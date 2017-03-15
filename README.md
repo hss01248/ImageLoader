@@ -2,8 +2,30 @@
 
 图片加载框架的api封装
 
-api设计参考glide,目前底层依赖fresco
+api设计参考glide,目前底层依赖fresco,如果要切换其他图片加载框架,实现ILoader接口即可.
 
+```
+public interface ILoader {
+
+    void init(Context context,int cacheSizeInM);
+
+    void request(SingleConfig config);
+
+    void pause();
+
+    void resume();
+
+    void clearDiskCache();
+
+    void clearCacheByUrl(String url);
+
+    File getFileFromDiskCache(String url);
+
+    boolean  isCached(String url);
+
+}
+
+```
 # 初始化
 
 Application中:
