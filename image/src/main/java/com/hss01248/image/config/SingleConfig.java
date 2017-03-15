@@ -1,7 +1,10 @@
 package com.hss01248.image.config;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
+
+import com.hss01248.image.MyUtil;
 
 /**
  * Created by Administrator on 2017/3/14 0014.
@@ -9,52 +12,368 @@ import android.view.View;
 
 public class SingleConfig {
 
-    public Context context;
-
-
-    public String url;
-    public String filePath;
-
-
-    public View target;
-
-
-
-    public int width;
-    public int height;
-
-    public boolean needBlur = false;//是否需要模糊
-
-
-
-
-
-    public SingleConfig(Context context) {
-        this.context = context;
+    public Context getContext() {
+        return context;
     }
 
-    public SingleConfig url(String url){
-        this.url = url;
-        return this;
+    private Context context;
+
+    public int getBorderColor() {
+        return borderColor;
     }
-    public SingleConfig file(String filePath){
-        this.filePath = filePath;
-        return this;
+
+    public int getBorderWidth() {
+        return borderWidth;
     }
-    public SingleConfig fileDescriptor(String filePath){
-        this.filePath = filePath;
-        return this;
+
+    public String getContentProvider() {
+        return contentProvider;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public boolean isNeedBlur() {
+        return needBlur;
+    }
+
+    public int getPlaceHolderResId() {
+        return placeHolderResId;
+    }
+
+    public int getRectRoundRadius() {
+        return rectRoundRadius;
+    }
+
+    public int getResId() {
+        return resId;
+    }
+
+    public int getScaleMode() {
+        return scaleMode;
+    }
+
+    public int getShapeMode() {
+        return shapeMode;
+    }
+
+    public View getTarget() {
+        return target;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getRoundOverlayColor() {
+        return roundOverlayColor;
+    }
+
+    public boolean isIgnoreCertificateVerify() {
+        return ignoreCertificateVerify;
+    }
+
+    public BitmapListener getBitmapListener() {
+        return bitmapListener;
+    }
+
+    private  boolean ignoreCertificateVerify ;
+    private String url;
+    private String filePath;
+    private int resId;
+    private String contentProvider;
+    private boolean isGif=false;
+
+    private View target;
+
+    private int width;
+    private int height;
+
+    private boolean needBlur = false;//是否需要模糊
+    private int blurRadius;
+
+    //UI:
+    private int placeHolderResId;
+
+    private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
+    private int rectRoundRadius;//圆角矩形时圆角的半径
+
+    private int roundOverlayColor;//圆角/圆外覆盖一层背景色
+    private int scaleMode;//填充模式,默认centercrop,可选fitXY,centerInside...
+
+    private int borderWidth;//边框的宽度
+    private int borderColor;//边框颜色
+
+    public boolean isAsBitmap() {
+        return asBitmap;
+    }
+
+    private boolean asBitmap;//只获取bitmap
+    private BitmapListener bitmapListener;
+
+    private void show(){
+        GlobalConfig.getLoader().request(this);
+
     }
 
 
-    /**
-     * 最终加载的动作
-     * @param view
-     * @return
-     */
-    public SingleConfig into(View view){
-        this.target = view;
-        return this;
+    public boolean isGif() {
+        return isGif;
+    }
+
+    public int getBlurRadius() {
+        return blurRadius;
+    }
+
+    public SingleConfig(ConfigBuilder builder){
+        this.url = builder.url;
+        this.filePath = builder.filePath;
+        this.resId = builder.resId;
+        this.contentProvider = builder.contentProvider;
+
+        this.ignoreCertificateVerify = builder.ignoreCertificateVerify;
+
+        this.target = builder.target;
+        this.width = builder.width;
+        this.height = builder.height;
+
+        this.shapeMode = builder.shapeMode;
+        if(shapeMode== ShapeMode.RECT_ROUND){
+            this.rectRoundRadius = builder.rectRoundRadius;
+        }
+        this.scaleMode = builder.scaleMode;
+
+        this.needBlur = builder.needBlur;
+        this.placeHolderResId = builder.placeHolderResId;
+        this.borderWidth = builder.borderWidth;
+        if(borderWidth>0){
+            this.borderColor = builder.borderColor;
+        }
+
+
+        this.asBitmap = builder.asBitmap;
+        this.bitmapListener = builder.bitmapListener;
+
+        this.roundOverlayColor = builder.roundOverlayColor;
+        this.isGif = builder.isGif;
+        this.blurRadius = builder.blurRadius;
+
+
+
+    }
+
+
+    public interface BitmapListener{
+        void onSuccess(Bitmap bitmap);
+        void onFail();
+    }
+
+    public static class ConfigBuilder{
+        private Context context;
+
+        private  boolean ignoreCertificateVerify = GlobalConfig.ignoreCertificateVerify;
+
+        //图片源
+        /**
+         * 类型	SCHEME	示例
+         远程图片	http://, https://	HttpURLConnection 或者参考 使用其他网络加载方案
+         本地文件	file://	FileInputStream
+         Content provider	content://	ContentResolver
+         asset目录下的资源	asset://	AssetManager
+         res目录下的资源	res://	Resources.openRawResource
+         Uri中指定图片数据	data:mime/type;base64,	数据类型必须符合 rfc2397规定 (仅支持 UTF-8)
+         * @param config
+         * @return
+         */
+        private String url;
+        private String filePath;
+        private int resId;
+        private String contentProvider;
+        private boolean isGif=false;
+
+        private View target;
+        private boolean asBitmap;//只获取bitmap
+        private BitmapListener bitmapListener;
+
+        private int width;
+        private int height;
+
+        private boolean needBlur = false;//是否需要模糊
+        private int blurRadius;
+
+        //UI:
+        private int placeHolderResId;
+
+        private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
+        private int rectRoundRadius;//圆角矩形时圆角的半径
+
+        public ConfigBuilder setRoundOverlayColor(int roundOverlayColor) {
+            this.roundOverlayColor = roundOverlayColor;
+            return this;
+        }
+
+        private int roundOverlayColor;//圆角/圆外覆盖一层背景色
+        private int scaleMode;//填充模式,默认centercrop,可选fitXY,centerInside...
+
+        private int borderWidth;//边框的宽度
+        private int borderColor;//边框颜色
+
+
+
+
+
+
+        public ConfigBuilder(Context context){
+            this.context = context;
+
+        }
+
+        /*public ConfigBuilder(SingleConfig config){
+
+        }*/
+
+        public ConfigBuilder ignoreCertificateVerify(boolean ignoreCertificateVerify){
+            this.ignoreCertificateVerify = ignoreCertificateVerify;
+            return this;
+        }
+
+        /**
+         * 设置网络路径
+         * @param url
+         * @return
+         */
+        public ConfigBuilder url(String url){
+            this.url = url;
+            if(url.contains("gif")){
+                isGif = true;
+            }
+            return this;
+        }
+
+        public ConfigBuilder file(String filePath){
+            this.filePath = filePath;
+            if(filePath.contains("gif")){
+                isGif = true;
+            }
+            return this;
+        }
+
+        public ConfigBuilder res(int resId){
+            this.resId = resId;
+            return this;
+        }
+        public ConfigBuilder content(String contentProvider){
+            this.contentProvider = contentProvider;
+            return this;
+        }
+
+        public void into(View targetView){
+            this.target = targetView;
+             new SingleConfig(this).show();
+        }
+
+        public void asBitmap(BitmapListener bitmapListener){
+            this.bitmapListener = bitmapListener;
+            this.asBitmap = true;
+            new SingleConfig(this).show();
+        }
+
+        /*public SingleConfig build(){
+            return new SingleConfig(this);
+        }*/
+
+        /**
+         * dp单位
+         * @param width
+         * @param height
+         * @return
+         */
+        public ConfigBuilder widthHeight(int width,int height){
+            this.width = MyUtil.dip2px(width);
+            this.height = MyUtil.dip2px(height);
+            return this;
+        }
+
+        public ConfigBuilder placeHolder(int placeHolderResId){
+            this.placeHolderResId = placeHolderResId;
+            return this;
+        }
+
+
+        /**
+         * 是否需要高斯模糊
+         * @return
+         */
+        public ConfigBuilder blur(int blurRadius){
+            this.needBlur = true;
+            this.blurRadius = blurRadius;
+            return this;
+        }
+
+
+
+        public ConfigBuilder asCircle(int overlayColorWhenGif){
+            this.shapeMode = ShapeMode.OVAL;
+            this.roundOverlayColor  = overlayColorWhenGif;
+            return this;
+        }
+
+
+
+        /**
+         * 形状为圆角矩形时的圆角半径
+         * @param rectRoundRadius
+         * @return
+         */
+        public ConfigBuilder rectRoundCorner(int rectRoundRadius,int overlayColorWhenGif){
+            this.rectRoundRadius = MyUtil.dip2px(rectRoundRadius);
+            this.shapeMode = ShapeMode.RECT_ROUND;
+            this.roundOverlayColor  = overlayColorWhenGif;
+
+            return this;
+        }
+
+        /**
+         * 拉伸/裁剪模式
+         * @param scaleMode 取值ScaleMode
+         * @return
+         */
+        public ConfigBuilder scale(int scaleMode){
+            this.scaleMode = scaleMode;
+            return this;
+        }
+
+        /**
+         * 设置边框
+         * @param borderWidth
+         * @param borderColor
+         * @return
+         */
+        public ConfigBuilder border(int borderWidth,int borderColor){
+            this.borderWidth = MyUtil.dip2px(borderWidth);
+            this.borderColor = borderColor;
+            return this;
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 
 

@@ -2,8 +2,10 @@ package com.hss01248.image;
 
 import android.content.Context;
 
+import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
-import com.hss01248.image.fresco.FrescoUtil;
+
+
 
 
 /**
@@ -12,26 +14,20 @@ import com.hss01248.image.fresco.FrescoUtil;
 
 public class ImageLoader {
 
-    public static Context context;
-
-
-
-
-
-
+    //public static Context context;
 
     public static void init(final Context context, int cacheSizeInM){
-        ImageLoader.context = context;
+        //ImageLoader.context = context;
 
-        FrescoUtil.init(context,cacheSizeInM);
+        GlobalConfig.context = context;
+        GlobalConfig.getLoader().init(context,cacheSizeInM);
+
+
     }
 
-    public static SingleConfig with(Context context){
-        return new SingleConfig(context);
-
+    public static SingleConfig.ConfigBuilder with(Context context){
+        return new SingleConfig.ConfigBuilder(context);
     }
-
-
 
 
 }

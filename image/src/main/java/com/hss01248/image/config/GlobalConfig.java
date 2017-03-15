@@ -1,5 +1,8 @@
 package com.hss01248.image.config;
 
+import android.content.Context;
+
+import com.hss01248.image.fresco.FrescoLoader;
 import com.hss01248.image.interfaces.ILoader;
 
 /**
@@ -7,6 +10,10 @@ import com.hss01248.image.interfaces.ILoader;
  */
 
 public class GlobalConfig {
+
+    public static String baseUrl;
+
+    public static Context context;
     /**
      * lrucache 最大值
      */
@@ -32,8 +39,10 @@ public class GlobalConfig {
 
     public static ILoader getLoader() {
         if(loader == null){
-
+            loader = new FrescoLoader();
         }
         return loader;
     }
+
+
 }

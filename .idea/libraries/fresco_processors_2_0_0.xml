@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="fresco-processors-2.0.0">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/image/build/intermediates/exploded-aar/jp.wasabeef/fresco-processors/2.0.0/res" />
       <root url="jar://$PROJECT_DIR$/image/build/intermediates/exploded-aar/jp.wasabeef/fresco-processors/2.0.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/image/build/intermediates/exploded-aar/jp.wasabeef/fresco-processors/2.0.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
