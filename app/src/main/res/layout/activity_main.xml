@@ -23,6 +23,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <Button
+            android:id="@+id/btn_bigpic_viewpager"
+            android:text="加载轮播大图"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_url"
         android:layout_width="250dp"

@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hss01248.image.ImageLoader;
@@ -26,8 +28,13 @@ public class MainActivity extends AppCompatActivity {
     SimpleDraweeView ivRes;
     @Bind(R.id.iv_url_blur)
     SimpleDraweeView ivUrlBlur;
+
     @Bind(R.id.btn_bigpic)
     Button btnBigpic;
+    @Bind(R.id.btn_bigpic_viewpager)
+    Button btnBigpicViewpager;
+    @Bind(R.id.activity_main)
+    ScrollView activityMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +87,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.btn_bigpic)
-    public void onClick() {
-        Intent intent = new Intent(this,BigImageActy.class);
-        startActivity(intent);
+    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_bigpic:{
+                Intent intent = new Intent(this,BigImageActy.class);
+                startActivity(intent);
+            }
+
+                break;
+            case R.id.btn_bigpic_viewpager:{
+                Intent intent = new Intent(this,ViewpagerActy.class);
+                startActivity(intent);
+            }
+                break;
+        }
     }
+
+
+        /*Intent intent = new Intent(this,BigImageActy.class);
+        startActivity(intent);*/
+
 }

@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".BigImageActy"/>
+        <activity android:name=".ViewpagerActy"/>
     </application>
 
 </manifest>
