@@ -195,7 +195,7 @@ ImageLoader.loadBigImage(BigImageView imageView,String url)
 
 ## viewpager加载大图的处理
 
-> 只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断创建和回收.参考demo中MyAdapter的写法.核心代码如下:
+> 只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断创建和回收.参考demo中[MyAdapter](https://github.com/hss01248/ImageLoader/blob/master/app/src/main/java/com/hss01248/imageloaderdemo/MyAdapter.java)的写法.核心代码如下:
 
 ```
 //构造方法
