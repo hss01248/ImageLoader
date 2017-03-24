@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
@@ -38,6 +39,7 @@ import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.loader.fresco.FrescoImageLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.MyUtil;
+import com.hss01248.image.R;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
@@ -124,6 +126,14 @@ public class FrescoLoader implements ILoader {
 
         if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
             bigImageView.setProgressIndicator(new ProgressPieIndicator());
+        }else {
+           int count =  bigImageView.getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = bigImageView.getChildAt(i);
+                if(child.findViewById(R.id.progressBar00)!=null){
+                    child.setVisibility(View.INVISIBLE);
+                }
+            }
         }
         bigImageView.showImage(buildUriByType(config));
 
@@ -409,7 +419,7 @@ public class FrescoLoader implements ILoader {
         url = MyUtil.appendUrl(url);
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         Uri uri = Uri.parse(url);
-        // imagePipeline.evictFromMemoryCache(uri);
+         imagePipeline.evictFromMemoryCache(uri);
         imagePipeline.evictFromDiskCache(uri);
         //imagePipeline.evictFromCache(uri);//这个包含了从内存移除和从硬盘移除
     }

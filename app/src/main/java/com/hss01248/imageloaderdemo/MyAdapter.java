@@ -21,7 +21,7 @@ public class MyAdapter extends PagerAdapter {
 
     public MyAdapter(List<String> urls){
         this.urls = urls;
-        mViews = new ArrayList<BigImageView>();
+        mViews = new ArrayList<BigImageView>(4);
     }
 
 
@@ -38,16 +38,19 @@ public class MyAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
 
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                ViewPager.LayoutParams.MATCH_PARENT,ViewPager.LayoutParams.MATCH_PARENT);
 
+        BigImageView imageView = null;
         int i = position % 4;
-         BigImageView imageView = mViews.get(i);
-        if(imageView==null){
+        if(mViews.size()==0 || mViews.size()<=i){
             imageView = new BigImageView(container.getContext());
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                    ViewPager.LayoutParams.MATCH_PARENT,ViewPager.LayoutParams.MATCH_PARENT);
+            imageView.setLayoutParams(params);
             mViews.add(imageView);
+        }else {
+            imageView = mViews.get(i);
         }
-        imageView.setLayoutParams(params);
+
 
          String url = urls.get(position);
         ImageLoader.loadBigImage(imageView,url);

@@ -1,5 +1,6 @@
 package com.hss01248.image.fresco;
 
+import android.text.TextUtils;
 import android.view.View;
 
 import com.github.piasy.biv.indicator.ProgressIndicator;
@@ -13,10 +14,17 @@ import com.hss01248.image.R;
 public class ProgressPieIndicator implements ProgressIndicator {
    // private ProgressBar progressBar;
     private View root;
+    private String cacheFile;
     //private TextView textView;
     @Override
     public View getView(BigImageView parent) {
         View view = View.inflate(parent.getContext(), R.layout.progress,null);
+        cacheFile = parent.currentImageFile();
+        if(TextUtils.isEmpty(cacheFile)){
+            cacheFile = parent.currentImageFile();
+        }else if(cacheFile.equals(parent.currentImageFile())){
+
+        }
        // progressBar = (ProgressBar) view.findViewById(R.id.progressBar00);
         //textView = (TextView) view.findViewById(R.id.tv_progress);
         root = view;

@@ -193,6 +193,44 @@ ImageLoader.loadBigImage(BigImageView imageView,String url)
 
  ![loading](loading.jpg)
 
+## viewpager加载大图的处理
+
+> 只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断创建和回收.参考demo中MyAdapter的写法.核心代码如下:
+
+```
+//构造方法
+public MyAdapter(List<String> urls){
+        this.urls = urls;
+        mViews = new ArrayList<BigImageView>(4);
+    }
+   
+	@Override
+    public Object instantiateItem(ViewGroup container, final int position) {
+
+        BigImageView imageView = null;
+        int i = position % 4;
+        if(mViews.size()==0 || mViews.size()<=i){
+            imageView = new BigImageView(container.getContext());
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                    ViewPager.LayoutParams.MATCH_PARENT,ViewPager.LayoutParams.MATCH_PARENT);
+            imageView.setLayoutParams(params);
+            mViews.add(imageView);
+        }else {
+            imageView = mViews.get(i);
+        }
+
+         String url = urls.get(position);
+        ImageLoader.loadBigImage(imageView,url);
+        container.addView(imageView);
+        return imageView;
+
+    }
+```
+
+经测试,效果非常不错.几十张超级大图(4000*3000像素左右),快速滑动和快速缩放时,内存占用偶尔冲上五六十M,但很快会降到40M左右.
+
+![memory in viewpager](G:\projects\android\hss01248\ImageLoader\memory in viewpager.jpg)
+
 
 
 # 内存优化的几个策略的说明
