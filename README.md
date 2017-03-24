@@ -3,6 +3,8 @@
 图片加载框架的api封装
 
 api设计参考glide,目前底层依赖fresco,如果要切换其他图片加载框架,实现ILoader接口即可.
+### 更新日志
+https://github.com/hss01248/ImageLoader/blob/master/LOG.md
 
 ```
 public interface ILoader {
