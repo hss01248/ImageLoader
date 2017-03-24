@@ -17,6 +17,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/btn_bigpic"
+            android:text="加载大图"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_url"
         android:layout_width="250dp"

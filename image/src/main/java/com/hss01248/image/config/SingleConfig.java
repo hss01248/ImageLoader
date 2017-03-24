@@ -88,17 +88,23 @@ public class SingleConfig {
 
     private  boolean ignoreCertificateVerify ;
     private String url;
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    private String thumbnailUrl;//小图的url
     private String filePath;
     private int resId;
     private String contentProvider;
-    private boolean isGif=false;
+    private boolean isGif;
 
     private View target;
 
     private int width;
     private int height;
 
-    private boolean needBlur = false;//是否需要模糊
+    private boolean needBlur ;//是否需要模糊
     private int blurRadius;
 
     //UI:
@@ -120,6 +126,14 @@ public class SingleConfig {
     private boolean asBitmap;//只获取bitmap
     private BitmapListener bitmapListener;
 
+
+
+    /*public BigImageView getBigImageView() {
+        return bigImageView;
+    }*/
+
+   // private BigImageView bigImageView ;//可放大和缩放的大图
+
     private void show(){
         GlobalConfig.getLoader().request(this);
 
@@ -136,6 +150,7 @@ public class SingleConfig {
 
     public SingleConfig(ConfigBuilder builder){
         this.url = builder.url;
+        this.thumbnailUrl = builder.thumbnailUrl;
         this.filePath = builder.filePath;
         this.resId = builder.resId;
         this.contentProvider = builder.contentProvider;
@@ -167,6 +182,8 @@ public class SingleConfig {
         this.isGif = builder.isGif;
         this.blurRadius = builder.blurRadius;
 
+       // this.bigImageView = builder.bigImageView;
+
 
 
     }
@@ -195,6 +212,7 @@ public class SingleConfig {
          * @return
          */
         private String url;
+        private String thumbnailUrl;//小图的url
         private String filePath;
         private int resId;
         private String contentProvider;
@@ -227,7 +245,12 @@ public class SingleConfig {
         private int borderWidth;//边框的宽度
         private int borderColor;//边框颜色
 
+        /*private BigImageView bigImageView ;//可放大和缩放的大图
 
+        public ConfigBuilder intoBigImageView(BigImageView bigImageView ){
+            this.bigImageView = bigImageView;
+            return this;
+        }*/
 
 
 
@@ -256,6 +279,10 @@ public class SingleConfig {
             if(url.contains("gif")){
                 isGif = true;
             }
+            return this;
+        }
+        public ConfigBuilder thumbnail(String thumbnailUrl){
+            this.thumbnailUrl = thumbnailUrl;
             return this;
         }
 

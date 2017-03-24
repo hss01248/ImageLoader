@@ -15,4 +15,16 @@ public class BaseApp extends Application {
         super.onCreate();
         ImageLoader.init(getApplicationContext(), 40);
     }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        ImageLoader.trimMemory(level);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        ImageLoader.clearAllMemoryCaches();
+    }
 }

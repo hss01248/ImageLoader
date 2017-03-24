@@ -29,5 +29,8 @@ public interface ILoader {
 
    boolean  isCached(String url);
 
+    void trimMemory(int level);
+
+    void clearAllMemoryCaches();
 
 }

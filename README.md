@@ -7,14 +7,16 @@ api设计参考glide,目前底层依赖fresco,如果要切换其他图片加载�
 ```
 public interface ILoader {
 
-    void init(Context context,int cacheSizeInM);
+    void init(Context context,int cacheSizeInM);//初始化
 
-    void request(SingleConfig config);
-
+    void request(SingleConfig config);//核心方法
+	
+	//图片加载的暂停和继续
     void pause();
 
     void resume();
-
+    
+    //下面是操作磁盘缓存的一些方法
     void clearDiskCache();
 
     void clearCacheByUrl(String url);
@@ -22,19 +24,45 @@ public interface ILoader {
     File getFileFromDiskCache(String url);
 
     boolean  isCached(String url);
+    
+    //下面是内存的优化-响应app的内存事件,做出相应的处理
+    void trimMemory(int level);
+
+    void clearAllMemoryCaches();
 
 }
-
 ```
 # 初始化
 
-Application中:
+### Application中:
+
+oncreate方法中:
 
 传入全局context和定义缓存文件夹的大小
 
 ```
 init(final Context context, int cacheSizeInM)
 ```
+
+响应app的内存事件,预防OOM:
+
+```
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        ImageLoader.trimMemory(level);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        ImageLoader.clearAllMemoryCaches();
+    }
+    
+```
+
+
 
 # 入口方法
 
@@ -149,6 +177,74 @@ asBitmap(BitmapListener bitmapListener)
 
 
 
+# 加载大图
+
+内部采用的是https://github.com/Piasy/BigImageViewer,确实很给力.
+
+```
+ImageLoader.loadBigImage(BigImageView imageView,String url)
+```
+
+如果本地没有缓存,则先显示loading界面,图片下载完后显示图片.
+
+如果本地有缓存,则直接显示图片.
+
+ ![loading](loading.jpg)
+
+
+
+# 内存优化的几个策略的说明
+
+## bitmap编码
+
+将fresco框架默认的RGB_888改成RGB_565,每张图片内存能减小一半,而显示效果相差并不大.
+
+```
+初始化时ImagePipelineConfig设置setBitmapsConfig(Bitmap.Config.RGB_565)
+```
+
+## downsampling和resization配合
+
+图片向下采样,将图片采样成设定的宽高的bitmap,而不是加载原图.
+
+```
+初始化时ImagePipelineConfig.Builder设置setDownsampleEnabled(true)//同时支持PNG，JPG以及WEP格式的图片
+
+每次加载图片时,指定宽高,即可执行resization,将图片解析成该宽高的bitmap.
+```
+
+## 预防OOM
+
+参见 [Fresco 5.0以上内存持续增长问题优化](http://blog.csdn.net/honjane/article/details/65629799)
+
+自定义控制fresco的内存对象池大小
+
+```
+初始化时ImagePipelineConfig.Builder设置setBitmapMemoryCacheParamsSupplier(new MyBitmapMemoryCacheParamsSupplier(activityManager))
+```
+
+并且响应app的内存事件,在内存不够时进行清除内存缓存.
+
+```
+Application的回调中调用方法:
+
+@Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        ImageLoader.trimMemory(level);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        ImageLoader.clearAllMemoryCaches();
+    }
+```
+
+## 外部辅助
+
+> 如果图片用的是七牛云存储或者阿里云,那么利用他们的图片处理的api,请求时带上目标宽高等参数,让他们裁剪成你要的小图后返回,不仅省内存,而且省流量.
+
 # 示例代码:
 
 ```
@@ -199,6 +295,15 @@ Add it in your root build.gradle at the end of repositories:
 
 ```
     dependencies {
-            compile 'com.github.hss01248:ImageLoader:0.0.1'
+            compile 'com.github.hss01248:ImageLoader:0.0.2'
     }
 ```
+
+# thanks
+
+https://github.com/facebook/fresco
+
+https://github.com/Piasy/BigImageViewer
+
+ [Fresco 5.0以上内存持续增长问题优化](http://blog.csdn.net/honjane/article/details/65629799)
+

@@ -1,5 +1,6 @@
 package com.hss01248.image.fresco;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -33,6 +34,9 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
+import com.github.piasy.biv.BigImageViewer;
+import com.github.piasy.biv.loader.fresco.FrescoImageLoader;
+import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
@@ -75,8 +79,12 @@ public class FrescoLoader implements ILoader {
                 .setDownsampleEnabled(true)//Downsampling，它处理图片的速度比常规的裁剪更快，
                 // 并且同时支持PNG，JPG以及WEP格式的图片，非常强大,与ResizeOptions配合使用
                 .setBitmapsConfig(Bitmap.Config.RGB_565)
+                //让fresco即时清理内存:http://blog.csdn.net/honjane/article/details/65629799
+                .setBitmapMemoryCacheParamsSupplier(new MyBitmapMemoryCacheParamsSupplier((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)))
                 .build();
-        Fresco.initialize(context, config);
+        //Fresco.initialize(context, config);
+
+        BigImageViewer.initialize(FrescoImageLoader.with(context,config));
 
     }
 
@@ -92,6 +100,10 @@ public class FrescoLoader implements ILoader {
     }
 
     private void requestForImageView(SingleConfig config) {
+        if(config.getTarget() instanceof BigImageView){
+            viewBigImage(config);
+            return;
+        }
 
 
         ImageRequest request = buildRequest(config);
@@ -103,6 +115,30 @@ public class FrescoLoader implements ILoader {
         AbstractDraweeController controller = buildPipelineDraweeController(config,request);
 
         ((SimpleDraweeView) config.getTarget()).setController(controller);
+
+    }
+
+    private void viewBigImage(SingleConfig config) {
+        BigImageView bigImageView = (BigImageView) config.getTarget();
+        //bigImageView.setProgressIndicator(new ProgressPieIndicator());
+
+        if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
+            bigImageView.setProgressIndicator(new ProgressPieIndicator());
+        }
+        bigImageView.showImage(buildUriByType(config));
+
+        //bigimageview对缩略图的支持并不好
+       /* if(TextUtils.isEmpty(config.getThumbnailUrl())){
+            if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
+                bigImageView.setProgressIndicator(new ProgressPieIndicator());
+            }
+            bigImageView.showImage(buildUriByType(config));
+        }else {
+            bigImageView.showImage(Uri.parse(config.getThumbnailUrl()),buildUriByType(config));
+        }*/
+
+
+
 
     }
 
@@ -146,7 +182,11 @@ public class FrescoLoader implements ILoader {
 
             //GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(GlobalConfig.context.getResources());
             if(config.getPlaceHolderResId()>0){
-                hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), ScalingUtils.ScaleType.CENTER_CROP);
+                if(config.getResId()>0 || !TextUtils.isEmpty(config.getFilePath()) || isCached(config.getUrl())){
+
+                }else {//只有在图片源为网络图片,并且图片没有缓存到本地时,才给显示placeholder
+                    hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), ScalingUtils.ScaleType.FIT_CENTER);
+                }
             }
 
 
@@ -393,13 +433,36 @@ public class FrescoLoader implements ILoader {
 
     @Override
     public boolean isCached(String url) {
+        if(TextUtils.isEmpty(url)){
+            return false;
+        }
         url = MyUtil.appendUrl(url);
-         return Fresco.getImagePipeline().isInDiskCache(Uri.parse(url)).getResult();
+        DataSource<Boolean> isIn = Fresco.getImagePipeline().isInDiskCache(Uri.parse(url));
+        if(isIn!=null){
+            try {
+                return isIn.getResult();
+            }catch (Exception e){
+                return false;
+            }
+        }else {
+            return false;
+        }
+
 
        /* ImageRequest imageRequest = ImageRequest.fromUri(url);
         CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
                 .getEncodedCacheKey(imageRequest,null);
         return ImagePipelineFactory.getInstance()
                 .getMainFileCache().hasKey(cacheKey);*/
+    }
+
+    @Override
+    public  void trimMemory(int level){
+       //todo  BitmapMemoryCacheTrimStrategy.getTrimRatio(trimType)
+    }
+
+    @Override
+    public  void  clearAllMemoryCaches(){
+        Fresco.getImagePipeline().clearMemoryCaches();
     }
 }
