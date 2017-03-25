@@ -1,4 +1,4 @@
-package com.hss01248.imageloaderdemo;
+package com.hss01248.image.bigimage;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -15,13 +15,21 @@ import java.util.List;
  * Created by Administrator on 2017/3/24 0024.
  */
 
-public class MyAdapter extends PagerAdapter {
+public class PagerAdapterForBigImage extends PagerAdapter {
     List<String> urls;
     List<BigImageView> mViews ;
 
-    public MyAdapter(List<String> urls){
+    public PagerAdapterForBigImage(List<String> urls){
         this.urls = urls;
         mViews = new ArrayList<BigImageView>(4);
+    }
+
+    public void changeDatas(List<String> urls){
+       if(urls!=null){
+           this.urls.clear();
+           this.urls.addAll(urls);
+           notifyDataSetChanged();
+       }
     }
 
 

@@ -64,8 +64,9 @@ public class ViewpagerActy extends Activity {
 
 
 
-        MyAdapter adapter = new MyAdapter(urls);
-        viewPager.setAdapter(adapter);
+       // PagerAdapterForBigImage adapter = new PagerAdapterForBigImage(urls);
+       // viewPager.setAdapter(adapter);
+        ImageLoader.loadBigImages(viewPager,urls);
 
 
 

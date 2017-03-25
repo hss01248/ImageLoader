@@ -195,36 +195,10 @@ ImageLoader.loadBigImage(BigImageView imageView,String url)
 
 ## viewpager加载大图的处理
 
-> 只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断创建和回收.参考demo中MyAdapter的写法.核心代码如下:
+> pageradapter内部只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断创建和回收.
 
 ```
-//构造方法
-public MyAdapter(List<String> urls){
-        this.urls = urls;
-        mViews = new ArrayList<BigImageView>(4);
-    }
-   
-	@Override
-    public Object instantiateItem(ViewGroup container, final int position) {
-
-        BigImageView imageView = null;
-        int i = position % 4;
-        if(mViews.size()==0 || mViews.size()<=i){
-            imageView = new BigImageView(container.getContext());
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                    ViewPager.LayoutParams.MATCH_PARENT,ViewPager.LayoutParams.MATCH_PARENT);
-            imageView.setLayoutParams(params);
-            mViews.add(imageView);
-        }else {
-            imageView = mViews.get(i);
-        }
-
-         String url = urls.get(position);
-        ImageLoader.loadBigImage(imageView,url);
-        container.addView(imageView);
-        return imageView;
-
-    }
+ImageLoader.loadBigImages(ViewPager viewPager, List<String> urls)//urls
 ```
 
 经测试,效果非常不错.几十张超级大图(4000*3000像素左右),快速滑动和快速缩放时,内存占用偶尔冲上五六十M,但很快会降到40M左右.
@@ -335,7 +309,7 @@ Add it in your root build.gradle at the end of repositories:
 
 ```
     dependencies {
-            compile 'com.github.hss01248:ImageLoader:0.0.2'
+            compile 'com.github.hss01248:ImageLoader:0.0.3'
     }
 ```
 
