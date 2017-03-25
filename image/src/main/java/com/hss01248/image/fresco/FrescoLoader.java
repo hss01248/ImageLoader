@@ -318,6 +318,8 @@ public class FrescoLoader implements ILoader {
      */
     private Uri buildUriByType(SingleConfig config) {
 
+        Log.e("builduri:","url:"+config.getUrl()+"---filepath:"+config.getFilePath()+ "--content:"+config.getContentProvider());
+
         if(!TextUtils.isEmpty(config.getUrl())){
             String url = MyUtil.appendUrl(config.getUrl());
             return Uri.parse(url);
@@ -328,6 +330,7 @@ public class FrescoLoader implements ILoader {
         }
 
         if(!TextUtils.isEmpty(config.getFilePath())){
+
             File file = new File(config.getFilePath());
             if(file.exists()){
                 return Uri.fromFile(file);

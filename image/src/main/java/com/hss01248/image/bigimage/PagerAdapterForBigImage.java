@@ -2,6 +2,7 @@ package com.hss01248.image.bigimage;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,10 +19,11 @@ import java.util.List;
 public class PagerAdapterForBigImage extends PagerAdapter {
     List<String> urls;
     List<BigImageView> mViews ;
+    private static final int CACHE_SIZE = 4;
 
     public PagerAdapterForBigImage(List<String> urls){
         this.urls = urls;
-        mViews = new ArrayList<BigImageView>(4);
+        mViews = new ArrayList<BigImageView>(CACHE_SIZE);
     }
 
     public void changeDatas(List<String> urls){
@@ -47,9 +49,12 @@ public class PagerAdapterForBigImage extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
 
 
+
+
         BigImageView imageView = null;
-        int i = position % 4;
-        if(mViews.size()==0 || mViews.size()<=i){
+        int i = position % CACHE_SIZE;
+        Log.e("instantiateItem","postion:"+position+"---i:"+i);
+        if(mViews.size()<=i){
             imageView = new BigImageView(container.getContext());
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                     ViewPager.LayoutParams.MATCH_PARENT,ViewPager.LayoutParams.MATCH_PARENT);
@@ -73,7 +78,8 @@ public class PagerAdapterForBigImage extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        //int i = position % 4;
+        int i = position % CACHE_SIZE;
+        Log.e("destroyItem","postion------------------:"+position+"---i:"+i);
        // BigImageView imageView = mViews.get(i);
         container.removeView((View) object);
 

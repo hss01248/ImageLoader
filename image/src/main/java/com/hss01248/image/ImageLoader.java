@@ -10,6 +10,7 @@ import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.bigimage.PagerAdapterForBigImage;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.interfaces.ILoader;
 
 import java.io.File;
 import java.util.List;
@@ -32,6 +33,10 @@ public class ImageLoader {
         ImageLoader.context = context;
         GlobalConfig.context = context;
         GlobalConfig.getLoader().init(context,cacheSizeInM);
+    }
+
+    public static ILoader getActualLoader(){
+        return  GlobalConfig.getLoader();
     }
 
     /**
@@ -68,6 +73,7 @@ public class ImageLoader {
      * @param urls 图片路径
      */
     public static void loadBigImages(ViewPager viewPager, List<String> urls){//,String thumbnail
+        viewPager.setOffscreenPageLimit(1);
        // ViewPager viewPager = new ViewPager(context);
         if( viewPager.getAdapter()==null  ){
             PagerAdapter adapter = new PagerAdapterForBigImage(urls);
