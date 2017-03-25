@@ -46,11 +46,21 @@ public class ImageLoader {
     /**
      * 加载大图.暂时不支持缩略图
      * @param imageView
-     * @param url
+     * @param path 支持content,filepath,网络的url.如果是网络图片,请拼接上http协议名和主机
      */
-    public static void loadBigImage(BigImageView imageView,String url){//,String thumbnail
-        new SingleConfig.ConfigBuilder(context).url(url).into(imageView);
+    public static void loadBigImage(BigImageView imageView,String path){//,String thumbnail
+        if(path.startsWith("content:")){
+            new SingleConfig.ConfigBuilder(context).content(path).into(imageView);
+        }else if(path.startsWith("http")){
+            new SingleConfig.ConfigBuilder(context).url(path).into(imageView);
+        } else {
+            new SingleConfig.ConfigBuilder(context).file(path).into(imageView);
+        }
+
+
     }
+
+
 
     /**
      *   加载多张大图.支持动态更新urls

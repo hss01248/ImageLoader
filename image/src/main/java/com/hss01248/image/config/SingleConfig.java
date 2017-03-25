@@ -287,6 +287,10 @@ public class SingleConfig {
         }
 
         public ConfigBuilder file(String filePath){
+            if(filePath.startsWith("content:")){
+                this.contentProvider = filePath;
+                return this;
+            }
             this.filePath = filePath;
             if(filePath.contains("gif")){
                 isGif = true;

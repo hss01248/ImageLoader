@@ -184,7 +184,9 @@ asBitmap(BitmapListener bitmapListener)
 内部采用的是https://github.com/Piasy/BigImageViewer,确实很给力.
 
 ```
-ImageLoader.loadBigImage(BigImageView imageView,String url)
+ImageLoader.loadBigImage(BigImageView imageView,String path)
+//说明: path可以是网络url,文件路径或者content://格式的路径
+当是网络url时,注意应该以http开头,这里内部不提供拼接功能
 ```
 
 如果本地没有缓存,则先显示loading界面,图片下载完后显示图片.
@@ -311,7 +313,7 @@ Add it in your root build.gradle at the end of repositories:
 
 ```
     dependencies {
-            compile 'com.github.hss01248:ImageLoader:0.0.3'
+            compile 'com.github.hss01248:ImageLoader:0.0.4'
     }
 ```
 

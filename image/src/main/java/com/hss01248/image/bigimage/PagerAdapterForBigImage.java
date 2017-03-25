@@ -62,6 +62,10 @@ public class PagerAdapterForBigImage extends PagerAdapter {
 
          String url = urls.get(position);
         ImageLoader.loadBigImage(imageView,url);
+        if(imageView.getParent()!=null){//多加一层判断,比较保险
+            ViewGroup viewGroup = (ViewGroup) imageView.getParent();
+            viewGroup.removeView(imageView);
+        }
         container.addView(imageView);
         return imageView;
 

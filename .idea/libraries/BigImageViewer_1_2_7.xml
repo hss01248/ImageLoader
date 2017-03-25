@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="BigImageViewer-1.2.7">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/image/build/intermediates/exploded-aar/com.github.piasy/BigImageViewer/1.2.7/res" />
-      <root url="jar://$PROJECT_DIR$/image/build/intermediates/exploded-aar/com.github.piasy/BigImageViewer/1.2.7/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.android/build-cache/0c6bc40adb4759fdd9650cf89015588fb0a8cf4c/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/0c6bc40adb4759fdd9650cf89015588fb0a8cf4c/output/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
