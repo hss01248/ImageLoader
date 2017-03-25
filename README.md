@@ -205,7 +205,7 @@ ImageLoader.loadBigImages(ViewPager viewPager, List<String> urls)//urls
 
 经测试,效果非常不错.几十张超级大图(4000*3000像素左右),快速滑动和快速缩放时,内存占用偶尔冲上五六十M,但很快会降到40M左右.
 
-![memory in viewpager](memory in viewpager.jpg)
+![memoryr](/memoryr.jpg)
 
 
 
