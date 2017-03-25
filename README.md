@@ -195,6 +195,8 @@ ImageLoader.loadBigImage(BigImageView imageView,String url)
 
 ## viewpager加载大图的处理
 
+> 用户只需要传入单纯的viewPager应用,框架会替调用者设置好特定的adapter.
+>
 > pageradapter内部只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断创建和回收.
 
 ```
