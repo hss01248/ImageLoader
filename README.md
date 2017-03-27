@@ -2,7 +2,7 @@
 
 图片加载框架的api封装
 
-api设计参考glide,目前底层依赖fresco,如果要切换其他图片加载框架,实现ILoader接口即可.
+api设计参考glide,目前底层依赖fresco和glide,可自由切换.如果要用其他图片加载框架,实现ILoader接口即可.
 ### 更新日志
 https://github.com/hss01248/ImageLoader/blob/master/LOG.md
 
@@ -10,6 +10,7 @@ https://github.com/hss01248/ImageLoader/blob/master/LOG.md
 public interface ILoader {
 
     void init(Context context,int cacheSizeInM);//初始化
+   
 
     void request(SingleConfig config);//核心方法
 	
@@ -43,7 +44,13 @@ oncreate方法中:
 传入全局context和定义缓存文件夹的大小
 
 ```
+默认底层使用fresco
 init(final Context context, int cacheSizeInM)
+
+
+//useFrescoOrGlide为true时,底层使用fresco,false时使用glide
+init( Context context, int cacheSizeInM,boolean useFrescoOrGlide)
+    
 ```
 
 响应app的内存事件,预防OOM:
@@ -306,14 +313,13 @@ Add it in your root build.gradle at the end of repositories:
             maven { url "https://jitpack.io" }
         }
     }
-
 ```
 
 **Step 2.** Add the dependency
 
 ```
     dependencies {
-            compile 'com.github.hss01248:ImageLoader:0.0.4'
+            compile 'com.github.hss01248:ImageLoader:0.0.5'
     }
 ```
 

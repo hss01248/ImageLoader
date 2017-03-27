@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="library-1.0.4">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/d357deb682015811346d70a555a005b075b8b2da/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/d357deb682015811346d70a555a005b075b8b2da/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.filippudak.progresspieview/library/1.0.4/681b7f4aa6cbe3a392a72ff5bfaa045fb1c66cfb/library-1.0.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

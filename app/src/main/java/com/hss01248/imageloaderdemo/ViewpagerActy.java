@@ -25,10 +25,10 @@ public class ViewpagerActy extends Activity {
         setContentView(R.layout.activity_viewpager);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         List<String> urls = new ArrayList<>();
-        urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20170222_221249_HHT.jpg");
+       /* urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20170222_221249_HHT.jpg");
         urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20161114_231649.jpg");
         urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20161229_221023.jpg");
-        urls.add("/storage/emulated/0/DCIM/家里有用图/DSC_0051.JPG");
+        urls.add("/storage/emulated/0/DCIM/家里有用图/DSC_0051.JPG");*/
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359324536&di=f1c2dfd6b0ebe0043f089d933d5d9e10&imgtype=0&src=http%3A%2F%2Fyouimg1.c-ctrip.com%2Ftarget%2Ffd%2Ftg%2Fg1%2FM02%2FFE%2FB5%2FCghzfFSrqqCATzfcACG0aD33PsY070.jpg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359343773&di=9fc5478b63f369090613c1c27d56f237&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201510%2F04%2F20151004210446_usmze.jpeg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359365740&di=f02eadaa956bef73d64cf9fb86969228&imgtype=0&src=http%3A%2F%2Fupload4.hlgnet.com%2Fbbsupfile%2F2012%2F2012-07-17%2F20120717003503_80.jpg");

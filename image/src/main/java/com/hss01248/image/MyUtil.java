@@ -2,9 +2,15 @@ package com.hss01248.image;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 
+import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.fresco.ProgressPieIndicator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +36,50 @@ import okhttp3.OkHttpClient;
  */
 
 public class MyUtil {
+
+
+    public static void viewBigImage(SingleConfig config) {
+        BigImageView bigImageView = (BigImageView) config.getTarget();
+        //bigImageView.setProgressIndicator(new ProgressPieIndicator());
+
+        if(!TextUtils.isEmpty(config.getUrl()) && !GlobalConfig.getLoader().isCached(config.getUrl() )){
+            bigImageView.setProgressIndicator(new ProgressPieIndicator());
+        }else {
+            int count =  bigImageView.getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = bigImageView.getChildAt(i);
+                if(child.findViewById(R.id.progressBar00)!=null){
+                    child.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+        bigImageView.showImage(buildUriByType(config));
+
+        //bigimageview对缩略图的支持并不好
+       /* if(TextUtils.isEmpty(config.getThumbnailUrl())){
+            if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
+                bigImageView.setProgressIndicator(new ProgressPieIndicator());
+            }
+            bigImageView.showImage(buildUriByType(config));
+        }else {
+            bigImageView.showImage(Uri.parse(config.getThumbnailUrl()),buildUriByType(config));
+        }*/
+    }
+
+
+
+
+    public static boolean shouldSetPlaceHolder(SingleConfig config){
+        if(config.getPlaceHolderResId()<=0 ) {
+            return false;
+        }
+
+        if(config.getResId()>0 || !TextUtils.isEmpty(config.getFilePath()) || GlobalConfig.getLoader().isCached(config.getUrl())){
+            return false;
+        }else {//只有在图片源为网络图片,并且图片没有缓存到本地时,才给显示placeholder
+            return true;
+        }
+    }
 
 
     public static int dip2px(float dipValue){
@@ -118,6 +168,53 @@ public class MyUtil {
             stringBuilder.append(hv);
         }
         return stringBuilder.toString();
+    }
+
+
+    /**
+     * 类型	SCHEME	示例
+     远程图片	http://, https://	HttpURLConnection 或者参考 使用其他网络加载方案
+     本地文件	file://	FileInputStream
+     Content provider	content://	ContentResolver
+     asset目录下的资源	asset://	AssetManager
+     res目录下的资源	res://	Resources.openRawResource
+     Uri中指定图片数据	data:mime/type;base64,	数据类型必须符合 rfc2397规定 (仅支持 UTF-8)
+     * @param config
+     * @return
+     */
+    public static Uri buildUriByType(SingleConfig config) {
+
+        Log.e("builduri:","url: "+config.getUrl()+" ---filepath:"+config.getFilePath()+ "--content:"+config.getContentProvider());
+
+        if(!TextUtils.isEmpty(config.getUrl())){
+            String url = MyUtil.appendUrl(config.getUrl());
+            return Uri.parse(url);
+        }
+
+        if(config.getResId() > 0){
+            return Uri.parse("res://imageloader/" + config.getResId());
+        }
+
+        if(!TextUtils.isEmpty(config.getFilePath())){
+
+            File file = new File(config.getFilePath());
+            if(file.exists()){
+                return Uri.fromFile(file);
+            }
+        }
+
+        if(!TextUtils.isEmpty(config.getContentProvider())){
+            String content = config.getContentProvider();
+            if(!content.startsWith("content")){
+                content = "content://"+content;
+            }
+            return Uri.parse(content);
+        }
+
+
+
+
+        return null;
     }
 
 

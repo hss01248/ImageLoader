@@ -30,9 +30,12 @@ public class ImageLoader {
      * @param cacheSizeInM 缓存文件夹最大多少
      */
     public static void init(final Context context, int cacheSizeInM){
+       init(context,cacheSizeInM,true);
+    }
+
+    public static void init(final Context context, int cacheSizeInM,boolean useFrescoOrGlide){
         ImageLoader.context = context;
-        GlobalConfig.context = context;
-        GlobalConfig.getLoader().init(context,cacheSizeInM);
+        GlobalConfig.init(context,cacheSizeInM,useFrescoOrGlide);
     }
 
     public static ILoader getActualLoader(){

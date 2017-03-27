@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="webpsupport-1.1.0">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/54ada1082609f26c0d5aa4e2b8a90652567e0ba6/output/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/54ada1082609f26c0d5aa4e2b8a90652567e0ba6/output/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/b772b4aba035dd9f7a8a442d8f86d894dd1a2d60/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/b772b4aba035dd9f7a8a442d8f86d894dd1a2d60/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

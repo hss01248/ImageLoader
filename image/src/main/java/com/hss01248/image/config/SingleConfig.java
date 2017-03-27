@@ -2,9 +2,12 @@ package com.hss01248.image.config;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 
 import com.hss01248.image.MyUtil;
+
+import java.io.File;
 
 /**
  * Created by Administrator on 2017/3/14 0014.
@@ -13,6 +16,9 @@ import com.hss01248.image.MyUtil;
 public class SingleConfig {
 
     public Context getContext() {
+        if(context==null){
+            context = GlobalConfig.context;
+        }
         return context;
     }
 
@@ -35,6 +41,16 @@ public class SingleConfig {
     }
 
     public int getHeight() {
+        if(height<=0){
+            //先去imageview里取,如果为0,则赋值成matchparent
+            if(target!=null){
+                height=  target.getMeasuredWidth();
+            }
+            if(height<=0){
+                height=GlobalConfig.getWinWidth();
+            }
+        }
+
         return height;
     }
 
@@ -71,6 +87,15 @@ public class SingleConfig {
     }
 
     public int getWidth() {
+        if(width<=0){
+            //先去imageview里取,如果为0,则赋值成matchparent
+            if(target!=null){
+              width=  target.getMeasuredWidth();
+            }
+            if(width<=0){
+                width=GlobalConfig.getWinWidth();
+            }
+        }
         return width;
     }
 
@@ -291,6 +316,13 @@ public class SingleConfig {
                 this.contentProvider = filePath;
                 return this;
             }
+
+            if(!new File(filePath).exists()){
+                //throw new RuntimeException("文件不存在");
+                Log.e("imageloader","文件不存在");
+                return this;
+            }
+
             this.filePath = filePath;
             if(filePath.contains("gif")){
                 isGif = true;

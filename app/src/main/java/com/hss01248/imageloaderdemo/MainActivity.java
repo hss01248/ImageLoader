@@ -8,9 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.SingleConfig;
 
@@ -21,13 +21,13 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.iv_url)
-    SimpleDraweeView ivUrl;
+    ImageView ivUrl;
     @Bind(R.id.iv_file)
-    SimpleDraweeView ivFile;
+    ImageView ivFile;
     @Bind(R.id.iv_res)
-    SimpleDraweeView ivRes;
+    ImageView ivRes;
     @Bind(R.id.iv_url_blur)
-    SimpleDraweeView ivUrlBlur;
+    ImageView ivUrlBlur;
 
     @Bind(R.id.btn_bigpic)
     Button btnBigpic;
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         Log.e("bitmap", bitmap.getWidth() + "---height:" + bitmap.getHeight() + "--" + bitmap.toString());
+                        ivRes.setImageBitmap(bitmap);
                     }
 
                     @Override

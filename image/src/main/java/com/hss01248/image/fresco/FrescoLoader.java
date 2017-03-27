@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
@@ -39,7 +38,6 @@ import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.loader.fresco.FrescoImageLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.MyUtil;
-import com.hss01248.image.R;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
@@ -103,7 +101,7 @@ public class FrescoLoader implements ILoader {
 
     private void requestForImageView(SingleConfig config) {
         if(config.getTarget() instanceof BigImageView){
-            viewBigImage(config);
+            MyUtil.viewBigImage(config);
             return;
         }
 
@@ -120,37 +118,7 @@ public class FrescoLoader implements ILoader {
 
     }
 
-    private void viewBigImage(SingleConfig config) {
-        BigImageView bigImageView = (BigImageView) config.getTarget();
-        //bigImageView.setProgressIndicator(new ProgressPieIndicator());
 
-        if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
-            bigImageView.setProgressIndicator(new ProgressPieIndicator());
-        }else {
-           int count =  bigImageView.getChildCount();
-            for (int i = 0; i < count; i++) {
-                View child = bigImageView.getChildAt(i);
-                if(child.findViewById(R.id.progressBar00)!=null){
-                    child.setVisibility(View.INVISIBLE);
-                }
-            }
-        }
-        bigImageView.showImage(buildUriByType(config));
-
-        //bigimageview对缩略图的支持并不好
-       /* if(TextUtils.isEmpty(config.getThumbnailUrl())){
-            if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
-                bigImageView.setProgressIndicator(new ProgressPieIndicator());
-            }
-            bigImageView.showImage(buildUriByType(config));
-        }else {
-            bigImageView.showImage(Uri.parse(config.getThumbnailUrl()),buildUriByType(config));
-        }*/
-
-
-
-
-    }
 
     private AbstractDraweeController buildPipelineDraweeController(SingleConfig config,ImageRequest request) {
         PipelineDraweeControllerBuilder builder =  Fresco.newDraweeControllerBuilder();
@@ -189,15 +157,10 @@ public class FrescoLoader implements ILoader {
             hierarchy = new GenericDraweeHierarchyBuilder(context.getResources()).build();
         }
 
+        if(MyUtil.shouldSetPlaceHolder(config)){
+            hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), ScalingUtils.ScaleType.FIT_CENTER);
+        }
 
-            //GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(GlobalConfig.context.getResources());
-            if(config.getPlaceHolderResId()>0){
-                if(config.getResId()>0 || !TextUtils.isEmpty(config.getFilePath()) || isCached(config.getUrl())){
-
-                }else {//只有在图片源为网络图片,并且图片没有缓存到本地时,才给显示placeholder
-                    hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), ScalingUtils.ScaleType.FIT_CENTER);
-                }
-            }
 
 
             //边角形状和边框
@@ -260,6 +223,9 @@ public class FrescoLoader implements ILoader {
                 case ScaleMode.FIT_START:
                     hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_START);
                     break;
+                default:
+                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+                    break;
             }
 
         simpleDraweeView.setHierarchy(hierarchy);
@@ -268,7 +234,7 @@ public class FrescoLoader implements ILoader {
     }
 
     private ImageRequest buildRequest(SingleConfig config) {
-        Uri uri = buildUriByType(config);
+        Uri uri = MyUtil.buildUriByType(config);
 
         ImageRequestBuilder builder =   ImageRequestBuilder.newBuilderWithSource(uri);
 
@@ -305,51 +271,7 @@ public class FrescoLoader implements ILoader {
     }
 
 
-    /**
-     * 类型	SCHEME	示例
-         远程图片	http://, https://	HttpURLConnection 或者参考 使用其他网络加载方案
-         本地文件	file://	FileInputStream
-         Content provider	content://	ContentResolver
-         asset目录下的资源	asset://	AssetManager
-         res目录下的资源	res://	Resources.openRawResource
-         Uri中指定图片数据	data:mime/type;base64,	数据类型必须符合 rfc2397规定 (仅支持 UTF-8)
-     * @param config
-     * @return
-     */
-    private Uri buildUriByType(SingleConfig config) {
 
-        Log.e("builduri:","url:"+config.getUrl()+"---filepath:"+config.getFilePath()+ "--content:"+config.getContentProvider());
-
-        if(!TextUtils.isEmpty(config.getUrl())){
-            String url = MyUtil.appendUrl(config.getUrl());
-            return Uri.parse(url);
-        }
-
-        if(config.getResId() > 0){
-            return Uri.parse("res://imageloader/" + config.getResId());
-        }
-
-        if(!TextUtils.isEmpty(config.getFilePath())){
-
-            File file = new File(config.getFilePath());
-            if(file.exists()){
-                return Uri.fromFile(file);
-            }
-        }
-
-        if(!TextUtils.isEmpty(config.getContentProvider())){
-           String content = config.getContentProvider();
-            if(!content.startsWith("content")){
-                content = "content://"+content;
-            }
-            return Uri.parse(content);
-        }
-
-
-
-
-        return null;
-    }
 
 
     /**

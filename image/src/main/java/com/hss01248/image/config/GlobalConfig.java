@@ -1,8 +1,11 @@
 package com.hss01248.image.config;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.view.WindowManager;
 
 import com.hss01248.image.fresco.FrescoLoader;
+import com.hss01248.image.glide.GlideLoader;
 import com.hss01248.image.interfaces.ILoader;
 
 /**
@@ -14,6 +17,46 @@ public class GlobalConfig {
     public static String baseUrl;
 
     public static Context context;
+
+    public static int getWinHeight() {
+        if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
+            return winHeight<winWidth? winHeight : winWidth;
+        }else if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT){
+           return winHeight>winWidth? winHeight : winWidth;
+        }
+        return winHeight;
+    }
+
+    public static int getWinWidth() {
+        if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
+            return winHeight>winWidth? winHeight : winWidth;
+        }else if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT){
+            return winHeight<winWidth? winHeight : winWidth;
+        }
+        return winWidth;
+    }
+
+    private static int winHeight;
+    private static int winWidth;
+    private static boolean userFresco;
+    //private static int oritation;
+
+    public static void init(Context context,int cacheSizeInM,boolean userFresco){
+        GlobalConfig.context = context;
+        GlobalConfig.cacheMaxSize = cacheSizeInM;
+        WindowManager wm = (WindowManager) context
+                .getSystemService(Context.WINDOW_SERVICE);
+
+        GlobalConfig.winWidth = wm.getDefaultDisplay().getWidth();
+        GlobalConfig.winHeight = wm.getDefaultDisplay().getHeight();
+        //oritation = context.getResources().getConfiguration().orientation;
+
+        getLoader().init(context,cacheSizeInM);
+        GlobalConfig.userFresco = userFresco;
+
+
+
+    }
     /**
      * lrucache 最大值
      */
@@ -39,7 +82,12 @@ public class GlobalConfig {
 
     public static ILoader getLoader() {
         if(loader == null){
-            loader = new FrescoLoader();
+            if(userFresco){
+                loader = new FrescoLoader();
+            }else {
+                loader = new GlideLoader();
+            }
+
         }
         return loader;
     }

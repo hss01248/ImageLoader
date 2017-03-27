@@ -29,22 +29,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/iv_url"
         android:layout_width="250dp"
         android:layout_marginBottom="20dp"
         android:layout_height="150dp" />
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/iv_file"
         android:layout_width="250dp"
         android:layout_marginBottom="20dp"
         android:layout_height="150dp" />
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/iv_res"
         android:layout_width="250dp"
         android:layout_marginBottom="20dp"
         android:layout_height="150dp" />
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/iv_url_blur"
         android:layout_width="250dp"
         android:layout_marginBottom="20dp"
