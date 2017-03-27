@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.facebook.binaryresource.BinaryResource;
@@ -365,6 +366,19 @@ public class FrescoLoader implements ILoader {
          imagePipeline.evictFromMemoryCache(uri);
         imagePipeline.evictFromDiskCache(uri);
         //imagePipeline.evictFromCache(uri);//这个包含了从内存移除和从硬盘移除
+    }
+
+    @Override
+    public void clearMomoryCache(View view) {
+
+    }
+
+    @Override
+    public void clearMomoryCache(String url) {
+        url = MyUtil.appendUrl(url);
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        Uri uri = Uri.parse(url);
+        imagePipeline.evictFromMemoryCache(uri);
     }
 
     @Override

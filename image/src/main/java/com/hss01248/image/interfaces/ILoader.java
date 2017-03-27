@@ -1,9 +1,9 @@
 package com.hss01248.image.interfaces;
 
 import android.content.Context;
+import android.view.View;
 
 import com.hss01248.image.config.SingleConfig;
-
 
 import java.io.File;
 
@@ -24,6 +24,9 @@ public interface ILoader {
     void clearDiskCache();
 
     void clearCacheByUrl(String url);
+
+    void clearMomoryCache(View view);
+    void clearMomoryCache(String url);
 
     File getFileFromDiskCache(String url);
 

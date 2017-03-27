@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableTypeRequest;
@@ -208,6 +209,16 @@ public class GlideLoader implements ILoader {
 
     @Override
     public void clearCacheByUrl(String url) {
+
+    }
+
+    @Override
+    public void clearMomoryCache(View view) {
+        Glide.clear(view);
+    }
+
+    @Override
+    public void clearMomoryCache(String url) {
 
     }
 

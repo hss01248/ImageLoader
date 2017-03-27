@@ -13,7 +13,7 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ImageLoader.init(getApplicationContext(), 40);
+        ImageLoader.init(getApplicationContext(), 40,false);
     }
 
     @Override

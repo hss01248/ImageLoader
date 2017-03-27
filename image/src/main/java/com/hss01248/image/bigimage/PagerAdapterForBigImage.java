@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.config.GlobalConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +82,11 @@ public class PagerAdapterForBigImage extends PagerAdapter {
         int i = position % CACHE_SIZE;
         Log.e("destroyItem","postion------------------:"+position+"---i:"+i);
        // BigImageView imageView = mViews.get(i);
+        GlobalConfig.getLoader().clearMomoryCache((View) object);
         container.removeView((View) object);
 
+
     }
+
+
 }
