@@ -2,6 +2,9 @@ package com.hss01248.image.config;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.hss01248.image.fresco.FrescoLoader;
@@ -17,6 +20,15 @@ public class GlobalConfig {
     public static String baseUrl;
 
     public static Context context;
+
+    public static Handler getMainHandler() {
+        if(mainHandler==null){
+            mainHandler = new Handler(Looper.getMainLooper());
+        }
+        return mainHandler;
+    }
+
+    private static Handler mainHandler;
 
     public static int getWinHeight() {
         if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
@@ -42,6 +54,7 @@ public class GlobalConfig {
     //private static int oritation;
 
     public static void init(Context context,int cacheSizeInM,boolean userFresco){
+
         GlobalConfig.context = context;
         GlobalConfig.cacheMaxSize = cacheSizeInM;
         WindowManager wm = (WindowManager) context
@@ -50,9 +63,9 @@ public class GlobalConfig {
         GlobalConfig.winWidth = wm.getDefaultDisplay().getWidth();
         GlobalConfig.winHeight = wm.getDefaultDisplay().getHeight();
         //oritation = context.getResources().getConfiguration().orientation;
-
-        getLoader().init(context,cacheSizeInM);
         GlobalConfig.userFresco = userFresco;
+        getLoader().init(context,cacheSizeInM);
+
 
 
 
@@ -83,8 +96,10 @@ public class GlobalConfig {
     public static ILoader getLoader() {
         if(loader == null){
             if(userFresco){
+                Log.e("ff","fresco");
                 loader = new FrescoLoader();
             }else {
+                Log.e("ff","GlideLoader");
                 loader = new GlideLoader();
             }
 

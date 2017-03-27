@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
@@ -102,6 +103,23 @@ public class FrescoLoader implements ILoader {
     private void requestForImageView(SingleConfig config) {
         if(config.getTarget() instanceof BigImageView){
             MyUtil.viewBigImage(config);
+            return;
+        }
+
+        if(config.getTarget() instanceof ImageView){
+            final ImageView imageView = (ImageView) config.getTarget();
+            config.setBitmapListener(new SingleConfig.BitmapListener() {
+                @Override
+                public void onSuccess(Bitmap bitmap) {
+                    imageView.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onFail() {
+
+                }
+            });
+            requestBitmap(config);
             return;
         }
 

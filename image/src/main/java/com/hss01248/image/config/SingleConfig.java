@@ -108,6 +108,7 @@ public class SingleConfig {
     }
 
     public BitmapListener getBitmapListener() {
+
         return bitmapListener;
     }
 
@@ -149,6 +150,11 @@ public class SingleConfig {
     }
 
     private boolean asBitmap;//只获取bitmap
+
+    public void setBitmapListener(BitmapListener bitmapListener) {
+        this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
+    }
+
     private BitmapListener bitmapListener;
 
 
@@ -345,7 +351,7 @@ public class SingleConfig {
         }
 
         public void asBitmap(BitmapListener bitmapListener){
-            this.bitmapListener = bitmapListener;
+            this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
             this.asBitmap = true;
             new SingleConfig(this).show();
         }

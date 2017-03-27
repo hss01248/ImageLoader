@@ -15,6 +15,10 @@ import com.hss01248.image.fresco.ProgressPieIndicator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -36,6 +40,38 @@ import okhttp3.OkHttpClient;
  */
 
 public class MyUtil {
+
+    public static SingleConfig.BitmapListener getBitmapListenerProxy(final SingleConfig.BitmapListener listener){
+        return (SingleConfig.BitmapListener) Proxy.newProxyInstance(SingleConfig.class.getClassLoader(),
+                listener.getClass().getInterfaces(), new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, final Method method, final Object[] args) throws Throwable {
+
+                runOnUIThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Object object=  method.invoke(listener,args);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
+
+                return null;
+            }
+        });
+
+    }
+
+
+    public static void runOnUIThread(Runnable runnable){
+        GlobalConfig.getMainHandler().post(runnable);
+    }
 
 
     public static void viewBigImage(SingleConfig config) {
@@ -86,6 +122,8 @@ public class MyUtil {
         final float scale = GlobalConfig.context.getResources().getDisplayMetrics().density;
         return (int)(dipValue * scale + 0.5f);
     }
+
+
 
 
     /**

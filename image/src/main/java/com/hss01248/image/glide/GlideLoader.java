@@ -216,6 +216,11 @@ public class GlideLoader implements ILoader {
         return null;
     }
 
+    /**
+     * 参见:https://github.com/bumptech/glide/issues/639
+     * @param url
+     * @return
+     */
     @Override
     public boolean isCached(String url) {
         return false;
