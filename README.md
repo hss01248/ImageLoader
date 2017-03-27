@@ -11,7 +11,6 @@ public interface ILoader {
 
     void init(Context context,int cacheSizeInM);//初始化
    
-
     void request(SingleConfig config);//核心方法
 	
 	//图片加载的暂停和继续
@@ -133,8 +132,7 @@ rectRoundCorner(int rectRoundRadius,int overlayColorWhenGif)
 asCircle(int overlayColorWhenGif)
 ```
 
-## 图片的边框
-
+## 图片的边框(glide不支持)
 ```
 border(int borderWidth,int borderColor)
 ```
