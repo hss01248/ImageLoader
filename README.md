@@ -186,8 +186,7 @@ asBitmap(BitmapListener bitmapListener)
 
 # 加载大图
 
-内部采用的是https://github.com/Piasy/BigImageViewer,确实很给力.
-
+内部采用的是https://github.com/Piasy/BigImageViewer,确实很给力.(注意内部有内存泄漏,尚未解决)
 ```
 ImageLoader.loadBigImage(BigImageView imageView,String path)
 //说明: path可以是网络url,文件路径或者content://格式的路径
