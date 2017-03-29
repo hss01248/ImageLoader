@@ -4,10 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.bigimage.PagerAdapterForBigImage;
+import com.hss01248.image.bigimage.RecycleAdapterForBigImage;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.ILoader;
@@ -88,6 +92,12 @@ public class ImageLoader {
             throw new RuntimeException("用于加载大图的viewPager应该专用,其adapter不要自己设置");
         }
 
+    }
+
+    public static void loadBigImages(RecyclerView recyclerView, List<String> urls){
+        recyclerView.setAdapter(new RecycleAdapterForBigImage(urls));
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(),LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     /**

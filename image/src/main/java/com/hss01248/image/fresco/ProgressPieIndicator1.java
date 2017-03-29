@@ -11,7 +11,7 @@ import com.hss01248.image.R;
  * Created by Administrator on 2017/3/24 0024.
  */
 
-public class ProgressPieIndicator implements ProgressIndicator {
+public class ProgressPieIndicator1 implements ProgressIndicator {
    // private ProgressBar progressBar;
     private View root;
     private String cacheFile;
@@ -33,6 +33,7 @@ public class ProgressPieIndicator implements ProgressIndicator {
 
     @Override
     public void onStart() {
+        if(root!=null)
         root.setVisibility(View.VISIBLE);
         //progressBar.setMax(100);
        // textView.setText("加载进度:0%");
@@ -48,8 +49,12 @@ public class ProgressPieIndicator implements ProgressIndicator {
 
     }
 
+
+
+
     @Override
     public void onFinish() {
+        if(root!=null)
         root.setVisibility(View.GONE);
 
     }

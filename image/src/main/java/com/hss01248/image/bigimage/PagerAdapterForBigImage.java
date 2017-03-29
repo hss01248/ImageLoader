@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.ImageLoader;
-import com.hss01248.image.config.GlobalConfig;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,12 +18,12 @@ import java.util.List;
 
 public class PagerAdapterForBigImage extends PagerAdapter {
     List<String> urls;
-    List<BigImageView> mViews ;
-    private static final int CACHE_SIZE = 4;
+    private LinkedList<BigImageView> mViewCache = null;
+
 
     public PagerAdapterForBigImage(List<String> urls){
         this.urls = urls;
-        mViews = new ArrayList<BigImageView>(CACHE_SIZE);
+        mViewCache = new LinkedList<>();
     }
 
     public void changeDatas(List<String> urls){
@@ -49,22 +48,17 @@ public class PagerAdapterForBigImage extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
 
-
-
-
+        Log.e("instantiateItem","postion:"+position);
         BigImageView imageView = null;
-        int i = position % CACHE_SIZE;
-        Log.e("instantiateItem","postion:"+position+"---i:"+i);
-        if(mViews.size()<=i){
+
+        if(mViewCache.size() == 0){
             imageView = new BigImageView(container.getContext());
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                     ViewPager.LayoutParams.MATCH_PARENT,ViewPager.LayoutParams.MATCH_PARENT);
             imageView.setLayoutParams(params);
-            mViews.add(imageView);
         }else {
-            imageView = mViews.get(i);
+            imageView = mViewCache.removeFirst();
         }
-
 
          String url = urls.get(position);
         ImageLoader.loadBigImage(imageView,url);
@@ -79,11 +73,13 @@ public class PagerAdapterForBigImage extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        int i = position % CACHE_SIZE;
-        Log.e("destroyItem","postion------------------:"+position+"---i:"+i);
+
+        Log.e("destroyItem","postion------------------:"+position);
        // BigImageView imageView = mViews.get(i);
-        GlobalConfig.getLoader().clearMomoryCache((View) object);
-        container.removeView((View) object);
+        //GlobalConfig.getLoader().clearMomoryCache((View) object);
+        BigImageView contentView = (BigImageView) object;
+        container.removeView(contentView);
+        this.mViewCache.add(contentView);
 
 
     }

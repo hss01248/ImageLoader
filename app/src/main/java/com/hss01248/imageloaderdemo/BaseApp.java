@@ -3,6 +3,7 @@ package com.hss01248.imageloaderdemo;
 import android.app.Application;
 
 import com.hss01248.image.ImageLoader;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
  * Created by Administrator on 2017/3/15 0015.
@@ -14,6 +15,7 @@ public class BaseApp extends Application {
     public void onCreate() {
         super.onCreate();
         ImageLoader.init(getApplicationContext(), 40,false);
+        LeakCanary.install(this);
     }
 
     @Override

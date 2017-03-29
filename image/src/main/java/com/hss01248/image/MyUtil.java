@@ -10,7 +10,7 @@ import android.view.View;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
-import com.hss01248.image.fresco.ProgressPieIndicator;
+import com.hss01248.image.fresco.ProgressPieIndicator1;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -76,11 +76,12 @@ public class MyUtil {
 
     public static void viewBigImage(SingleConfig config) {
         BigImageView bigImageView = (BigImageView) config.getTarget();
-        //bigImageView.setProgressIndicator(new ProgressPieIndicator());
+        //bigImageView.setProgressIndicator(new ProgressPieIndicator1());
 
         if(!TextUtils.isEmpty(config.getUrl()) && !GlobalConfig.getLoader().isCached(config.getUrl() )){
-            bigImageView.setProgressIndicator(new ProgressPieIndicator());
+            bigImageView.setProgressIndicator(new ProgressPieIndicator1());
         }else {
+            bigImageView.setProgressIndicator(null);
             int count =  bigImageView.getChildCount();
             for (int i = 0; i < count; i++) {
                 View child = bigImageView.getChildAt(i);
@@ -91,10 +92,12 @@ public class MyUtil {
         }
         bigImageView.showImage(buildUriByType(config));
 
+
+
         //bigimageview对缩略图的支持并不好
        /* if(TextUtils.isEmpty(config.getThumbnailUrl())){
             if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
-                bigImageView.setProgressIndicator(new ProgressPieIndicator());
+                bigImageView.setProgressIndicator(new ProgressPieIndicator1());
             }
             bigImageView.showImage(buildUriByType(config));
         }else {

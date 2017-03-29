@@ -28,6 +28,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:recyclerview-v7:25.3.0'
     testCompile 'junit:junit:4.12'
     compile 'com.facebook.fresco:fresco:1.1.0'
 
