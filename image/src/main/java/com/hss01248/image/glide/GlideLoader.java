@@ -62,6 +62,7 @@ public class GlideLoader implements ILoader {
             };
             RequestManager requestManager =  Glide.with(config.getContext());
             DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
+            request.override(config.getWidth(),config.getHeight());
             setShapeModeAndBlur(config, request);
             request.asBitmap().into(target);
 
@@ -120,6 +121,11 @@ public class GlideLoader implements ILoader {
 
             request.override(config.getWidth(),config.getHeight())
                     .thumbnail( 0.1f );
+
+
+            if(config.getErrorResId() >0){
+                request.error(config.getErrorResId());
+            }
 
             if(config.getTarget() instanceof ImageView){
                 request.into((ImageView) config.getTarget());

@@ -113,9 +113,20 @@ widthHeight(int width,int height)
 ```
 
 ## 占位图/默认图
+> 本方法的生效规则: 
+当容器view可复用(在recycleview,或者可复用的viewpager中)时,一定会设置占位图,否则会出现两幅实际图片快速切换闪烁的情况
+当容器view不复用时,当且仅当图片源为网络图片且本地没有缓存时,才会设置placeholder.以避免placehoder和正式图片的快速切换闪烁
 
 ```
-placeHolder(int placeHolderResId)
+placeHolder(int placeHolderResId,boolean reuseable)
+
+```
+
+## error图
+
+```
+error(int  errorResId)
+
 ```
 
 ## 圆角矩形
@@ -296,6 +307,18 @@ ImageLoader.with(this)
                     }
                 });
 ```
+
+
+# todo 
+1.BigImageView的内存泄漏问题,复用时progressview错乱问题,没有placeholder和error
+2. fresco和glide分包引用
+3.glide无法获取到圆角bitmap--transformation包无效果?
+
+
+
+
+
+
 # usage
 
 ## gradle

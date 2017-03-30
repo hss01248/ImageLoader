@@ -135,6 +135,24 @@ public class SingleConfig {
 
     //UI:
     private int placeHolderResId;
+    private boolean reuseable;
+
+    public int getLoadingResId() {
+        return loadingResId;
+    }
+
+    public int getErrorResId() {
+        return errorResId;
+    }
+
+    private int loadingResId;
+    private int errorResId;
+
+    public boolean isReuseable() {
+        return reuseable;
+    }
+
+
 
     private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
     private int rectRoundRadius;//圆角矩形时圆角的半径
@@ -212,6 +230,9 @@ public class SingleConfig {
         this.roundOverlayColor = builder.roundOverlayColor;
         this.isGif = builder.isGif;
         this.blurRadius = builder.blurRadius;
+        this.reuseable = builder.reuseable;
+        this.loadingResId = builder.loadingResId;
+        this.errorResId = builder.errorResId;
 
        // this.bigImageView = builder.bigImageView;
 
@@ -261,6 +282,12 @@ public class SingleConfig {
 
         //UI:
         private int placeHolderResId;
+        private boolean reuseable;//当前view是不是可重用的
+
+        private int loadingResId;
+        private int errorResId;
+
+
 
         private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
         private int rectRoundRadius;//圆角矩形时圆角的半径
@@ -314,6 +341,14 @@ public class SingleConfig {
         }
         public ConfigBuilder thumbnail(String thumbnailUrl){
             this.thumbnailUrl = thumbnailUrl;
+            return this;
+        }
+        public ConfigBuilder loading(int  loadingResId){
+            this.loadingResId = loadingResId;
+            return this;
+        }
+        public ConfigBuilder error(int  errorResId){
+            this.errorResId = errorResId;
             return this;
         }
 
@@ -372,8 +407,9 @@ public class SingleConfig {
             return this;
         }
 
-        public ConfigBuilder placeHolder(int placeHolderResId){
+        public ConfigBuilder placeHolder(int placeHolderResId,boolean reuseable){
             this.placeHolderResId = placeHolderResId;
+            this.reuseable = reuseable;
             return this;
         }
 

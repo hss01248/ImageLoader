@@ -58,18 +58,20 @@ public class MainActivity extends AppCompatActivity {
                 .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
                 // .res(R.drawable.thegif)
-                .placeHolder(R.mipmap.ic_launcher)
+                .placeHolder(R.mipmap.ic_launcher,false)
                 .widthHeight(250, 150)
                 .asCircle(R.color.colorPrimary)
+                .blur(40)
                 .into(ivUrl);
 
 
         ImageLoader.with(this)
-                .placeHolder(R.mipmap.ic_launcher)
-                .res(R.drawable.thegif)
-                //.url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
+                .placeHolder(R.mipmap.ic_launcher,false)
+                //.res(R.drawable.thegif)
+                .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 .widthHeight(250, 150)
                 .rectRoundCorner(15, R.color.colorPrimary)
+                .blur(20)
                 .asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {

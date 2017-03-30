@@ -107,6 +107,18 @@ public class FrescoLoader implements ILoader {
             return;
         }
 
+        if(config.getTarget() instanceof SimpleDraweeView){
+            ImageRequest request = buildRequest(config);
+
+
+            setDraweeHierarchy(config);
+
+
+            AbstractDraweeController controller = buildPipelineDraweeController(config,request);
+
+            ((SimpleDraweeView) config.getTarget()).setController(controller);
+        }
+
         if(config.getTarget() instanceof ImageView){
             final ImageView imageView = (ImageView) config.getTarget();
             config.setBitmapListener(new SingleConfig.BitmapListener() {
@@ -125,15 +137,7 @@ public class FrescoLoader implements ILoader {
         }
 
 
-        ImageRequest request = buildRequest(config);
 
-
-        setDraweeHierarchy(config);
-
-
-        AbstractDraweeController controller = buildPipelineDraweeController(config,request);
-
-        ((SimpleDraweeView) config.getTarget()).setController(controller);
 
     }
 

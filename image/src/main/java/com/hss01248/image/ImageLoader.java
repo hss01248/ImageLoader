@@ -91,7 +91,6 @@ public class ImageLoader {
         }else {
             throw new RuntimeException("用于加载大图的viewPager应该专用,其adapter不要自己设置");
         }
-
     }
 
     public static void loadBigImages(RecyclerView recyclerView, List<String> urls){

@@ -109,6 +109,9 @@ public class MyUtil {
 
 
     public static boolean shouldSetPlaceHolder(SingleConfig config){
+        if(config.isReuseable()){
+            return true;
+        }
         if(config.getPlaceHolderResId()<=0 ) {
             return false;
         }
