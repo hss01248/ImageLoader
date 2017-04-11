@@ -114,8 +114,8 @@ widthHeight(int width,int height)
 
 ## 占位图/默认图
 > 本方法的生效规则: 
-当容器view可复用(在recycleview,或者可复用的viewpager中)时,一定会设置占位图,否则会出现两幅实际图片快速切换闪烁的情况
-当容器view不复用时,当且仅当图片源为网络图片且本地没有缓存时,才会设置placeholder.以避免placehoder和正式图片的快速切换闪烁
+> 当容器view可复用(在recycleview,或者可复用的viewpager中)时,一定会设置占位图,否则会出现两幅实际图片快速切换闪烁的情况
+> 当容器view不复用时,当且仅当图片源为网络图片且本地没有缓存时,才会设置placeholder.以避免placehoder和正式图片的快速切换闪烁
 
 ```
 placeHolder(int placeHolderResId,boolean reuseable)
@@ -220,9 +220,13 @@ ImageLoader.loadBigImage(BigImageView imageView,String path)
 ImageLoader.loadBigImages(ViewPager viewPager, List<String> urls)//urls
 ```
 
-经测试,效果非常不错.几十张超级大图(4000*3000像素左右),快速滑动和快速缩放时,内存占用偶尔冲上五六十M,但很快会降到40M左右.
+之前BigImageView有内存泄漏时,.几十张超级大图(4000*3000像素左右),快速滑动和快速缩放时,内存占用偶尔冲上五六十M,但很快会降到40M左右,关掉activity内存一直不下,解决内存泄漏后,十分清爽:
 
-![memoryr](/memoryr.jpg)
+ 前一次的activity泄漏:多次进出,基线维持在40M水平![memory in viewpager](memory in viewpager.jpg)
+
+解决了内存泄漏后:20M左右
+
+ ![leaksolved](leaksolved.png)
 
 
 
@@ -311,7 +315,7 @@ ImageLoader.with(this)
 # todo 
 1.BigImageView的内存泄漏问题,复用时progressview错乱问题,没有placeholder和error
 2. fresco和glide分包引用
-3.glide无法获取到圆角bitmap--transformation包无效果?
+   3.glide无法获取到圆角bitmap--transformation包无效果?
 
 
 
