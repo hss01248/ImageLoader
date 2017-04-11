@@ -7,9 +7,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.bigimage.PagerAdapterForBigImage;
 import com.hss01248.image.bigimage.RecycleAdapterForBigImage;
 import com.hss01248.image.config.GlobalConfig;
@@ -28,18 +28,11 @@ public class ImageLoader {
 
     public static Context context;
 
-    /**
-     * 初始化
-     * @param context
-     * @param cacheSizeInM 缓存文件夹最大多少
-     */
-    public static void init(final Context context, int cacheSizeInM){
-       init(context,cacheSizeInM,true);
-    }
 
-    public static void init(final Context context, int cacheSizeInM,boolean useFrescoOrGlide){
+
+    public static void init(final Context context, int cacheSizeInM,ILoader imageLoader){
         ImageLoader.context = context;
-        GlobalConfig.init(context,cacheSizeInM,useFrescoOrGlide);
+        GlobalConfig.init(context,cacheSizeInM,imageLoader);
     }
 
     public static ILoader getActualLoader(){
@@ -60,7 +53,7 @@ public class ImageLoader {
      * @param imageView
      * @param path 支持content,filepath,网络的url.如果是网络图片,请拼接上http协议名和主机
      */
-    public static void loadBigImage(BigImageView imageView,String path){//,String thumbnail
+    public static void loadBigImage(View imageView, String path){//,String thumbnail
         if(path.startsWith("content:")){
             new SingleConfig.ConfigBuilder(context).content(path).into(imageView);
         }else if(path.startsWith("http")){

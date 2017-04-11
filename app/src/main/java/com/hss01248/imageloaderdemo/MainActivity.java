@@ -14,6 +14,11 @@ import android.widget.ScrollView;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.SingleConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -52,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void show() {
+
+        List<String> datas = new ArrayList<>();
+
+
+
 
 
         ImageLoader.with(this)

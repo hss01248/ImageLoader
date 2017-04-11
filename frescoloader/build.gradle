@@ -22,14 +22,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.0'
     testCompile 'junit:junit:4.12'
     compile 'com.facebook.fresco:fresco:1.1.0'
-
     // 在 API < 14 上的机器支持 WebP 时，需要添加
     compile 'com.facebook.fresco:animated-base-support:1.1.0'
     // 支持 GIF 动图，需要添加
@@ -37,7 +36,8 @@ dependencies {
     // 支持 WebP （静态图+动图），需要添加
     compile 'com.facebook.fresco:animated-webp:1.1.0'
     compile 'com.facebook.fresco:webpsupport:1.1.0'
-    compile "com.facebook.fresco:imagepipeline-okhttp3:0.12.0+"
-
-    compile 'jp.wasabeef:fresco-processors:2.0.0'//processors
+    compile 'com.facebook.fresco:imagepipeline-okhttp3:0.12.0+'
+    compile 'jp.wasabeef:fresco-processors:2.0.0'
+    //processors
+    compile project(':image')
 }

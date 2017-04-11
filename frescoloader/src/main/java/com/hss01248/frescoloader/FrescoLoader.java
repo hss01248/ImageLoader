@@ -1,4 +1,4 @@
-package com.hss01248.image.fresco;
+package com.hss01248.frescoloader;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -37,14 +37,14 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
 import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.loader.fresco.FrescoImageLoader;
 import com.github.piasy.biv.view.BigImageView;
+import com.hss01248.frescoloader.big.FrescoImageLoader;
+import com.hss01248.frescoloader.gif.GifUtils;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
-import com.hss01248.image.gif.GifUtils;
 import com.hss01248.image.interfaces.ILoader;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.hss01248.image.gif;
+package com.hss01248.frescoloader.gif;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;

@@ -19,7 +19,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    repositories {
+        flatDir {
+            dirs 'libs' //this way we can find the .aar file in libs folder
+        }
+    }
 }
+
 
 
 dependencies {
@@ -30,9 +37,14 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:recyclerview-v7:25.3.0'
     testCompile 'junit:junit:4.12'
+    compile "com.facebook.fresco:imagepipeline-okhttp3:0.12.0+"
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
+    compile 'com.github.filippudak.progresspieview:library:1.0.4'
 
+    compile 'commons-io:commons-io:2.5'
+    compile 'org.greenrobot:eventbus:3.0.0'
 
-    compile 'com.github.piasy:BigImageViewer:1.2.7'
+   /* compile 'com.github.piasy:BigImageViewer:1.2.7'
     compile 'com.github.piasy:ProgressPieIndicator:1.2.7'
 
     compile 'com.github.piasy:FrescoImageLoader:1.2.7'
@@ -54,9 +66,14 @@ dependencies {
     compile 'com.facebook.fresco:webpsupport:1.1.0'
     compile "com.facebook.fresco:imagepipeline-okhttp3:0.12.0+"
 
-    compile 'jp.wasabeef:fresco-processors:2.0.0'//processors
+    compile 'jp.wasabeef:fresco-processors:2.0.0'//processors*/
 
 
+
+    /*compile(name:'BigImageViewer-debug', ext:'aar')
+    compile(name:'FrescoImageLoader-debug', ext:'aar')
+    compile(name:'GlideImageLoader-debug', ext:'aar')
+    compile(name:'ProgressPieIndicator-debug', ext:'aar')*/
 
 
 

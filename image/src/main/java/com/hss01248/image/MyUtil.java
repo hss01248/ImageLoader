@@ -7,10 +7,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.github.piasy.biv.indicator.ProgressPieIndicator;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
-import com.hss01248.image.fresco.ProgressPieIndicator1;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,7 +79,7 @@ public class MyUtil {
         //bigImageView.setProgressIndicator(new ProgressPieIndicator1());
 
         if(!TextUtils.isEmpty(config.getUrl()) && !GlobalConfig.getLoader().isCached(config.getUrl() )){
-            bigImageView.setProgressIndicator(new ProgressPieIndicator1());
+            bigImageView.setProgressIndicator(new ProgressPieIndicator());
         }else {
             bigImageView.setProgressIndicator(null);
             int count =  bigImageView.getChildCount();

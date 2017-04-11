@@ -4,11 +4,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.WindowManager;
 
-import com.hss01248.image.fresco.FrescoLoader;
-import com.hss01248.image.glide.GlideLoader;
 import com.hss01248.image.interfaces.ILoader;
 
 /**
@@ -53,7 +50,7 @@ public class GlobalConfig {
     private static boolean userFresco;
     //private static int oritation;
 
-    public static void init(Context context,int cacheSizeInM,boolean userFresco){
+    public static void init(Context context,int cacheSizeInM,ILoader imageLoader){
 
         GlobalConfig.context = context;
         GlobalConfig.cacheMaxSize = cacheSizeInM;
@@ -62,8 +59,9 @@ public class GlobalConfig {
 
         GlobalConfig.winWidth = wm.getDefaultDisplay().getWidth();
         GlobalConfig.winHeight = wm.getDefaultDisplay().getHeight();
+        GlobalConfig.loader = imageLoader;
         //oritation = context.getResources().getConfiguration().orientation;
-        GlobalConfig.userFresco = userFresco;
+        //GlobalConfig.userFresco = userFresco;
         getLoader().init(context,cacheSizeInM);
 
 
@@ -94,16 +92,6 @@ public class GlobalConfig {
     private static ILoader loader;
 
     public static ILoader getLoader() {
-        if(loader == null){
-            if(userFresco){
-                Log.e("ff","fresco");
-                loader = new FrescoLoader();
-            }else {
-                Log.e("ff","GlideLoader");
-                loader = new GlideLoader();
-            }
-
-        }
         return loader;
     }
 

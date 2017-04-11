@@ -1,4 +1,4 @@
-package com.hss01248.image.gif;
+package com.hss01248.frescoloader.gif;
 
 import android.graphics.Bitmap;
 
@@ -43,7 +43,7 @@ public class GifUtils {
 
     public static Bitmap getBitmapFromGifFile(File file){
 
-        GifImageDecoder  gifDecoder = new GifImageDecoder();
+        GifImageDecoder gifDecoder = new GifImageDecoder();
         FileInputStream fis = null;
         try {
              fis = new FileInputStream(file);

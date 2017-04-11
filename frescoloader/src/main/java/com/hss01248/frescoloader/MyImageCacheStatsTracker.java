@@ -1,4 +1,4 @@
-package com.hss01248.image.fresco;
+package com.hss01248.frescoloader;
 
 import com.facebook.cache.common.CacheKey;
 import com.facebook.imagepipeline.cache.CountingMemoryCache;
