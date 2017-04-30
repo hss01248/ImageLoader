@@ -43,12 +43,9 @@ oncreate方法中:
 传入全局context和定义缓存文件夹的大小
 
 ```
-默认底层使用fresco
-init(final Context context, int cacheSizeInM)
 
+init(final Context context, int cacheSizeInM,ILoader loader)//指定缓存大小,以及使用哪个loader
 
-//useFrescoOrGlide为true时,底层使用fresco,false时使用glide
-init( Context context, int cacheSizeInM,boolean useFrescoOrGlide)
     
 ```
 
