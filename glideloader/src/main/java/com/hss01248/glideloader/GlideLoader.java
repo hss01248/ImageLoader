@@ -2,6 +2,7 @@ package com.hss01248.glideloader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -18,14 +19,19 @@ import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.BigImageViewer;
+import com.github.piasy.biv.event.CacheHitEvent;
+import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideImageLoader;
+import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.ILoader;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
@@ -44,7 +50,7 @@ public class GlideLoader implements ILoader {
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
         Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
         GlideBuilder builder = new GlideBuilder(context);
-        builder.setDiskCache(new InternalCacheDiskCacheFactory(context, cacheSizeInM*1024*1024));
+        builder.setDiskCache(new InternalCacheDiskCacheFactory(context, GlobalConfig.cacheFolderName,cacheSizeInM*1024*1024));
         BigImageViewer.initialize(GlideImageLoader.with(context));
 
     }
@@ -210,6 +216,22 @@ public class GlideLoader implements ILoader {
 
     @Override
     public void clearDiskCache() {
+        Glide.get(ImageLoader.context).clearDiskCache();
+
+       /* File dir = new File(ImageLoader.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR);
+        if(dir!=null && dir.exists()){
+            MyUtil.deleteFolderFile(dir.getAbsolutePath(),false);
+        }*/
+    }
+
+    @Override
+    public void clearMomoryCache() {
+        Glide.get(ImageLoader.context).clearMemory();
+    }
+
+    @Override
+    public long getCacheSize() {
+        return MyUtil.getCacheSize();
 
     }
 
@@ -228,12 +250,35 @@ public class GlideLoader implements ILoader {
 
     }
 
+    /**
+     * glide中只能异步,可以用CacheHitEvent+ url去接收
+     * @param url
+     * @return
+     */
     @Override
-    public File getFileFromDiskCache(String url) {
+    public File getFileFromDiskCache(final String url) {
+        Glide.with(ImageLoader.context)
+                .load(url)
+                .downloadOnly(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+                        if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
+                            EventBus.getDefault().post(new CacheHitEvent(resource,url));
+                        }else {
+                            EventBus.getDefault().post(new ErrorEvent(url));
+                        }
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        EventBus.getDefault().post(new ErrorEvent(url));
+                    }
+                });
         return null;
     }
 
     /**
+     * 无法同步判断
      * 参见:https://github.com/bumptech/glide/issues/639
      * @param url
      * @return

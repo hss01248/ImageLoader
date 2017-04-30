@@ -23,6 +23,10 @@ public interface ILoader {
 
     void clearDiskCache();
 
+    void clearMomoryCache();
+
+    long getCacheSize();
+
     void clearCacheByUrl(String url);
 
     void clearMomoryCache(View view);

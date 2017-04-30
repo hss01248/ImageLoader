@@ -355,3 +355,4 @@ https://github.com/Piasy/BigImageViewer
 
  [Fresco 5.0以上内存持续增长问题优化](http://blog.csdn.net/honjane/article/details/65629799)
 
+https://github.com/AlexMofer/RecyclePagerAdapter

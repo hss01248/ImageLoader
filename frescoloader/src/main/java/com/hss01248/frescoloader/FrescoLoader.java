@@ -182,7 +182,7 @@ public class FrescoLoader implements ILoader {
         }
 
         if(MyUtil.shouldSetPlaceHolder(config)){
-            hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), ScalingUtils.ScaleType.FIT_CENTER);
+            hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), ScalingUtils.ScaleType.CENTER_CROP);
         }
 
 
@@ -370,6 +370,16 @@ public class FrescoLoader implements ILoader {
     public void clearDiskCache() {
 
         Fresco.getImagePipeline().clearDiskCaches();
+    }
+
+    @Override
+    public void clearMomoryCache() {
+        Fresco.getImagePipeline().clearMemoryCaches();
+    }
+
+    @Override
+    public long getCacheSize() {
+        return MyUtil.getCacheSize();
     }
 
     @Override
