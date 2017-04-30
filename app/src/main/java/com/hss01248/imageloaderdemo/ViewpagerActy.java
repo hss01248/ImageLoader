@@ -29,7 +29,9 @@ public class ViewpagerActy extends Activity {
         urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20161114_231649.jpg");
         urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20161229_221023.jpg");
         urls.add("/storage/emulated/0/DCIM/家里有用图/DSC_0051.JPG");*/
+        urls.add("https://timgsa.baidu.com/timetgred4171&di=6e8aa952f387588e9");//这张图片有问题
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359324536&di=f1c2dfd6b0ebe0043f089d933d5d9e10&imgtype=0&src=http%3A%2F%2Fyouimg1.c-ctrip.com%2Ftarget%2Ffd%2Ftg%2Fg1%2FM02%2FFE%2FB5%2FCghzfFSrqqCATzfcACG0aD33PsY070.jpg");
+        urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_1000fdgrgdrgre8aa952f387588e9");//这张图片有问题
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359343773&di=9fc5478b63f369090613c1c27d56f237&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201510%2F04%2F20151004210446_usmze.jpeg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359365740&di=f02eadaa956bef73d64cf9fb86969228&imgtype=0&src=http%3A%2F%2Fupload4.hlgnet.com%2Fbbsupfile%2F2012%2F2012-07-17%2F20120717003503_80.jpg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359415501&di=2457a1060f3ccde0bd7f7b5d0891918d&imgtype=0&src=http%3A%2F%2Fdimg09.c-ctrip.com%2Fimages%2Ffd%2Ftg%2Fg2%2FM03%2FCB%2F19%2FCghzf1UualCAdMmaABQVh70n7_g185.jpg");
@@ -51,7 +53,7 @@ public class ViewpagerActy extends Activity {
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490971909&di=4e376f64ea228a1360759339b183bb0f&imgtype=jpg&er=1&src=http%3A%2F%2Fwww.wulong9.com%2Fuploads%2Fallimg%2F160901%2F2339441392-8.jpg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490377224967&di=7916a9c76cfd76540b3ed41f970c8b05&imgtype=0&src=http%3A%2F%2Fbbs11.djicdn.com%2Fdata%2Fattachment%2Fforum%2F201511%2F22%2F200600doo6tz2zqx6jdz5d.jpg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490377243693&di=5471e90a84737494794986fe81833f9f&imgtype=0&src=http%3A%2F%2Fnews.cpd.com.cn%2Fn203193%2Fc29879991%2Fpart%2F29880124.jpg");
-        urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490377264171&di=6e8aa952f387588e9dce20ce6da70b90&imgtype=0&src=http%3A%2F%2Fimg2.xiangshu.com%2FDay_130214%2F102_721302_a48bffc61d51fcf.jpg");
+        urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490377264171&di=6e8aa952f387588e9");//这张图片有问题
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490377296064&di=88b89e2b139e540e321dfeac8b1e45c5&imgtype=0&src=http%3A%2F%2Fwww.liuzhou.gov.cn%2Fxwzx%2Fqxdt%2Frax%2F201607%2FW020160729407716095395.jpg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490377327685&di=b2630926b28c9eb55845fb070cdd873a&imgtype=0&src=http%3A%2F%2Fimg.meyet.com%2Fforum%2F201509%2F13%2F161505r4lp1l9x93hsrxj9.jpg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490377349229&di=e756188f5130990ddcf2026b4c0653f2&imgtype=0&src=http%3A%2F%2Fimg.zhongguowangshi.com%2FxwSceneReport%2F201408%2F20140806201621_2568.jpg");

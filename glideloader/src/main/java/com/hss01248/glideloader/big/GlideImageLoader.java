@@ -27,6 +27,7 @@ package com.hss01248.glideloader.big;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -44,7 +45,6 @@ import com.hss01248.glideloader.R;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.util.Observable;
 
 import okhttp3.OkHttpClient;
 
@@ -54,10 +54,10 @@ import okhttp3.OkHttpClient;
 
 public final class GlideImageLoader implements ImageLoader {
     private final RequestManager mRequestManager;
-    private Observable observable;
+    //private Observable observable;
 
     private GlideImageLoader(Context context, OkHttpClient okHttpClient) {
-        observable = new Observable();
+        //observable = new Observable();
         GlideProgressSupport.init(Glide.get(context), okHttpClient);
         mRequestManager = Glide.with(context);
     }
@@ -73,11 +73,18 @@ public final class GlideImageLoader implements ImageLoader {
     @Override
     public void loadImage(final Uri uri) {
         mRequestManager
-                .load(uri)
+                .load(uri)//.asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate()
                 .downloadOnly(new SimpleTarget<File>() {
                     @Override
                     public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-                        EventBus.getDefault().post(new CacheHitEvent(resource,uri.toString()));
+                        if(resource.exists() && resource.isFile() && resource.length() > 100){
+                            Log.e("onResourceReady","onResourceReady  --"+ resource.getAbsolutePath());
+                            EventBus.getDefault().post(new CacheHitEvent(resource,uri.toString()));
+                        }else {
+                            Log.e("onloadfailed","onLoadFailed  --"+ uri.toString());
+                            EventBus.getDefault().post(new ErrorEvent(uri.toString()));
+                        }
+
                     }
 
                     @Override
@@ -88,9 +95,31 @@ public final class GlideImageLoader implements ImageLoader {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
+                        Log.e("onloadfailed","onLoadFailed  --"+ uri.toString());
                         EventBus.getDefault().post(new ErrorEvent(uri.toString()));
                     }
+
+                    /**
+                     * 如果资源已经在内存中，则onLoadStarted就不会被调用
+                     * @param placeholder
+                     */
+                    @Override
+                    public void onLoadStarted(Drawable placeholder) {
+                        super.onLoadStarted(placeholder);
+                        //EventBus.getDefault().post(new StartEvent(uri.toString()));
+                    }
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                    }
+
+                    @Override
+                    public void onStop() {
+                        super.onStop();
+                    }
                 });
+
 
         /*new ImageDownloadTarget(uri.toString()) {
                     @Override

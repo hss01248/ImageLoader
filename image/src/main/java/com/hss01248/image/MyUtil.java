@@ -5,9 +5,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
-import com.github.piasy.biv.indicator.ProgressPieIndicator;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
@@ -78,10 +76,10 @@ public class MyUtil {
         BigImageView bigImageView = (BigImageView) config.getTarget();
         //bigImageView.setProgressIndicator(new ProgressPieIndicator1());
 
-        if(!TextUtils.isEmpty(config.getUrl()) && !GlobalConfig.getLoader().isCached(config.getUrl() )){
-            bigImageView.setProgressIndicator(new ProgressPieIndicator());
+       /* if(!TextUtils.isEmpty(config.getUrl()) && !GlobalConfig.getLoader().isCached(config.getUrl() )){
+            //bigImageView.setProgressIndicator(new ProgressPieIndicator());
         }else {
-            bigImageView.setProgressIndicator(null);
+           // bigImageView.setProgressIndicator(null);
             int count =  bigImageView.getChildCount();
             for (int i = 0; i < count; i++) {
                 View child = bigImageView.getChildAt(i);
@@ -89,7 +87,7 @@ public class MyUtil {
                     child.setVisibility(View.INVISIBLE);
                 }
             }
-        }
+        }*/
         bigImageView.showImage(buildUriByType(config));
 
 

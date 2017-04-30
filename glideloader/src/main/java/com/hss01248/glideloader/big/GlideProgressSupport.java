@@ -30,7 +30,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.github.piasy.biv.event.ProgressEvent;
-import com.github.piasy.biv.event.StartEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -181,7 +180,7 @@ public class GlideProgressSupport {
                     long bytesRead = super.read(sink, byteCount);
                     long fullLength = mResponseBody.contentLength();
                     if(mTotalBytesRead ==0){
-                        EventBus.getDefault().post(new StartEvent(mUrl));
+                       // EventBus.getDefault().post(new StartEvent(mUrl));
                         //observable.notifyObservers(new DownloadStateEvent(mUrl,DownloadStateEvent.STATE_START, (int) (mTotalBytesRead*100/fullLength)));
                     }
                     if (bytesRead == -1) { // this source is exhausted

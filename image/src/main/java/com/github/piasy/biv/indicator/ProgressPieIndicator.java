@@ -24,8 +24,10 @@
 
 package com.github.piasy.biv.indicator;
 
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.filippudak.ProgressPieView.ProgressPieView;
 import com.github.piasy.biv.view.BigImageView;
@@ -39,17 +41,21 @@ import java.util.Locale;
 
 public class ProgressPieIndicator implements ProgressIndicator {
     private ProgressPieView mProgressPieView;
+    private RelativeLayout root;
 
     @Override
     public View getView(BigImageView parent) {
-        mProgressPieView = (ProgressPieView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.ui_progress_pie_indicator, parent, false);
-        return mProgressPieView;
+        root = (RelativeLayout) View.inflate(parent.getContext(),R.layout.ui_progress_pie_indicator,null);
+        mProgressPieView = (ProgressPieView) root.findViewById(R.id.progressview);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        root.setLayoutParams(params);
+        return root;
     }
 
     @Override
     public void onStart() {
         // not interested
+        root.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -63,6 +69,7 @@ public class ProgressPieIndicator implements ProgressIndicator {
 
     @Override
     public void onFinish() {
+        root.setVisibility(View.GONE);
         // not interested
     }
 }

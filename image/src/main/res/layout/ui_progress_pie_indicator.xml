@@ -23,18 +23,28 @@
   ~ SOFTWARE.
   -->
 
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_green_dark"
+    android:layout_width="match_parent">
+
 <com.filippudak.ProgressPieView.ProgressPieView
+    android:id="@+id/progressview"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
-        app:ppvBackgroundColor="@android:color/transparent"
+    android:layout_centerInParent="true"
+        app:ppvBackgroundColor="@android:color/holo_blue_bright"
         app:ppvProgress="0"
         app:ppvProgressColor="#80FFFFFF"
         app:ppvProgressFillType="radial"
         app:ppvStrokeColor="#80FFFFFF"
         app:ppvStrokeWidth="5dp"
         />
+</RelativeLayout>
