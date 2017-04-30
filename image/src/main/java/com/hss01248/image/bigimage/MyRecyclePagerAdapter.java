@@ -46,4 +46,5 @@ public class MyRecyclePagerAdapter extends RecyclePagerAdapter<MyPagerViewHolder
         this.urls.addAll(urls);
         notifyDataSetChanged();
     }
+
 }
