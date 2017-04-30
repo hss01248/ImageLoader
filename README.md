@@ -11,20 +11,20 @@ public interface ILoader {
 
     void init(Context context,int cacheSizeInM);//初始化
    
-    void request(SingleConfig config);//核心方法
+    void request(SingleConfig config);//核心方法,仅供内部调用
 	
 	//图片加载的暂停和继续
     void pause();
-
     void resume();
     
-    //下面是操作磁盘缓存的一些方法
-    void clearDiskCache();
-
+    //缓存大小与清除
+     void clearDiskCache();
+    void clearMomoryCache();
+    long getCacheSize();
+    
+    //下面是操作磁盘缓存的一些方法(glide无法同步获取,fresco可以)
     void clearCacheByUrl(String url);
-
     File getFileFromDiskCache(String url);
-
     boolean  isCached(String url);
     
     //下面是内存的优化-响应app的内存事件,做出相应的处理
@@ -197,27 +197,38 @@ asBitmap(BitmapListener bitmapListener)
 
 # 加载大图
 
-内部采用的是https://github.com/Piasy/BigImageViewer,确实很给力.(注意内部有内存泄漏,尚未解决)
+内部采用的是   https://github.com/davemorrissey/subsampling-scale-image-view
+
+## 加载单张大图:
+
 ```
 ImageLoader.loadBigImage(BigImageView imageView,String path)
 //说明: path可以是网络url,文件路径或者content://格式的路径
 当是网络url时,注意应该以http开头,这里内部不提供拼接功能
 ```
 
-如果本地没有缓存,则先显示loading界面,图片下载完后显示图片.
+内置了placeholder,progressbar,errorview.
 
-如果本地有缓存,则直接显示图片.
+暂未提供自定义设置的功能
 
- ![loading](loading.jpg)
+![placeholder](G:\projects\android\hss01248\ImageLoader\pics\placeholder.jpg)
 
-## viewpager加载大图的处理
+![progress](G:\projects\android\hss01248\ImageLoader\pics\progress.jpg)
+
+![error](G:\projects\android\hss01248\ImageLoader\pics\error.jpg)
+
+
+
+ 
+
+## 加载多张大图:
 
 > 用户只需要传入单纯的viewPager应用,框架会替调用者设置好特定的adapter.
 >
-> pageradapter内部只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断创建和回收.
+> pageradapter内部只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断回收.
 
 ```
-ImageLoader.loadBigImages(ViewPager viewPager, List<String> urls)//urls
+ImageLoader.loadBigImages(ViewPager viewPager, List<String> urls)//urls或filepaths
 ```
 
 之前BigImageView有内存泄漏时,.几十张超级大图(4000*3000像素左右),快速滑动和快速缩放时,内存占用偶尔冲上五六十M,但很快会降到40M左右,关掉activity内存一直不下,解决内存泄漏后,十分清爽:
@@ -313,10 +324,8 @@ ImageLoader.with(this)
 
 
 # todo 
-1.BigImageView的内存泄漏问题,复用时progressview错乱问题,没有placeholder和error
-2. fresco和glide分包引用
-   3.glide无法获取到圆角bitmap--transformation包无效果?
-
+fresco和glide分包引用
+glide无法获取到圆角bitmap--transformation包无效果?
 
 
 
@@ -343,7 +352,7 @@ Add it in your root build.gradle at the end of repositories:
 
 ```
     dependencies {
-            compile 'com.github.hss01248:ImageLoader:0.0.5'
+            compile 'com.github.hss01248:ImageLoader:1.0.0'
     }
 ```
 
