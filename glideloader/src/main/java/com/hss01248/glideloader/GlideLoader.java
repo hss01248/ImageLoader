@@ -119,8 +119,8 @@ public class GlideLoader implements ILoader {
 
             setShapeModeAndBlur(config, request);
 
-            request.override(config.getWidth(),config.getHeight())
-                    .thumbnail( 0.1f );
+            request.override(config.getWidth(),config.getHeight());
+                    //.thumbnail( 0.1f );
 
 
             if(config.getErrorResId() >0){
