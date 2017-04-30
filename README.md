@@ -352,9 +352,19 @@ Add it in your root build.gradle at the end of repositories:
 
 ```
     dependencies {
-            compile 'com.github.hss01248:ImageLoader:1.0.0'
+             compile 'com.github.hss01248.ImageLoader:image:1.0.1'
     }
 ```
+
+> 如果使用fresco: 再添加:   compile 'com.github.hss01248.ImageLoader:frescoloader:1.0.1'
+
+
+
+> 如果使用glide: 再添加 : compile 'com.github.hss01248.ImageLoader:glideloader:1.0.1'
+
+
+
+
 
 # thanks
 
