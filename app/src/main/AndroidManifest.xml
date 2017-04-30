@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hss01248.imageloaderdemo">
 
     <application
@@ -18,6 +19,8 @@
         </activity>
         <activity android:name=".BigImageActy"/>
         <activity android:name=".ViewpagerActy"/>
+        <!--<meta-data tools:replace="android:value"></meta-data>-->
     </application>
+
 
 </manifest>

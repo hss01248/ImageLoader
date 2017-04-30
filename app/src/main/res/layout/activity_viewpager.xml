@@ -11,6 +11,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="com.hss01248.imageloaderdemo.MainActivity">
+    <TextView
+        android:id="@+id/index"
+        android:text="999"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

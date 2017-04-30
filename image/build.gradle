@@ -43,6 +43,7 @@ dependencies {
 
     compile 'commons-io:commons-io:2.5'
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'am.util:viewpager:25.3.0'
 
    /* compile 'com.github.piasy:BigImageViewer:1.2.7'
     compile 'com.github.piasy:ProgressPieIndicator:1.2.7'

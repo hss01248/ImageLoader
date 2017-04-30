@@ -74,24 +74,7 @@ public class MyUtil {
 
     public static void viewBigImage(SingleConfig config) {
         BigImageView bigImageView = (BigImageView) config.getTarget();
-        //bigImageView.setProgressIndicator(new ProgressPieIndicator1());
-
-       /* if(!TextUtils.isEmpty(config.getUrl()) && !GlobalConfig.getLoader().isCached(config.getUrl() )){
-            //bigImageView.setProgressIndicator(new ProgressPieIndicator());
-        }else {
-           // bigImageView.setProgressIndicator(null);
-            int count =  bigImageView.getChildCount();
-            for (int i = 0; i < count; i++) {
-                View child = bigImageView.getChildAt(i);
-                if(child.findViewById(R.id.progressBar00)!=null){
-                    child.setVisibility(View.INVISIBLE);
-                }
-            }
-        }*/
         bigImageView.showImage(buildUriByType(config));
-
-
-
         //bigimageview对缩略图的支持并不好
        /* if(TextUtils.isEmpty(config.getThumbnailUrl())){
             if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){

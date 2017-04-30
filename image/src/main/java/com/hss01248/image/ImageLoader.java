@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.github.piasy.biv.BigImageViewer;
-import com.hss01248.image.bigimage.PagerAdapterForBigImage;
+import com.hss01248.image.bigimage.MyRecyclePagerAdapter;
 import com.hss01248.image.bigimage.RecycleAdapterForBigImage;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
@@ -76,10 +76,10 @@ public class ImageLoader {
         viewPager.setOffscreenPageLimit(1);
        // ViewPager viewPager = new ViewPager(context);
         if( viewPager.getAdapter()==null  ){
-            PagerAdapter adapter = new PagerAdapterForBigImage(urls);
+            PagerAdapter adapter = new MyRecyclePagerAdapter(urls);
             viewPager.setAdapter(adapter);
-        }else if (viewPager.getAdapter() instanceof PagerAdapterForBigImage){
-            PagerAdapterForBigImage adapterForBigImage = (PagerAdapterForBigImage) viewPager.getAdapter();
+        }else if (viewPager.getAdapter() instanceof MyRecyclePagerAdapter){
+            MyRecyclePagerAdapter adapterForBigImage = (MyRecyclePagerAdapter) viewPager.getAdapter();
             adapterForBigImage.changeDatas(urls);
         }else {
             throw new RuntimeException("用于加载大图的viewPager应该专用,其adapter不要自己设置");

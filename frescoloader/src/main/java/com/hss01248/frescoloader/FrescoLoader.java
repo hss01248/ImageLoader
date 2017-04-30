@@ -313,9 +313,18 @@ public class FrescoLoader implements ILoader {
             protected void onNewResultImpl(Bitmap bitmap) {
                 //注意，gif图片解码方法与普通图片不一样，是无法拿到bitmap的。如果要把gif的第一帧的bitmap返回，怎么做？
                 //GifImage.create(bytes).decode(1l,9).getFrameInfo(1).
-                if(bitmap!=null){
-                    config.getBitmapListener().onSuccess(bitmap);
-                    return;
+
+                if(bitmap!=null ){
+                    if(bitmap.isRecycled()){
+                        config.getBitmapListener().onFail();
+                        return;
+                    }else {
+                        config.getBitmapListener().onSuccess(bitmap);
+                        return;
+                    }
+
+
+
                 }
 
                 File cacheFile  = getFileFromDiskCache(finalUrl);

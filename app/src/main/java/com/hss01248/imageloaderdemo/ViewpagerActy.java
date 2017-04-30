@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.widget.TextView;
 
 import com.hss01248.image.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2017/3/24 0024.
@@ -16,14 +20,20 @@ import java.util.List;
 
 public class ViewpagerActy extends Activity {
 
+
+    @Bind(R.id.index)
+    TextView tvIndex;
+    @Bind(R.id.viewpager)
     ViewPager viewPager;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_viewpager);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ButterKnife.bind(this);
+        //viewPager = (ViewPager) findViewById(R.id.viewpager);
         List<String> urls = new ArrayList<>();
        /* urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20170222_221249_HHT.jpg");
         urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20161114_231649.jpg");
@@ -68,13 +78,27 @@ public class ViewpagerActy extends Activity {
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490972455&di=53778e44f17970656d0dc2e0a9ce4ee9&imgtype=jpg&er=1&src=http%3A%2F%2Fwww.7695556.com%2Fdata%2Fattachment%2Fforum%2F201609%2F28%2F201212dpyqwo0aam49owpa.jpg");
 
 
+        // PagerAdapterForBigImage adapter = new PagerAdapterForBigImage(urls);
+        // viewPager.setAdapter(adapter);
+        ImageLoader.loadBigImages(viewPager, urls);
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
 
 
+            }
 
-       // PagerAdapterForBigImage adapter = new PagerAdapterForBigImage(urls);
-       // viewPager.setAdapter(adapter);
-        ImageLoader.loadBigImages(viewPager,urls);
+            @Override
+            public void onPageSelected(int i) {
+                tvIndex.setText("index:"+i);
+            }
 
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
 
 
     }

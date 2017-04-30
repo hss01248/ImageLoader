@@ -26,6 +26,9 @@ package com.hss01248.frescoloader.big;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -48,9 +51,7 @@ import com.facebook.imagepipeline.memory.PooledByteBuffer;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.github.piasy.biv.event.CacheHitEvent;
 import com.github.piasy.biv.event.ErrorEvent;
-import com.github.piasy.biv.event.NoCacheEvent;
 import com.github.piasy.biv.event.ProgressEvent;
-import com.github.piasy.biv.event.StartEvent;
 import com.github.piasy.biv.loader.ImageLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.frescoloader.R;
@@ -67,11 +68,13 @@ public final class FrescoImageLoader implements ImageLoader {
 
     private final Context mAppContext;
     private final DefaultExecutorSupplier mExecutorSupplier;
+    private Handler handler;
 
     private FrescoImageLoader(Context appContext) {
         mAppContext = appContext;
 
         mExecutorSupplier = new DefaultExecutorSupplier(Runtime.getRuntime().availableProcessors());
+        handler = new Handler(Looper.getMainLooper());
     }
 
     public static FrescoImageLoader with(Context appContext) {
@@ -93,12 +96,25 @@ public final class FrescoImageLoader implements ImageLoader {
     public void loadImage(final Uri uri) {
         ImageRequest request = ImageRequest.fromUri(uri);
 
-        File localCache = getCacheFile(request);
-        if (localCache.exists()) {
-            EventBus.getDefault().post(new CacheHitEvent(localCache,uri.toString()));
+        final File localCache = getCacheFile(request);
+        if (localCache!=null && localCache.exists()) {
+            Log.e("onResourceReady","cache onResourceReady  --"+ localCache.getAbsolutePath());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(localCache.length() >100){
+
+                        EventBus.getDefault().postSticky(new CacheHitEvent(localCache,uri.toString()));
+                    }else {
+                        EventBus.getDefault().postSticky(new ErrorEvent(uri.toString()));
+                    }
+                }
+            },300);
+
+
         } else {
-            EventBus.getDefault().post(new StartEvent(uri.toString()));
-            EventBus.getDefault().post(new ProgressEvent(0,false,uri.toString()));
+            //EventBus.getDefault().post(new StartEvent(uri.toString()));
+            //EventBus.getDefault().post(new ProgressEvent(0,false,uri.toString()));
            // callback.onStart(); // ensure `onStart` is called before `onProgress` and `onFinish`
            // callback.onProgress(0); // show 0 progress immediately
 
@@ -114,8 +130,13 @@ public final class FrescoImageLoader implements ImageLoader {
 
                 @Override
                 protected void onSuccess(File image) {
-                    EventBus.getDefault().post(new ProgressEvent(100,true,uri.toString()));
-                    EventBus.getDefault().post(new NoCacheEvent(image,uri.toString()));
+                    //EventBus.getDefault().post(new ProgressEvent(100,true,uri.toString()));
+                    Log.e("onResourceReady","download onResourceReady  --"+ image.getAbsolutePath());
+                    if(image.length() >100){
+                        EventBus.getDefault().postSticky(new CacheHitEvent(image,uri.toString()));
+                    }else {
+                        EventBus.getDefault().postSticky(new ErrorEvent(uri.toString()));
+                    }
                     //callback.onFinish();
                     //callback.onCacheMiss(image);
 

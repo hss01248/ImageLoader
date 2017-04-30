@@ -78,7 +78,7 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     private View placeHolder;
 
     private final ImageLoader mImageLoader;
-    private final Map<String,File> mTempImages;
+    private  Map<String,File> mTempImages;
 
    // private View progressView;
 
@@ -154,9 +154,16 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         setInitScaleType(mInitScaleType);
 
         mImageLoader = BigImageViewer.imageLoader();
-
         mTempImages = new HashMap<>();
+
+
+       // EventBus.getDefault().register(this);
     }
+
+    public void setCachedFileMap(Map<String,File> cachedFileMap){
+        mTempImages = cachedFileMap;
+    }
+
 
     @Override
     public void setOnClickListener(OnClickListener listener) {
@@ -279,17 +286,20 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         //Log.d("BigImageView", "showImage new url: "+ uri.toString());
        // Log.d("BigImageView", "showImage  old url: " + this.url);
 
-        if(TextUtils.isEmpty(this.url) || !this.url.equals(uri.toString())){
+       /* if(TextUtils.isEmpty(this.url) || !this.url.equals(uri.toString())){
             onStart();
-        }
+        }*/
 
         this.url = uri.toString();
         mThumbnail = thumbnail;
 
 
         if(mTempImages.containsKey(this.url)){
+            Log.e("dd","mTempImages.containsKey(this.url),show content");
+            //onStart();
             showContent(mTempImages.get(this.url));
         }else {
+            onStart();
             mImageLoader.loadImage(uri);
         }
 
@@ -300,56 +310,6 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
 
     }
 
-
-
-
-   /* public void onStart() {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                // why show thumbnail in onStart? because we may not need download it from internet
-                *//*if (mThumbnail != Uri.EMPTY) {
-                    mThumbnailView = mImageLoader.showThumbnail(BigImageView.this, mThumbnail,
-                            mInitScaleType);
-                    addView(mThumbnailView);
-                }*//*
-
-                if(progressView !=null){
-
-                }
-
-                if (mProgressIndicator != null) {
-                    progressView = mProgressIndicator.getView(BigImageView.this);
-                    addView(progressView);
-                    mProgressIndicator.onStart();
-                }else {
-
-                }
-
-            }
-        });
-    }*/
-
-
-   /* public void onProgress(final int progress) {
-        if (mProgressIndicator != null && mProgressNotifyRunnable.update(progress)) {
-            post(mProgressNotifyRunnable);
-        }
-    }*/
-
-
-
-
-
-
-   /* public void onFinish() {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                doOnFinish();
-            }
-        });
-    }*/
 
 
     private void doOnFinish() {
@@ -406,28 +366,23 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
 
 
 
-
-    /*@UiThread
-    private void doShowImage(File image) {
-        mImageView.setImage(ImageSource.uri(Uri.fromFile(image)));
-    }*/
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        //EventBus.getDefault().unregister(this);
         EventBus.getDefault().register(this);
+
+
+
 
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+       // EventBus.getDefault().removeAllStickyEvents();
         EventBus.getDefault().unregister(this);
 
-       /* for (int i = 0, size = mTempImages.size(); i < size; i++) {
-            mTempImages.get(i).delete();
-        }*/
-        //mTempImages.clear();
     }
 
 
@@ -440,6 +395,8 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
             showProgress(event.progress);
             if(event.progress ==100){
                // doOnFinish();//动画
+                //showContent(null);
+
             }
         }
 
@@ -460,11 +417,11 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     public void onCacheHitEvent(CacheHitEvent event){
         Log.d("BigImageView", "onCacheHitEvent---event url: " + event.url);
         Log.d("BigImageView", "onCacheHitEvent---old url: " + this.url);
-        if(this.url.equals(event.url)){
+        if(this.url.equals(event.url) && event.file!=null && event.file.exists() && event.file.length() > 100){
+            mCurrentImageFile = event.file;
+            mTempImages.put(this.url,event.file);
             showContent(event.file);
         }
-
-
     }
 
     /*@Subscribe(threadMode = ThreadMode.MAIN)
@@ -477,14 +434,17 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     @Override
     public void showContent(File image) {
 
-        mCurrentImageFile = image;
-        if(!mTempImages.containsKey(this.url)){
+
+      /*  if(!mTempImages.containsKey(this.url)){
             mTempImages.put(this.url,image);
-        }
-        mImageView.setImage(ImageSource.uri(Uri.fromFile(image)));
+        }*/
         mImageView.setVisibility(VISIBLE);
+        if(image!=null)
+        mImageView.setImage(ImageSource.uri(Uri.fromFile(image)));
+        Log.d("BigImageView", "mImageView.setImage: " + image.getAbsolutePath());
+
+
             currentState = STATE_CONTENT;
-            mImageView.setVisibility(VISIBLE);
             if(progressView!=null)
                 progressView.setVisibility(GONE);
             if(mThumbnailView!=null)

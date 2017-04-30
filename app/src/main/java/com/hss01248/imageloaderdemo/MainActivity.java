@@ -16,8 +16,7 @@ import com.hss01248.image.config.SingleConfig;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -71,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 .placeHolder(R.mipmap.ic_launcher,false)
                 .widthHeight(250, 150)
                 .asCircle(R.color.colorPrimary)
-                .blur(40)
-                .into(ivUrl);
+                .blur(40);
+                //.into(ivUrl);
 
 
         ImageLoader.with(this)
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         Log.e("bitmap", bitmap.getWidth() + "---height:" + bitmap.getHeight() + "--" + bitmap.toString());
-                        ivRes.setImageBitmap(bitmap);
+                        //ivRes.setImageBitmap(bitmap);
                     }
 
                     @Override
