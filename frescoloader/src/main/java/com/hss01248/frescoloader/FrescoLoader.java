@@ -117,6 +117,7 @@ public class FrescoLoader implements ILoader {
             AbstractDraweeController controller = buildPipelineDraweeController(config,request);
 
             ((SimpleDraweeView) config.getTarget()).setController(controller);
+            return;
         }
 
         if(config.getTarget() instanceof ImageView){
