@@ -3,6 +3,16 @@
 图片加载框架的api封装
 
 api设计参考glide,目前底层依赖fresco和glide,可自由切换.如果要用其他图片加载框架,实现ILoader接口即可.
+
+
+
+> 一条龙地支持fresco和glide
+
+图片加载:[ImageLoader](https://github.com/hss01248/ImageLoader)  -->> 图片选择: [PhotoPicker](https://github.com/hss01248/PhotoPicker)  -->>拍照/选图/裁剪/压缩: [PhotoOut](https://github.com/hss01248/PhotoOut)
+
+
+
+
 ### 更新日志
 https://github.com/hss01248/ImageLoader/blob/master/LOG.md
 
