@@ -17,7 +17,6 @@ import com.hss01248.image.config.SingleConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -70,22 +69,22 @@ public class MainActivity extends AppCompatActivity {
                 .placeHolder(R.mipmap.ic_launcher,false)
                 .widthHeight(250, 150)
                 .asCircle(R.color.colorPrimary)
-                .blur(40);
-                //.into(ivUrl);
+                .blur(40)
+                .into(ivUrl);
 
 
         ImageLoader.with(this)
                 .placeHolder(R.mipmap.ic_launcher,false)
                 //.res(R.drawable.thegif)
                 .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
-                .widthHeight(250, 150)
-                .rectRoundCorner(15, R.color.colorPrimary)
-                .blur(20)
+                .widthHeight(100, 80)
+                .rectRoundCorner(5, R.color.colorPrimary)
+                .blur(5)
                 .asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         Log.e("bitmap", bitmap.getWidth() + "---height:" + bitmap.getHeight() + "--" + bitmap.toString());
-                        //ivRes.setImageBitmap(bitmap);
+                        ivRes.setImageBitmap(bitmap);
                     }
 
                     @Override

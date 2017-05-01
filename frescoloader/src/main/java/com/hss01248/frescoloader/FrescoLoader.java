@@ -31,7 +31,6 @@ import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
-import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
@@ -308,7 +307,11 @@ public class FrescoLoader implements ILoader {
         final String finalUrl = request.getSourceUri().toString();//;MyUtil.appendUrl(config.getUrl());
         Log.e("uri",finalUrl);
         DataSource<CloseableReference<CloseableImage>> dataSource = Fresco.getImagePipeline().fetchDecodedImage(request, GlobalConfig.context);
-        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+
+
+
+
+        dataSource.subscribe(new MyBaseBitmapDataSubscriber() {
             @Override
             protected void onNewResultImpl(Bitmap bitmap) {
                 //注意，gif图片解码方法与普通图片不一样，是无法拿到bitmap的。如果要把gif的第一帧的bitmap返回，怎么做？
