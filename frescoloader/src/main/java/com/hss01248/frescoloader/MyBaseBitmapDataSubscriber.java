@@ -14,6 +14,24 @@ import com.facebook.imagepipeline.image.CloseableImage;
  */
 
 public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<CloseableReference<CloseableImage>> {
+
+
+    @Override
+    public void onNewResult(DataSource<CloseableReference<CloseableImage>> dataSource) {
+        // isFinished() should be checked before calling onNewResultImpl(), otherwise
+        // there would be a race condition: the final data source result might be ready before
+        // we call isFinished() here, which would lead to the loss of the final result
+        // (because of an early dataSource.close() call).
+        final boolean shouldClose = dataSource.isFinished();
+        try {
+            onNewResultImpl(dataSource);
+        } finally {
+            if (shouldClose) {
+               // dataSource.close();
+            }
+        }
+    }
+
     @Override
     public void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
         if (!dataSource.isFinished()) {
