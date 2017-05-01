@@ -325,9 +325,6 @@ public class FrescoLoader implements ILoader {
                         config.getBitmapListener().onSuccess(bitmap);
                         return;
                     }
-
-
-
                 }
 
                 File cacheFile  = getFileFromDiskCache(finalUrl);
