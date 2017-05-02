@@ -2,7 +2,16 @@
 
 图片加载框架的api封装
 
-api设计参考glide,目前底层依赖fresco和glide,可自由切换.如果要用其他图片加载框架,实现ILoader接口即可.
+
+
+## 特点
+
+* api设计参考glide,链式调用
+* 目前底层依赖fresco和glide,直接gradle改一下就切换了
+* 能够以同样api获取bitmap,所设置的宽高,高斯模糊,圆角或圆形效果均生效.
+* 解决了fresco最新版中,获取到的bitmap是recycled,不能用的问题
+* 基于subsampling-scale-image-view的大图预览功能,带进度和失败状态,能轮播,极致的高清无码,更重要的是非常省内存,绝不泄漏
+* 丰富便捷的api: 暂停和继续图片加载,获取磁盘缓存大小和清空缓存,响应内存事件等等.
 
 
 
@@ -109,9 +118,9 @@ ImageLoader.with(this)
 .ignoreCertificateVerify(boolean ignoreCertificateVerify)
 ```
 
-## 传入宽高,用于resize,以节省内存
+## 传入宽高,用于resize,以节省内存(必传参数)
 
-> 一般,传如用于显示的那个view的宽高就行,单位为dp.内部已自行转换为px
+> 一般,传如用于显示的那个view的宽高就行,单位为dp.内部会自行转换为px
 >
 > 框架能根据这两个参数去把图片流解压成这个大小的bitmap,可以节约内存空间
 
@@ -194,7 +203,7 @@ into(View targetView)
 
 ## 或者,只拿bitmap引用
 
-> 此时,scale的配置是无效的,因为没有view去给它展示
+> 此时,scale的配置是无效的,因为没有view去给它展示. 而其他设置的宽高,高斯模糊,圆角或圆形效果,都能生效,最终给你一个你想要的bitmap
 
 ```
 asBitmap(BitmapListener bitmapListener)
@@ -210,6 +219,7 @@ asBitmap(BitmapListener bitmapListener)
 
 ```
 ImageLoader.loadBigImage(BigImageView imageView,String path)
+
 //说明: path可以是网络url,文件路径或者content://格式的路径
 当是网络url时,注意应该以http开头,这里内部不提供拼接功能
 ```
@@ -218,11 +228,11 @@ ImageLoader.loadBigImage(BigImageView imageView,String path)
 
 暂未提供自定义设置的功能
 
-![placeholder](G:\projects\android\hss01248\ImageLoader\pics\placeholder.jpg)
+![placeholder](pics/placeholder.jpg)
 
-![progress](G:\projects\android\hss01248\ImageLoader\pics\progress.jpg)
+![progress](pics/progress.jpg)
 
-![error](G:\projects\android\hss01248\ImageLoader\pics\error.jpg)
+![error](pics/error.jpg)
 
 
 
@@ -230,7 +240,7 @@ ImageLoader.loadBigImage(BigImageView imageView,String path)
 
 ## 加载多张大图:
 
-> 用户只需要传入单纯的viewPager应用,框架会替调用者设置好特定的adapter.
+> 用户只需要传入单纯的viewPager对象,框架会替调用者设置好特定的adapter.
 >
 > pageradapter内部只构建4个BigImageView,滑动时复用此view,则对应的bitmap能够被不断回收.
 
@@ -330,11 +340,6 @@ ImageLoader.with(this)
 ```
 
 
-# todo 
-fresco和glide分包引用
-glide无法获取到圆角bitmap--transformation包无效果?
-
-
 
 
 
@@ -359,15 +364,12 @@ Add it in your root build.gradle at the end of repositories:
 
 ```
     dependencies {
-             compile 'com.github.hss01248.ImageLoader:image:1.0.1'
+              compile 'com.github.hss01248.ImageLoader:frescoloader:1.0.2'//如果使用fresco
+              compile 'com.github.hss01248.ImageLoader:glideloader:1.0.2'//如果使用glide
     }
 ```
 
-> 如果使用fresco: 再添加:   compile 'com.github.hss01248.ImageLoader:frescoloader:1.0.1'
 
-
-
-> 如果使用glide: 再添加 : compile 'com.github.hss01248.ImageLoader:glideloader:1.0.1'
 
 
 

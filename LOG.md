@@ -1,5 +1,16 @@
 # UPDATE LOG
 
+## 2017-05-02
+
+* 解决fresco获取bitmap总是被标记为recycled的问题
+* 获取的bitmap也能自动应用上高斯模糊,圆角,圆形,解决glide中bitmap的黑边问题(bitmap转换过程中设置为RGB8888,因为RGB565会损失透明通道)
+* 修正glide的初始化方式
+
+## 2017-05-01
+
+* glide与fresco分包,分别引用.
+* 彻底解决大图预览,尤其是轮播预览的bug.加上了各种状态显示
+
 ## 2017-03-27
 
 1.添加GlideLoader,以及入口处切换loader的功能(便于调试)

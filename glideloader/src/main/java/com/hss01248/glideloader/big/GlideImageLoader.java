@@ -96,6 +96,8 @@ public final class GlideImageLoader implements ImageLoader {
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
                         Log.e("onloadfailed","onLoadFailed  --"+ uri.toString());
+                        if(e!=null)
+                        e.printStackTrace();
                         EventBus.getDefault().post(new ErrorEvent(uri.toString()));
                     }
 

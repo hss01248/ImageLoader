@@ -71,12 +71,12 @@ public class GlobalConfig {
     /**
      * lrucache 最大值
      */
-    public static int cacheMaxSize= 50;
+    public static int cacheMaxSize= 150;
 
     /**
      * 缓存文件夹
      */
-    public static String cacheFolderName = "frescoCache";
+    public static String cacheFolderName = "imageCache";
 
     /**
      * bitmap是888还是565编码,后者内存占用相当于前者一般,前者显示效果要好一点点,但两者效果不会差太多

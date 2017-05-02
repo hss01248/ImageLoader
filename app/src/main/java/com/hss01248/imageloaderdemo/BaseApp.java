@@ -17,7 +17,7 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ImageLoader.init(getApplicationContext(), 40,new GlideLoader());
+        ImageLoader.init(getApplicationContext(), 100,new GlideLoader());
         LeakCanary.install(this);
         MyToast.init(this,true,true);
         //Logger.initialize(new Settings());
