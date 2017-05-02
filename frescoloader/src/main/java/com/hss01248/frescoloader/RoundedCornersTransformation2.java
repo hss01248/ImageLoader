@@ -1,4 +1,4 @@
-package com.hss01248.glideloader;
+package com.hss01248.frescoloader;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -25,13 +25,13 @@ public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
     private int mMargin;
     private CornerType mCornerType = CornerType.ALL;
 
-    public RoundedCornersTransformation2(int radius, int margin) {
+    public RoundedCornersTransformation2( int radius, int margin) {
         this(radius, margin, CornerType.ALL);
     }
 
 
 
-    public RoundedCornersTransformation2(int radius, int margin,
+    public RoundedCornersTransformation2( int radius, int margin,
                                          CornerType cornerType) {
 
         mRadius = radius;
@@ -46,7 +46,6 @@ public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
 
         int width = source.getWidth();
         int height = source.getHeight();
-
 
         Bitmap bitmap =  Bitmap.createBitmap(width, height, source.getConfig());
 

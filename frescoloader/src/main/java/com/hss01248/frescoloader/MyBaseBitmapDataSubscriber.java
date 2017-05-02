@@ -8,6 +8,11 @@ import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
 import com.facebook.imagepipeline.image.CloseableBitmap;
 import com.facebook.imagepipeline.image.CloseableImage;
+import com.hss01248.frescoloader.gif.GifUtils;
+import com.hss01248.image.ImageLoader;
+import com.hss01248.image.MyUtil;
+
+import java.io.File;
 
 /**
  * Created by Administrator on 2017/5/1.
@@ -15,6 +20,13 @@ import com.facebook.imagepipeline.image.CloseableImage;
 
 public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<CloseableReference<CloseableImage>> {
 
+    String finalUrl; int width; int height;
+
+    public MyBaseBitmapDataSubscriber(String finalUrl, int width, int height) {
+        this.finalUrl = finalUrl;
+        this.width = width;
+        this.height = height;
+    }
 
     @Override
     public void onNewResult(DataSource<CloseableReference<CloseableImage>> dataSource) {
@@ -32,6 +44,8 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
         }
     }
 
+
+
     @Override
     public void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
         if (!dataSource.isFinished()) {
@@ -45,11 +59,46 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
             bitmap = ((CloseableBitmap) closeableImageRef.get()).getUnderlyingBitmap();
         }
 
-        try {
+
+        if(bitmap!=null ){
+            if(bitmap.isRecycled()){
+                onFailure(dataSource);
+            }else {
+                onNewResultImpl(bitmap,dataSource);
+            }
+            return;
+        }
+
+        //如果bitmap为空
+        File cacheFile  = ImageLoader.getActualLoader().getFileFromDiskCache(finalUrl);
+        if(cacheFile ==null){
+            onFailure(dataSource);
+            return;
+        }
+        //还要判断文件是不是gif格式的
+        if (!"gif".equalsIgnoreCase(MyUtil.getRealType(cacheFile))){
+            onFailure(dataSource);
+            return;
+        }
+        Bitmap bitmapGif = GifUtils.getBitmapFromGifFile(cacheFile);//拿到gif第一帧的bitmap
+        if(width>0 && height >0) {
+            bitmapGif = MyUtil.compressBitmap(bitmapGif, true, width, height);//将bitmap压缩到指定宽高。
+        }
+
+        if (bitmapGif != null) {
+            onNewResultImpl(bitmap,dataSource);
+        } else {
+            onFailure(dataSource);
+        }
+
+
+
+
+       /* try {
             onNewResultImpl(bitmap);
         } finally {
             //CloseableReference.closeSafely(closeableImageRef);
-        }
+        }*/
     }
 
     /**
@@ -60,5 +109,5 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
      * @param bitmap
 
      */
-    protected abstract void onNewResultImpl(@Nullable Bitmap bitmap);
+    protected abstract void onNewResultImpl(@Nullable Bitmap bitmap,DataSource<CloseableReference<CloseableImage>> dataSource);
 }

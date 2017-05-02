@@ -1,5 +1,6 @@
 package com.hss01248.glideloader;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -7,11 +8,15 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapResource;
+
 /**
  * Created by Administrator on 2017/5/1.
  */
 
-public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
+public class RoundedCornersTransformation3 {//implements Transformation<Bitmap>
     public enum CornerType {
         ALL,
         TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
@@ -20,20 +25,28 @@ public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
         DIAGONAL_FROM_TOP_LEFT, DIAGONAL_FROM_TOP_RIGHT
     }
 
+    private BitmapPool mBitmapPool;
     private int mRadius;
     private int mDiameter;
     private int mMargin;
-    private CornerType mCornerType = CornerType.ALL;
+    private CornerType mCornerType;
 
-    public RoundedCornersTransformation2(int radius, int margin) {
-        this(radius, margin, CornerType.ALL);
+    public RoundedCornersTransformation3(Context context, int radius, int margin) {
+        this(context, radius, margin, CornerType.ALL);
     }
 
+    public RoundedCornersTransformation3(BitmapPool pool, int radius, int margin) {
+        this(pool, radius, margin, CornerType.ALL);
+    }
 
-
-    public RoundedCornersTransformation2(int radius, int margin,
+    public RoundedCornersTransformation3(Context context, int radius, int margin,
                                          CornerType cornerType) {
+        this(Glide.get(context).getBitmapPool(), radius, margin, cornerType);
+    }
 
+    public RoundedCornersTransformation3(BitmapPool pool, int radius, int margin,
+                                         CornerType cornerType) {
+        mBitmapPool = pool;
         mRadius = radius;
         mDiameter = mRadius * 2;
         mMargin = margin;
@@ -42,22 +55,22 @@ public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
 
     //@Override
     public Bitmap transform(Bitmap source, int outWidth, int outHeight) {
-
+       // Bitmap source = resource.get();
 
         int width = source.getWidth();
         int height = source.getHeight();
 
-
-        Bitmap bitmap =  Bitmap.createBitmap(width, height, source.getConfig());
-
+        Bitmap bitmap = mBitmapPool.get(width, height, Bitmap.Config.ARGB_8888);
+        if (bitmap == null) {
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        }
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
         drawRoundRect(canvas, paint, width, height);
-        //source.recycle();
-        return bitmap;
+        return BitmapResource.obtain(bitmap, mBitmapPool).get();
     }
 
     public void drawRoundRect(Canvas canvas, Paint paint, float width, float height) {

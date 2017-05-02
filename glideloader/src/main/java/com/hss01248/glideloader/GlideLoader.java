@@ -2,11 +2,8 @@ package com.hss01248.glideloader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -18,13 +15,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
-import com.bumptech.glide.load.resource.bitmap.BitmapResource;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.BigImageViewer;
@@ -59,9 +51,11 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
 public class GlideLoader implements ILoader {
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
-        Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
+        /*Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
         GlideBuilder builder = new GlideBuilder(context);
-        builder.setDiskCache(new InternalCacheDiskCacheFactory(context, GlobalConfig.cacheFolderName,cacheSizeInM*1024*1024));
+        builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
+
+        builder.setDiskCache(new InternalCacheDiskCacheFactory(context, GlobalConfig.cacheFolderName,cacheSizeInM*1024*1024));*/
         BigImageViewer.initialize(GlideImageLoader.with(context));
 
     }
@@ -74,15 +68,17 @@ public class GlideLoader implements ILoader {
                 public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                     // do something with the bitmap
                     // for demonstration purposes, let's just set it to an ImageView
-                    BitmapPool mBitmapPool = Glide.get(ImageLoader.context).getBitmapPool();
+                   // BitmapPool mBitmapPool = Glide.get(ImageLoader.context).getBitmapPool();
+                    //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
                     if(config.isNeedBlur()){
-                        bitmap = blur(bitmap,config.getBlurRadius(),mBitmapPool);
+                        bitmap = blur(bitmap,config.getBlurRadius(),true);
                     }
                     if(config.getShapeMode() == ShapeMode.OVAL){
-                        bitmap = cropCirle(bitmap,mBitmapPool);
+                        bitmap = MyUtil.cropCirle(bitmap,true);
                     }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
-                        bitmap = rectRound(bitmap,config.getRectRoundRadius(),0,mBitmapPool);
+                        bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
                     }
+
                     config.getBitmapListener().onSuccess(bitmap);
                 }
 
@@ -324,55 +320,26 @@ public class GlideLoader implements ILoader {
         Glide.with(GlobalConfig.context).onLowMemory();
     }
 
-    public static Bitmap cropCirle(Bitmap source,BitmapPool mBitmapPool) {
-        //BitmapPool mBitmapPool = Glide.get(ImageLoader.context).getBitmapPool();
 
 
-        int size = Math.min(source.getWidth(), source.getHeight());
-
-        int width = (source.getWidth() - size) / 2;
-        int height = (source.getHeight() - size) / 2;
-
-        Bitmap bitmap = mBitmapPool.get(size, size, Bitmap.Config.RGB_565);
-        if (bitmap == null) {
-            bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565);
-        }
-
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        BitmapShader shader =
-                new BitmapShader(source, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
-        if (width != 0 || height != 0) {
-            // source isn't square, move viewport to center
-            Matrix matrix = new Matrix();
-            matrix.setTranslate(-width, -height);
-            shader.setLocalMatrix(matrix);
-        }
-        paint.setShader(shader);
-        paint.setAntiAlias(true);
-
-        float r = size / 2f;
-        canvas.drawCircle(r, r, r, paint);
-        return BitmapResource.obtain(bitmap, mBitmapPool).get();
-    }
-
-    public static Bitmap blur(Bitmap source,int mRadius,BitmapPool mBitmapPool){
-        int mSampling = 2;
+    public static Bitmap blur(Bitmap source,int mRadius,boolean recycleOriginal){
+        int mSampling = 1;
         int width = source.getWidth();
         int height = source.getHeight();
         int scaledWidth = width / mSampling;
         int scaledHeight = height / mSampling;
+        Bitmap bitmap
+         = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.scale(1 / (float) mSampling, 1 / (float) mSampling);
+            Paint paint = new Paint();
+            paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+            canvas.drawBitmap(source, 0, 0, paint);
 
-        Bitmap bitmap = mBitmapPool.get(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888);
-        if (bitmap == null) {
-            bitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888);
-        }
 
-        Canvas canvas = new Canvas(bitmap);
-        canvas.scale(1 / (float) mSampling, 1 / (float) mSampling);
-        Paint paint = new Paint();
-        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
-        canvas.drawBitmap(source, 0, 0, paint);
+
+
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             try {
@@ -383,24 +350,16 @@ public class GlideLoader implements ILoader {
         } else {
             bitmap = FastBlur.blur(bitmap, mRadius, true);
         }
-
-        return BitmapResource.obtain(bitmap, mBitmapPool).get();
-    }
-
-    public static Bitmap rectRound(Bitmap source,int radius, int margin,BitmapPool mBitmapPool){
-        int width = source.getWidth();
-        int height = source.getHeight();
-
-        Bitmap bitmap = mBitmapPool.get(width, height, Bitmap.Config.ARGB_8888);
-        if (bitmap == null) {
-            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        if(recycleOriginal){
+            //source.recycle();
         }
 
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
-        new RoundedCornersTransformation2(mBitmapPool,radius,margin).drawRoundRect(canvas, paint, width, height);
-        return BitmapResource.obtain(bitmap, mBitmapPool).get();
+        return bitmap;
     }
+
+
+
+
+
+
 }

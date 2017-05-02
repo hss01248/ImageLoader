@@ -2,7 +2,7 @@ package com.hss01248.imageloaderdemo;
 
 import android.app.Application;
 
-import com.hss01248.frescoloader.FrescoLoader;
+import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.image.ImageLoader;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -17,7 +17,7 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ImageLoader.init(getApplicationContext(), 40,new FrescoLoader());
+        ImageLoader.init(getApplicationContext(), 40,new GlideLoader());
         LeakCanary.install(this);
         MyToast.init(this,true,true);
         //Logger.initialize(new Settings());

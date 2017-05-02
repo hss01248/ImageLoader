@@ -33,6 +33,7 @@ public class ImageLoader {
     public static void init(final Context context, int cacheSizeInM,ILoader imageLoader){
         ImageLoader.context = context;
         GlobalConfig.init(context,cacheSizeInM,imageLoader);
+        //imageLoader.init();
     }
 
     public static ILoader getActualLoader(){

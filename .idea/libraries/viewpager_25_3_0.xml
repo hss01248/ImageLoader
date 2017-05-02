@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="viewpager-25.3.0">
     <CLASSES>
-      <root url="file://$USER_HOME$/.android/build-cache/b8f9cea8be8b32a58c0c013eff153a4c35fbf3f6/output/res" />
-      <root url="jar://$USER_HOME$/.android/build-cache/b8f9cea8be8b32a58c0c013eff153a4c35fbf3f6/output/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.android/build-cache/59ecf920f89822ddaac302066ff94c34f42759cb/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/59ecf920f89822ddaac302066ff94c34f42759cb/output/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

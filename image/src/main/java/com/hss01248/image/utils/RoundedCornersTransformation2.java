@@ -1,4 +1,4 @@
-package com.hss01248.glideloader;
+package com.hss01248.image.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -48,7 +48,7 @@ public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
         int height = source.getHeight();
 
 
-        Bitmap bitmap =  Bitmap.createBitmap(width, height, source.getConfig());
+        Bitmap bitmap =  Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
 
         Canvas canvas = new Canvas(bitmap);

@@ -58,19 +58,31 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> datas = new ArrayList<>();
 
-
-
-
-
         ImageLoader.with(this)
                 .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
                 // .res(R.drawable.thegif)
                 .placeHolder(R.mipmap.ic_launcher,false)
                 .widthHeight(250, 150)
-                .asCircle(R.color.colorPrimary)
+                .asCircle(R.color.colorAccent)
                 .blur(40)
-                .into(ivUrl);
+                .asBitmap(new SingleConfig.BitmapListener() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+
+                        ivUrl.setImageBitmap(bitmap);
+                        Log.e("ee","ivUrl  bitmap.config:" + bitmap.getConfig());
+                        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            ivUrl.setBackground(new BitmapDrawable(bitmap));
+                        }*/
+                    }
+
+                    @Override
+                    public void onFail() {
+
+                    }
+                });
+                //.into(ivUrl);
 
 
         ImageLoader.with(this)
@@ -84,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         Log.e("bitmap", bitmap.getWidth() + "---height:" + bitmap.getHeight() + "--" + bitmap.toString());
+
                         ivRes.setImageBitmap(bitmap);
+                        Log.e("dd","ivRes  bitmap.config:" + bitmap.getConfig());
                     }
 
                     @Override

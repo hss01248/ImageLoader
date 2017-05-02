@@ -3,7 +3,11 @@ package com.hss01248.frescoloader;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
+import android.renderscript.RSRuntimeException;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -38,7 +42,7 @@ import com.facebook.imagepipeline.request.Postprocessor;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.frescoloader.big.FrescoImageLoader;
-import com.hss01248.frescoloader.gif.GifUtils;
+import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
@@ -49,6 +53,8 @@ import com.hss01248.image.interfaces.ILoader;
 import java.io.File;
 
 import jp.wasabeef.fresco.processors.BlurPostprocessor;
+import jp.wasabeef.fresco.processors.internal.FastBlur;
+import jp.wasabeef.fresco.processors.internal.RSBlur;
 import okhttp3.OkHttpClient;
 
 import static com.hss01248.image.config.GlobalConfig.context;
@@ -100,7 +106,7 @@ public class FrescoLoader implements ILoader {
 
     }
 
-    private void requestForImageView(SingleConfig config) {
+    private void requestForImageView(final SingleConfig config) {
         if(config.getTarget() instanceof BigImageView){
             MyUtil.viewBigImage(config);
             return;
@@ -129,7 +135,9 @@ public class FrescoLoader implements ILoader {
 
                 @Override
                 public void onFail() {
-
+                    if(config.getErrorResId() >0){
+                        imageView.setImageResource(config.getErrorResId());
+                    }
                 }
             });
             requestBitmap(config);
@@ -306,46 +314,27 @@ public class FrescoLoader implements ILoader {
         final ImageRequest request = buildRequest(config);
         final String finalUrl = request.getSourceUri().toString();//;MyUtil.appendUrl(config.getUrl());
         Log.e("uri",finalUrl);
+
         DataSource<CloseableReference<CloseableImage>> dataSource = Fresco.getImagePipeline().fetchDecodedImage(request, GlobalConfig.context);
 
 
 
 
-        dataSource.subscribe(new MyBaseBitmapDataSubscriber() {
+        dataSource.subscribe(new MyBaseBitmapDataSubscriber(finalUrl,config.getWidth(),config.getHeight()) {
             @Override
-            protected void onNewResultImpl(Bitmap bitmap) {
+            protected void onNewResultImpl(Bitmap bitmap,DataSource<CloseableReference<CloseableImage>> dataSource) {
                 //注意，gif图片解码方法与普通图片不一样，是无法拿到bitmap的。如果要把gif的第一帧的bitmap返回，怎么做？
                 //GifImage.create(bytes).decode(1l,9).getFrameInfo(1).
+                if(config.getShapeMode() == ShapeMode.OVAL){
+                    bitmap = MyUtil.cropCirle(bitmap,false);
 
-                if(bitmap!=null ){
-                    if(bitmap.isRecycled()){
-                        config.getBitmapListener().onFail();
-                        return;
-                    }else {
-                        config.getBitmapListener().onSuccess(bitmap);
-                        return;
-                    }
+                }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
+                    bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
                 }
 
-                File cacheFile  = getFileFromDiskCache(finalUrl);
-                if(cacheFile ==null){
-                    config.getBitmapListener().onFail();
-                    return;
-                }
-                //还要判断文件是不是gif格式的
-                if (!"gif".equalsIgnoreCase(MyUtil.getRealType(cacheFile))){
-                    config.getBitmapListener().onFail();
-                    return;
-                }
 
-                Bitmap bitmapGif = GifUtils.getBitmapFromGifFile(cacheFile);//拿到gif第一帧的bitmap
-                Bitmap target = MyUtil.compressBitmap(bitmapGif, true, config.getWidth(), config.getHeight());//将bitmap压缩到指定宽高。
-                if (target != null) {
-                    config.getBitmapListener().onSuccess(target);
-                } else {
-                    config.getBitmapListener().onFail();
-                }
 
+                config.getBitmapListener().onSuccess(bitmap);
             }
 
             @Override
@@ -456,4 +445,39 @@ public class FrescoLoader implements ILoader {
     public  void  clearAllMemoryCaches(){
         Fresco.getImagePipeline().clearMemoryCaches();
     }
+
+
+    public static Bitmap blur(Bitmap source,int mRadius,boolean recycleOriginal){
+        int mSampling = 2;
+        int width = source.getWidth();
+        int height = source.getHeight();
+        int scaledWidth = width / mSampling;
+        int scaledHeight = height / mSampling;
+
+        Bitmap bitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, source.getConfig());
+
+
+        Canvas canvas = new Canvas(bitmap);
+        canvas.scale(1 / (float) mSampling, 1 / (float) mSampling);
+        Paint paint = new Paint();
+        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+        canvas.drawBitmap(source, 0, 0, paint);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            try {
+                bitmap = RSBlur.blur(ImageLoader.context, bitmap, mRadius);
+            } catch (RSRuntimeException e) {
+                bitmap = FastBlur.blur(bitmap, mRadius, true);
+            }
+        } else {
+            bitmap = FastBlur.blur(bitmap, mRadius, true);
+        }
+        if(recycleOriginal){
+            source.recycle();
+        }
+
+        return bitmap;
+    }
+
+
 }

@@ -1,7 +1,10 @@
 package com.hss01248.image;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -9,6 +12,7 @@ import android.util.Log;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.utils.RoundedCornersTransformation2;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +34,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
-
 
 
 /**
@@ -396,6 +399,56 @@ public class MyUtil {
         }
 
     }
+
+
+
+    public static Bitmap rectRound(Bitmap source,int radius, int margin){
+        return new RoundedCornersTransformation2(radius,margin).transform(source,source.getWidth(),source.getHeight());
+    }
+
+    public static Bitmap cropCirle(Bitmap source,boolean recycleOriginal) {
+        //BitmapPool mBitmapPool = Glide.get(ImageLoader.context).getBitmapPool();
+
+
+        int size = Math.min(source.getWidth(), source.getHeight());
+
+        int width = (source.getWidth() - size) / 2;
+        int height = (source.getHeight() - size) / 2;
+        //source.setHasAlpha(true);
+        Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        //bitmap.setHasAlpha(true);
+
+
+
+        Canvas canvas = new Canvas(bitmap);
+
+        //canvas.drawColor(Color.TRANSPARENT);
+        //canvas.setBitmap(bitmap);
+        Paint paint = new Paint();
+        //paint.setColor(Color.TRANSPARENT);
+        //paint.setColorFilter()
+        BitmapShader shader =
+                new BitmapShader(source, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+        if (width != 0 || height != 0) {
+            // source isn't square, move viewport to center
+            Matrix matrix = new Matrix();
+            matrix.setTranslate(-width, -height);
+            shader.setLocalMatrix(matrix);
+        }
+        paint.setShader(shader);
+        paint.setAntiAlias(true);
+
+        float r = size / 2f;
+        canvas.drawCircle(r, r, r, paint);
+        if(recycleOriginal){
+            source.recycle();
+        }
+
+        return bitmap;
+    }
+
+
+
 
 
 

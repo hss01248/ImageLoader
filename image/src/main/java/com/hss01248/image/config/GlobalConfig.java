@@ -62,7 +62,7 @@ public class GlobalConfig {
         GlobalConfig.loader = imageLoader;
         //oritation = context.getResources().getConfiguration().orientation;
         //GlobalConfig.userFresco = userFresco;
-        getLoader().init(context,cacheSizeInM);
+        imageLoader.init(context,cacheSizeInM);
 
 
 
