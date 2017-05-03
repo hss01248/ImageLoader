@@ -53,13 +53,7 @@ public class GlideLoader implements ILoader {
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
         Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
-        /*Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
-        GlideBuilder builder = new GlideBuilder(context);
-        builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
-
-        builder.setDiskCache(new InternalCacheDiskCacheFactory(context, GlobalConfig.cacheFolderName,cacheSizeInM*1024*1024));*/
         BigImageViewer.initialize(GlideImageLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
-
     }
 
     @Override
