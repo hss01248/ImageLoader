@@ -34,17 +34,21 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.event.CacheHitEvent;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.loader.BigLoader;
+import com.github.piasy.biv.progress.ProgressInterceptor;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.R;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.InputStream;
 
 import okhttp3.OkHttpClient;
 
@@ -58,7 +62,10 @@ public final class GlideBigLoader implements BigLoader {
 
     private GlideBigLoader(Context context, OkHttpClient okHttpClient) {
         //observable = new Observable();
-        GlideProgressSupport.init(Glide.get(context), okHttpClient);
+        //GlideProgressSupport.init(Glide.get(context), okHttpClient);
+        OkHttpClient client=  okHttpClient.newBuilder().addNetworkInterceptor(new ProgressInterceptor()).build();
+        Glide.get(context).register(GlideUrl.class, InputStream.class,
+                new OkHttpUrlLoader.Factory(client));
         mRequestManager = Glide.with(context);
     }
 
@@ -73,7 +80,8 @@ public final class GlideBigLoader implements BigLoader {
     @Override
     public void loadImage(final Uri uri) {
         mRequestManager
-                .load(uri)//.asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate()
+                .load(uri)
+                //.asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate()
                 .downloadOnly(new SimpleTarget<File>() {
                     @Override
                     public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {

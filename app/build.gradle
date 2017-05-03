@@ -37,8 +37,8 @@ dependencies {
     //compile 'com.github.lsjwzh.RecyclerViewPager:lib:v1.1.2'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
-    compile project(':frescoloader')
-    compile project(':glideloader')
+    compile project(':fresco')
+    compile project(':glide')
     compile project(':picasso')
     compile ('com.github.hss01248:Toasty:2.0.1'){
         exclude group: 'com.android.support'

@@ -24,7 +24,7 @@ public class OkHttpProgressResponseBody extends ResponseBody{
 
     private BufferedSource mBufferedSource;
 
-    OkHttpProgressResponseBody(String url, ResponseBody responseBody) {
+    public  OkHttpProgressResponseBody(String url, ResponseBody responseBody) {
         this.mUrl = url;
         this.mResponseBody = responseBody;
     }

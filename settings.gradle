@@ -1,1 +1,1 @@
-include ':app', ':image', ':frescoloader', ':glideloader', ':picasso'
+include ':app', ':image', ':fresco', ':glide', ':picasso'
