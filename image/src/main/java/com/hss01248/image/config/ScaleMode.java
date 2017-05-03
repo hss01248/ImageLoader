@@ -38,6 +38,7 @@ public interface ScaleMode {
     int FIT_START = 7;
     int FIT_END = 8;
     int CENTER_INSIDE = 9;
+    int FACE_CROP = 10;
 
 
 }

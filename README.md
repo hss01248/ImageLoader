@@ -7,7 +7,7 @@
 ## 特点
 
 * api设计参考glide,链式调用
-* 目前底层依赖fresco和glide,直接gradle改一下就切换了
+* 目前底层依赖fresco和glide,picasso,直接gradle改一下就切换了
 * 能够以同样api获取bitmap,所设置的宽高,高斯模糊,圆角或圆形效果均生效.
 * 解决了fresco最新版中,获取到的bitmap是recycled,不能用的问题
 * 基于subsampling-scale-image-view的大图预览功能,带进度和失败状态,能轮播,极致的高清无码,更重要的是非常省内存,绝不泄漏
@@ -373,6 +373,20 @@ Add it in your root build.gradle at the end of repositories:
 
 
 
+## 脸部识别
+
+> 因为耗时长,需要依赖com.google.android.gms:play-services,所以没有加入到包中,但已预留相关接口
+>
+> 需要的自行修改源码添加即可
+
+
+
+https://github.com/aryarohit07/GlideFaceDetectionTransformation
+
+https://github.com/aryarohit07/PicassoFaceDetectionTransformation
+
+https://github.com/aryarohit07/FrescoFaceDetectionProcessor
+
 
 
 # thanks
@@ -384,3 +398,24 @@ https://github.com/Piasy/BigImageViewer
  [Fresco 5.0以上内存持续增长问题优化](http://blog.csdn.net/honjane/article/details/65629799)
 
 https://github.com/AlexMofer/RecyclePagerAdapter
+
+bitmap转换器:
+
+https://github.com/wasabeef/fresco-processors
+
+https://github.com/wasabeef/glide-transformations
+
+https://github.com/wasabeef/picasso-transformations
+
+
+
+
+
+extend:
+
+https://github.com/JakeWharton/picasso2-okhttp3-downloader
+
+https://github.com/amitshekhariitbhu/GlideBitmapPool
+
+https://github.com/peng8350/LoadingProgress
+

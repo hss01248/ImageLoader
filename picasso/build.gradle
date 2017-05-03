@@ -22,16 +22,17 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.0'
     testCompile 'junit:junit:4.12'
     compile project(':image')
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'jp.wasabeef:glide-transformations:2.0.1'
-    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
-    //compile 'com.github.aryarohit07:glide-facedetection-transformation:0.3.0'//https://github.com/aryarohit07/GlideFaceDetectionTransformation
-
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'jp.wasabeef:picasso-transformations:2.1.2'
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+    //compile 'com.github.aryarohit07:picasso-facedetection-transformation:0.3.0'
+    // If you want to use the GPU Filters
+    //compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 }

@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/frescoloader/frescoloader.iml" filepath="$PROJECT_DIR$/frescoloader/frescoloader.iml" />
       <module fileurl="file://$PROJECT_DIR$/glideloader/glideloader.iml" filepath="$PROJECT_DIR$/glideloader/glideloader.iml" />
       <module fileurl="file://$PROJECT_DIR$/image/image.iml" filepath="$PROJECT_DIR$/image/image.iml" />
+      <module fileurl="file://$PROJECT_DIR$/picasso/picasso.iml" filepath="$PROJECT_DIR$/picasso/picasso.iml" />
     </modules>
   </component>
 </project>

@@ -35,7 +35,7 @@ import java.io.File;
  * Created by Piasy{github.com/Piasy} on 08/11/2016.
  */
 
-public interface ImageLoader {
+public interface BigLoader {
 
     void loadImage(Uri uri);
 

@@ -2,6 +2,8 @@ package com.hss01248.image;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,11 +30,21 @@ public class ImageLoader {
 
     public static Context context;
 
+     static Handler getHandler() {
+         if(handler==null){
+             handler = new Handler(Looper.getMainLooper());
+         }
+        return handler;
+    }
+
+    static Handler handler;
+
 
 
     public static void init(final Context context, int cacheSizeInM,ILoader imageLoader){
         ImageLoader.context = context;
         GlobalConfig.init(context,cacheSizeInM,imageLoader);
+        handler = new Handler(Looper.getMainLooper());
         //imageLoader.init();
     }
 
@@ -122,7 +134,7 @@ public class ImageLoader {
     }
 
     public static void  clearAllMemoryCaches(){
-        GlobalConfig.getLoader().clearAllMemoryCaches();
+        GlobalConfig.getLoader().onLowMemory();
     }
 
 

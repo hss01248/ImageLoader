@@ -41,7 +41,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
-import com.hss01248.frescoloader.big.FrescoImageLoader;
+import com.hss01248.frescoloader.big.BigImageLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
@@ -91,7 +91,7 @@ public class FrescoLoader implements ILoader {
                 .build();
         //Fresco.initialize(context, config);
 
-        BigImageViewer.initialize(FrescoImageLoader.with(context,config));
+        BigImageViewer.initialize(BigImageLoader.with(context,config));
 
     }
 
@@ -279,9 +279,13 @@ public class FrescoLoader implements ILoader {
         if(config.isNeedBlur()){
             postprocessor = new BlurPostprocessor(context,config.getBlurRadius(),2);//todo 高斯模糊的配置
         }
+        if(config.getScaleMode() == ScaleMode.FACE_CROP){
+            //postprocessor = new FaceCenterCrop(config.getWidth(), config.getHeight());//脸部识别
+        }
 
 
         ResizeOptions resizeOptions = getResizeOption(config);
+
 
         builder.setPostprocessor(postprocessor)
                 .setResizeOptions(resizeOptions)//缩放,在解码前修改内存中的图片大小, 配合Downsampling可以处理所有图片,否则只能处理jpg,
@@ -442,7 +446,7 @@ public class FrescoLoader implements ILoader {
     }
 
     @Override
-    public  void  clearAllMemoryCaches(){
+    public  void onLowMemory(){
         Fresco.getImagePipeline().clearMemoryCaches();
     }
 

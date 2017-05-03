@@ -42,6 +42,14 @@ import okhttp3.OkHttpClient;
 
 public class MyUtil {
 
+
+    public static void runOnUI(Runnable runnable){
+        ImageLoader.getHandler().post(runnable);
+    }
+
+
+
+
     public static SingleConfig.BitmapListener getBitmapListenerProxy(final SingleConfig.BitmapListener listener){
         return (SingleConfig.BitmapListener) Proxy.newProxyInstance(SingleConfig.class.getClassLoader(),
                 listener.getClass().getInterfaces(), new InvocationHandler() {
@@ -407,7 +415,7 @@ public class MyUtil {
     }
 
     public static Bitmap cropCirle(Bitmap source,boolean recycleOriginal) {
-        //BitmapPool mBitmapPool = Glide.get(ImageLoader.context).getBitmapPool();
+        //BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
 
 
         int size = Math.min(source.getWidth(), source.getHeight());

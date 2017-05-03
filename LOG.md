@@ -1,5 +1,9 @@
 # UPDATE LOG
 
+## 2017-05-03
+
+* 实现Picasso版本的loader
+
 ## 2017-05-02
 
 * 解决fresco获取bitmap总是被标记为recycled的问题

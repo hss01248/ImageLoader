@@ -25,29 +25,30 @@
 package com.github.piasy.biv;
 
 import android.net.Uri;
-import com.github.piasy.biv.loader.ImageLoader;
+
+import com.github.piasy.biv.loader.BigLoader;
 
 /**
  * Created by Piasy{github.com/Piasy} on 06/11/2016.
  *
  * This is not a singleton, you can initialize it multiple times, but before you initialize it
- * again, it will use the same {@link ImageLoader} globally.
+ * again, it will use the same {@link BigLoader} globally.
  */
 
 public final class BigImageViewer {
     private static volatile BigImageViewer sInstance;
 
-    private final ImageLoader mImageLoader;
+    private final BigLoader mImageLoader;
 
-    private BigImageViewer(ImageLoader imageLoader) {
+    private BigImageViewer(BigLoader imageLoader) {
         mImageLoader = imageLoader;
     }
 
-    public static void initialize(ImageLoader imageLoader) {
+    public static void initialize(BigLoader imageLoader) {
         sInstance = new BigImageViewer(imageLoader);
     }
 
-    public static ImageLoader imageLoader() {
+    public static BigLoader imageLoader() {
         if (sInstance == null) {
             throw new IllegalStateException("You must initialize BigImageViewer before use it!");
         }
@@ -59,7 +60,7 @@ public final class BigImageViewer {
             return;
         }
 
-        ImageLoader imageLoader = imageLoader();
+        BigLoader imageLoader = imageLoader();
         for (Uri uri : uris) {
             imageLoader.prefetch(uri);
         }

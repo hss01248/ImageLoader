@@ -29,7 +29,7 @@ import android.util.Log;
 
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.indicator.DownloadStateEvent;
-import com.github.piasy.biv.loader.ImageLoader;
+import com.github.piasy.biv.loader.BigLoader;
 
 import java.io.File;
 import java.util.Observable;
@@ -42,9 +42,9 @@ import java.util.Observer;
 public abstract class ImageDownloadTarget extends SimpleTarget<File> implements Observer {
     private final String mUrl;
     private final Observable observable;
-    private ImageLoader.Callback callback;
+    private BigLoader.Callback callback;
 
-    protected ImageDownloadTarget(String url, Observable observable, ImageLoader.Callback callback) {
+    protected ImageDownloadTarget(String url, Observable observable, BigLoader.Callback callback) {
         mUrl = url;
         this.observable = observable;
         this.callback = callback;

@@ -38,7 +38,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.event.CacheHitEvent;
 import com.github.piasy.biv.event.ErrorEvent;
-import com.github.piasy.biv.loader.ImageLoader;
+import com.github.piasy.biv.loader.BigLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.R;
 
@@ -52,22 +52,22 @@ import okhttp3.OkHttpClient;
  * Created by Piasy{github.com/Piasy} on 09/11/2016.
  */
 
-public final class GlideImageLoader implements ImageLoader {
+public final class GlideBigLoader implements BigLoader {
     private final RequestManager mRequestManager;
     //private Observable observable;
 
-    private GlideImageLoader(Context context, OkHttpClient okHttpClient) {
+    private GlideBigLoader(Context context, OkHttpClient okHttpClient) {
         //observable = new Observable();
         GlideProgressSupport.init(Glide.get(context), okHttpClient);
         mRequestManager = Glide.with(context);
     }
 
-    public static GlideImageLoader with(Context context) {
+    public static GlideBigLoader with(Context context) {
         return with(context, null);
     }
 
-    public static GlideImageLoader with(Context context, OkHttpClient okHttpClient) {
-        return new GlideImageLoader(context, okHttpClient);
+    public static GlideBigLoader with(Context context, OkHttpClient okHttpClient) {
+        return new GlideBigLoader(context, okHttpClient);
     }
 
     @Override

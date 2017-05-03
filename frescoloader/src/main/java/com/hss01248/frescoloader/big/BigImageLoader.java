@@ -52,7 +52,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.github.piasy.biv.event.CacheHitEvent;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.event.ProgressEvent;
-import com.github.piasy.biv.loader.ImageLoader;
+import com.github.piasy.biv.loader.BigLoader;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.frescoloader.R;
 
@@ -64,32 +64,32 @@ import java.io.File;
  * Created by Piasy{github.com/Piasy} on 08/11/2016.
  */
 
-public final class FrescoImageLoader implements ImageLoader {
+public final class BigImageLoader implements BigLoader {
 
     private final Context mAppContext;
     private final DefaultExecutorSupplier mExecutorSupplier;
     private Handler handler;
 
-    private FrescoImageLoader(Context appContext) {
+    private BigImageLoader(Context appContext) {
         mAppContext = appContext;
 
         mExecutorSupplier = new DefaultExecutorSupplier(Runtime.getRuntime().availableProcessors());
         handler = new Handler(Looper.getMainLooper());
     }
 
-    public static FrescoImageLoader with(Context appContext) {
+    public static BigImageLoader with(Context appContext) {
         return with(appContext, null, null);
     }
 
-    public static FrescoImageLoader with(Context appContext,
-                                                                            ImagePipelineConfig imagePipelineConfig) {
+    public static BigImageLoader with(Context appContext,
+                                      ImagePipelineConfig imagePipelineConfig) {
         return with(appContext, imagePipelineConfig, null);
     }
 
-    public static FrescoImageLoader with(Context appContext,
-                                                                            ImagePipelineConfig imagePipelineConfig, DraweeConfig draweeConfig) {
+    public static BigImageLoader with(Context appContext,
+                                      ImagePipelineConfig imagePipelineConfig, DraweeConfig draweeConfig) {
         Fresco.initialize(appContext, imagePipelineConfig, draweeConfig);
-        return new FrescoImageLoader(appContext);
+        return new BigImageLoader(appContext);
     }
 
     @Override

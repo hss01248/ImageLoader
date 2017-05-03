@@ -24,7 +24,7 @@ import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.event.CacheHitEvent;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.view.BigImageView;
-import com.hss01248.glideloader.big.GlideImageLoader;
+import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
@@ -36,6 +36,8 @@ import com.hss01248.image.interfaces.ILoader;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -53,7 +55,7 @@ public class GlideLoader implements ILoader {
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
         Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
-        BigImageViewer.initialize(GlideImageLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
+        BigImageViewer.initialize(GlideBigLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class GlideLoader implements ILoader {
                 public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                     // do something with the bitmap
                     // for demonstration purposes, let's just set it to an ImageView
-                   // BitmapPool mBitmapPool = Glide.get(ImageLoader.context).getBitmapPool();
+                   // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
                     //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
                     if(config.isNeedBlur()){
                         bitmap = blur(bitmap,config.getBlurRadius(),true);
@@ -166,8 +168,9 @@ public class GlideLoader implements ILoader {
         DrawableTypeRequest request = null;
         if(!TextUtils.isEmpty(config.getUrl())){
             request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
+            //request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
         }else if(!TextUtils.isEmpty(config.getFilePath())){
-            request= requestManager.load(MyUtil.appendUrl(config.getFilePath()));
+            request= requestManager.load(config.getFilePath());
         }else if(!TextUtils.isEmpty(config.getContentProvider())){
             request= requestManager.loadFromMediaStore(Uri.parse(config.getContentProvider()));
         }else if(config.getResId()>0){
@@ -178,10 +181,16 @@ public class GlideLoader implements ILoader {
 
     private void setShapeModeAndBlur(SingleConfig config, DrawableTypeRequest request) {
         int shapeMode = config.getShapeMode();
-        Transformation[] transformation =  new Transformation[2];
-        if(config.isNeedBlur()){
-            transformation[0]=new BlurTransformation(config.getContext(), config.getBlurRadius());
+        List<Transformation> transformations = new ArrayList<>();
+
+        if(config.getScaleMode() == ScaleMode.FACE_CROP){
+            // transformations.add(new FaceCenterCrop(config.getWidth(), config.getHeight()));//脸部识别
         }
+
+        if(config.isNeedBlur()){
+            transformations.add(new BlurTransformation(config.getContext(), config.getBlurRadius()));
+        }
+
 
         switch (shapeMode){
             case ShapeMode.RECT:
@@ -191,8 +200,8 @@ public class GlideLoader implements ILoader {
                 }
                 break;
             case ShapeMode.RECT_ROUND:
-                transformation[1] =
-                new RoundedCornersTransformation(config.getContext(), config.getRectRoundRadius(), 0, RoundedCornersTransformation.CornerType.ALL);
+                transformations.add(new RoundedCornersTransformation(config.getContext(),
+                        config.getRectRoundRadius(), 0, RoundedCornersTransformation.CornerType.ALL));
 
                 if(config.getBorderWidth()>0){
 
@@ -202,7 +211,7 @@ public class GlideLoader implements ILoader {
                 }
                 break;
             case ShapeMode.OVAL:
-                transformation[1] =  new CropCircleTransformation(config.getContext());
+                transformations.add( new CropCircleTransformation(config.getContext()));
                 if(config.getBorderWidth()>0){
 
                 }
@@ -212,13 +221,12 @@ public class GlideLoader implements ILoader {
                 break;
         }
 
-        if(transformation[0] !=null && transformation[1]!=null){
-            request.bitmapTransform(transformation);
-        }else if(transformation[0] !=null && transformation[1]==null){
-            request.bitmapTransform(transformation[0]);
-        }else if(transformation[0] ==null && transformation[1]!=null){
-            request.bitmapTransform(transformation[1]);
+
+        Transformation[] forms = new Transformation[transformations.size()];
+        for (int i = 0; i < transformations.size(); i++) {
+            forms[i] = transformations.get(i);
         }
+        request.bitmapTransform(forms);
     }
 
     @Override
@@ -236,7 +244,7 @@ public class GlideLoader implements ILoader {
     public void clearDiskCache() {
         Glide.get(ImageLoader.context).clearDiskCache();
 
-       /* File dir = new File(ImageLoader.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR);
+       /* File dir = new File(BigLoader.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR);
         if(dir!=null && dir.exists()){
             MyUtil.deleteFolderFile(dir.getAbsolutePath(),false);
         }*/
@@ -312,7 +320,7 @@ public class GlideLoader implements ILoader {
     }
 
     @Override
-    public void clearAllMemoryCaches() {
+    public void onLowMemory() {
         Glide.with(GlobalConfig.context).onLowMemory();
     }
 

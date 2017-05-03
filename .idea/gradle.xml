@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/frescoloader" />
             <option value="$PROJECT_DIR$/glideloader" />
             <option value="$PROJECT_DIR$/image" />
+            <option value="$PROJECT_DIR$/picasso" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

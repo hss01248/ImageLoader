@@ -38,6 +38,6 @@ public interface ILoader {
 
     void trimMemory(int level);
 
-    void clearAllMemoryCaches();
+    void onLowMemory();
 
 }

@@ -48,7 +48,7 @@ import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.event.ProgressEvent;
 import com.github.piasy.biv.indicator.ProgressIndicator;
 import com.github.piasy.biv.indicator.ProgressPieIndicator;
-import com.github.piasy.biv.loader.ImageLoader;
+import com.github.piasy.biv.loader.BigLoader;
 import com.hss01248.image.R;
 
 import org.greenrobot.eventbus.EventBus;
@@ -77,7 +77,7 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     private View mThumbnailView;
     private View placeHolder;
 
-    private final ImageLoader mImageLoader;
+    private final BigLoader mImageLoader;
     private  Map<String,File> mTempImages;
 
    // private View progressView;

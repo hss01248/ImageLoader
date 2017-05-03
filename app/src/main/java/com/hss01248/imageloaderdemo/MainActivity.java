@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 .placeHolder(R.mipmap.ic_launcher,false)
                 .widthHeight(250, 150)
                 .asCircle(R.color.colorAccent)
-                .blur(40)
+               .blur(40)
                 .asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {

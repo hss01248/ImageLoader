@@ -39,5 +39,8 @@ dependencies {
     compile 'com.facebook.fresco:imagepipeline-okhttp3:0.12.0+'
     compile 'jp.wasabeef:fresco-processors:2.0.0'
     //processors
+    compile 'commons-io:commons-io:2.5'
+    //compile 'com.github.aryarohit07:fresco-facedetection-processor:0.1.1'
+    //https://github.com/aryarohit07/FrescoFaceDetectionProcessor,需要依赖com.google.android.gms:play-services-vision:9.4.0
     compile project(':image')
 }
