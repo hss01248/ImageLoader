@@ -78,69 +78,7 @@ public class GlideProgressSupport {
                 new OkHttpUrlLoader.Factory(builder.build()));
     }
 
-    /*public static void forget(String url) {
-        DispatchingProgressListener.forget(url);
-    }
 
-    public static void expect(String url, ProgressListener listener) {
-        DispatchingProgressListener.expect(url, listener);
-    }*/
-
-    public interface ProgressListener {
-        void onDownloadStart(String url);
-
-        void onProgress(String url, long bytesRead, long contentLength);
-
-        void onDownloadFinish(String url);
-
-        void onDownloadFail(String url);
-    }
-
-    /*public abstract class ResponseProgressListener {
-        public String url;
-       public abstract void update(String url, long bytesRead, long contentLength);
-    }*/
-
-     /*static class DispatchingProgressListener implements ProgressListener {
-        private static final Map<String, ProgressListener> LISTENERS = new HashMap<>();
-        private static final Map<String, Integer> PROGRESSES = new HashMap<>();
-
-        static void forget(String url) {
-            if(LISTENERS.containsKey(url))
-            LISTENERS.remove(url);
-            if(PROGRESSES.containsKey(url))
-            PROGRESSES.remove(url);
-        }
-
-        static void expect(String url, ProgressListener listener) {
-            LISTENERS.put(url, listener);
-        }
-
-        @Override
-        public void update(HttpUrl url, final long bytesRead, final long contentLength) {
-            String key = url.toString();
-            final ProgressListener listener = LISTENERS.get(key);
-            if (listener == null) {
-                return;
-            }
-
-            Integer lastProgress = PROGRESSES.get(key);
-            if (lastProgress == null) {
-                // ensure `onStart` is called before `onProgress` and `onFinish`
-                listener.onDownloadStart();
-            }
-            if (contentLength <= bytesRead) {
-                listener.onDownloadFinish();
-                forget(key);
-                return;
-            }
-            int progress = (int) ((float) bytesRead / contentLength * 100);
-            if (lastProgress == null || progress != lastProgress) {
-                PROGRESSES.put(key, progress);
-                listener.onProgress(progress);
-            }
-        }
-    }*/
 
     private static class OkHttpProgressResponseBody extends ResponseBody {
         private final String mUrl;

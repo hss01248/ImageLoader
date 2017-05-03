@@ -48,6 +48,7 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
 
 import java.io.File;
@@ -413,6 +414,11 @@ public class FrescoLoader implements ILoader {
             }
         }
         return localFile;
+    }
+
+    @Override
+    public void getFileFromDiskCache(String url, FileGetter getter) {
+
     }
 
     @Override

@@ -21,8 +21,6 @@ import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.event.CacheHitEvent;
-import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
@@ -31,9 +29,8 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -283,24 +280,28 @@ public class GlideLoader implements ILoader {
      */
     @Override
     public File getFileFromDiskCache(final String url) {
+        return null;
+    }
+
+    @Override
+    public void getFileFromDiskCache(String url, final FileGetter getter) {
         Glide.with(ImageLoader.context)
                 .load(url)
                 .downloadOnly(new SimpleTarget<File>() {
                     @Override
                     public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
                         if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
-                            EventBus.getDefault().post(new CacheHitEvent(resource,url));
+                            getter.onSuccess(resource);
                         }else {
-                            EventBus.getDefault().post(new ErrorEvent(url));
+                            getter.onFail();
                         }
                     }
 
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                        EventBus.getDefault().post(new ErrorEvent(url));
+                        getter.onFail();
                     }
                 });
-        return null;
     }
 
     /**

@@ -2,16 +2,13 @@ package com.hss01248.picasso;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Build;
-import android.renderscript.RSRuntimeException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
@@ -19,8 +16,10 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
 import com.hss01248.image.utils.ThreadPoolFactory;
+import com.hss01248.picasso.big.PicassoBigLoader;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -35,8 +34,6 @@ import java.util.List;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
-import jp.wasabeef.picasso.transformations.internal.FastBlur;
-import jp.wasabeef.picasso.transformations.internal.RSBlur;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -60,6 +57,9 @@ public class PicassoLoader implements ILoader {
     private List<String> paths = new ArrayList<>();
     private Picasso picasso;
     private OkHttpClient client;
+    private static volatile int count;
+
+
 
     private Picasso getPicasso(){
         if(picasso ==null){
@@ -75,6 +75,8 @@ public class PicassoLoader implements ILoader {
     public void init(Context context, int cacheSizeInM) {//Picasso默认最大容量250MB的文件缓存
        // Picasso.get(context).setMemoryCategory(MemoryCategory.NORMAL);
         //BigImageViewer.initialize(PicassoImageLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
+        getPicasso();
+        BigImageViewer.initialize(new PicassoBigLoader(client));
 
     }
 
@@ -330,32 +332,6 @@ public class PicassoLoader implements ILoader {
      */
     @Override
     public File getFileFromDiskCache(final String url) {
-        Request request = new Request.Builder().url(url).build();
-        client.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                File file = new File(GlobalConfig.context.getCacheDir(), "tmp.jpg");
-                BufferedSource source = response.body().source();
-                Sink sink = Okio.sink(file);
-                source.readAll(sink);
-                source.close();
-                sink.close();
-
-                //todo 异步
-            }
-        });
-
-
-
-
-
-
-
 
         Picasso.with(ImageLoader.context)
                 .load(url)
@@ -371,6 +347,42 @@ public class PicassoLoader implements ILoader {
                     }
                 });
         return null;
+    }
+
+    @Override
+    public void getFileFromDiskCache(final String url, final FileGetter getter) {
+        ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+                Request request = new Request.Builder().url(url).build();
+                client.newCall(request).enqueue(new okhttp3.Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        getter.onFail();
+
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        final File file = new File(GlobalConfig.context.getCacheDir(), count%30+"-tmp.jpg");
+                        BufferedSource source = response.body().source();
+                        Sink sink = Okio.sink(file);
+                        source.readAll(sink);
+                        source.close();
+                        sink.close();
+                        count++;
+
+                        MyUtil.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getter.onSuccess(file);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
     }
 
     /**
@@ -397,38 +409,5 @@ public class PicassoLoader implements ILoader {
 
 
 
-    public static Bitmap blur(Bitmap source, int mRadius, boolean recycleOriginal){
-        int mSampling = 1;
-        int width = source.getWidth();
-        int height = source.getHeight();
-        int scaledWidth = width / mSampling;
-        int scaledHeight = height / mSampling;
-        Bitmap bitmap
-                = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.scale(1 / (float) mSampling, 1 / (float) mSampling);
-        Paint paint = new Paint();
-        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
-        canvas.drawBitmap(source, 0, 0, paint);
 
-
-
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            try {
-                bitmap = RSBlur.blur(ImageLoader.context, bitmap, mRadius);
-            } catch (RSRuntimeException e) {
-                bitmap = FastBlur.blur(bitmap, mRadius, true);
-            }
-        } else {
-            bitmap = FastBlur.blur(bitmap, mRadius, true);
-        }
-        if(recycleOriginal){
-            //source.recycle();
-        }
-
-        return bitmap;
-    }
 }

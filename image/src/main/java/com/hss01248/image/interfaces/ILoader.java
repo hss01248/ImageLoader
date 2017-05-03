@@ -34,6 +34,10 @@ public interface ILoader {
 
     File getFileFromDiskCache(String url);
 
+    void getFileFromDiskCache(String url,FileGetter getter);
+
+
+
    boolean  isCached(String url);
 
     void trimMemory(int level);
