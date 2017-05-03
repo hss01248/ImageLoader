@@ -37,6 +37,13 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import jp.wasabeef.picasso.transformations.internal.FastBlur;
 import jp.wasabeef.picasso.transformations.internal.RSBlur;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okio.BufferedSource;
+import okio.Okio;
+import okio.Sink;
 
 import static com.squareup.picasso.MemoryPolicy.NO_CACHE;
 import static com.squareup.picasso.MemoryPolicy.NO_STORE;
@@ -51,14 +58,24 @@ public class PicassoLoader implements ILoader {
 
     private static final String PICASSO = "picasso";
     private List<String> paths = new ArrayList<>();
+    private Picasso picasso;
+    private OkHttpClient client;
+
+    private Picasso getPicasso(){
+        if(picasso ==null){
+            client = MyUtil.getClient(GlobalConfig.ignoreCertificateVerify);
+            picasso =  new Picasso.Builder(GlobalConfig.context)
+                    .downloader(new OkHttp3Downloader(client))
+                    .build();
+        }
+        return picasso;
+    }
 
     @Override
     public void init(Context context, int cacheSizeInM) {//Picasso默认最大容量250MB的文件缓存
        // Picasso.get(context).setMemoryCategory(MemoryCategory.NORMAL);
         //BigImageViewer.initialize(PicassoImageLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
-        Picasso picasso = new Picasso.Builder(context)
-                .downloader(new OkHttp3Downloader(MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)))
-                .build();
+
     }
 
     @Override
@@ -183,7 +200,7 @@ public class PicassoLoader implements ILoader {
     private RequestCreator getDrawableTypeRequest(SingleConfig config) {
 
         RequestCreator request = null;
-        Picasso picasso = Picasso.with(GlobalConfig.context);
+        Picasso picasso = getPicasso();
         if(!TextUtils.isEmpty(config.getUrl())){
             request= picasso.load(MyUtil.appendUrl(config.getUrl()));
             paths.add(config.getUrl());
@@ -306,11 +323,40 @@ public class PicassoLoader implements ILoader {
     /**
      *
      * http://blog.csdn.net/u014592587/article/details/47070075
+     *
+     * https://github.com/square/picasso/issues/1025
      * @param url
      * @return
      */
     @Override
     public File getFileFromDiskCache(final String url) {
+        Request request = new Request.Builder().url(url).build();
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                File file = new File(GlobalConfig.context.getCacheDir(), "tmp.jpg");
+                BufferedSource source = response.body().source();
+                Sink sink = Okio.sink(file);
+                source.readAll(sink);
+                source.close();
+                sink.close();
+
+                //todo 异步
+            }
+        });
+
+
+
+
+
+
+
+
         Picasso.with(ImageLoader.context)
                 .load(url)
                 .fetch(new Callback() {
