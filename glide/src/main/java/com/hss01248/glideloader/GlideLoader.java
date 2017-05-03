@@ -180,8 +180,8 @@ public class GlideLoader implements ILoader {
         int shapeMode = config.getShapeMode();
         List<Transformation> transformations = new ArrayList<>();
 
-        if(config.getScaleMode() == ScaleMode.FACE_CROP){
-            // transformations.add(new FaceCenterCrop(config.getWidth(), config.getHeight()));//脸部识别
+        if(config.isCropFace()){
+            // transformations.add(new FaceCenterCrop());//脸部识别
         }
 
         if(config.isNeedBlur()){

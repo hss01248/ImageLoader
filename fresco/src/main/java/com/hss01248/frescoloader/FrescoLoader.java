@@ -280,7 +280,7 @@ public class FrescoLoader implements ILoader {
         if(config.isNeedBlur()){
             postprocessor = new BlurPostprocessor(context,config.getBlurRadius(),2);//todo 高斯模糊的配置
         }
-        if(config.getScaleMode() == ScaleMode.FACE_CROP){
+        if(config.isCropFace()){
             //postprocessor = new FaceCenterCrop(config.getWidth(), config.getHeight());//脸部识别
         }
 

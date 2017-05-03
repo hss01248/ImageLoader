@@ -175,7 +175,11 @@ public class SingleConfig {
 
     private BitmapListener bitmapListener;
 
+    public boolean isCropFace() {
+        return cropFace;
+    }
 
+    private boolean cropFace;
 
     /*public BigImageView getBigImageView() {
         return bigImageView;
@@ -234,6 +238,7 @@ public class SingleConfig {
         this.loadingResId = builder.loadingResId;
         this.errorResId = builder.errorResId;
 
+        this.cropFace = builder.cropFace;
        // this.bigImageView = builder.bigImageView;
 
 
@@ -302,6 +307,7 @@ public class SingleConfig {
 
         private int borderWidth;//边框的宽度
         private int borderColor;//边框颜色
+        private boolean cropFace;
 
         /*private BigImageView bigImageView ;//可放大和缩放的大图
 
@@ -349,6 +355,10 @@ public class SingleConfig {
         }
         public ConfigBuilder error(int  errorResId){
             this.errorResId = errorResId;
+            return this;
+        }
+        public ConfigBuilder cropFace(){
+            this.cropFace = true;
             return this;
         }
 

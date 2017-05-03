@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+       // GlideFaceDetector.initialize(this);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
                 show();
             }
         }, 1000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //GlideFaceDetector.releaseDetector();
     }
 
     private void show() {
@@ -65,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 .placeHolder(R.mipmap.ic_launcher,false)
                 .widthHeight(250, 150)
                 .asCircle(R.color.colorAccent)
-               .blur(40)
+               //.blur(40)
                 .asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 .widthHeight(100, 80)
                 .rectRoundCorner(5, R.color.colorPrimary)
-                .blur(5)
+               // .blur(5)
                 .asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
@@ -108,6 +114,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         //.into(ivRes);
+
+        ImageLoader.with(this)
+                .cropFace()
+                .widthHeight(100,100)
+                .asCircle(R.color.colorAccent)
+                .url("https://github.com/aryarohit07/PicassoFaceDetectionTransformation/raw/master/images/original_image1.jpg?raw=true")
+                .into(ivUrlBlur);
 
 
     }

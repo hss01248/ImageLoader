@@ -375,9 +375,11 @@ Add it in your root build.gradle at the end of repositories:
 
 ## 脸部识别
 
-> 因为耗时长,需要依赖com.google.android.gms:play-services,所以没有加入到包中,但已预留相关接口
+> 因为耗时长,需要依赖com.google.android.gms:play-services,国内阉割版rom用不了.
 >
-> 需要的自行修改源码添加即可
+> 所以没有引入到包中,但已预留相关接口
+>
+> 需要的自行打开那一行代码注释即可试用
 
 
 
