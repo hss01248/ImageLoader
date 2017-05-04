@@ -368,12 +368,13 @@ Add it in your root build.gradle at the end of repositories:
     }
 ```
 
-**Step 2.** Add the dependency
+**Step 2.** Add the dependency( 三选一即可)
 
 ```
     dependencies {
-              compile 'com.github.hss01248.ImageLoader:frescoloader:1.0.4'//如果使用fresco
-              compile 'com.github.hss01248.ImageLoader:glideloader:1.0.4'//如果使用glide
+              compile 'com.github.hss01248.ImageLoader:fresco:1.0.5'//如果使用fresco
+              compile 'com.github.hss01248.ImageLoader:glide:1.0.5'//如果使用glide
+              compile 'com.github.hss01248.ImageLoader:picasso:1.0.5'//如果使用glide
     }
 ```
 
