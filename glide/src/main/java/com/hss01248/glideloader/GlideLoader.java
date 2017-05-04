@@ -218,12 +218,16 @@ public class GlideLoader implements ILoader {
                 break;
         }
 
-
-        Transformation[] forms = new Transformation[transformations.size()];
-        for (int i = 0; i < transformations.size(); i++) {
-            forms[i] = transformations.get(i);
+        if(transformations.size()>0){
+            Transformation[] forms = new Transformation[transformations.size()];
+            for (int i = 0; i < transformations.size(); i++) {
+                forms[i] = transformations.get(i);
+            }
+            request.bitmapTransform(forms);
         }
-        request.bitmapTransform(forms);
+
+
+
     }
 
     @Override

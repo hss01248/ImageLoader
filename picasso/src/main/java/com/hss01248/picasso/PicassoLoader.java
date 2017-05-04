@@ -261,8 +261,11 @@ public class PicassoLoader implements ILoader {
                 }
                 break;
         }
+        if(transformations.size()>0){
+            request.transform(transformations);
+        }
 
-        request.transform(transformations);
+
     }
 
     @Override

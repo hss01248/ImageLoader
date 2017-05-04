@@ -293,6 +293,11 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
 
         this.url = uri.toString();
         mThumbnail = thumbnail;
+        if(url.startsWith("file:///")){
+            onStart();
+            showContent(new File(url.substring(8)));
+            return;
+        }
 
 
         if(mTempImages.containsKey(this.url)){
@@ -426,8 +431,8 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCacheHitEvent(CacheHitEvent2 event){
-        Log.d("BigImageView", "onCacheHitEvent---event url: " + event.url);
-        Log.d("BigImageView", "onCacheHitEvent---old url: " + this.url);
+        Log.d("BigImageView", "onCacheHitEvent2---event url: " + event.url);
+        Log.d("BigImageView", "onCacheHitEvent2---old url: " + this.url);
         if(this.url.equals(event.url) ){
             mImageView.setImage(ImageSource.uri(event.uri));
             showContent(null);
