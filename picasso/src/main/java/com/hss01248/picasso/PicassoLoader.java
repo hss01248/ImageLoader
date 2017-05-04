@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -53,11 +54,12 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
 
 public class PicassoLoader implements ILoader {
 
-    private static final String PICASSO = "picasso";
+    private static final String TAG_PICASSO = "picasso";
     private List<String> paths = new ArrayList<>();
     private Picasso picasso;
     private OkHttpClient client;
     private static volatile int count;
+    private static ConcurrentHashMap<String,File> fileCache = new ConcurrentHashMap<>();
 
 
 
@@ -92,7 +94,7 @@ public class PicassoLoader implements ILoader {
 
 
             final RequestCreator request = getDrawableTypeRequest(config);
-            request.tag(PICASSO).config(Bitmap.Config.RGB_565);
+            request.tag(TAG_PICASSO).config(Bitmap.Config.RGB_565);
 
             if(request ==null){
                 return;
@@ -265,13 +267,13 @@ public class PicassoLoader implements ILoader {
 
     @Override
     public void pause() {
-        Picasso.with(GlobalConfig.context).pauseTag(PICASSO);
+        Picasso.with(GlobalConfig.context).pauseTag(TAG_PICASSO);
 
     }
 
     @Override
     public void resume() {
-        Picasso.with(GlobalConfig.context).resumeTag(PICASSO);
+        Picasso.with(GlobalConfig.context).resumeTag(TAG_PICASSO);
     }
 
 
@@ -286,6 +288,7 @@ public class PicassoLoader implements ILoader {
         if(dir!=null && dir.exists()){
             MyUtil.deleteFolderFile(dir.getAbsolutePath(),false);
         }
+       PicassoBigLoader.clearCache();
     }
 
     @Override
@@ -351,6 +354,9 @@ public class PicassoLoader implements ILoader {
 
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
+        if(!url.startsWith("http")){
+            return;
+        }
         ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
             @Override
             public void run() {
@@ -358,13 +364,33 @@ public class PicassoLoader implements ILoader {
                 client.newCall(request).enqueue(new okhttp3.Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        getter.onFail();
+                        MyUtil.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getter.onFail();
+                            }
+                        });
+
 
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        final File file = new File(GlobalConfig.context.getCacheDir(), count%30+"-tmp.jpg");
+                        if(!response.isSuccessful()){
+                            MyUtil.runOnUIThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getter.onFail();
+                                }
+                            });
+
+                            return;
+                        }
+                        File dir = new File(GlobalConfig.context.getCacheDir(),"picassobig");
+                        if(!dir.exists()){
+                            dir.mkdirs();
+                        }
+                        final File file = new File(dir, count%30+"-tmp.jpg");
                         BufferedSource source = response.body().source();
                         Sink sink = Okio.sink(file);
                         source.readAll(sink);

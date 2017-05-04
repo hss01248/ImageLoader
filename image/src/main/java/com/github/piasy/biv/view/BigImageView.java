@@ -44,6 +44,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.event.CacheHitEvent;
+import com.github.piasy.biv.event.CacheHitEvent2;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.event.ProgressEvent;
 import com.github.piasy.biv.indicator.ProgressIndicator;
@@ -421,6 +422,16 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
             mCurrentImageFile = event.file;
             mTempImages.put(this.url,event.file);
             showContent(event.file);
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCacheHitEvent(CacheHitEvent2 event){
+        Log.d("BigImageView", "onCacheHitEvent---event url: " + event.url);
+        Log.d("BigImageView", "onCacheHitEvent---old url: " + this.url);
+        if(this.url.equals(event.url) ){
+            mImageView.setImage(ImageSource.uri(event.uri));
+            showContent(null);
+
         }
     }
 

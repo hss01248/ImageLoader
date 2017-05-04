@@ -1,17 +1,17 @@
 package com.github.piasy.biv.event;
 
-import java.io.File;
+import android.net.Uri;
 
 /**
  * Created by Administrator on 2017/4/11 0011.
  */
 
-public class CacheHitEvent {
-    public File file;
+public class CacheHitEvent2 {
+    public Uri uri;
     public String url;
 
-    public CacheHitEvent(File file,String url) {
-        this.file = file;
+    public CacheHitEvent2(Uri uri, String url) {
+        this.uri = uri;
         this.url = url;
     }
 

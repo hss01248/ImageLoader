@@ -4,10 +4,12 @@ import android.net.Uri;
 import android.view.View;
 
 import com.github.piasy.biv.event.CacheHitEvent;
+import com.github.piasy.biv.event.CacheHitEvent2;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.loader.BigLoader;
 import com.github.piasy.biv.progress.ProgressInterceptor;
 import com.github.piasy.biv.view.BigImageView;
+import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.utils.ThreadPoolFactory;
 import com.jakewharton.picasso.OkHttp3Downloader;
@@ -40,11 +42,30 @@ public class PicassoBigLoader implements BigLoader {
         picasso =  new Picasso.Builder(GlobalConfig.context)
                 .downloader(new OkHttp3Downloader(client1))
                 .build();
-
+    }
+    public static void clearCache(){
+        File dir2 = new File(GlobalConfig.context.getCacheDir(), "picassobig");
+        if(dir2!=null && dir2.exists()){
+            MyUtil.deleteFolderFile(dir2.getAbsolutePath(),false);
+        }
     }
 
     @Override
     public void loadImage(final Uri uri) {
+        if(!uri.toString().startsWith("http")){
+                if(uri.toString().startsWith("file")){
+                    File file = new File(uri.getPath());
+                    if(file!=null && file.exists()){
+                        EventBus.getDefault().post(new CacheHitEvent(file,uri.toString()));
+                    }else {
+                        EventBus.getDefault().post(new ErrorEvent(uri.toString()));
+                    }
+                }else {
+                    EventBus.getDefault().post(new CacheHitEvent2(uri,uri.toString()));
+                }
+
+            return;
+        }
 
         ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
             @Override
@@ -59,7 +80,16 @@ public class PicassoBigLoader implements BigLoader {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        final File file = new File(GlobalConfig.context.getCacheDir(), count%30+"-tmp.jpg");
+
+                        if(!response.isSuccessful()) {
+                            EventBus.getDefault().post(new ErrorEvent(uri.toString()));
+                            return;
+                        }
+                        File dir = new File(GlobalConfig.context.getCacheDir(),"picassobig");
+                        if(!dir.exists()){
+                            dir.mkdirs();
+                        }
+                        final File file = new File(dir, count%100+"-tmp.jpg");
                         BufferedSource source = response.body().source();
                         Sink sink = Okio.sink(file);
                         source.readAll(sink);

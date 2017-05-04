@@ -43,9 +43,7 @@ import okhttp3.OkHttpClient;
 public class MyUtil {
 
 
-    public static void runOnUI(Runnable runnable){
-        ImageLoader.getHandler().post(runnable);
-    }
+
 
 
 

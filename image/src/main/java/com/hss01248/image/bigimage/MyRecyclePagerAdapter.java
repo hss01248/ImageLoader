@@ -47,4 +47,8 @@ public class MyRecyclePagerAdapter extends RecyclePagerAdapter<MyPagerViewHolder
         notifyDataSetChanged();
     }
 
+    @Override
+    public void onViewRecycled(MyPagerViewHolder holder) {
+        super.onViewRecycled(holder);
+    }
 }
