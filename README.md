@@ -258,6 +258,14 @@ ImageLoader.loadBigImages(ViewPager viewPager, List<String> urls)//urls或filepa
 
 
 
+> 注意,如果是使用Picasso,请在viewpager所在的activity的ondestroy方法中调用:(清除磁盘缓存)
+
+```
+PicassoBigLoader.clearCache()
+```
+
+
+
 # 内存优化的几个策略的说明
 
 ## bitmap编码
