@@ -45,7 +45,6 @@ import com.hss01248.frescoloader.big.BigImageLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
-import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.FileGetter;
@@ -57,6 +56,7 @@ import jp.wasabeef.fresco.processors.BlurPostprocessor;
 import jp.wasabeef.fresco.processors.internal.FastBlur;
 import jp.wasabeef.fresco.processors.internal.RSBlur;
 import okhttp3.OkHttpClient;
+
 
 import static com.hss01248.image.config.GlobalConfig.context;
 
@@ -189,9 +189,7 @@ public class FrescoLoader implements ILoader {
             hierarchy = new GenericDraweeHierarchyBuilder(context.getResources()).build();
         }
 
-        if(MyUtil.shouldSetPlaceHolder(config)){
-            hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), ScalingUtils.ScaleType.CENTER_CROP);
-        }
+
 
 
 
@@ -228,37 +226,39 @@ public class FrescoLoader implements ILoader {
 
         hierarchy.setRoundingParams(roundingParams);
 
-            //伸缩模式
-            int scaleMode = config.getScaleMode();
-            switch (scaleMode){
-                case ScaleMode.CENTER_CROP:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                    break;
-                case ScaleMode.CENTER_INSIDE:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                    break;
-                case ScaleMode.FIT_CENTER:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-                    break;
-                case ScaleMode.FIT_XY:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-                    break;
-                case ScaleMode.FIT_END:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_END);
-                    break;
-                case ScaleMode.FOCUS_CROP:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
-                    break;
-                case ScaleMode.CENTER:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER);
-                    break;
-                case ScaleMode.FIT_START:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_START);
-                    break;
-                default:
-                    hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                    break;
+
+
+        //占位图
+        if(MyUtil.shouldSetPlaceHolder(config)){
+            ScalingUtils.ScaleType scaleType = ScalingUtils.ScaleType.CENTER_CROP;
+            if(config.getPlaceHolderScaleType() >0){
+                scaleType = FrescoUtil.getActualScaleType(config.getPlaceHolderScaleType());
             }
+            hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), scaleType);
+        }
+
+        //loading图
+        if(config.getLoadingResId()>0){
+            ScalingUtils.ScaleType scaleType2 = ScalingUtils.ScaleType.CENTER_INSIDE;
+            if(config.getLoadingScaleType() >0){
+                scaleType2 = FrescoUtil.getActualScaleType(config.getLoadingScaleType());
+            }
+            hierarchy.setProgressBarImage(config.getLoadingResId(),scaleType2);
+        }
+
+        //正常图的伸缩模式
+        ScalingUtils.ScaleType scaleMode = FrescoUtil.getActualScaleType(config.getScaleMode());
+        hierarchy.setActualImageScaleType(scaleMode);
+
+        //失败图
+        if(config.getErrorResId()>0){
+            ScalingUtils.ScaleType scaleType3 = ScalingUtils.ScaleType.CENTER_CROP;
+            if(config.getErrorScaleType() >0){
+                scaleType3 = FrescoUtil.getActualScaleType(config.getErrorScaleType());
+            }
+            hierarchy.setFailureImage(config.getErrorResId(),scaleType3);
+        }
+
 
         simpleDraweeView.setHierarchy(hierarchy);
 

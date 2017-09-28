@@ -137,6 +137,18 @@ public class SingleConfig {
     private int placeHolderResId;
     private boolean reuseable;
 
+    public int getPlaceHolderScaleType() {
+        return placeHolderScaleType;
+    }
+
+    public int getErrorScaleType() {
+        return errorScaleType;
+    }
+
+    private int placeHolderScaleType;
+    private int errorScaleType;
+    private int loadingScaleType;
+
     public int getLoadingResId() {
         return loadingResId;
     }
@@ -189,7 +201,6 @@ public class SingleConfig {
 
     private void show(){
         GlobalConfig.getLoader().request(this);
-
     }
 
 
@@ -199,6 +210,10 @@ public class SingleConfig {
 
     public int getBlurRadius() {
         return blurRadius;
+    }
+
+    public int getLoadingScaleType() {
+        return loadingScaleType;
     }
 
     public SingleConfig(ConfigBuilder builder){
@@ -240,6 +255,10 @@ public class SingleConfig {
 
         this.cropFace = builder.cropFace;
        // this.bigImageView = builder.bigImageView;
+
+        this.errorScaleType = builder.errorScaleType;
+        this.placeHolderScaleType = builder.placeHolderScaleType;
+        this.loadingScaleType = builder.loadingScaleType;
 
 
 
@@ -285,9 +304,29 @@ public class SingleConfig {
         private boolean needBlur = false;//是否需要模糊
         private int blurRadius;
 
+        public ConfigBuilder setLoadingScaleType(int loadingScaleType) {
+            this.loadingScaleType = loadingScaleType;
+            return this;
+        }
+
+        private int loadingScaleType;
+
         //UI:
         private int placeHolderResId;
         private boolean reuseable;//当前view是不是可重用的
+
+        public ConfigBuilder setPlaceHolderScaleType(int placeHolderScaleType) {
+            this.placeHolderScaleType = placeHolderScaleType;
+            return this;
+        }
+
+        public ConfigBuilder setErrorScaleType(int errorScaleType) {
+            this.errorScaleType = errorScaleType;
+            return this;
+        }
+
+        private int placeHolderScaleType;
+        private int errorScaleType;
 
         private int loadingResId;
         private int errorResId;

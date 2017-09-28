@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager})
+    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager,R.id.btn_recycle})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_bigpic:{
@@ -139,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
                 break;
+            case R.id.btn_recycle:{
+                Intent intent = new Intent(this,RecycleViewActy.class);
+                startActivity(intent);
+            }
         }
     }
 

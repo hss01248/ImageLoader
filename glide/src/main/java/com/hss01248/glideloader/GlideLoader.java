@@ -96,9 +96,8 @@ public class GlideLoader implements ILoader {
                 return;
             }
 
-
-            RequestManager requestManager =  Glide.with(config.getContext());
-            DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
+            final RequestManager requestManager =  Glide.with(config.getContext());
+            final DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
 
             if(request ==null){
                 return;
@@ -113,13 +112,13 @@ public class GlideLoader implements ILoader {
                     request.centerCrop();
                     break;
                 case ScaleMode.CENTER_INSIDE:
-                    request.centerCrop();
+                    request.fitCenter();
                     break;
                 case ScaleMode.FIT_CENTER:
                     request.fitCenter();
                     break;
                 case ScaleMode.FIT_XY:
-                    request.centerCrop();
+                    request.fitCenter();
                     break;
                 case ScaleMode.FIT_END:
                     request.centerCrop();
@@ -152,6 +151,31 @@ public class GlideLoader implements ILoader {
 
             if(config.getTarget() instanceof ImageView){
                 request.into((ImageView) config.getTarget());
+//todo
+               /* request.listener(new RequestListener<String,GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        //request.fitCenter();//todo 或者 imageview直接更改scaletype
+                        Log.e("dd",e.getMessage()+"--model:"+model);
+                        if(model.equals(config.getUrl())){
+                            ImageView imageView = (ImageView) config.getTarget();
+                            if(config.getErrorResId()>0 && config.getScaleMode()>0){
+                                imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode()));
+                            }
+                        }
+
+
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if(model.equals(config.getUrl())){
+
+                        }
+                        return false;
+                    }
+                });*/
             }
 
 

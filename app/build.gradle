@@ -44,4 +44,7 @@ dependencies {
         exclude group: 'com.android.support'
     }
     compile 'com.github.tianzhijiexian:logger:1.1.9'//日志
+    compile 'com.github.hss01248:SuperAdapter:1.0.1'
+
+
 }

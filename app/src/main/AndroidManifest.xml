@@ -19,6 +19,7 @@
         </activity>
         <activity android:name=".BigImageActy"/>
         <activity android:name=".ViewpagerActy"/>
+        <activity android:name=".RecycleViewActy"/>
         <!--<meta-data tools:replace="android:value"></meta-data>-->
     </application>
 

@@ -8,9 +8,11 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.utils.RoundedCornersTransformation2;
 
@@ -451,6 +453,27 @@ public class MyUtil {
         }
 
         return bitmap;
+    }
+
+    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode){
+        switch (scaleMode){
+            case 0:
+                return ImageView.ScaleType.CENTER_CROP;
+            case ScaleMode.CENTER_CROP:
+                return ImageView.ScaleType.CENTER_CROP;
+            case ScaleMode.FIT_XY:
+                return ImageView.ScaleType.FIT_XY;
+            case ScaleMode.CENTER:
+                return ImageView.ScaleType.CENTER;
+            case ScaleMode.FIT_CENTER:
+                return ImageView.ScaleType.FIT_CENTER;
+            case ScaleMode.FIT_START:
+                return ImageView.ScaleType.FIT_START;
+            case ScaleMode.CENTER_INSIDE:
+                return ImageView.ScaleType.CENTER_INSIDE;
+            default:
+                return ImageView.ScaleType.CENTER_CROP;
+        }
     }
 
 
