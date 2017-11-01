@@ -12,6 +12,7 @@
 * 解决了fresco最新版中,获取到的bitmap是recycled,不能用的问题
 * 基于subsampling-scale-image-view的大图预览功能,带进度和失败状态,能轮播,极致的高清无码,更重要的是非常省内存,绝不泄漏
 * 丰富便捷的api: 暂停和继续图片加载,获取磁盘缓存大小和清空缓存,响应内存事件等等.
+* 可以设置placeHolder,loadingDrawable,errorHolder,并且均可以自定义其scaleType.
 
 
 
