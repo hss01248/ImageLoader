@@ -43,4 +43,5 @@ dependencies {
     //compile 'com.github.aryarohit07:fresco-facedetection-processor:0.1.1'
     //https://github.com/aryarohit07/FrescoFaceDetectionProcessor,需要依赖com.google.android.gms:play-services-vision:9.4.0
     compile project(':image')
+
 }

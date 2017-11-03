@@ -315,15 +315,9 @@ public class SingleConfig {
         private int placeHolderResId;
         private boolean reuseable;//当前view是不是可重用的
 
-        public ConfigBuilder setPlaceHolderScaleType(int placeHolderScaleType) {
-            this.placeHolderScaleType = placeHolderScaleType;
-            return this;
-        }
 
-        public ConfigBuilder setErrorScaleType(int errorScaleType) {
-            this.errorScaleType = errorScaleType;
-            return this;
-        }
+
+
 
         private int placeHolderScaleType;
         private int errorScaleType;
@@ -392,8 +386,18 @@ public class SingleConfig {
             this.loadingResId = loadingResId;
             return this;
         }
+        public ConfigBuilder loading(int  loadingResId,int loadingScaleType){
+            this.loadingResId = loadingResId;
+            this.loadingScaleType = loadingScaleType;
+            return this;
+        }
         public ConfigBuilder error(int  errorResId){
             this.errorResId = errorResId;
+            return this;
+        }
+        public ConfigBuilder error(int  errorResId,int errorScaleType){
+            this.errorResId = errorResId;
+            this.errorScaleType = errorScaleType;
             return this;
         }
         public ConfigBuilder cropFace(){
@@ -446,19 +450,30 @@ public class SingleConfig {
 
         /**
          * dp单位
-         * @param width
-         * @param height
+         * @param widthInDp
+         * @param heightInDp
          * @return
          */
-        public ConfigBuilder widthHeight(int width,int height){
-            this.width = MyUtil.dip2px(width);
-            this.height = MyUtil.dip2px(height);
+        public ConfigBuilder widthHeight(int widthInDp,int heightInDp){
+            this.width = MyUtil.dip2px(widthInDp);
+            this.height = MyUtil.dip2px(heightInDp);
             return this;
         }
 
+        public ConfigBuilder placeHolder(int placeHolderResId,boolean reuseable,int placeHolderScaleType){
+            this.placeHolderResId = placeHolderResId;
+            this.reuseable = reuseable;
+            this.placeHolderScaleType = placeHolderScaleType;
+            return this;
+        }
         public ConfigBuilder placeHolder(int placeHolderResId,boolean reuseable){
             this.placeHolderResId = placeHolderResId;
             this.reuseable = reuseable;
+            return this;
+        }
+        public ConfigBuilder placeHolder(int placeHolderResId){
+            this.placeHolderResId = placeHolderResId;
+            this.reuseable = true;
             return this;
         }
 

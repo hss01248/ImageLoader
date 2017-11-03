@@ -34,6 +34,12 @@
                 android:text="recyvleview加载大量图片"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+        <Button
+                android:id="@+id/btn_fresco"
+                android:text="go to fresco"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/iv_url"

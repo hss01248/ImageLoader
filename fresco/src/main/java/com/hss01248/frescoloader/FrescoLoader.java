@@ -222,6 +222,8 @@ public class FrescoLoader implements ILoader {
                         roundingParams.setOverlayColor(config.getRoundOverlayColor());
                     }
                     break;
+                default:
+                    break;
             }
 
         hierarchy.setRoundingParams(roundingParams);
@@ -252,7 +254,7 @@ public class FrescoLoader implements ILoader {
 
         //失败图
         if(config.getErrorResId()>0){
-            ScalingUtils.ScaleType scaleType3 = ScalingUtils.ScaleType.CENTER_CROP;
+            ScalingUtils.ScaleType scaleType3 = ScalingUtils.ScaleType.CENTER_INSIDE;
             if(config.getErrorScaleType() >0){
                 scaleType3 = FrescoUtil.getActualScaleType(config.getErrorScaleType());
             }

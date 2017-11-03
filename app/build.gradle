@@ -30,7 +30,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    //compile 'com.android.support:appcompat-v7:25.0.0'
     testCompile 'junit:junit:4.12'
     compile project(path: ':image')
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -40,11 +40,22 @@ dependencies {
     compile project(':fresco')
     compile project(':glide')
     compile project(':picasso')
-    compile ('com.github.hss01248:Toasty:2.0.1'){
-        exclude group: 'com.android.support'
-    }
+
     compile 'com.github.tianzhijiexian:logger:1.1.9'//日志
     compile 'com.github.hss01248:SuperAdapter:1.0.1'
+
+    compile 'com.blankj:utilcode:1.9.6'
+    compile ('com.github.hss01248:Toasty:2.0.4'){
+        exclude group: 'com.android.support'
+    }
+
+   /* compile'com.github.hss01248:PhotoOut:1.0.3'
+    compile'com.github.hss01248.PhotoPicker:glide:1.0.8'
+    compile'com.github.hss01248.PhotoPicker:fresco:1.0.8'
+    compile'com.github.hss01248.PhotoPicker:picasso:1.0.8'*/
+    compile ('com.github.hss01248:DialogUtil:1.1.8'){
+        exclude group: 'com.android.support'
+    }
 
 
 }
