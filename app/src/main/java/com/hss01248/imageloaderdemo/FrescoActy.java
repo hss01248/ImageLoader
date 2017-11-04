@@ -20,7 +20,6 @@ import com.hss01248.frescoloader.FrescoLoader;
 import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
-import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.picasso.PicassoLoader;
 
@@ -131,13 +130,13 @@ public class FrescoActy extends Activity {
         initData();
         initListener();
 
-        ImageLoader.with(this)
+        /*ImageLoader.with(this)
             .url("http://pic137.nipic.com/file/20170801/21016265_111024595000_2.jpg")
             .scale(ScaleMode.CENTER_INSIDE)
             .placeHolder(R.drawable.default_placeholder_300x300, true, ScaleMode.FIT_XY)
             .loading(R.drawable.loading2)
             .error(R.drawable.error_small, ScaleMode.CENTER_INSIDE)
-            .widthHeight(180, 150);
+            .widthHeight(180, 150);*/
         //.into(ivFile);
 
     }
@@ -227,6 +226,8 @@ public class FrescoActy extends Activity {
         urls.add("error--http://img06.tooopen.cn/images/20170814/tooopen_sy_220490839847.jpg");
         urls.add("http://img06.tooopen.cn/images/20170818/tooopen_sy_221040993375.jpg");
         urls.add("http://img07.tooopen.cn/images/20170320/tooopen_sy_202527818519.jpg");
+        urls.add("http://s9.rr.itc.cn/r/wapChange/201612_24_10/a1tuxc4889097989855.jpg");
+        urls.add("https://img.jianke.com/article/201704/20170417174402188.gif");
 
         sbWidth.setMax(100);
         sbHeight.setMax(100);
