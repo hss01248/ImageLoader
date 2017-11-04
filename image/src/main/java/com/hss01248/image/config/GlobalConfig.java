@@ -89,6 +89,10 @@ public class GlobalConfig {
 
     public static boolean ignoreCertificateVerify = false;
 
+    public static void setLoader(ILoader loader) {
+        GlobalConfig.loader = loader;
+    }
+
     private static ILoader loader;
 
     public static ILoader getLoader() {

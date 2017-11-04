@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import com.elvishew.xlog.XLog;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.frescoloader.FrescoLoader;
@@ -24,9 +25,11 @@ public class BaseApp extends Application {
         ImageLoader.init(getApplicationContext(), 100,new FrescoLoader());
         LeakCanary.install(this);
         MyToast.init(this,true,true);
+
        // PhotoUtil.init(getApplicationContext(),new GlideIniter());//第二个参数根据具体依赖库而定
         StyledDialog.init(this);
         //Logger.initialize(new Settings());
+        XLog.init();
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

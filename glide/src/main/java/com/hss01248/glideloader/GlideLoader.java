@@ -31,6 +31,7 @@ import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
+import com.hss01248.image.utils.ThreadPoolFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -267,7 +268,13 @@ public class GlideLoader implements ILoader {
 
     @Override
     public void clearDiskCache() {
-        Glide.get(ImageLoader.context).clearDiskCache();
+        ThreadPoolFactory.getNormalPool().execute(new Runnable() {
+            @Override
+            public void run() {
+                Glide.get(ImageLoader.context).clearDiskCache();
+            }
+        });
+
 
        /* File dir = new File(BigLoader.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR);
         if(dir!=null && dir.exists()){

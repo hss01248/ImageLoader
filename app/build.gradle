@@ -41,7 +41,7 @@ dependencies {
     compile project(':glide')
     compile project(':picasso')
 
-    compile 'com.github.tianzhijiexian:logger:1.1.9'//日志
+    compile 'com.elvishew:xlog:1.4.0'
     compile 'com.github.hss01248:SuperAdapter:1.0.1'
 
     compile 'com.blankj:utilcode:1.9.6'

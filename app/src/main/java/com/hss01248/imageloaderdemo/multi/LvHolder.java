@@ -32,7 +32,7 @@ public class LvHolder extends SuperLvHolder<String> {
             .widthHeight(333, 333)
            /* .placeHolder(R.drawable.default_placeholder_300x300,false)
             .error(R.drawable.warning)
-            .loading(R.drawable.loading)*/
+            .loading2(R.drawable.loading2)*/
             .into(itemIv);
     }
 }

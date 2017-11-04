@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,13 +12,17 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 
+import com.elvishew.xlog.XLog;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
+import com.hss01248.frescoloader.FrescoLoader;
+import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
-import com.orhanobut.logger.Logger;
+import com.hss01248.picasso.PicassoLoader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,6 +99,8 @@ public class FrescoActy extends Activity {
     RadioGroup rgTarget;
     @Bind(R.id.btn_show)
     Button btnShow;
+    @Bind(R.id.btn_scale)
+    Button btn_scale;
 
     ArrayList<String> urls ;
     List<String> ress ;
@@ -128,7 +135,7 @@ public class FrescoActy extends Activity {
             .url("http://pic137.nipic.com/file/20170801/21016265_111024595000_2.jpg")
             .scale(ScaleMode.CENTER_INSIDE)
             .placeHolder(R.drawable.default_placeholder_300x300, true, ScaleMode.FIT_XY)
-            .loading(R.drawable.loading)
+            .loading(R.drawable.loading2)
             .error(R.drawable.error_small, ScaleMode.CENTER_INSIDE)
             .widthHeight(180, 150);
         //.into(ivFile);
@@ -139,7 +146,7 @@ public class FrescoActy extends Activity {
         sbWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                builder.widthHeight(progress*1080/100,sbHeight.getProgress()*1920/100);
+                builder.widthHeightByPx(progress*1080/100,sbHeight.getProgress()*1920/100);
                 loadImage();
             }
 
@@ -157,7 +164,7 @@ public class FrescoActy extends Activity {
         sbHeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                builder.widthHeight(sbWidth.getProgress()*1080/100,progress*1920/100);
+                builder.widthHeightByPx(sbWidth.getProgress()*1080/100,progress*1920/100);
                 loadImage();
             }
 
@@ -217,7 +224,7 @@ public class FrescoActy extends Activity {
         urls.add("http://pic137.nipic.com/file/20170801/21016265_111024595000_2.jpg");
         urls.add("http://img02.tooopen.com/images/20141231/sy_78327074576.jpg");
         urls.add("http://img06.tooopen.cn/images/20170106/tooopen_sy_195886579867.jpg");
-        urls.add("http://img06.tooopen.cn/images/20170814/tooopen_sy_220490839847.jpg");
+        urls.add("error--http://img06.tooopen.cn/images/20170814/tooopen_sy_220490839847.jpg");
         urls.add("http://img06.tooopen.cn/images/20170818/tooopen_sy_221040993375.jpg");
         urls.add("http://img07.tooopen.cn/images/20170320/tooopen_sy_202527818519.jpg");
 
@@ -235,148 +242,228 @@ public class FrescoActy extends Activity {
             R.drawable.loading3_18dp, R.drawable.loading4_48dp};
         ress = Arrays.asList(R.drawable.image+"",R.drawable.thegif+"",R.drawable.img2+"");
         builder = ImageLoader.with(this);
-        placeHolderDes = Arrays.asList("1","2","3","4");
+        config = new SingleConfig(builder);
+        placeHolderDes = Arrays.asList("0","1","2","3");
         scaleModeStrs = Arrays.asList("CENTER_CROP","FIT_XY","CENTER","FOCUS_CROP","FIT_CENTER","FIT_START","FIT_END","CENTER_INSIDE","FACE_CROP");
 
 
+        sbWidth.setProgress(30);
+        sbHeight.setProgress(30);
+        rbFresco.setChecked(true);
+        etAsImageview.setChecked(true);
+
 
     }
 
-    @OnClick({R.id.iv_targetView, R.id.rb_fresco, R.id.rb_glide, R.id.rb_picasso, R.id.rg_loader, R.id.rb_fromfile, R.id.rb_from_url, R.id.rb_from_res, R.id.rg_from, R.id.sb_width, R.id.sb_height, R.id.et_placeholder_res, R.id.et_placeholder_scale, R.id.et_loading_res, R.id.et_loading_scale, R.id.et_error_res, R.id.et_error_scale, R.id.et_as_cirle, R.id.et_roundcorner, R.id.rg_shape, R.id.sb_roundcorner_radis, R.id.sb_border_width, R.id.et_border_color, R.id.sb_blur_rate, R.id.et_as_imageview, R.id.et_as_bitmap, R.id.rg_target, R.id.btn_show})
+    int selectedPlaceHolderScale;
+    int selectedLoadingScale;
+    int selectedErrorScale;
+
+
+    @OnClick({R.id.iv_targetView, R.id.rb_fresco, R.id.rb_glide, R.id.rb_picasso, R.id.rg_loader,
+        R.id.rb_fromfile, R.id.rb_from_url, R.id.rb_from_res, R.id.rg_from, R.id.sb_width, R.id.sb_height,
+        R.id.et_placeholder_res, R.id.et_placeholder_scale, R.id.et_loading_res, R.id.et_loading_scale,
+        R.id.et_error_res, R.id.et_error_scale, R.id.et_as_cirle, R.id.et_roundcorner, R.id.rg_shape,
+        R.id.sb_roundcorner_radis, R.id.sb_border_width, R.id.et_border_color, R.id.sb_blur_rate,
+        R.id.et_as_imageview, R.id.et_as_bitmap, R.id.rg_target, R.id.btn_show,R.id.btn_scale})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_targetView:
-                break;
-            case R.id.rb_fresco:
-                break;
-            case R.id.rb_glide:
-                break;
-            case R.id.rb_picasso:
-                break;
-            case R.id.rg_loader:
-                break;
-            case R.id.rb_fromfile:
-                break;
-            case R.id.rb_from_url:
-                StyledDialog.buildIosSingleChoose(urls, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        builder.url(charSequence.toString());
-                        loadImage();
-                    }
-                }).show();
-                break;
-            case R.id.rb_from_res:
-                StyledDialog.buildIosSingleChoose(ress, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        builder.res( Integer.parseInt(charSequence.toString()));
-                        loadImage();
-                    }
-                }).show();
-                break;
-            case R.id.et_placeholder_res:
-                StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        builder.placeHolder(placeHolderRes[i],true,config.getPlaceHolderScaleType());
-                        etPlaceholderRes.setText(charSequence);
-                        loadImage();
-                    }
-                }).show();
-                break;
-            case R.id.et_placeholder_scale:
-                StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        etPlaceholderScale.setText(charSequence);
-                        builder.placeHolder(config.getPlaceHolderResId(),true,i+1);
-                    }
-                }).show();
-                break;
-            case R.id.et_loading_res:
-                StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        builder.placeHolder(loadingRes[i],true,config.getLoadingScaleType());
-                        etLoadingRes.setText(charSequence);
-                        loadImage();
-                    }
-                }).show();
-                break;
-            case R.id.et_loading_scale:
-                StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        etLoadingScale.setText(charSequence);
-                        builder.placeHolder(config.getLoadingResId(),true,i+1);
-                    }
-                }).show();
-                break;
-            case R.id.et_error_res:
-                StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        builder.placeHolder(errorRes[i],true,config.getErrorScaleType());
-                        etErrorRes.setText(charSequence);
-                        loadImage();
-                    }
-                }).show();
-                break;
-            case R.id.et_error_scale:
-                StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
-                    @Override
-                    public void onItemClick(CharSequence charSequence, int i) {
-                        etErrorScale.setText(charSequence);
-                        builder.placeHolder(config.getErrorResId(),true,i+1);
-                    }
-                }).show();
-                break;
-            case R.id.et_as_cirle:
-                loadImage();
-                break;
-            case R.id.et_roundcorner:
-                loadImage();
-                break;
-            case R.id.sb_roundcorner_radis:
-                break;
-            case R.id.sb_border_width:
-                break;
-            case R.id.et_border_color:
-                break;
-            case R.id.sb_blur_rate:
-                break;
-            case R.id.et_as_imageview:
-                break;
-            case R.id.et_as_bitmap:
-                break;
-            case R.id.rg_target:
-                break;
-            case R.id.btn_show:
-                loadImage();
-                break;
-            default:break;
+        try {
+            switch (view.getId()) {
+                case R.id.btn_scale:
+                    StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            builder.scale(i+1);
+                            btn_scale.setText(charSequence);
+                            loadImage();
+
+
+                        }
+                    }).show();
+
+                    break;
+                case R.id.iv_targetView:
+                    break;
+                case R.id.rb_fresco:
+                    break;
+                case R.id.rb_glide:
+                    break;
+                case R.id.rb_picasso:
+                    break;
+                case R.id.rg_loader:
+                    break;
+                case R.id.rb_fromfile:
+                    break;
+                case R.id.rb_from_url:
+                    StyledDialog.buildIosSingleChoose(urls, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            builder.res(0);
+                            builder.file("");
+                            builder.url(charSequence.toString());
+
+                        }
+                    }).show();
+                    break;
+                case R.id.rb_from_res:
+                    StyledDialog.buildIosSingleChoose(ress, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            builder.url("");
+                            builder.file("");
+                            builder.res( Integer.parseInt(charSequence.toString()));
+
+                        }
+                    }).show();
+                    break;
+                case R.id.et_placeholder_res:
+                    StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            XLog.e("place holder:%s,positon:%d,resid:%d",charSequence,i,placeHolderRes[i]);
+                            builder.placeHolder(placeHolderRes[i],true,selectedPlaceHolderScale);
+                            etPlaceholderRes.setText(charSequence);
+
+
+                        }
+                    }).show();
+                    break;
+                case R.id.et_placeholder_scale:
+                    StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            etPlaceholderScale.setText(charSequence);
+                            selectedPlaceHolderScale = i+1;
+                            String text = (String) etPlaceholderRes.getText();
+                            if(!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)){
+                                int idx = Integer.parseInt(text);
+                                builder.placeHolder(placeHolderRes[idx],true,i+1);
+                            }
+
+
+                        }
+                    }).show();
+                    break;
+                case R.id.et_loading_res:
+                    StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            builder.loading(loadingRes[i],selectedLoadingScale);
+                            etLoadingRes.setText(charSequence);
+
+                        }
+                    }).show();
+                    break;
+                case R.id.et_loading_scale:
+                    StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            etLoadingScale.setText(charSequence);
+                            selectedLoadingScale = i+1;
+                            String text = (String) etLoadingRes.getText();
+                            if(!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)){
+                                int idx = Integer.parseInt(text);
+                                builder.loading(placeHolderRes[idx],i+1);
+                            }
+
+                        }
+                    }).show();
+                    break;
+                case R.id.et_error_res:
+                    StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            builder.error(errorRes[i],selectedErrorScale);
+                            etErrorRes.setText(charSequence);
+
+                        }
+                    }).show();
+                    break;
+                case R.id.et_error_scale:
+                    StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
+                        @Override
+                        public void onItemClick(CharSequence charSequence, int i) {
+                            etErrorScale.setText(charSequence);
+                            selectedErrorScale = i+1;
+                            String text = (String) etErrorRes.getText();
+                            if(!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)){
+                                int idx = Integer.parseInt(text);
+                                builder.error(errorRes[idx],i+1);
+                            }
+                        }
+                    }).show();
+                    break;
+                case R.id.et_as_cirle:
+                    loadImage();
+                    break;
+                case R.id.et_roundcorner:
+                    loadImage();
+                    break;
+                case R.id.sb_roundcorner_radis:
+                    break;
+                case R.id.sb_border_width:
+                    break;
+                case R.id.et_border_color:
+                    break;
+                case R.id.sb_blur_rate:
+                    break;
+                case R.id.et_as_imageview:
+                    break;
+                case R.id.et_as_bitmap:
+                    break;
+                case R.id.rg_target:
+                    break;
+                case R.id.btn_show:
+                    loadImage();
+                    break;
+                default:break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
+    boolean hasFrescoInited = true;
+    boolean hasGlideInited = false;
+    boolean hasPicassoInited = false;
     private void loadImage() {
 
-        //loader:
-        int loaderId =   rgLoader.getCheckedRadioButtonId();
-        boolean isFresco = true;
-        /*if(loaderId == R.id.rb_fresco){
-            ImageLoader.init(getApplicationContext(),60,new FrescoLoader());
-            isFresco = true;
-        }else if(loaderId == R.id.rb_glide){
-            ImageLoader.init(getApplicationContext(),60,new GlideLoader());
-        }else if(loaderId == R.id.rb_picasso){
-            ImageLoader.init(getApplicationContext(),60,new PicassoLoader());
-        }else {
-            MyToast.error("loader not choosed");
-            return;
-        }*/
-        //图片源
-        //SingleConfig.ConfigBuilder builder = ImageLoader.with(this);
+        try {
+            //loader:
+            int loaderId =   rgLoader.getCheckedRadioButtonId();
+            boolean isFresco = false;
+            if(loaderId == R.id.rb_fresco){
+                isFresco = true;
+                if(hasFrescoInited){
+                    GlobalConfig.setLoader(new FrescoLoader());
+                }else {
+                    ImageLoader.init(getApplicationContext(),60,new FrescoLoader());
+                    hasFrescoInited = true;
+                }
+
+            }else if(loaderId == R.id.rb_glide){
+                if(hasGlideInited){
+                    GlobalConfig.setLoader(new GlideLoader());
+                }else {
+                    ImageLoader.init(getApplicationContext(),60,new GlideLoader());
+                    hasGlideInited = true;
+                }
+            }else if(loaderId == R.id.rb_picasso){
+                if(hasPicassoInited){
+                    GlobalConfig.setLoader(new PicassoLoader());
+                }else {
+                    ImageLoader.init(getApplicationContext(),60,new PicassoLoader());
+                    hasPicassoInited = true;
+                }
+            }else {
+                MyToast.error("loader not choosed");
+                return;
+            }
+
+            ImageLoader.getActualLoader().clearDiskCache();
+            //图片源
+            //SingleConfig.ConfigBuilder builder = ImageLoader.with(this);
         /*if(!TextUtils.isEmpty(selectedPath)){
             if(selectedPath.startsWith("http")){
                 builder.url(selectedPath);
@@ -393,57 +480,65 @@ public class FrescoActy extends Activity {
             return;
         }*/
 
-        //宽高
-        /*int width = sbWidth.getProgress()*1080/100/2;
-        int height = sbHeight.getProgress()*1920/100/2;
-        Logger.e("width:"+width+ "  height:"+height);
-        if(width>0 && height>0){
-            builder.widthHeight(width,height);
-        }*/
+            //宽高
+        int width = sbWidth.getProgress()*1080/100;
+        int height = sbHeight.getProgress()*1920/100;
+        XLog.e("width:"+width+ "  height:"+height);
+        builder.widthHeightByPx(width,height);
 
-        //todo 获取res的值
+            //todo 获取res的值
 
 
 
 
-        int shapeId =   rgShape.getCheckedRadioButtonId();
-        if(shapeId == R.id.et_as_cirle){
-            builder.asCircle(R.color.colorAccent);
-        }else if(shapeId == R.id.et_roundcorner){
-            builder.rectRoundCorner(sbRoundcornerRadis.getProgress(),R.color.colorAccent);
-        }
-        //高斯模糊
-        int blurRate = sbBlurRate.getProgress();
-        if(blurRate>0){
-            builder.blur(blurRate);
-        }
-        //加载到view或者bitmap
-        int targetId =   rgTarget.getCheckedRadioButtonId();
-        if(targetId == R.id.et_as_imageview){
-            if(isFresco){
-                builder.into(ivTargetView);
+            int shapeId =   rgShape.getCheckedRadioButtonId();
+            if(shapeId == R.id.et_as_cirle){
+                builder.asCircle(R.color.colorAccent);
+            }else if(shapeId == R.id.et_roundcorner){
+                builder.rectRoundCorner(sbRoundcornerRadis.getProgress(),R.color.colorAccent);
+            }
+            //高斯模糊
+            int blurRate = sbBlurRate.getProgress();
+            if(blurRate>0){
+                builder.blur(blurRate);
+            }
+            //加载到view或者bitmap
+            int targetId =   rgTarget.getCheckedRadioButtonId();
+            XLog.e(builder);
+            if(targetId == R.id.et_as_imageview){
+                if(isFresco){
+                    imageView.setVisibility(View.GONE);
+                    ivTargetView.setVisibility(View.VISIBLE);
+                    builder.into(ivTargetView);
+                }else {
+                    imageView.setVisibility(View.VISIBLE);
+                    ivTargetView.setVisibility(View.GONE);
+                    builder.into(imageView);
+
+                }
+
+            }else if(targetId == R.id.et_as_bitmap){
+                builder.asBitmap(new SingleConfig.BitmapListener() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        XLog.e("bitmap :%s,width:%d,height:%d",bitmap.toString(),bitmap.getWidth(),bitmap.getHeight());
+                    }
+
+                    @Override
+                    public void onFail() {
+                        XLog.e("on fail");
+
+                    }
+                });
             }else {
-                builder.into(imageView);
+                MyToast.error("no target selected!");
             }
 
-        }else if(targetId == R.id.et_as_bitmap){
-            builder.asBitmap(new SingleConfig.BitmapListener() {
-                @Override
-                public void onSuccess(Bitmap bitmap) {
-                    Logger.e("bitmap :%s,width:%d,height:%d",bitmap.toString(),bitmap.getWidth(),bitmap.getHeight());
-                }
 
-                @Override
-                public void onFail() {
-                    Logger.e("on fail");
-
-                }
-            });
-        }else {
-            MyToast.error("no target selected!");
+            config = new SingleConfig(builder);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-
-        config = new SingleConfig(builder);
     }
 }

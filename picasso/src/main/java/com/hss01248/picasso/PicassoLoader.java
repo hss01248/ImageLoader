@@ -106,11 +106,22 @@ public class PicassoLoader implements ILoader {
                 request.error(config.getErrorResId());
             }
 
+            boolean canFit = true;
+        boolean canCenterCrop = false;
+        if(config.getWidth() >0 && config.getHeight() >0){
+            request.resize(config.getWidth(),config.getHeight());
+            canFit = false;
+            canCenterCrop = true;
+        }
+
             if(!config.isAsBitmap()){
                 int scaleMode = config.getScaleMode();
                 switch (scaleMode){
                     case ScaleMode.CENTER_CROP:
-                        request.centerCrop();
+                        if(canCenterCrop){
+                            request.centerCrop();
+                        }
+
                         break;
                     case ScaleMode.CENTER_INSIDE:
                         request.centerInside();
@@ -119,10 +130,14 @@ public class PicassoLoader implements ILoader {
                         request.centerCrop();
                         break;
                     case ScaleMode.FIT_XY:
-                        request.fit();
+                        if(canFit){
+                            request.fit();
+                        }
                         break;
                     case ScaleMode.FIT_END:
-                        request.fit();
+                        if(canFit){
+                            request.fit();
+                        }
                         break;
                     case ScaleMode.FOCUS_CROP:
                         request.centerCrop();
@@ -141,7 +156,8 @@ public class PicassoLoader implements ILoader {
             }
 
 
-            request.resize(config.getWidth(),config.getHeight()).onlyScaleDown();
+
+
         if(config.getWidth() >1000 || config.getHeight() >1000){
             request.memoryPolicy(NO_CACHE, NO_STORE);
         }

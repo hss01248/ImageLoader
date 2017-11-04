@@ -44,11 +44,11 @@ public class SingleConfig {
         if(height<=0){
             //先去imageview里取,如果为0,则赋值成matchparent
             if(target!=null){
-                height=  target.getMeasuredWidth();
+                height=  target.getMeasuredHeight();
             }
-            if(height<=0){
+            /*if(height<=0){
                 height=GlobalConfig.getWinWidth();
-            }
+            }*/
         }
 
         return height;
@@ -92,9 +92,9 @@ public class SingleConfig {
             if(target!=null){
               width=  target.getMeasuredWidth();
             }
-            if(width<=0){
+           /* if(width<=0){
                 width=GlobalConfig.getWinWidth();
-            }
+            }*/
         }
         return width;
     }
@@ -459,6 +459,11 @@ public class SingleConfig {
             this.height = MyUtil.dip2px(heightInDp);
             return this;
         }
+        public ConfigBuilder widthHeightByPx(int widthInPx,int heightInPx){
+            this.width = MyUtil.dip2px(widthInPx);
+            this.height = MyUtil.dip2px(heightInPx);
+            return this;
+        }
 
         public ConfigBuilder placeHolder(int placeHolderResId,boolean reuseable,int placeHolderScaleType){
             this.placeHolderResId = placeHolderResId;
@@ -534,15 +539,40 @@ public class SingleConfig {
         }
 
 
-
-
-
-
-
-
-
-
-
+        @Override
+        public String toString() {
+            return "{" +
+                "context:" + context +
+                ", ignoreCertificateVerify:" + ignoreCertificateVerify +
+                ", url:'" + url + '\'' +
+                ", thumbnailUrl:'" + thumbnailUrl + '\'' +
+                ", filePath:'" + filePath + '\'' +
+                ", resId=" + resId +
+                ", contentProvider:'" + contentProvider + '\'' +
+                ", isGif:" + isGif +
+                ", target:" + target +
+                ", asBitmap:" + asBitmap +
+                ", bitmapListener:" + bitmapListener +
+                ", width:" + width +
+                ", height:" + height +
+                ", needBlur:" + needBlur +
+                ", blurRadius:" + blurRadius +
+                ", loadingScaleType:" + loadingScaleType +
+                ", placeHolderResId:" + placeHolderResId +
+                ", reuseable:" + reuseable +
+                ", placeHolderScaleType:" + placeHolderScaleType +
+                ", errorScaleType:" + errorScaleType +
+                ", loadingResId:" + loadingResId +
+                ", errorResId:" + errorResId +
+                ", shapeMode:" + shapeMode +
+                ", rectRoundRadius:" + rectRoundRadius +
+                ", roundOverlayColor:" + roundOverlayColor +
+                ", scaleMode:" + scaleMode +
+                ", borderWidth:" + borderWidth +
+                ", borderColor:" + borderColor +
+                ", cropFace:" + cropFace +
+                '}';
+        }
     }
 
 

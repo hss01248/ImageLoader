@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
@@ -188,11 +190,6 @@ public class FrescoLoader implements ILoader {
         if(hierarchy==null){
             hierarchy = new GenericDraweeHierarchyBuilder(context.getResources()).build();
         }
-
-
-
-
-
             //边角形状和边框
             int shapeMode = config.getShapeMode();
             RoundingParams roundingParams =null;
@@ -236,7 +233,9 @@ public class FrescoLoader implements ILoader {
             if(config.getPlaceHolderScaleType() >0){
                 scaleType = FrescoUtil.getActualScaleType(config.getPlaceHolderScaleType());
             }
-            hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), scaleType);
+            if(config.getPlaceHolderResId() >0){
+                hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), scaleType);
+            }
         }
 
         //loading图
@@ -245,7 +244,14 @@ public class FrescoLoader implements ILoader {
             if(config.getLoadingScaleType() >0){
                 scaleType2 = FrescoUtil.getActualScaleType(config.getLoadingScaleType());
             }
-            hierarchy.setProgressBarImage(config.getLoadingResId(),scaleType2);
+//todo 提供几种选择，以及可以自己设置内部圈圈
+            AnimationDrawable animationDrawable = new AnimationDrawable();
+            Drawable drawable = ImageLoader.context.getResources().getDrawable(config.getLoadingResId());
+            if(drawable != null){
+                animationDrawable.addFrame(drawable,50);
+                animationDrawable.setOneShot(false);
+                hierarchy.setProgressBarImage(animationDrawable,scaleType2);//new ProgressBarDrawable(),R.drawable.progressstyleshape
+            }
         }
 
         //正常图的伸缩模式
@@ -303,7 +309,10 @@ public class FrescoLoader implements ILoader {
     private ResizeOptions getResizeOption(SingleConfig config) {
         ResizeOptions resizeOptions = null;
         if (config.getWidth() >0 && config.getHeight() > 0){
-            resizeOptions = new ResizeOptions(config.getWidth(),config.getHeight());//todo 通过图片宽高和view宽高计算出最合理的resization
+            resizeOptions = new ResizeOptions(config.getWidth(),config.getHeight());
+        }else {
+            //todo 通过图片宽高和view宽高计算出最合理的resization
+
         }
         return resizeOptions;
     }
