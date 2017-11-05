@@ -21,6 +21,7 @@
         <activity android:name=".ViewpagerActy"/>
         <activity android:name=".RecycleViewActy"/>
         <activity android:name=".FrescoActy"/>
+        <activity android:name=".ScaleTypeActy"/>
     </application>
 
 

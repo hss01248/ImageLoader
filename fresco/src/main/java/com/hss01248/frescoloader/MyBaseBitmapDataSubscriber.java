@@ -2,6 +2,7 @@ package com.hss01248.frescoloader;
 
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.BaseDataSubscriber;
@@ -39,12 +40,26 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
             onNewResultImpl(dataSource);
         } finally {
             if (shouldClose) {
-               // dataSource.close();
+               dataSource.close();
             }
         }
     }
 
+    @Override
+    protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+        if(dataSource.getFailureCause()!=null){
+            onFail(dataSource.getFailureCause());
+        }else {
+            onFail(new Throwable("unknown cause"));
+        }
 
+
+    }
+
+    @Override
+    public void onFailure(DataSource<CloseableReference<CloseableImage>> dataSource) {
+        super.onFailure(dataSource);
+    }
 
     @Override
     public void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
@@ -62,7 +77,7 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
 
         if(bitmap!=null ){
             if(bitmap.isRecycled()){
-                onFailure(dataSource);
+                onFail(new Throwable("bitmap.isRecycled"));
             }else {
                 onNewResultImpl(bitmap,dataSource);
             }
@@ -70,25 +85,26 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
         }
 
         //如果bitmap为空
+        Log.e("onNewResultImpl","finalUrl :"+finalUrl);
         File cacheFile  = ImageLoader.getActualLoader().getFileFromDiskCache(finalUrl);
         if(cacheFile ==null){
-            onFailure(dataSource);
+            onFail(new Throwable("file cache is null:"+finalUrl));
             return;
         }
         //还要判断文件是不是gif格式的
         if (!"gif".equalsIgnoreCase(MyUtil.getRealType(cacheFile))){
-            onFailure(dataSource);
+            onFail(new Throwable("file cache is not gif:"+finalUrl));
             return;
         }
         Bitmap bitmapGif = GifUtils.getBitmapFromGifFile(cacheFile);//拿到gif第一帧的bitmap
         if(width>0 && height >0) {
-            bitmapGif = MyUtil.compressBitmap(bitmapGif, true, width, height);//将bitmap压缩到指定宽高。
+            bitmapGif = MyUtil.compressBitmap(bitmapGif, false, width, height);//将bitmap压缩到指定宽高。
         }
 
         if (bitmapGif != null) {
-            onNewResultImpl(bitmap,dataSource);
+            onNewResultImpl(bitmapGif,dataSource);
         } else {
-            onFailure(dataSource);
+            onFail(new Throwable("can not create bitmap from gif file:"+cacheFile.getAbsolutePath()));
         }
 
 
@@ -110,4 +126,6 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
 
      */
     protected abstract void onNewResultImpl(@Nullable Bitmap bitmap,DataSource<CloseableReference<CloseableImage>> dataSource);
+
+    protected abstract void onFail(Throwable e);
 }

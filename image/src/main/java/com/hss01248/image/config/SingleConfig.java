@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.hss01248.image.MyUtil;
 
@@ -52,6 +53,11 @@ public class SingleConfig {
         }
 
         return height;
+    }
+    private boolean isUseARGB8888;
+
+    public boolean isUseARGB8888(){
+        return isUseARGB8888;
     }
 
     public boolean isNeedBlur() {
@@ -132,6 +138,8 @@ public class SingleConfig {
 
     private boolean needBlur ;//是否需要模糊
     private int blurRadius;
+
+
 
     //UI:
     private int placeHolderResId;
@@ -226,8 +234,10 @@ public class SingleConfig {
         this.ignoreCertificateVerify = builder.ignoreCertificateVerify;
 
         this.target = builder.target;
-        this.width = builder.width;
-        this.height = builder.height;
+
+        //结合view本身的宽高
+        setWH(builder);
+
 
         this.shapeMode = builder.shapeMode;
         if(shapeMode== ShapeMode.RECT_ROUND){
@@ -259,15 +269,52 @@ public class SingleConfig {
         this.errorScaleType = builder.errorScaleType;
         this.placeHolderScaleType = builder.placeHolderScaleType;
         this.loadingScaleType = builder.loadingScaleType;
+        this.isUseARGB8888 = builder.isUseARGB8888;
 
 
 
     }
 
+    private void setWH(ConfigBuilder builder) {
+        if(!builder.asBitmap){
+            View view = builder.target;
+            if(view!=null){
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+                if(params!=null){
+                    int h = params.height;
+                    int w = params.width;
+                    if(w >0){
+                        if(builder.width<=0){
+                            this.width = w;
+                        }
+                    }/*else {
+                        if(builder.width == ViewGroup.LayoutParams.MATCH_PARENT){
+                            this.width = GlobalConfig.getWinWidth();
+                        }
+                    }*/
+                    if(h >0){
+                        if(builder.height<=0){
+                            this.height = h;
+                        }
+                    }/*else {
+                        if(builder.height<=0){
+                            if(builder.height == ViewGroup.LayoutParams.MATCH_PARENT){
+                                this.height = GlobalConfig.getWinHeight();
+                            }
+                        }
+                    }*/
+                }
+            }
+        }else {
+            this.width = builder.width;
+            this.height = builder.height;
+        }
+    }
+
 
     public interface BitmapListener{
         void onSuccess(Bitmap bitmap);
-        void onFail();
+        void onFail(Throwable e);
     }
 
     public static class ConfigBuilder{
@@ -316,7 +363,12 @@ public class SingleConfig {
         private boolean reuseable;//当前view是不是可重用的
 
 
+        public ConfigBuilder setUseARGB8888(boolean useARGB8888) {
+            isUseARGB8888 = useARGB8888;
+            return this;
+        }
 
+        private boolean isUseARGB8888;
 
 
         private int placeHolderScaleType;

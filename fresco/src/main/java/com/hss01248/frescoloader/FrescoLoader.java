@@ -33,6 +33,8 @@ import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
+import com.facebook.imagepipeline.common.ImageDecodeOptions;
+import com.facebook.imagepipeline.common.ImageDecodeOptionsBuilder;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
@@ -58,7 +60,6 @@ import jp.wasabeef.fresco.processors.BlurPostprocessor;
 import jp.wasabeef.fresco.processors.internal.FastBlur;
 import jp.wasabeef.fresco.processors.internal.RSBlur;
 import okhttp3.OkHttpClient;
-
 
 import static com.hss01248.image.config.GlobalConfig.context;
 
@@ -89,6 +90,7 @@ public class FrescoLoader implements ILoader {
                 .setDownsampleEnabled(true)//Downsampling，它处理图片的速度比常规的裁剪更快，
                 // 并且同时支持PNG，JPG以及WEP格式的图片，非常强大,与ResizeOptions配合使用
                 .setBitmapsConfig(Bitmap.Config.RGB_565)
+
                 //让fresco即时清理内存:http://blog.csdn.net/honjane/article/details/65629799
                 .setBitmapMemoryCacheParamsSupplier(new MyBitmapMemoryCacheParamsSupplier((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)))
                 .build();
@@ -137,7 +139,7 @@ public class FrescoLoader implements ILoader {
                 }
 
                 @Override
-                public void onFail() {
+                public void onFail(Throwable e) {
                     if(config.getErrorResId() >0){
                         imageView.setImageResource(config.getErrorResId());
                     }
@@ -160,8 +162,8 @@ public class FrescoLoader implements ILoader {
         if(config.isAsBitmap()){
 
         }else {
-            builder.setAutoPlayAnimations(true);//自动播放gif动画
             if(config.getTarget() instanceof SimpleDraweeView){
+                builder.setAutoPlayAnimations(true);//自动播放gif动画
                 SimpleDraweeView view = (SimpleDraweeView) config.getTarget();
                 builder.setOldController(view.getController());
             }
@@ -286,7 +288,7 @@ public class FrescoLoader implements ILoader {
 
         Postprocessor postprocessor=null;
         if(config.isNeedBlur()){
-            postprocessor = new BlurPostprocessor(context,config.getBlurRadius(),2);//todo 高斯模糊的配置
+            postprocessor = new BlurPostprocessor(context,config.getBlurRadius(),2);
         }
         if(config.isCropFace()){
             //postprocessor = new FaceCenterCrop(config.getWidth(), config.getHeight());//脸部识别
@@ -295,8 +297,21 @@ public class FrescoLoader implements ILoader {
 
         ResizeOptions resizeOptions = getResizeOption(config);
 
+        ImageDecodeOptionsBuilder decodeOptionsBuilder = ImageDecodeOptions.newBuilder();
+        if(config.isUseARGB8888()){
+            decodeOptionsBuilder.setBitmapConfig(Bitmap.Config.ARGB_8888);
+        }else {
+            decodeOptionsBuilder.setBitmapConfig(Bitmap.Config.RGB_565);
+        }
+        /*if(config.isAsBitmap()){
+            decodeOptionsBuilder.setDecodePreviewFrame(true);
+        }*/
+
+
+
 
         builder.setPostprocessor(postprocessor)
+                .setImageDecodeOptions(decodeOptionsBuilder.build())
                 .setResizeOptions(resizeOptions)//缩放,在解码前修改内存中的图片大小, 配合Downsampling可以处理所有图片,否则只能处理jpg,
                 // 开启Downsampling:在初始化时设置.setDownsampleEnabled(true)
                 .setAutoRotateEnabled(true);
@@ -333,9 +348,6 @@ public class FrescoLoader implements ILoader {
 
         DataSource<CloseableReference<CloseableImage>> dataSource = Fresco.getImagePipeline().fetchDecodedImage(request, GlobalConfig.context);
 
-
-
-
         dataSource.subscribe(new MyBaseBitmapDataSubscriber(finalUrl,config.getWidth(),config.getHeight()) {
             @Override
             protected void onNewResultImpl(Bitmap bitmap,DataSource<CloseableReference<CloseableImage>> dataSource) {
@@ -344,18 +356,15 @@ public class FrescoLoader implements ILoader {
                 if(config.getShapeMode() == ShapeMode.OVAL){
                     bitmap = MyUtil.cropCirle(bitmap,false);
 
-                }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
+                }else if(config.getShapeMode() == ShapeMode.RECT_ROUND && config.getRectRoundRadius()>0){
                     bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
                 }
-
-
-
                 config.getBitmapListener().onSuccess(bitmap);
             }
 
             @Override
-            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                config.getBitmapListener().onFail();
+            protected void onFail(Throwable e) {
+                config.getBitmapListener().onFail(e);
             }
         }, CallerThreadExecutor.getInstance());
 
@@ -415,7 +424,9 @@ public class FrescoLoader implements ILoader {
         url = MyUtil.appendUrl(url);
         File localFile = null;
         if (!TextUtils.isEmpty(url)) {
+            Log.e("getfilefromdisk","url is:"+url);
             CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(ImageRequest.fromUri(url),null);
+            Log.e("getfilefromdisk","cacheKey is:"+cacheKey);
             if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
                 BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
                 localFile = ((FileBinaryResource) resource).getFile();
@@ -434,7 +445,7 @@ public class FrescoLoader implements ILoader {
 
     @Override
     public boolean isCached(String url) {
-        if(TextUtils.isEmpty(url)){
+       /* if(TextUtils.isEmpty(url)){
             return false;
         }
         url = MyUtil.appendUrl(url);
@@ -447,14 +458,14 @@ public class FrescoLoader implements ILoader {
             }
         }else {
             return false;
-        }
+        }*/
 
 
-       /* ImageRequest imageRequest = ImageRequest.fromUri(url);
+        ImageRequest imageRequest = ImageRequest.fromUri(url);
         CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
                 .getEncodedCacheKey(imageRequest,null);
         return ImagePipelineFactory.getInstance()
-                .getMainFileCache().hasKey(cacheKey);*/
+                .getMainFileCache().hasKey(cacheKey);
     }
 
     @Override

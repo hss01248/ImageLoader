@@ -168,7 +168,6 @@ public class PicassoLoader implements ILoader {
                 request.fetch(new Callback() {
                     @Override
                     public void onSuccess() {
-
                         ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
                             @Override
                             public void run() {
@@ -182,12 +181,12 @@ public class PicassoLoader implements ILoader {
                                     });
 
 
-                                } catch (IOException e) {
+                                } catch (final IOException e) {
                                     e.printStackTrace();
                                     MyUtil.runOnUIThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            config.getBitmapListener().onFail();
+                                            config.getBitmapListener().onFail(e);
                                         }
                                     });
 
@@ -198,15 +197,12 @@ public class PicassoLoader implements ILoader {
 
                     @Override
                     public void onError() {
-                        config.getBitmapListener().onFail();
+                        config.getBitmapListener().onFail(new Throwable("fetch fail:"));
 
                     }
                 });
                 return;
-            }
-
-
-            if(config.getTarget() instanceof ImageView){
+            }else if(config.getTarget() instanceof ImageView){
                 request.into((ImageView) config.getTarget());
             }
 

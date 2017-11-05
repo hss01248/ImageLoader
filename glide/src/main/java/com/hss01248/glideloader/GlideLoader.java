@@ -57,41 +57,82 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
 public class GlideLoader implements ILoader {
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
-        Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
+
+        Glide.get(context)
+                .setMemoryCategory(MemoryCategory.NORMAL);
         BigImageViewer.initialize(GlideBigLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
     }
 
     @Override
     public void request(final SingleConfig config) {
         if(config.isAsBitmap()){
-            SimpleTarget target = new SimpleTarget<Bitmap>(config.getWidth(),config.getHeight()) {
-                @Override
-                public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                    // do something with the bitmap
-                    // for demonstration purposes, let's just set it to an ImageView
-                   // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
-                    //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
-                    if(config.isNeedBlur()){
-                        bitmap = blur(bitmap,config.getBlurRadius(),true);
-                    }
-                    if(config.getShapeMode() == ShapeMode.OVAL){
-                        bitmap = MyUtil.cropCirle(bitmap,true);
-                    }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
-                        bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
+            SimpleTarget target = null;
+            if(config.getWidth()>0 && config.getHeight()>0){
+                target = new SimpleTarget<Bitmap>(config.getWidth(),config.getHeight()) {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        // do something with the bitmap
+                        // for demonstration purposes, let's just set it to an ImageView
+                        // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
+                        //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
+                        if(config.isNeedBlur()){
+                            bitmap = blur(bitmap,config.getBlurRadius(),false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
+                        if(config.getShapeMode() == ShapeMode.OVAL){
+                            bitmap = MyUtil.cropCirle(bitmap,false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
+                            bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
+
+                        config.getBitmapListener().onSuccess(bitmap);
                     }
 
-                    config.getBitmapListener().onSuccess(bitmap);
-                }
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        config.getBitmapListener().onFail(e);
+                    }
+                };
+            }else {
+                target = new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        // do something with the bitmap
+                        // for demonstration purposes, let's just set it to an ImageView
+                        // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
+                        //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
+                        if(config.isNeedBlur()){
+                            bitmap = blur(bitmap,config.getBlurRadius(),false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
+                        if(config.getShapeMode() == ShapeMode.OVAL){
+                            bitmap = MyUtil.cropCirle(bitmap,false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
+                            bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
 
-                @Override
-                public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                    super.onLoadFailed(e, errorDrawable);
-                    config.getBitmapListener().onFail();
-                }
-            };
+                        config.getBitmapListener().onSuccess(bitmap);
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        config.getBitmapListener().onFail(e);
+                    }
+                };
+            }
+
             RequestManager requestManager =  Glide.with(config.getContext());
             DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
-            request.override(config.getWidth(),config.getHeight());
+            if(config.getWidth()>0 && config.getHeight()>0){
+                request.override(config.getWidth(),config.getHeight());
+            }
+
            // setShapeModeAndBlur(config, request);
             request.asBitmap().into(target);
 
@@ -437,12 +478,6 @@ public class GlideLoader implements ILoader {
             Paint paint = new Paint();
             paint.setFlags(Paint.FILTER_BITMAP_FLAG);
             canvas.drawBitmap(source, 0, 0, paint);
-
-
-
-
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             try {
                 bitmap = RSBlur.blur(ImageLoader.context, bitmap, mRadius);
@@ -453,7 +488,7 @@ public class GlideLoader implements ILoader {
             bitmap = FastBlur.blur(bitmap, mRadius, true);
         }
         if(recycleOriginal){
-            //source.recycle();
+            source.recycle();
         }
 
         return bitmap;

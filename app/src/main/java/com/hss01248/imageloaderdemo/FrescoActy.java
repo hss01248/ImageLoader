@@ -523,11 +523,21 @@ public class FrescoActy extends Activity {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         XLog.e("bitmap :%s,width:%d,height:%d",bitmap.toString(),bitmap.getWidth(),bitmap.getHeight());
+                        imageView.setVisibility(View.VISIBLE);
+                        ivTargetView.setVisibility(View.GONE);
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        imageView.setImageBitmap(bitmap);
+
                     }
 
                     @Override
-                    public void onFail() {
+                    public void onFail(Throwable e) {
+                        e.printStackTrace();
                         XLog.e("on fail");
+                        //MyToast.error("on bitmap fail");
+                        imageView.setVisibility(View.VISIBLE);
+                        ivTargetView.setVisibility(View.GONE);
+                        imageView.setImageResource(R.drawable.error1_48dp);
 
                     }
                 });
