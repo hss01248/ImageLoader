@@ -99,5 +99,33 @@ public class GlobalConfig {
         return loader;
     }
 
+    public static int placeHolderResId;
+    public static int placeHolderScaleType = ScaleMode.CENTER_CROP;
+    public static int errorResId;
+    public static int errorScaleType  = ScaleMode.CENTER_INSIDE;
+    public static int loadingResId;
+    public static int loadingScaleType = ScaleMode.CENTER_INSIDE;
+
+    public static void setDefaultPlaceHolder(int placeHolderResId){
+        GlobalConfig.placeHolderResId = placeHolderResId;
+    }
+    public static void setDefaultPlaceHolderScaleType(int placeHolderScaleType){
+        GlobalConfig.placeHolderScaleType = placeHolderScaleType;
+    }
+
+    public static void setDefaultErrorHolder(int errorResId){
+        GlobalConfig.errorResId = errorResId;
+    }
+
+    public static void setDefaultErrorHolderScaleType(int errorScaleType){
+        GlobalConfig.errorScaleType = errorScaleType;
+    }
+
+    public static void setDefaultLoadingHolder(int loadingResId){
+        GlobalConfig.loadingResId =loadingResId;
+    }
+
+
+
 
 }

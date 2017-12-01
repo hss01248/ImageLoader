@@ -309,21 +309,21 @@ public class SingleConfig {
             return this;
         }
 
-        private int loadingScaleType;
+        private int loadingScaleType = GlobalConfig.loadingScaleType;
 
         //UI:
-        private int placeHolderResId;
+        private int placeHolderResId= GlobalConfig.placeHolderResId;
         private boolean reuseable;//当前view是不是可重用的
 
 
 
 
 
-        private int placeHolderScaleType;
-        private int errorScaleType;
+        private int placeHolderScaleType= GlobalConfig.placeHolderScaleType;
+        private int errorScaleType= GlobalConfig.errorScaleType;
 
-        private int loadingResId;
-        private int errorResId;
+        private int loadingResId = GlobalConfig.loadingResId;
+        private int errorResId = GlobalConfig.errorResId;
 
 
 
