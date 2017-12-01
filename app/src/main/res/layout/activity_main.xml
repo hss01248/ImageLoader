@@ -40,6 +40,12 @@
                 android:textAllCaps="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btn_scale"
+            android:text="go to scale mode"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/iv_url"

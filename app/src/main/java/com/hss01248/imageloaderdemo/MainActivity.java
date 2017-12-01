@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFail() {
+                    public void onFail(Throwable e) {
 
                     }
                 });
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFail() {
+                    public void onFail(Throwable e) {
                         Log.e("bitmap", "fail");
 
                     }
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager,R.id.btn_recycle,R.id.btn_fresco})
+    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager,R.id.btn_recycle,R.id.btn_fresco,R.id.btn_scale})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_bigpic:{
@@ -146,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_fresco:
                 Intent intent = new Intent(this,FrescoActy.class);
                 startActivity(intent);
+                break;
+            case R.id.btn_scale:
+                Intent intent6 = new Intent(this,ScaleTypeActy.class);
+                startActivity(intent6);
                 break;
             default:break;
         }

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.renderscript.RSRuntimeException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -18,7 +19,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
@@ -26,7 +32,6 @@ import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
-import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.FileGetter;
@@ -52,41 +57,82 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
 public class GlideLoader implements ILoader {
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
-        Glide.get(context).setMemoryCategory(MemoryCategory.NORMAL);
+
+        Glide.get(context)
+                .setMemoryCategory(MemoryCategory.NORMAL);
         BigImageViewer.initialize(GlideBigLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
     }
 
     @Override
     public void request(final SingleConfig config) {
         if(config.isAsBitmap()){
-            SimpleTarget target = new SimpleTarget<Bitmap>(config.getWidth(),config.getHeight()) {
-                @Override
-                public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                    // do something with the bitmap
-                    // for demonstration purposes, let's just set it to an ImageView
-                   // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
-                    //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
-                    if(config.isNeedBlur()){
-                        bitmap = blur(bitmap,config.getBlurRadius(),true);
-                    }
-                    if(config.getShapeMode() == ShapeMode.OVAL){
-                        bitmap = MyUtil.cropCirle(bitmap,true);
-                    }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
-                        bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
+            SimpleTarget target = null;
+            if(config.getWidth()>0 && config.getHeight()>0){
+                target = new SimpleTarget<Bitmap>(config.getWidth(),config.getHeight()) {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        // do something with the bitmap
+                        // for demonstration purposes, let's just set it to an ImageView
+                        // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
+                        //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
+                        if(config.isNeedBlur()){
+                            bitmap = blur(bitmap,config.getBlurRadius(),false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
+                        if(config.getShapeMode() == ShapeMode.OVAL){
+                            bitmap = MyUtil.cropCirle(bitmap,false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
+                            bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
+
+                        config.getBitmapListener().onSuccess(bitmap);
                     }
 
-                    config.getBitmapListener().onSuccess(bitmap);
-                }
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        config.getBitmapListener().onFail(e);
+                    }
+                };
+            }else {
+                target = new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        // do something with the bitmap
+                        // for demonstration purposes, let's just set it to an ImageView
+                        // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
+                        //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
+                        if(config.isNeedBlur()){
+                            bitmap = blur(bitmap,config.getBlurRadius(),false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
+                        if(config.getShapeMode() == ShapeMode.OVAL){
+                            bitmap = MyUtil.cropCirle(bitmap,false);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
+                            bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
+                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
+                        }
 
-                @Override
-                public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                    super.onLoadFailed(e, errorDrawable);
-                    config.getBitmapListener().onFail();
-                }
-            };
+                        config.getBitmapListener().onSuccess(bitmap);
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        config.getBitmapListener().onFail(e);
+                    }
+                };
+            }
+
             RequestManager requestManager =  Glide.with(config.getContext());
             DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
-            request.override(config.getWidth(),config.getHeight());
+            if(config.getWidth()>0 && config.getHeight()>0){
+                request.override(config.getWidth(),config.getHeight());
+            }
+
            // setShapeModeAndBlur(config, request);
             request.asBitmap().into(target);
 
@@ -107,39 +153,36 @@ public class GlideLoader implements ILoader {
                 request.placeholder(config.getPlaceHolderResId());
             }
 
-            int scaleMode = config.getScaleMode();
+            /*int scaleMode = config.getScaleMode();
             switch (scaleMode){
                 case ScaleMode.CENTER_CROP:
+                case ScaleMode.CENTER:
                     request.centerCrop();
                     break;
                 case ScaleMode.CENTER_INSIDE:
                     request.fitCenter();
                     break;
                 case ScaleMode.FIT_CENTER:
+                case ScaleMode.FIT_START:
+                case ScaleMode.FIT_END:
                     request.fitCenter();
                     break;
                 case ScaleMode.FIT_XY:
                     request.fitCenter();
                     break;
-                case ScaleMode.FIT_END:
-                    request.centerCrop();
-                    break;
+
                 case ScaleMode.FOCUS_CROP:
-                    request.centerCrop();
-                    break;
-                case ScaleMode.CENTER:
-                    request.centerCrop();
-                    break;
-                case ScaleMode.FIT_START:
                     request.centerCrop();
                     break;
 
                 default:
                     request.centerCrop();
                     break;
+            }*/
+            if(config.getWidth()>0 && config.getHeight()>0){
+                request.override(config.getWidth(),config.getHeight());
+                Log.e("glideloader:","to overrided-w:"+config.getWidth()+"--h:"+config.getHeight());
             }
-            request.override(config.getWidth(),config.getHeight());
-
             setShapeModeAndBlur(config, request);
 
 
@@ -150,8 +193,68 @@ public class GlideLoader implements ILoader {
                 request.error(config.getErrorResId());
             }
 
+
             if(config.getTarget() instanceof ImageView){
-                request.into((ImageView) config.getTarget());
+                final ImageView imageView = (ImageView) config.getTarget();
+
+                //com.bumptech.glide.load.resource.gif.GifDrawable
+
+                ImageViewTarget<GlideDrawable> viewTarget = new ImageViewTarget<GlideDrawable>(imageView) {
+
+                    @Override
+                    protected void setResource(GlideDrawable resource) {
+                        view.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
+                        if(resource instanceof GlideBitmapDrawable){
+                            GlideBitmapDrawable bitmapDrawable = (GlideBitmapDrawable) resource;
+                            Log.e("glideloader:","overrided-w:"+bitmapDrawable.getBitmap().getWidth()+"--h:"+bitmapDrawable.getBitmap().getHeight());
+                            imageView.setImageBitmap(bitmapDrawable.getBitmap());
+                        }else if(resource instanceof GifDrawable){
+                            GifDrawable gifDrawable = (GifDrawable) resource;
+                            imageView.setImageDrawable(gifDrawable);
+                            gifDrawable.start();
+                        }
+
+                    }
+
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        super.onResourceReady(resource, glideAnimation);
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        if(config.getErrorResId() >0){
+                            view.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
+                            view.setImageDrawable(errorDrawable);
+                        }
+                    }
+
+                    @Override
+                    public void onLoadStarted(Drawable placeholder) {
+                        if(config.getLoadingResId() >0){
+                            view.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
+                            view.setImageDrawable(view.getContext().getResources().getDrawable(config.getLoadingResId()));
+                        }else {
+                            view.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
+                            view.setImageDrawable(placeholder);
+                        }
+
+                    }
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                    }
+
+                    @Override
+                    public void onLoadCleared(Drawable placeholder) {
+                        super.onLoadCleared(placeholder);
+                    }
+                };
+                request.dontAnimate();
+
+
+                request.into(viewTarget);
 //todo
                /* request.listener(new RequestListener<String,GlideDrawable>() {
                     @Override
@@ -190,7 +293,7 @@ public class GlideLoader implements ILoader {
         DrawableTypeRequest request = null;
         if(!TextUtils.isEmpty(config.getUrl())){
             request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
-            //request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
+            request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
         }else if(!TextUtils.isEmpty(config.getFilePath())){
             request= requestManager.load(config.getFilePath());
         }else if(!TextUtils.isEmpty(config.getContentProvider())){
@@ -375,12 +478,6 @@ public class GlideLoader implements ILoader {
             Paint paint = new Paint();
             paint.setFlags(Paint.FILTER_BITMAP_FLAG);
             canvas.drawBitmap(source, 0, 0, paint);
-
-
-
-
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             try {
                 bitmap = RSBlur.blur(ImageLoader.context, bitmap, mRadius);
@@ -391,7 +488,7 @@ public class GlideLoader implements ILoader {
             bitmap = FastBlur.blur(bitmap, mRadius, true);
         }
         if(recycleOriginal){
-            //source.recycle();
+            source.recycle();
         }
 
         return bitmap;

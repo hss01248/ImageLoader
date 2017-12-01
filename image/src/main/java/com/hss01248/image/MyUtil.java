@@ -68,9 +68,6 @@ public class MyUtil {
                         }
                     }
                 });
-
-
-
                 return null;
             }
         });
@@ -460,10 +457,15 @@ public class MyUtil {
         return bitmap;
     }
 
-    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode){
+    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode,boolean isContent){
         switch (scaleMode){
             case 0:
-                return ImageView.ScaleType.CENTER_CROP;
+                if(isContent){
+                    return ImageView.ScaleType.CENTER_CROP;
+                }else {
+                    return ImageView.ScaleType.CENTER_INSIDE;
+                }
+
             case ScaleMode.CENTER_CROP:
                 return ImageView.ScaleType.CENTER_CROP;
             case ScaleMode.FIT_XY:
@@ -477,7 +479,11 @@ public class MyUtil {
             case ScaleMode.CENTER_INSIDE:
                 return ImageView.ScaleType.CENTER_INSIDE;
             default:
-                return ImageView.ScaleType.CENTER_CROP;
+                if(isContent){
+                    return ImageView.ScaleType.CENTER_CROP;
+                }else {
+                    return ImageView.ScaleType.CENTER_INSIDE;
+                }
         }
     }
 

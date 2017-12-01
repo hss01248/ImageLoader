@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <GridView
+        android:id="@+id/gv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="imageview and small img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:background="@drawable/shape_main_list_bg"
+            android:layout_width="80dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="80dp" />
+        <ImageView
+            android:background="@drawable/shape_main_list_bg"
+            android:id="@+id/iv_small"
+            android:src="@drawable/timg50"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <TextView
+        android:text="big image"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_gravity="center"
+        android:id="@+id/iv_big"
+        android:src="@drawable/timg6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_loadsmall"
+        android:textAllCaps="false"
+        android:text="load small img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn_loadbig"
+        android:textAllCaps="false"
+        android:text="load big img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

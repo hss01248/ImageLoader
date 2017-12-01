@@ -14,6 +14,11 @@
 * 丰富便捷的api: 暂停和继续图片加载,获取磁盘缓存大小和清空缓存,响应内存事件等等.
 * 可以设置placeHolder,loadingDrawable,errorHolder,并且均可以自定义其scaleType.
 
+## TODO 
+* 自动识别gif并加载
+* 适配wrap_centent
+* 适配focus_face
+
 
 
 > 一条龙地支持fresco和glide
