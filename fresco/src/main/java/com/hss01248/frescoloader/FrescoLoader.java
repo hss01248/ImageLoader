@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -26,6 +25,7 @@ import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.AbstractDraweeController;
+import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
@@ -60,6 +60,7 @@ import jp.wasabeef.fresco.processors.BlurPostprocessor;
 import jp.wasabeef.fresco.processors.internal.FastBlur;
 import jp.wasabeef.fresco.processors.internal.RSBlur;
 import okhttp3.OkHttpClient;
+
 
 import static com.hss01248.image.config.GlobalConfig.context;
 
@@ -229,6 +230,28 @@ public class FrescoLoader implements ILoader {
 
 
 
+
+
+        //loading图
+        if(config.getLoadingResId()>0){
+            ScalingUtils.ScaleType scaleType2 = ScalingUtils.ScaleType.CENTER_INSIDE;
+            if(config.getLoadingScaleType() >0){
+                scaleType2 = FrescoUtil.getActualScaleType(config.getLoadingScaleType());
+            }
+//todo 提供几种选择，以及可以自己设置内部圈圈  另外,设置了loading,就不要占位图了
+            /*AnimationDrawable animationDrawable = new AnimationDrawable();
+            Drawable drawable = ImageLoader.context.getResources().getDrawable(config.getLoadingResId());
+            if(drawable != null){
+                animationDrawable.addFrame(drawable,50);
+                animationDrawable.setOneShot(false);
+                hierarchy.setProgressBarImage(animationDrawable,scaleType2);//new ProgressBarDrawable(),R.drawable.progressstyleshape
+            }*/
+
+            Object roundingParams1 = ImageLoader.context.getResources().getDrawable(config.getLoadingResId());//R.drawable.fresco_spinner
+            roundingParams1 = new AutoRotateDrawable((Drawable) roundingParams1, 1200);
+            hierarchy.setProgressBarImage((Drawable) roundingParams1,scaleType2);
+        }
+
         //占位图
         if(MyUtil.shouldSetPlaceHolder(config)){
             ScalingUtils.ScaleType scaleType = ScalingUtils.ScaleType.CENTER_CROP;
@@ -237,22 +260,6 @@ public class FrescoLoader implements ILoader {
             }
             if(config.getPlaceHolderResId() >0){
                 hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), scaleType);
-            }
-        }
-
-        //loading图
-        if(config.getLoadingResId()>0){
-            ScalingUtils.ScaleType scaleType2 = ScalingUtils.ScaleType.CENTER_INSIDE;
-            if(config.getLoadingScaleType() >0){
-                scaleType2 = FrescoUtil.getActualScaleType(config.getLoadingScaleType());
-            }
-//todo 提供几种选择，以及可以自己设置内部圈圈
-            AnimationDrawable animationDrawable = new AnimationDrawable();
-            Drawable drawable = ImageLoader.context.getResources().getDrawable(config.getLoadingResId());
-            if(drawable != null){
-                animationDrawable.addFrame(drawable,50);
-                animationDrawable.setOneShot(false);
-                hierarchy.setProgressBarImage(animationDrawable,scaleType2);//new ProgressBarDrawable(),R.drawable.progressstyleshape
             }
         }
 

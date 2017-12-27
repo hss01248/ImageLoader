@@ -104,6 +104,9 @@ public class MyUtil {
         if(config.getPlaceHolderResId()<=0 ) {
             return false;
         }
+        if(config.getLoadingResId() >0){
+            return false;
+        }
 
         if(config.getResId()>0 || !TextUtils.isEmpty(config.getFilePath()) || GlobalConfig.getLoader().isCached(config.getUrl())){
             return false;
