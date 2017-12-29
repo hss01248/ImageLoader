@@ -25,10 +25,26 @@
 
 图片加载:[ImageLoader](https://github.com/hss01248/ImageLoader)  -->> 图片选择: [PhotoPicker](https://github.com/hss01248/PhotoPicker)  -->>拍照/选图/裁剪/压缩: [PhotoOut](https://github.com/hss01248/PhotoOut)
 
+# 效果图:
+
+![recyleview](pics\recyleview.jpg)
+
+
+
+
+
+
+
+![config_fresco_fitcenter](pics\config_fresco_fitcenter.jpg)
+
+
+
+![config_glide](pics\config_glide.jpg)
 
 
 
 ### 更新日志
+
 https://github.com/hss01248/ImageLoader/blob/master/LOG.md
 
 ```
