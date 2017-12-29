@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hss01248.image.MyUtil;
+import com.hss01248.image.R;
 
 import java.io.File;
 
@@ -438,6 +439,15 @@ public class SingleConfig {
             this.loadingResId = loadingResId;
             return this;
         }
+
+        /**
+         * 使用默认的loading样式
+         * @return
+         */
+        public ConfigBuilder loadingDefault(){
+            this.loadingResId = R.drawable.imageloader_loading_81;
+            return this;
+        }
         public ConfigBuilder loading(int  loadingResId,int loadingScaleType){
             this.loadingResId = loadingResId;
             this.loadingScaleType = loadingScaleType;
@@ -512,8 +522,8 @@ public class SingleConfig {
             return this;
         }
         public ConfigBuilder widthHeightByPx(int widthInPx,int heightInPx){
-            this.width = MyUtil.dip2px(widthInPx);
-            this.height = MyUtil.dip2px(heightInPx);
+            this.width = widthInPx;
+            this.height = heightInPx;
             return this;
         }
 
@@ -578,7 +588,7 @@ public class SingleConfig {
             return this;
         }
 
-        /**
+        /** todo 尚未实现此功能
          * 设置边框
          * @param borderWidth
          * @param borderColor

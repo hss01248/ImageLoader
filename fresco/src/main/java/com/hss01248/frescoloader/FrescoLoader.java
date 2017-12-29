@@ -247,7 +247,7 @@ public class FrescoLoader implements ILoader {
                 hierarchy.setProgressBarImage(animationDrawable,scaleType2);//new ProgressBarDrawable(),R.drawable.progressstyleshape
             }*/
 
-            Object roundingParams1 = ImageLoader.context.getResources().getDrawable(config.getLoadingResId());//R.drawable.fresco_spinner
+            Object roundingParams1 = ImageLoader.context.getResources().getDrawable(config.getLoadingResId());//R.drawable.imageloader_loading_50
             roundingParams1 = new AutoRotateDrawable((Drawable) roundingParams1, 1200);
             hierarchy.setProgressBarImage((Drawable) roundingParams1,scaleType2);
         }

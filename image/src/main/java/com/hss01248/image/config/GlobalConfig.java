@@ -103,7 +103,7 @@ public class GlobalConfig {
     public static int placeHolderScaleType = ScaleMode.CENTER_CROP;
     public static int errorResId;
     public static int errorScaleType  = ScaleMode.CENTER_INSIDE;
-    public static int loadingResId;
+    public static int loadingResId ;
     public static int loadingScaleType = ScaleMode.CENTER_INSIDE;
 
     public static void setDefaultPlaceHolder(int placeHolderResId){
