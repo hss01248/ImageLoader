@@ -240,7 +240,7 @@ public class FrescoActy extends Activity {
         errorRes = new int[]{R.drawable.error1_48dp, R.drawable.error2_24dp,
             R.drawable.error3_18dp, R.drawable.error4_36dp};
         loadingRes = new int[]{R.drawable.loading1_48dp, R.drawable.loading2_18dp,
-            R.drawable.loading3_18dp, R.drawable.loading4_48dp};
+            R.drawable.imageloader_loading_81, R.drawable.imageloader_loading_50};
         ress = Arrays.asList(R.drawable.image+"",R.drawable.thegif+"",R.drawable.img2+"");
         builder = ImageLoader.with(this);
         config = new SingleConfig(builder);

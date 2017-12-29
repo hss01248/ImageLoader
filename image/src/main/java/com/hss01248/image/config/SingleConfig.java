@@ -445,7 +445,7 @@ public class SingleConfig {
          * @return
          */
         public ConfigBuilder loadingDefault(){
-            this.loadingResId = R.drawable.imageloader_loading_81;
+            this.loadingResId = R.drawable.imageloader_loading_50;
             return this;
         }
         public ConfigBuilder loading(int  loadingResId,int loadingScaleType){

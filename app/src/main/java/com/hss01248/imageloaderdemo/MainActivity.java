@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this,RecycleViewActy.class);
                 startActivity(intent);
             }
+            break;
             case R.id.btn_fresco:
                 Intent intent = new Intent(this,FrescoActy.class);
                 startActivity(intent);
