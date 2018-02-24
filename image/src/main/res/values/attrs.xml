@@ -32,4 +32,11 @@
         </attr>
         <attr format="boolean" name="optimizeDisplay"/>
     </declare-styleable>
+
+    <declare-styleable name="CircleLoadingView">
+        <attr name="startColor" format="color" />
+        <attr name="endColor" format="color" />
+        <attr name="circleThicknessRatio" format="float" />
+    </declare-styleable>
+
 </resources>

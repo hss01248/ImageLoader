@@ -184,6 +184,10 @@ public class SingleConfig {
     private int borderWidth;//边框的宽度
     private int borderColor;//边框颜色
 
+    public void setAsBitmap(boolean asBitmap) {
+        this.asBitmap = asBitmap;
+    }
+
     public boolean isAsBitmap() {
         return asBitmap;
     }
@@ -498,6 +502,11 @@ public class SingleConfig {
         public void into(View targetView){
             this.target = targetView;
              new SingleConfig(this).show();
+        }
+
+        public ConfigBuilder listener(BitmapListener bitmapListener){
+            this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
+            return this;
         }
 
         public void asBitmap(BitmapListener bitmapListener){

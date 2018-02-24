@@ -39,9 +39,9 @@ public class ViewpagerActy extends Activity {
         urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20161114_231649.jpg");
         urls.add("/storage/emulated/0/DCIM/家里有用图/IMG_20161229_221023.jpg");
         urls.add("/storage/emulated/0/DCIM/家里有用图/DSC_0051.JPG");*/
-        urls.add("https://timgsa.baidu.com/timetgred4171&di=6e8aa952f387588e9");//这张图片有问题
-        urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359324536&di=f1c2dfd6b0ebe0043f089d933d5d9e10&imgtype=0&src=http%3A%2F%2Fyouimg1.c-ctrip.com%2Ftarget%2Ffd%2Ftg%2Fg1%2FM02%2FFE%2FB5%2FCghzfFSrqqCATzfcACG0aD33PsY070.jpg");
-        urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_1000fdgrgdrgre8aa952f387588e9");//这张图片有问题
+        urls.add("http://img.daimg.com/uploads/allimg/180209/3-1P209124408.jpg");//这张图片有问题
+        urls.add("http://img.daimg.com/uploads/allimg/170917/1-1F91G52451.jpg");
+        urls.add("http://www.jj20.com/bz/zrfg/fghj/5493_8.html");//这张图片有问题
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359343773&di=9fc5478b63f369090613c1c27d56f237&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201510%2F04%2F20151004210446_usmze.jpeg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359365740&di=f02eadaa956bef73d64cf9fb86969228&imgtype=0&src=http%3A%2F%2Fupload4.hlgnet.com%2Fbbsupfile%2F2012%2F2012-07-17%2F20120717003503_80.jpg");
         urls.add("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490359415501&di=2457a1060f3ccde0bd7f7b5d0891918d&imgtype=0&src=http%3A%2F%2Fdimg09.c-ctrip.com%2Fimages%2Ffd%2Ftg%2Fg2%2FM03%2FCB%2F19%2FCghzf1UualCAdMmaABQVh70n7_g185.jpg");

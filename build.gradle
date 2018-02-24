@@ -3,7 +3,11 @@
 buildscript {
     repositories {
         jcenter()
-    }
+		maven {
+			url 'https://maven.google.com/'
+			name 'Google'
+		}
+	}
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
 
@@ -21,7 +25,11 @@ allprojects {
         maven {
             url  "http://dl.bintray.com/piasy/maven"
         }
-    }
+		maven {
+			url 'https://maven.google.com/'
+			name 'Google'
+		}
+	}
 }
 
 task clean(type: Delete) {

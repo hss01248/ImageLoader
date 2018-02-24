@@ -5,10 +5,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.AbstractDraweeController;
+import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.drawable.AutoRotateDrawable;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -40,6 +43,7 @@ import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
@@ -63,6 +67,7 @@ import okhttp3.OkHttpClient;
 
 
 import static com.hss01248.image.config.GlobalConfig.context;
+import static com.hss01248.image.config.GlobalConfig.getLoader;
 
 /**
  * Created by Administrator on 2017/3/15 0015.
@@ -157,7 +162,7 @@ public class FrescoLoader implements ILoader {
 
 
 
-    private AbstractDraweeController buildPipelineDraweeController(SingleConfig config,ImageRequest request) {
+    private AbstractDraweeController buildPipelineDraweeController(final SingleConfig config, final ImageRequest request) {
         PipelineDraweeControllerBuilder builder =  Fresco.newDraweeControllerBuilder();
         builder.setImageRequest(request);
         if(config.isAsBitmap()){
@@ -166,6 +171,43 @@ public class FrescoLoader implements ILoader {
             if(config.getTarget() instanceof SimpleDraweeView){
                 builder.setAutoPlayAnimations(true);//自动播放gif动画
                 SimpleDraweeView view = (SimpleDraweeView) config.getTarget();
+
+                builder.setControllerListener(new ControllerListener<ImageInfo>() {
+                    @Override
+                    public void onSubmit(String id, Object callerContext) {
+
+                    }
+
+                    @Override
+                    public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable animatable) {
+                        if(config.getBitmapListener()!=null){
+                            config.setAsBitmap(true);
+                            getLoader().request(config);
+                        }
+                    }
+
+                    @Override
+                    public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
+
+                    }
+
+                    @Override
+                    public void onIntermediateImageFailed(String id, Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onFailure(String id, Throwable throwable) {
+                        if(config.getBitmapListener()!=null){
+                            config.getBitmapListener().onFail(throwable);
+                        }
+                    }
+
+                    @Override
+                    public void onRelease(String id) {
+
+                    }
+                });
                 builder.setOldController(view.getController());
             }
 

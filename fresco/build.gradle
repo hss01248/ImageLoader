@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
@@ -26,7 +26,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.0'
+
     testCompile 'junit:junit:4.12'
     compile 'com.facebook.fresco:fresco:1.1.0'
     // 在 API < 14 上的机器支持 WebP 时，需要添加
@@ -43,5 +43,7 @@ dependencies {
     //compile 'com.github.aryarohit07:fresco-facedetection-processor:0.1.1'
     //https://github.com/aryarohit07/FrescoFaceDetectionProcessor,需要依赖com.google.android.gms:play-services-vision:9.4.0
     compile project(':image')
+    provided 'com.android.support:appcompat-v7:26.1.0'
+    provided 'com.android.support:recyclerview-v7:26.1.0'
 
 }

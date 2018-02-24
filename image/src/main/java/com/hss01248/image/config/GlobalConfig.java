@@ -89,6 +89,13 @@ public class GlobalConfig {
 
     public static boolean ignoreCertificateVerify = false;
 
+
+    public static void setBigImageDark(boolean isBigImageDark) {
+        GlobalConfig.isBigImageDark = isBigImageDark;
+    }
+
+    public static boolean isBigImageDark = true;
+
     public static void setLoader(ILoader loader) {
         GlobalConfig.loader = loader;
     }
