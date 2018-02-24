@@ -27,7 +27,7 @@
 
 # 效果图:
 
-![recyleview](pics\recyleview.jpg)
+![recyleview](pics/recyleview.jpg)
 
 
 
@@ -35,11 +35,11 @@
 
 
 
-![config_fresco_fitcenter](pics\config_fresco_fitcenter.jpg)
+![config_fresco_fitcenter](pics/config_fresco_fitcenter.jpg)
 
 
 
-![config_glide](pics\config_glide.jpg)
+![config_glide](pics/config_glide.jpg)
 
 
 
