@@ -431,13 +431,13 @@ public class GlideLoader implements ILoader {
                         if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
                             getter.onSuccess(resource);
                         }else {
-                            getter.onFail();
+                            getter.onFail(new Throwable("resource not exist"));
                         }
                     }
 
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                        getter.onFail();
+                        getter.onFail(e);
                     }
                 });
     }
@@ -463,6 +463,10 @@ public class GlideLoader implements ILoader {
         Glide.with(GlobalConfig.context).onLowMemory();
     }
 
+    @Override
+    public void download(String url, FileGetter getter) {
+        getFileFromDiskCache(url,getter);
+    }
 
 
     public static Bitmap blur(Bitmap source,int mRadius,boolean recycleOriginal){

@@ -12,6 +12,6 @@ public interface FileGetter {
 
     //void onSuccess(InputStream is);
 
-    void onFail();
+    void onFail(Throwable e);
 
 }

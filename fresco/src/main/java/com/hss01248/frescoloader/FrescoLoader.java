@@ -21,9 +21,11 @@ import com.facebook.binaryresource.FileBinaryResource;
 import com.facebook.cache.common.CacheKey;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.executors.CallerThreadExecutor;
+import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.internal.Supplier;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
+import com.facebook.datasource.DataSubscriber;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.AbstractDraweeController;
@@ -474,7 +476,7 @@ public class FrescoLoader implements ILoader {
         File localFile = null;
         if (!TextUtils.isEmpty(url)) {
             Log.e("getfilefromdisk","url is:"+url);
-            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(ImageRequest.fromUri(url),null);
+            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(ImageRequest.fromUri(url),false);
             Log.e("getfilefromdisk","cacheKey is:"+cacheKey);
             if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
                 BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
@@ -525,6 +527,57 @@ public class FrescoLoader implements ILoader {
     @Override
     public  void onLowMemory(){
         Fresco.getImagePipeline().clearMemoryCaches();
+    }
+
+    @Override
+    public void download(String url, FileGetter getter) {
+        if(isCached(url)){
+            File file = getFileFromDiskCache(url);
+            if(file!=null && file.exists()){
+                getter.onSuccess(file);
+            }else {
+                getter.onFail(new Throwable("file does not exist"));
+            }
+        }else {
+            downloadReally(url,getter);
+        }
+    }
+
+    private void downloadReally(final String url, final FileGetter getter) {
+        ImageRequest imageRequest = ImageRequest.fromUri(url);
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        DataSource<Void> dataSource = imagePipeline.prefetchToDiskCache(imageRequest, false);
+        DataSubscriber<Void> dataSubscriber = new DataSubscriber<Void>() {
+            @Override
+            public void onNewResult(DataSource<Void> dataSource) {
+                if(dataSource.hasFailed()){
+                    onFailure(dataSource);
+                }else {
+                    File file = getFileFromDiskCache(url);
+                    if(file!=null && file.exists()){
+                        getter.onSuccess(file);
+                    }else {
+                        getter.onFail(new Throwable("file does not exist after prefetched"));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(DataSource<Void> dataSource) {
+                getter.onFail(dataSource.getFailureCause());
+            }
+
+            @Override
+            public void onCancellation(DataSource<Void> dataSource) {
+                getter.onFail(dataSource.getFailureCause());
+            }
+
+            @Override
+            public void onProgressUpdate(DataSource<Void> dataSource) {
+
+            }
+        };
+        dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
     }
 
 
