@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-        android:background="#ffffff"
+        android:background="#000000"
     tools:context="com.hss01248.imageloaderdemo.MainActivity">
 
     <android.support.v4.view.ViewPager
@@ -16,6 +16,7 @@
     <TextView
             android:id="@+id/index"
             android:text="999"
+
             android:textColor="@color/bg_white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
