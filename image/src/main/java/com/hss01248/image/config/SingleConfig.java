@@ -223,7 +223,10 @@ public class SingleConfig {
    // private BigImageView bigImageView ;//可放大和缩放的大图
 
     private void show(){
-        GlobalConfig.getLoader().request(this);
+        if(ConfigChecker.check(this)){
+            GlobalConfig.getLoader().request(this);
+        }
+
     }
 
 
@@ -296,10 +299,11 @@ public class SingleConfig {
             if(view!=null){
                 ViewGroup.LayoutParams params = view.getLayoutParams();
                 if(params!=null){
+                    //注意:返回的值都是px单位
                     int h = params.height;
                     int w = params.width;
                     if(w >0){
-                        if(builder.width<=0){
+                        if(builder.width<=0 || builder.width > w){
                             this.width = w;
                         }
                     }/*else {
@@ -308,7 +312,7 @@ public class SingleConfig {
                         }
                     }*/
                     if(h >0){
-                        if(builder.height<=0){
+                        if(builder.height<=0 || builder.height>h){
                             this.height = h;
                         }
                     }/*else {
