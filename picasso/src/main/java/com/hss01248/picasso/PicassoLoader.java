@@ -416,7 +416,8 @@ public class PicassoLoader implements ILoader {
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                getter.onSuccess(file);
+                                int[] wh = MyUtil.getImageWidthHeight(file.getAbsolutePath());
+                                getter.onSuccess(file,wh[0],wh[1]);
                             }
                         });
                     }

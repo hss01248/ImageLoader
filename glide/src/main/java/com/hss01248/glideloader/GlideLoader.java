@@ -429,7 +429,8 @@ public class GlideLoader implements ILoader {
                     @Override
                     public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
                         if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
-                            getter.onSuccess(resource);
+                            int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
+                            getter.onSuccess(resource,wh[0],wh[1]);
                         }else {
                             getter.onFail(new Throwable("resource not exist"));
                         }

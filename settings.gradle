@@ -1,1 +1,1 @@
-include ':app', ':image', ':fresco', ':glide', ':picasso'
+include ':app', ':image', ':fresco', ':glide'//, ':picasso'

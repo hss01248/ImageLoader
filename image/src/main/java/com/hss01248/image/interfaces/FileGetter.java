@@ -8,7 +8,7 @@ import java.io.File;
 
 public interface FileGetter {
 
-    void onSuccess(File file);
+    void onSuccess(File file,int width,int height);
 
     //void onSuccess(InputStream is);
 

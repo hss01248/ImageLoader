@@ -45,7 +45,7 @@ public class RecycleViewActy extends Activity {
 
             @Override
             protected SuperRcvHolder generateCoustomViewHolder(int i) {
-                return new RcvHolder(View.inflate(RecycleViewActy.this,R.layout.item_dreeview,null)).setColumnNum(3);
+                return new RcvHolder(View.inflate(RecycleViewActy.this,R.layout.item_iv,null)).setColumnNum(3);
             }
         };
         recyclerView.setItemAnimator(new DefaultItemAnimator());

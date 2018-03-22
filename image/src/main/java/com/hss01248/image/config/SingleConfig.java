@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.R;
+import com.hss01248.image.interfaces.ImageListener;
 
 import java.io.File;
 
@@ -172,9 +173,6 @@ public class SingleConfig {
     public boolean isReuseable() {
         return reuseable;
     }
-
-
-
     private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
     private int rectRoundRadius;//圆角矩形时圆角的半径
 
@@ -205,6 +203,18 @@ public class SingleConfig {
     }
 
     private boolean cropFace;
+
+    public boolean widthWrapContent;
+    public boolean heightWrapContent;
+
+    public boolean widthMatchParent;
+    public boolean heightMatchParent;
+
+    private ImageListener imageListener;
+
+    public ImageListener getImageListener() {
+        return imageListener;
+    }
 
     /*public BigImageView getBigImageView() {
         return bigImageView;
@@ -349,6 +359,7 @@ public class SingleConfig {
         private View target;
         private boolean asBitmap;//只获取bitmap
         private BitmapListener bitmapListener;
+        private ImageListener imageListener;
 
         private int width;
         private int height;
@@ -358,6 +369,11 @@ public class SingleConfig {
 
         public ConfigBuilder setLoadingScaleType(int loadingScaleType) {
             this.loadingScaleType = loadingScaleType;
+            return this;
+        }
+
+        public ConfigBuilder setImageListener(ImageListener imageListener) {
+            this.imageListener = imageListener;
             return this;
         }
 

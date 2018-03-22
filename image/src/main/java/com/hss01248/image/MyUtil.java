@@ -1,6 +1,7 @@
 package com.hss01248.image;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -115,6 +116,9 @@ public class MyUtil {
 
 
     public static int dip2px(float dipValue){
+        if(dipValue<=0){
+            return (int) dipValue;
+        }
         final float scale = GlobalConfig.context.getResources().getDisplayMetrics().density;
         return (int)(dipValue * scale + 0.5f);
     }
@@ -486,6 +490,21 @@ public class MyUtil {
                     return ImageView.ScaleType.CENTER_INSIDE;
                 }
         }
+    }
+
+    public static int[] getImageWidthHeight(String path){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+
+        /**
+         * 最关键在此，把options.inJustDecodeBounds = true;
+         * 这里再decodeFile()，返回的bitmap为空，但此时调用options.outHeight时，已经包含了图片的高了
+         */
+        options.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options); // 此时返回的bitmap为null
+        /**
+         *options.outHeight为原始图片的高
+         */
+        return new int[]{options.outWidth,options.outHeight};
     }
 
 
