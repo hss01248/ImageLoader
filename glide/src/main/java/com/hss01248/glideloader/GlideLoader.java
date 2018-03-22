@@ -293,7 +293,7 @@ public class GlideLoader implements ILoader {
         DrawableTypeRequest request = null;
         if(!TextUtils.isEmpty(config.getUrl())){
             request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
-            request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
+            request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存原图
         }else if(!TextUtils.isEmpty(config.getFilePath())){
             request= requestManager.load(config.getFilePath());
         }else if(!TextUtils.isEmpty(config.getContentProvider())){
@@ -408,6 +408,7 @@ public class GlideLoader implements ILoader {
 
     @Override
     public void clearMomoryCache(String url) {
+
 
     }
 
