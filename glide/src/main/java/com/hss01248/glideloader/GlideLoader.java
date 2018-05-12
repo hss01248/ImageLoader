@@ -134,7 +134,7 @@ public class GlideLoader implements ILoader {
             }
 
            // setShapeModeAndBlur(config, request);
-            request.asBitmap().into(target);
+            request.asBitmap().approximate().into(target);
 
         }else {
 
