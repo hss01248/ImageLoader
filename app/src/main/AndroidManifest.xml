@@ -22,7 +22,8 @@
         <activity android:name=".RecycleViewActy"/>
         <activity android:name=".ConfigAllActy"/>
         <activity android:name=".ScaleTypeActy"/>
-    </application>
+		<activity android:name=".FrescoFaceCropActivity" />
+	</application>
 
 
 </manifest>

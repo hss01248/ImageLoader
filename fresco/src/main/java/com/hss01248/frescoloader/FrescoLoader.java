@@ -506,7 +506,7 @@ public class FrescoLoader implements ILoader {
                     bitmap1 = Bitmap.createBitmap(bitmap);
                 }
                 //将bitmap放到fresco的内存池中
-                FrescoUtil.putIntoPool(bitmap1,finalUrl);
+               // FrescoUtil.putIntoPool(bitmap1,finalUrl);
                 config.getBitmapListener().onSuccess(bitmap1);
             }
 
