@@ -17,7 +17,6 @@
         android:shape="ring"
         android:thicknessRatio="14"
         android:useLevel="false"
-
         >
         <gradient
             android:endColor="#BFBFBF"

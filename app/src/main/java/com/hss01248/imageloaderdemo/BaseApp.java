@@ -22,7 +22,8 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ImageLoader.init(getApplicationContext(), 100,new FrescoLoader());
+        ImageLoader.init(getApplicationContext(), 500,new FrescoLoader());
+        //GlobalConfig.setBigImageDark(false);
         LeakCanary.install(this);
         MyToast.init(this,true,true);
 

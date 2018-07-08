@@ -36,13 +36,13 @@
                 android:layout_height="wrap_content" />
         <Button
                 android:id="@+id/btn_fresco"
-                android:text="go to fresco"
+                android:text="全部自由配置项"
                 android:textAllCaps="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         <Button
             android:id="@+id/btn_scale"
-            android:text="go to scale mode"
+            android:text="查看大图小图的scale type效果"
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

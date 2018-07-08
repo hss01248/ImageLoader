@@ -25,10 +25,26 @@
 
 图片加载:[ImageLoader](https://github.com/hss01248/ImageLoader)  -->> 图片选择: [PhotoPicker](https://github.com/hss01248/PhotoPicker)  -->>拍照/选图/裁剪/压缩: [PhotoOut](https://github.com/hss01248/PhotoOut)
 
+# 效果图:
+
+![recyleview](pics/recyleview.jpg)
+
+
+
+
+
+
+
+![config_fresco_fitcenter](pics/config_fresco_fitcenter.jpg)
+
+
+
+![config_glide](pics/config_glide.jpg)
 
 
 
 ### 更新日志
+
 https://github.com/hss01248/ImageLoader/blob/master/LOG.md
 
 ```
@@ -232,7 +248,7 @@ ImageLoader.loadBigImage(BigImageView imageView,String path)
 
 内置了placeholder,progressbar,errorview.
 
-暂未提供自定义设置的功能
+
 
 ![placeholder](pics/placeholder.jpg)
 
@@ -378,9 +394,9 @@ Add it in your root build.gradle at the end of repositories:
 
 ```
     dependencies {
-              compile 'com.github.hss01248.ImageLoader:fresco:1.0.6'//如果使用fresco
-              compile 'com.github.hss01248.ImageLoader:glide:1.0.6'//如果使用glide
-              compile 'com.github.hss01248.ImageLoader:picasso:1.0.6'//如果使用picasso
+              compile 'com.github.hss01248.ImageLoader:fresco:1.0.8'//如果使用fresco
+              compile 'com.github.hss01248.ImageLoader:glide:1.0.8'//如果使用glide
+              compile 'com.github.hss01248.ImageLoader:picasso:1.0.8'//如果使用picasso
     }
 ```
 

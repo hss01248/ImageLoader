@@ -1,12 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
+
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
@@ -34,17 +35,24 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support:recyclerview-v7:25.3.0'
+    provided 'com.android.support:appcompat-v7:26.1.0'
+    provided 'com.android.support:recyclerview-v7:26.1.0'
     testCompile 'junit:junit:4.12'
     //compile "com.facebook.fresco:imagepipeline-okhttp3:0.12.0+"
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
-    compile 'com.github.filippudak.progresspieview:library:1.0.4'
+    compile 'com.squareup.okhttp3:okhttp:3.9.1'
+    compile ('com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'){
+        exclude group: 'com.android.support'
+    }
+    compile ('com.github.filippudak.progresspieview:library:1.0.4'){
+        exclude group: 'com.android.support'
+    }
 
     //compile 'commons-io:commons-io:2.5'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'am.util:viewpager:25.3.0'
+    compile ('am.util:viewpager:25.3.0'){
+        exclude group: 'com.android.support'
+    }
+    compile 'com.blankj:utilcode:1.9.8'
 
    /* compile 'com.github.piasy:BigImageViewer:1.2.7'
     compile 'com.github.piasy:ProgressPieIndicator:1.2.7'

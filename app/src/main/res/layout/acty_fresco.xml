@@ -13,10 +13,11 @@
 			<TextView
 					android:layout_marginBottom="10dp"
 					android:gravity="center"
-					android:text="SimpleDraweeView:"
+					android:text="ImageView:"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content" />
-			<com.facebook.drawee.view.SimpleDraweeView
+			<!--<com.facebook.drawee.view.SimpleDraweeView-->
+			<ImageView
 					android:background="@drawable/shape_main_list_bg"
 					android:id="@+id/iv_targetView"
 					android:layout_width="180dp"
@@ -395,14 +396,13 @@
 
 		</LinearLayout>
 	</ScrollView>
-	<Button android:layout_alignParentBottom="true"
+	<android.support.design.widget.FloatingActionButton android:layout_alignParentBottom="true"
 			android:layout_alignParentRight="true"
 			android:layout_marginBottom="30dp"
 			android:layout_marginRight="30dp"
 			android:id="@+id/btn_show"
 			android:textAllCaps="false"
-			android:text="load"
-			android:layout_width="wrap_content"
+			android:layout_width="50dp"
 			android:layout_height="50dp" />
 	</RelativeLayout>
 

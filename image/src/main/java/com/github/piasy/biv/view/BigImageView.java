@@ -48,9 +48,10 @@ import com.github.piasy.biv.event.CacheHitEvent2;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.event.ProgressEvent;
 import com.github.piasy.biv.indicator.ProgressIndicator;
-import com.github.piasy.biv.indicator.ProgressPieIndicator;
+import com.github.piasy.biv.indicator.ProgressPieIndicatorNew;
 import com.github.piasy.biv.loader.BigLoader;
 import com.hss01248.image.R;
+import com.hss01248.image.config.GlobalConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -109,6 +110,8 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     public static final int STATE_CONTENT = 3;
     public static final int STATE_ERROR = 4;
 
+    private boolean darkTheme = GlobalConfig.isBigImageDark;
+
     public void updateHierachy(){
 
     }
@@ -137,19 +140,24 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
                 ViewGroup.LayoutParams.MATCH_PARENT);
         mImageView.setLayoutParams(params);
         mImageView.setMinimumTileDpi(160);
-        errorView = View.inflate(context,R.layout.error_view,null);
+
+        //解决图片旋转的问题,
+        //参见; https://github.com/davemorrissey/subsampling-scale-image-view/issues/231
+        mImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
+        errorView = View.inflate(context,isDarkTheme()? R.layout.error_view_dark : R.layout.error_view,null);
         LayoutParams params2 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         errorView.setLayoutParams(params2);
         addView(errorView);
 
-        placeHolder = View.inflate(context,R.layout.view_placeholder,null);
+        //placeHolder = View.inflate(context,R.layout.view_placeholder,null);
+        placeHolder = View.inflate(context,isDarkTheme()? R.layout.ui_progress_pie_indicator_new_dark : R.layout.ui_progress_pie_indicator_new,null);
         LayoutParams params3 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         placeHolder.setLayoutParams(params3);
         addView(placeHolder);
 
-        setProgressIndicator(new ProgressPieIndicator());
+        setProgressIndicator(new ProgressPieIndicatorNew());
 
         setOptimizeDisplay(mOptimizeDisplay);
         setInitScaleType(mInitScaleType);
@@ -164,7 +172,13 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     public void setCachedFileMap(Map<String,File> cachedFileMap){
         mTempImages = cachedFileMap;
     }
+    public boolean isDarkTheme() {
+        return darkTheme;
+    }
 
+    public void setDarkTheme(boolean darkTheme) {
+        this.darkTheme = darkTheme;
+    }
 
     @Override
     public void setOnClickListener(OnClickListener listener) {

@@ -53,9 +53,9 @@ public class RcvHolder extends SuperRcvHolder<String> {
         ImageLoader.with(context)
             .widthHeight(imageSize,imageSize)
             .url(data)
-            .placeHolder(R.drawable.default_placeholder_300x300,true,ScaleMode.FIT_XY)
-            .error(R.drawable.error_small,ScaleMode.CENTER_INSIDE)
-            .loading(R.drawable.loading2)
+            .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
+            .loadingDefault()
+            .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
             .into(itemView);
 
 

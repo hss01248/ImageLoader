@@ -20,9 +20,10 @@
         <activity android:name=".BigImageActy"/>
         <activity android:name=".ViewpagerActy"/>
         <activity android:name=".RecycleViewActy"/>
-        <activity android:name=".FrescoActy"/>
+        <activity android:name=".ConfigAllActy"/>
         <activity android:name=".ScaleTypeActy"/>
-    </application>
+		<activity android:name=".FrescoFaceCropActivity" />
+	</application>
 
 
 </manifest>

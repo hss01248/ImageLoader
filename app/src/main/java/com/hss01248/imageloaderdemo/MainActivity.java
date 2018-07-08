@@ -1,18 +1,16 @@
 package com.hss01248.imageloaderdemo;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import com.hss01248.image.ImageLoader;
-import com.hss01248.image.config.SingleConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,33 +70,33 @@ public class MainActivity extends AppCompatActivity {
                 .widthHeight(250, 150)
                 .asCircle(R.color.colorAccent)
                //.blur(40)
-                .asBitmap(new SingleConfig.BitmapListener() {
+                /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
 
                         ivUrl.setImageBitmap(bitmap);
                         Log.e("ee","ivUrl  bitmap.config:" + bitmap.getConfig());
-                        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        *//*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                             ivUrl.setBackground(new BitmapDrawable(bitmap));
-                        }*/
+                        }*//*
                     }
 
                     @Override
                     public void onFail(Throwable e) {
 
                     }
-                });
-                //.into(ivUrl);
+                });*/
+                .into(ivUrl);
 
 
         ImageLoader.with(this)
                 .placeHolder(R.mipmap.ic_launcher,false)
-                //.res(R.drawable.thegif)
-                .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
+                .res(R.drawable.thegif)
+                //.url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 .widthHeight(100, 80)
                 .rectRoundCorner(5, R.color.colorPrimary)
                // .blur(5)
-                .asBitmap(new SingleConfig.BitmapListener() {
+                /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         Log.e("bitmap", bitmap.getWidth() + "---height:" + bitmap.getHeight() + "--" + bitmap.toString());
@@ -112,14 +110,21 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("bitmap", "fail");
 
                     }
-                });
-        //.into(ivRes);
+                });*/
+        .into(ivRes);
+
+        ImageLoader.with(this)
+            .widthHeight(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+            .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
+            .rectRoundCorner(5,R.color.bg_white)
+            .into(ivFile);
 
         ImageLoader.with(this)
                 .cropFace()
                 .widthHeight(100,100)
                 .asCircle(R.color.colorAccent)
-                .url("https://github.com/aryarohit07/PicassoFaceDetectionTransformation/raw/master/images/original_image1.jpg?raw=true")
+                .blur(10)
+                .url("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg")
                 .into(ivUrlBlur);
 
 
@@ -129,8 +134,9 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_bigpic:{
-                Intent intent = new Intent(this,BigImageActy.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(this,BigImageActy.class);
+                startActivity(intent);*/
+                FrescoFaceCropActivity.launch(this);
             }
 
                 break;
@@ -143,8 +149,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this,RecycleViewActy.class);
                 startActivity(intent);
             }
+            break;
             case R.id.btn_fresco:
-                Intent intent = new Intent(this,FrescoActy.class);
+                Intent intent = new Intent(this,ConfigAllActy.class);
                 startActivity(intent);
                 break;
             case R.id.btn_scale:

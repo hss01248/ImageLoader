@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +14,6 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 
 import com.elvishew.xlog.XLog;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.hss01248.frescoloader.FrescoLoader;
@@ -21,7 +21,7 @@ import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
-import com.hss01248.picasso.PicassoLoader;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,11 +37,11 @@ import es.dmoral.toasty.MyToast;
  * @date 2017/11/1
  */
 
-public class FrescoActy extends Activity {
+public class ConfigAllActy extends Activity {
 
 
     @Bind(R.id.iv_targetView)
-    SimpleDraweeView ivTargetView;
+    ImageView ivTargetView;
     @Bind(R.id.iv_targetView2)
     ImageView imageView;
     @Bind(R.id.rb_fresco)
@@ -97,7 +97,7 @@ public class FrescoActy extends Activity {
     @Bind(R.id.rg_target)
     RadioGroup rgTarget;
     @Bind(R.id.btn_show)
-    Button btnShow;
+    FloatingActionButton btnShow;
     @Bind(R.id.btn_scale)
     Button btn_scale;
 
@@ -240,7 +240,7 @@ public class FrescoActy extends Activity {
         errorRes = new int[]{R.drawable.error1_48dp, R.drawable.error2_24dp,
             R.drawable.error3_18dp, R.drawable.error4_36dp};
         loadingRes = new int[]{R.drawable.loading1_48dp, R.drawable.loading2_18dp,
-            R.drawable.loading3_18dp, R.drawable.loading4_48dp};
+            R.drawable.imageloader_loading_81, R.drawable.imageloader_loading_50};
         ress = Arrays.asList(R.drawable.image+"",R.drawable.thegif+"",R.drawable.img2+"");
         builder = ImageLoader.with(this);
         config = new SingleConfig(builder);
@@ -452,9 +452,9 @@ public class FrescoActy extends Activity {
                 }
             }else if(loaderId == R.id.rb_picasso){
                 if(hasPicassoInited){
-                    GlobalConfig.setLoader(new PicassoLoader());
+                   // GlobalConfig.setLoader(new PicassoLoader());
                 }else {
-                    ImageLoader.init(getApplicationContext(),60,new PicassoLoader());
+                    //ImageLoader.init(getApplicationContext(),60,new PicassoLoader());
                     hasPicassoInited = true;
                 }
             }else {

@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hss01248.image.MyUtil;
+import com.hss01248.image.R;
+import com.hss01248.image.interfaces.ImageListener;
 
 import java.io.File;
 
@@ -171,9 +173,6 @@ public class SingleConfig {
     public boolean isReuseable() {
         return reuseable;
     }
-
-
-
     private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
     private int rectRoundRadius;//圆角矩形时圆角的半径
 
@@ -182,6 +181,10 @@ public class SingleConfig {
 
     private int borderWidth;//边框的宽度
     private int borderColor;//边框颜色
+
+    public void setAsBitmap(boolean asBitmap) {
+        this.asBitmap = asBitmap;
+    }
 
     public boolean isAsBitmap() {
         return asBitmap;
@@ -201,6 +204,18 @@ public class SingleConfig {
 
     private boolean cropFace;
 
+    public boolean widthWrapContent;
+    public boolean heightWrapContent;
+
+    public boolean widthMatchParent;
+    public boolean heightMatchParent;
+
+    private ImageListener imageListener;
+
+    public ImageListener getImageListener() {
+        return imageListener;
+    }
+
     /*public BigImageView getBigImageView() {
         return bigImageView;
     }*/
@@ -208,7 +223,10 @@ public class SingleConfig {
    // private BigImageView bigImageView ;//可放大和缩放的大图
 
     private void show(){
-        GlobalConfig.getLoader().request(this);
+        if(ConfigChecker.check(this)){
+            GlobalConfig.getLoader().request(this);
+        }
+
     }
 
 
@@ -281,10 +299,11 @@ public class SingleConfig {
             if(view!=null){
                 ViewGroup.LayoutParams params = view.getLayoutParams();
                 if(params!=null){
+                    //注意:返回的值都是px单位
                     int h = params.height;
                     int w = params.width;
                     if(w >0){
-                        if(builder.width<=0){
+                        if(builder.width<=0 || builder.width > w){
                             this.width = w;
                         }
                     }/*else {
@@ -293,7 +312,7 @@ public class SingleConfig {
                         }
                     }*/
                     if(h >0){
-                        if(builder.height<=0){
+                        if(builder.height<=0 || builder.height>h){
                             this.height = h;
                         }
                     }/*else {
@@ -344,6 +363,7 @@ public class SingleConfig {
         private View target;
         private boolean asBitmap;//只获取bitmap
         private BitmapListener bitmapListener;
+        private ImageListener imageListener;
 
         private int width;
         private int height;
@@ -353,6 +373,11 @@ public class SingleConfig {
 
         public ConfigBuilder setLoadingScaleType(int loadingScaleType) {
             this.loadingScaleType = loadingScaleType;
+            return this;
+        }
+
+        public ConfigBuilder setImageListener(ImageListener imageListener) {
+            this.imageListener = imageListener;
             return this;
         }
 
@@ -438,6 +463,15 @@ public class SingleConfig {
             this.loadingResId = loadingResId;
             return this;
         }
+
+        /**
+         * 使用默认的loading样式
+         * @return
+         */
+        public ConfigBuilder loadingDefault(){
+            this.loadingResId = R.drawable.imageloader_loading_50;
+            return this;
+        }
         public ConfigBuilder loading(int  loadingResId,int loadingScaleType){
             this.loadingResId = loadingResId;
             this.loadingScaleType = loadingScaleType;
@@ -490,6 +524,11 @@ public class SingleConfig {
              new SingleConfig(this).show();
         }
 
+        public ConfigBuilder listener(BitmapListener bitmapListener){
+            this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
+            return this;
+        }
+
         public void asBitmap(BitmapListener bitmapListener){
             this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
             this.asBitmap = true;
@@ -512,8 +551,8 @@ public class SingleConfig {
             return this;
         }
         public ConfigBuilder widthHeightByPx(int widthInPx,int heightInPx){
-            this.width = MyUtil.dip2px(widthInPx);
-            this.height = MyUtil.dip2px(heightInPx);
+            this.width = widthInPx;
+            this.height = heightInPx;
             return this;
         }
 
@@ -578,7 +617,7 @@ public class SingleConfig {
             return this;
         }
 
-        /**
+        /** todo 尚未实现此功能
          * 设置边框
          * @param borderWidth
          * @param borderColor

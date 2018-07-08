@@ -87,6 +87,7 @@ public class ImageLoader {
      */
     public static void loadBigImages(ViewPager viewPager, List<String> urls){//,String thumbnail
         viewPager.setOffscreenPageLimit(1);
+        //强制让左右缓存一个
        // ViewPager viewPager = new ViewPager(context);
         if( viewPager.getAdapter()==null  ){
             PagerAdapter adapter = new MyRecyclePagerAdapter(urls);

@@ -375,14 +375,14 @@ public class PicassoLoader implements ILoader {
         ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
             @Override
             public void run() {
-                Request request = new Request.Builder().url(url).build();
+                final Request request = new Request.Builder().url(url).build();
                 client.newCall(request).enqueue(new okhttp3.Callback() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
+                    public void onFailure(Call call, final IOException e) {
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                getter.onFail();
+                                getter.onFail(e);
                             }
                         });
 
@@ -390,12 +390,12 @@ public class PicassoLoader implements ILoader {
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
+                    public void onResponse(final Call call, final Response response) throws IOException {
                         if(!response.isSuccessful()){
                             MyUtil.runOnUIThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    getter.onFail();
+                                    getter.onFail(new Throwable(response.message()));
                                 }
                             });
 
@@ -416,7 +416,8 @@ public class PicassoLoader implements ILoader {
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                getter.onSuccess(file);
+                                int[] wh = MyUtil.getImageWidthHeight(file.getAbsolutePath());
+                                getter.onSuccess(file,wh[0],wh[1]);
                             }
                         });
                     }
@@ -448,7 +449,10 @@ public class PicassoLoader implements ILoader {
         clearMomoryCache();
     }
 
-
+    @Override
+    public void download(String url, FileGetter getter) {
+        getFileFromDiskCache(url,getter);
+    }
 
 
 }

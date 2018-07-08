@@ -134,7 +134,7 @@ public class GlideLoader implements ILoader {
             }
 
            // setShapeModeAndBlur(config, request);
-            request.asBitmap().into(target);
+            request.asBitmap().approximate().into(target);
 
         }else {
 
@@ -293,7 +293,7 @@ public class GlideLoader implements ILoader {
         DrawableTypeRequest request = null;
         if(!TextUtils.isEmpty(config.getUrl())){
             request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
-            request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
+            request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存原图
         }else if(!TextUtils.isEmpty(config.getFilePath())){
             request= requestManager.load(config.getFilePath());
         }else if(!TextUtils.isEmpty(config.getContentProvider())){
@@ -409,6 +409,7 @@ public class GlideLoader implements ILoader {
     @Override
     public void clearMomoryCache(String url) {
 
+
     }
 
     /**
@@ -429,15 +430,16 @@ public class GlideLoader implements ILoader {
                     @Override
                     public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
                         if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
-                            getter.onSuccess(resource);
+                            int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
+                            getter.onSuccess(resource,wh[0],wh[1]);
                         }else {
-                            getter.onFail();
+                            getter.onFail(new Throwable("resource not exist"));
                         }
                     }
 
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                        getter.onFail();
+                        getter.onFail(e);
                     }
                 });
     }
@@ -463,6 +465,10 @@ public class GlideLoader implements ILoader {
         Glide.with(GlobalConfig.context).onLowMemory();
     }
 
+    @Override
+    public void download(String url, FileGetter getter) {
+        getFileFromDiskCache(url,getter);
+    }
 
 
     public static Bitmap blur(Bitmap source,int mRadius,boolean recycleOriginal){

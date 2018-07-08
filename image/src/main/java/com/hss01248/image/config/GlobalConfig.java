@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.WindowManager;
 
+import com.hss01248.image.R;
 import com.hss01248.image.interfaces.ILoader;
 
 /**
@@ -89,6 +90,13 @@ public class GlobalConfig {
 
     public static boolean ignoreCertificateVerify = false;
 
+
+    public static void setBigImageDark(boolean isBigImageDark) {
+        GlobalConfig.isBigImageDark = isBigImageDark;
+    }
+
+    public static boolean isBigImageDark = true;
+
     public static void setLoader(ILoader loader) {
         GlobalConfig.loader = loader;
     }
@@ -99,11 +107,11 @@ public class GlobalConfig {
         return loader;
     }
 
-    public static int placeHolderResId;
-    public static int placeHolderScaleType = ScaleMode.CENTER_CROP;
-    public static int errorResId;
+    public static int placeHolderResId = R.drawable.imageloader_placeholder_125;
+    public static int placeHolderScaleType = ScaleMode.CENTER_INSIDE;
+    public static int errorResId = R.drawable.imageloader_failure_image_104;
     public static int errorScaleType  = ScaleMode.CENTER_INSIDE;
-    public static int loadingResId;
+    public static int loadingResId = R.drawable.imageloader_loading_50;
     public static int loadingScaleType = ScaleMode.CENTER_INSIDE;
 
     public static void setDefaultPlaceHolder(int placeHolderResId){

@@ -38,10 +38,21 @@ public interface ILoader {
 
 
 
+
+
    boolean  isCached(String url);
 
     void trimMemory(int level);
 
     void onLowMemory();
+
+
+    /**
+     * 如果有缓存,就直接从缓存里拿,如果没有,就从网上下载
+     * 返回的file在图片框架的缓存中,非常规文件名,需要自己拷贝出来.
+     * @param url
+     * @param getter
+     */
+    void download(String url,FileGetter getter);
 
 }
