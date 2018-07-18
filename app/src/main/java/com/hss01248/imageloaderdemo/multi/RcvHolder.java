@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.hss01248.adapter.SuperRcvHolder;
+
+import com.hss01248.adapter.SuperRvHolder;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.imageloaderdemo.BigImageActy;
@@ -18,12 +19,13 @@ import com.hss01248.imageloaderdemo.R;
  * Created by huangshuisheng on 2017/9/28.
  */
 
-public class RcvHolder extends SuperRcvHolder<String> {
+public class RcvHolder extends SuperRvHolder<String,Activity> {
     //public ImageView imageView;
     private int imageSize;
     private int columnNumber;
     public RcvHolder(View itemView) {
         super(itemView);
+        this.rootView = itemView;
         //imageView = (ImageView) itemView.findViewById(R.id.item_iv);
 
     }

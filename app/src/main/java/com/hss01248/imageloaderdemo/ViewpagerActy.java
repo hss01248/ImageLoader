@@ -11,7 +11,8 @@ import com.hss01248.image.ImageLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -21,9 +22,9 @@ import butterknife.ButterKnife;
 public class ViewpagerActy extends Activity {
 
 
-    @Bind(R.id.index)
+    @BindView(R.id.index)
     TextView tvIndex;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewPager;
 
 

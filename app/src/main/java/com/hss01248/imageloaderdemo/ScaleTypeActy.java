@@ -1,6 +1,7 @@
 package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -14,7 +15,8 @@ import com.hss01248.adapter.SuperLvHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -24,15 +26,15 @@ import butterknife.OnClick;
 
 public class ScaleTypeActy extends Activity {
 
-    @Bind(R.id.gv)
+    @BindView(R.id.gv)
     GridView gv;
-    @Bind(R.id.iv_small)
+    @BindView(R.id.iv_small)
     ImageView ivSmall;
-    @Bind(R.id.iv_big)
+    @BindView(R.id.iv_big)
     ImageView ivBig;
-    @Bind(R.id.btn_loadsmall)
+    @BindView(R.id.btn_loadsmall)
     Button btnLoadsmall;
-    @Bind(R.id.btn_loadbig)
+    @BindView(R.id.btn_loadbig)
     Button btnLoadbig;
     SuperLvAdapter lvAdapter;
     List<ScaleTypeInfo> datas ;
@@ -64,11 +66,12 @@ public class ScaleTypeActy extends Activity {
 
     private void initGv() {
         gv.setNumColumns(4);
-        lvAdapter = new SuperLvAdapter(datas,this) {
+        lvAdapter = new SuperLvAdapter(this) {
             @Override
-            protected SuperLvHolder generateNewHolder(Activity activity, int i) {
-                return new ScaleTypeHolder(activity);
+            protected SuperLvHolder generateNewHolder(Context context, int i, Class aClass) {
+                return new ScaleTypeHolder(ScaleTypeActy.this);
             }
+
         };
         gv.setAdapter(lvAdapter);
 

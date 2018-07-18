@@ -7,14 +7,15 @@ import com.hss01248.adapter.SuperLvHolder;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.imageloaderdemo.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by huangshuisheng on 2017/9/28.
  */
 
-public class LvHolder extends SuperLvHolder<String> {
-    @Bind(R.id.item_iv)
+public class LvHolder extends SuperLvHolder<String,Activity> {
+    @BindView(R.id.item_iv)
     ImageView itemIv;
 
     public LvHolder(Activity context) {

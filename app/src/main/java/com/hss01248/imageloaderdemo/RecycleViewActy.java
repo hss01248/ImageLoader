@@ -7,9 +7,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
-import com.hss01248.adapter.SuperRcvAdapter;
-import com.hss01248.adapter.SuperRcvHolder;
+
+import com.hss01248.adapter.SuperRvAdapter;
+import com.hss01248.adapter.SuperRvHolder;
+import com.hss01248.dialog.adapter.SuperRcvAdapter;
+import com.hss01248.dialog.adapter.SuperRcvHolder;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.imageloaderdemo.multi.RcvHolder;
 
@@ -23,7 +27,7 @@ import java.util.List;
 public class RecycleViewActy extends Activity {
 
     RecyclerView recyclerView;
-    SuperRcvAdapter adapter ;
+    SuperRvAdapter adapter ;
     List<String> datas ;
     int oldScrollState;
 
@@ -35,19 +39,16 @@ public class RecycleViewActy extends Activity {
         recyclerView = (RecyclerView) findViewById(R.id.recy);
         datas = new ArrayList<>();
         addDatas();
-        adapter = new SuperRcvAdapter(datas,this) {
 
-            @Override
-            public void onViewDetachedFromWindow(SuperRcvHolder holder) {
-                super.onViewDetachedFromWindow(holder);
-                //ImageLoader.getActualLoader().clearMomoryCache(holder.rootView);
-            }
 
+        adapter = new SuperRvAdapter(this) {
             @Override
-            protected SuperRcvHolder generateCoustomViewHolder(int i) {
-                return new RcvHolder(View.inflate(RecycleViewActy.this,R.layout.item_iv,null)).setColumnNum(3);
+            protected SuperRvHolder generateCoustomViewHolder(ViewGroup viewGroup, int i) {
+              return   new RcvHolder(
+                        View.inflate(RecycleViewActy.this,R.layout.item_iv,null)).setColumnNum(3);
             }
         };
+        adapter.refresh(datas);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
        /* StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3, OrientationHelper.VERTICAL);
         layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);

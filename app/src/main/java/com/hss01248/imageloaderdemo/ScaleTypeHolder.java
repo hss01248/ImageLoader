@@ -1,22 +1,24 @@
 package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hss01248.adapter.SuperLvHolder;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Administrator on 2017/11/5.
  */
 
-public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo> {
+public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo,Activity> {
 
-    @Bind(R.id.iv)
+    @BindView(R.id.iv)
     ImageView iv;
-    @Bind(R.id.tv)
+    @BindView(R.id.tv)
     TextView tv;
 
     public ScaleTypeHolder(Activity context) {
@@ -27,6 +29,8 @@ public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo> {
     protected int setLayoutRes() {
         return R.layout.item_scale;
     }
+
+
 
     @Override
     public void assingDatasAndEvents(Activity activity, ScaleTypeInfo scaleTypeInfo) {

@@ -15,26 +15,27 @@ import com.hss01248.image.ImageLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Bind(R.id.iv_url)
+    @BindView(R.id.iv_url)
     ImageView ivUrl;
-    @Bind(R.id.iv_file)
+    @BindView(R.id.iv_file)
     ImageView ivFile;
-    @Bind(R.id.iv_res)
+    @BindView(R.id.iv_res)
     ImageView ivRes;
-    @Bind(R.id.iv_url_blur)
+    @BindView(R.id.iv_url_blur)
     ImageView ivUrlBlur;
 
-    @Bind(R.id.btn_bigpic)
+    @BindView(R.id.btn_bigpic)
     Button btnBigpic;
-    @Bind(R.id.btn_bigpic_viewpager)
+    @BindView(R.id.btn_bigpic_viewpager)
     Button btnBigpicViewpager;
-    @Bind(R.id.activity_main)
+    @BindView(R.id.activity_main)
     ScrollView activityMain;
 
     @Override

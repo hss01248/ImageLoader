@@ -20,7 +20,8 @@ import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -31,13 +32,13 @@ import butterknife.ButterKnife;
 public class FrescoFaceCropActivity extends Activity {
 
 
-    @Bind(R.id.iv1)
+    @BindView(R.id.iv1)
     SimpleDraweeView iv1;
-    @Bind(R.id.iv2)
+    @BindView(R.id.iv2)
     SimpleDraweeView iv2;
-    @Bind(R.id.iv3)
+    @BindView(R.id.iv3)
     SimpleDraweeView iv3;
-    @Bind(R.id.iv4)
+    @BindView(R.id.iv4)
     SimpleDraweeView iv4;
     /**
      * 人脸识别最多数
