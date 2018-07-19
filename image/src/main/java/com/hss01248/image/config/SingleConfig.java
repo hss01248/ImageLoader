@@ -295,6 +295,10 @@ public class SingleConfig {
 
     private void setWH(ConfigBuilder builder) {
         if(!builder.asBitmap){
+
+            this.width = builder.width;
+            this.height = builder.height;
+
             View view = builder.target;
             if(view!=null){
                 ViewGroup.LayoutParams params = view.getLayoutParams();
@@ -302,6 +306,14 @@ public class SingleConfig {
                     //注意:返回的值都是px单位
                     int h = params.height;
                     int w = params.width;
+
+                    //todo
+                    // 1. 常用情况: view设置宽度match parent,高度wrap content,
+                    // 同时要求图片等比例缩小或放大,使宽度刚好是matchaprent,高度等比例,不能变形
+                    //2. 常见情况: 宽度match parent,高度一定
+
+
+
                     if(w >0){
                         if(builder.width<=0 || builder.width > w){
                             this.width = w;

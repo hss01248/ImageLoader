@@ -48,6 +48,7 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.image.QualityInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
@@ -270,7 +271,12 @@ public class FrescoLoader implements ILoader {
                 }
                 File file = getFileFromDiskCache(config.getUrl());
                 if(file!=null && file.exists()){
+                    if(imageInfo ==null){
+                        imageInfo = new FileImageInfo(file.getAbsolutePath());
+                    }
                     config.getImageListener().onSuccess(file.getAbsolutePath(),imageInfo.getWidth(),imageInfo.getHeight(),null,0,0);
+                }else {
+                    config.getBitmapListener().onFail(new Throwable("file not found:"+config.getUrl()));
                 }
 
 
@@ -505,7 +511,7 @@ public class FrescoLoader implements ILoader {
                 }else {
                     bitmap1 = Bitmap.createBitmap(bitmap);
                 }
-                //将bitmap放到fresco的内存池中
+                //不要将bitmap放到fresco的内存池中,不然又被回收
                // FrescoUtil.putIntoPool(bitmap1,finalUrl);
                 config.getBitmapListener().onSuccess(bitmap1);
             }
@@ -574,9 +580,9 @@ public class FrescoLoader implements ILoader {
         url = MyUtil.appendUrl(url);
         File localFile = null;
         if (!TextUtils.isEmpty(url)) {
-            Log.e("getfilefromdisk","url is:"+url);
+            Log.d("getfilefromdisk","url is:"+url);
             CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(ImageRequest.fromUri(url),false);
-            Log.e("getfilefromdisk","cacheKey is:"+cacheKey);
+            Log.d("getfilefromdisk","cacheKey is:"+cacheKey);
             if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
                 BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
                 localFile = ((FileBinaryResource) resource).getFile();
