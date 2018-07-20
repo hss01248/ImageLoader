@@ -46,7 +46,7 @@ dependencies {
     // If you want to use the GPU Filters
     implementation 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 
-    compile project(':image')
+    compile project(':imageloader')
 
     //https://github.com/wasabeef/glide-transformations
 //    https://github.com/open-android/Glide-transformations
