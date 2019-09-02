@@ -3,12 +3,33 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:gravity="center"
     android:layout_height="match_parent">
-    <ImageView
+   <!-- <ImageView
         android:layout_marginTop="10dp"
         android:background="@drawable/shape_main_list_bg"
         android:id="@+id/iv"
         android:layout_width="80dp"
-        android:layout_height="80dp" />
+        android:layout_height="80dp" />-->
+
+    <com.hss01248.imageloaderdemo.RoundImageView
+        android:id="@+id/iv"
+        android:layout_marginTop="10dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/shape_main_list_bg"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        app:corner_radius="12dip" />
+
+    <!--<com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/iv"
+        android:layout_marginTop="10dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/shape_main_list_bg"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        app:riv_corner_radius="12dip" />-->
+
     <TextView
         android:id="@+id/tv"
         android:textSize="13sp"
