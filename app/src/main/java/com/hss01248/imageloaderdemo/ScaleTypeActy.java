@@ -68,9 +68,11 @@ public class ScaleTypeActy extends Activity {
         gv.setNumColumns(4);
         lvAdapter = new SuperLvAdapter(this) {
             @Override
-            protected SuperLvHolder generateNewHolder(Context context, int i, Class aClass) {
-                return new ScaleTypeHolder(ScaleTypeActy.this);
+            protected SuperLvHolder generateNewHolder(Activity activity, int i) {
+                 return new ScaleTypeHolder(ScaleTypeActy.this);
             }
+
+
 
         };
         gv.setAdapter(lvAdapter);

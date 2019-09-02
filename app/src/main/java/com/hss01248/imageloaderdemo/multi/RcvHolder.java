@@ -30,6 +30,11 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
 
     }
 
+    @Override
+    protected void findViewsById(View view) {
+
+    }
+
     public RcvHolder setColumnNum(int columnNumber){
         this.columnNumber = columnNumber;
         WindowManager wm = (WindowManager) itemView.getContext().getSystemService(Context.WINDOW_SERVICE);

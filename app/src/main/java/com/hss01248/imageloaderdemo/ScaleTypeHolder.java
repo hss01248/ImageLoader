@@ -2,6 +2,7 @@ package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,13 +17,20 @@ import butterknife.BindView;
 
 public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo,Activity> {
 
-    @BindView(R.id.iv)
+    //@BindView(R.id.iv)
     ImageView iv;
-    @BindView(R.id.tv)
+    //@BindView(R.id.tv)
     TextView tv;
 
     public ScaleTypeHolder(Activity context) {
         super(context);
+    }
+
+    @Override
+    protected void findViewsById(View view) {
+        iv = view.findViewById(R.id.iv);
+        tv = view.findViewById(R.id.tv);
+
     }
 
     @Override

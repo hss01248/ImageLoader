@@ -1,6 +1,7 @@
 package com.hss01248.imageloaderdemo.multi;
 
 import android.app.Activity;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.hss01248.adapter.SuperLvHolder;
@@ -15,11 +16,16 @@ import butterknife.BindView;
  */
 
 public class LvHolder extends SuperLvHolder<String,Activity> {
-    @BindView(R.id.item_iv)
+    //@BindView(R.id.item_iv)
     ImageView itemIv;
 
     public LvHolder(Activity context) {
         super(context);
+    }
+
+    @Override
+    protected void findViewsById(View view) {
+        itemIv = view.findViewById(R.id.item_iv);
     }
 
     @Override

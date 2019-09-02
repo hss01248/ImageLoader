@@ -6,6 +6,19 @@
         android:id="@+id/gv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btn_loadsmall"
+        android:textAllCaps="false"
+        android:text="load small img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btn_loadbig"
+        android:textAllCaps="false"
+        android:text="load big img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <TextView
         android:layout_marginTop="30dp"
         android:gravity="center"
@@ -42,17 +55,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btn_loadsmall"
-        android:textAllCaps="false"
-        android:text="load small img"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/btn_loadbig"
-        android:textAllCaps="false"
-        android:text="load big img"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
 
 </LinearLayout>
