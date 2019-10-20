@@ -41,10 +41,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresPermission;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -261,7 +263,7 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         return mCurrentImageFile == null ? "" : mCurrentImageFile.getAbsolutePath();
     }
 
-    //@RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)//ojk合规屏蔽
+    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)//ojk合规屏蔽
     public void saveImageIntoGallery() {
         if (mCurrentImageFile == null) {
             if (mImageSaveCallback != null) {

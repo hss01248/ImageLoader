@@ -13,7 +13,9 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
+import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
@@ -27,6 +29,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -64,7 +67,7 @@ public class GlideLoader implements ILoader {
 
         /*Glide.get(context)
                 .setMemoryCategory(MemoryCategory.NORMAL);*/
-        //BigImageViewer.initialize(GlideBigLoader.with(context,getClient(GlobalConfig.ignoreCertificateVerify)));
+        BigImageViewer.initialize(GlideBigLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
         GlobalConfig.cacheFolderName = DiskCache.Factory.DEFAULT_DISK_CACHE_DIR;
         GlobalConfig.cacheMaxSize =  DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE/1024/1024;
 
@@ -293,7 +296,7 @@ public class GlideLoader implements ILoader {
                  @Override
                  public boolean onLongClick(View v) {
                      showPop((ImageView)v,config);
-                     return false;
+                     return true;
                  }
              });
 
@@ -311,11 +314,20 @@ public class GlideLoader implements ILoader {
             desc += "bitmap, w:"+glideBitmapDrawable.getIntrinsicWidth() +",h:"+glideBitmapDrawable.getIntrinsicHeight();
             Bitmap bitmap = glideBitmapDrawable.getBitmap();
             if(bitmap != null){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    desc += "\nconfig:"+bitmap.getConfig().name()+",size:"+MyUtil.formatFileSize(bitmap.getAllocationByteCount());
-                }
+                desc += "\nconfig:"+bitmap.getConfig().name()+",size:"+MyUtil.formatFileSize(bitmap.getByteCount());
+            }else {
+
             }
-        }else {
+        }else if(drawable instanceof BitmapDrawable){
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            if(bitmap != null){
+                desc += "bitmap, w:"+bitmap.getWidth() +",h:"+bitmap.getHeight();
+                desc += "\nconfig:"+bitmap.getConfig().name()+",size:"+MyUtil.formatFileSize(bitmap.getByteCount());
+            }
+
+
+        } else {
             desc += "drawable:"+drawable;
         }
 

@@ -57,6 +57,7 @@ public class ImageLoader {
         ImageLoader.context = context;
         GlobalConfig.init(context,cacheSizeInM,imageLoader);
         handler = new Handler(Looper.getMainLooper());
+        imageLoader.init(context,150);
     }
 
     public static ILoader getActualLoader(){
