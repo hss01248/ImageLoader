@@ -1,5 +1,6 @@
 package com.hss01248.image;
 
+import com.blankj.utilcode.util.Utils;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
@@ -7,6 +8,8 @@ import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.utils.RoundedCornersTransformation2;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
@@ -31,6 +34,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -520,6 +524,42 @@ public class MyUtil {
             context = ((ContextWrapper) context).getBaseContext();
         }
         return null;
+    }
+
+    public static String formatFileSize(long size) {
+        try {
+            DecimalFormat dff = new DecimalFormat(".00");
+            if (size >= 1024 * 1024) {
+                double doubleValue = ((double) size) / (1024 * 1024);
+                String value = dff.format(doubleValue);
+                return value + "MB";
+            } else if (size > 1024) {
+                double doubleValue = ((double) size) / 1024;
+                String value = dff.format(doubleValue);
+                return value + "KB";
+            } else {
+                return size + "B";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return String.valueOf(size);
+    }
+
+    /**
+     * 复制文本到剪贴板
+     *
+     * @param text 文本
+     */
+    public static void copyText(final CharSequence text) {
+        //部分机型出现SecurityException
+        //http://10.0.20.7/zentao/bug-view-22357.html
+        try {
+            ClipboardManager clipboard = (ClipboardManager) Utils.getApp().getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setPrimaryClip(ClipData.newPlainText("text", text));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

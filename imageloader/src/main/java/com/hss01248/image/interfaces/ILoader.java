@@ -17,6 +17,9 @@ public interface ILoader {
 
     void request(SingleConfig config);
 
+    void debug(SingleConfig config);
+
+
     void pause();
 
     void resume();

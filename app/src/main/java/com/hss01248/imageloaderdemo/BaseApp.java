@@ -14,6 +14,7 @@ import com.hss01248.frescoloader.big.BigImageLoader;
 import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.config.GlobalConfig;
 import com.squareup.leakcanary.LeakCanary;
 
 import es.dmoral.toasty.MyToast;
@@ -28,6 +29,7 @@ public class BaseApp extends Application {
     public void onCreate() {
         super.onCreate();
         ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
+        GlobalConfig.debug = true;
         //BigImageViewer.initialize(GlideBigLoader.with(this));
         //GlobalConfig.setBigImageDark(false);
         LeakCanary.install(this);

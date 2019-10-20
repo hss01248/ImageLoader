@@ -27,6 +27,7 @@ public class GlobalConfig {
     }
 
     private static Handler mainHandler;
+    public static boolean debug;
 
     public static int getWinHeight() {
         if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){

@@ -133,6 +133,11 @@ public class FrescoLoader implements ILoader {
 
     }
 
+    @Override
+    public void debug(SingleConfig config) {
+
+    }
+
     private void requestForSimpleDraweeView(SimpleDraweeView target, SingleConfig config) {
 
         // 数据-model

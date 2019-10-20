@@ -35,6 +35,9 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -278,49 +281,61 @@ public class GlideLoader implements ILoader {
                 };
                 builder.dontAnimate();
                 builder.into(viewTarget);
-               //开始:
-                /*if(MyUtil.shouldSetPlaceHolder(config)){
-                    if(config.getLoadingResId() >0){
-                        imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
-                        imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getLoadingResId()));
-                    }else {
-                        imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
-                        imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
-                    }
-                }
-
-               builder.listener(new RequestListener<String,GlideDrawable>() {
-                   @Override
-                   public boolean onException(Exception e,String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                       if(e != null){
-                           e.printStackTrace();
-                       }
-                       if(config.getImageListener() != null){
-                          config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
-                       }
-                       if(config.getErrorResId() >0){
-                           if(model != null && model.equals(config.getUsableString())){
-                               imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
-                           }
-                           // view.setImageDrawable(errorDrawable);
-                       }
-
-                       return false;
-                   }
-
-                   @Override
-                   public boolean onResourceReady(GlideDrawable resource,String model, Target<GlideDrawable> target,
-                           boolean isFromMemoryCache, boolean isFirstResource) {
-                       if(config.getImageListener() != null){
-                           config.getImageListener().onSuccess("",0,0,null,0,0);
-                       }
-                       return false;
-                   }
-               });
-                builder.dontAnimate();
-                builder.into(imageView);*/
             }
         }
+    }
+
+    @Override
+    public void debug(final SingleConfig config) {
+        if(config.getTarget() instanceof ImageView) {
+             ImageView imageView = (ImageView) config.getTarget();
+             imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                 @Override
+                 public boolean onLongClick(View v) {
+                     showPop((ImageView)v,config);
+                     return false;
+                 }
+             });
+
+        }
+    }
+
+    private void showPop(ImageView v, final SingleConfig config) {
+        final PopupWindow popupWindow = new PopupWindow(v.getContext());
+        TextView textView = new TextView(v.getContext());
+        String desc = config.getUrl()+"\n";
+        desc += v.getScaleType().name()+"\n";
+        Drawable drawable = v.getDrawable();
+        if(drawable instanceof GlideBitmapDrawable){
+            GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) drawable;
+            desc += "bitmap, w:"+glideBitmapDrawable.getIntrinsicWidth() +",h:"+glideBitmapDrawable.getIntrinsicHeight();
+            Bitmap bitmap = glideBitmapDrawable.getBitmap();
+            if(bitmap != null){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    desc += "\nconfig:"+bitmap.getConfig().name()+",size:"+MyUtil.formatFileSize(bitmap.getAllocationByteCount());
+                }
+            }
+        }else {
+            desc += "drawable:"+drawable;
+        }
+
+        desc += "\nimageview:"+v.getMeasuredWidth() +" x " + v.getMeasuredHeight();
+
+        textView.setText(desc);
+
+        textView.setPadding(20,20,20,20);
+        popupWindow.setContentView(textView);
+        popupWindow.showAsDropDown(v);
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+                MyUtil.copyText(config.getUrl());
+                Toast.makeText(v.getContext(),"已拷贝链接",Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private int getUseableResId(SingleConfig config) {
