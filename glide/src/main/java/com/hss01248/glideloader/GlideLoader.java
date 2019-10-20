@@ -59,6 +59,8 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
  *
  * 填坑指南:
  * https://www.cnblogs.com/bylijian/p/6908813.html
+ *
+ * glide 使用roundcorner+ center crop
  */
 
 public class GlideLoader implements ILoader {
