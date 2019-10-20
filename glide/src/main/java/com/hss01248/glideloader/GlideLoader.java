@@ -1,5 +1,28 @@
 package com.hss01248.glideloader;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.cache.DiskCache;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.github.piasy.biv.view.BigImageView;
+import com.hss01248.image.ImageLoader;
+import com.hss01248.image.MyUtil;
+import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.ShapeMode;
+import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.interfaces.FileGetter;
+import com.hss01248.image.interfaces.ILoader;
+import com.hss01248.image.utils.ThreadPoolFactory;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,33 +33,8 @@ import android.os.Build;
 import android.renderscript.RSRuntimeException;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-
-import com.bumptech.glide.DrawableTypeRequest;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.MemoryCategory;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.ImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.view.BigImageView;
-import com.hss01248.glideloader.big.GlideBigLoader;
-import com.hss01248.image.ImageLoader;
-import com.hss01248.image.MyUtil;
-import com.hss01248.image.config.GlobalConfig;
-import com.hss01248.image.config.ShapeMode;
-import com.hss01248.image.config.SingleConfig;
-import com.hss01248.image.interfaces.FileGetter;
-import com.hss01248.image.interfaces.ILoader;
-import com.hss01248.image.utils.ThreadPoolFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,15 +50,21 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
  * Created by Administrator on 2017/3/27 0027.
  * 参考:
  * https://mrfu.me/2016/02/28/Glide_Series_Roundup/
+ *
+ * 填坑指南:
+ * https://www.cnblogs.com/bylijian/p/6908813.html
  */
 
 public class GlideLoader implements ILoader {
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
 
-        Glide.get(context)
-                .setMemoryCategory(MemoryCategory.NORMAL);
-        BigImageViewer.initialize(GlideBigLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
+        /*Glide.get(context)
+                .setMemoryCategory(MemoryCategory.NORMAL);*/
+        //BigImageViewer.initialize(GlideBigLoader.with(context,getClient(GlobalConfig.ignoreCertificateVerify)));
+        GlobalConfig.cacheFolderName = DiskCache.Factory.DEFAULT_DISK_CACHE_DIR;
+        GlobalConfig.cacheMaxSize =  DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE/1024/1024;
+
     }
 
     @Override
@@ -93,6 +97,9 @@ public class GlideLoader implements ILoader {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
+                        if(e !=null){
+                            e.printStackTrace();
+                        }
                         config.getBitmapListener().onFail(e);
                     }
                 };
@@ -122,6 +129,9 @@ public class GlideLoader implements ILoader {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
+                        if(e !=null){
+                            e.printStackTrace();
+                        }
                         config.getBitmapListener().onFail(e);
                     }
                 };
@@ -144,75 +154,83 @@ public class GlideLoader implements ILoader {
             }
 
             final RequestManager requestManager =  Glide.with(config.getContext());
-            final DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
+             DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
 
             if(request ==null){
                 return;
             }
+            DrawableRequestBuilder builder = request.thumbnail(0.85f);
             if(MyUtil.shouldSetPlaceHolder(config)){
-                request.placeholder(config.getPlaceHolderResId());
+                builder.placeholder(config.getPlaceHolderResId());
             }
 
             /*int scaleMode = config.getScaleMode();
             switch (scaleMode){
                 case ScaleMode.CENTER_CROP:
                 case ScaleMode.CENTER:
-                    request.centerCrop();
+                    builder.centerCrop();
                     break;
                 case ScaleMode.CENTER_INSIDE:
-                    request.fitCenter();
+                    builder.fitCenter();
                     break;
                 case ScaleMode.FIT_CENTER:
                 case ScaleMode.FIT_START:
                 case ScaleMode.FIT_END:
-                    request.fitCenter();
+                    builder.fitCenter();
                     break;
                 case ScaleMode.FIT_XY:
-                    request.fitCenter();
+                    builder.fitCenter();
                     break;
-
                 case ScaleMode.FOCUS_CROP:
-                    request.centerCrop();
+                    builder.centerCrop();
                     break;
 
                 default:
-                    request.centerCrop();
+                    builder.centerCrop();
                     break;
             }*/
             if(config.getWidth()>0 && config.getHeight()>0){
-                request.override(config.getWidth(),config.getHeight());
-                Log.e("glideloader:","to overrided-w:"+config.getWidth()+"--h:"+config.getHeight());
+                builder.override(config.getWidth(),config.getHeight());
             }
-            setShapeModeAndBlur(config, request);
-
-
-                    //.thumbnail( 0.1f );
-
-
+            setShapeModeAndBlur(config, builder);
             if(config.getErrorResId() >0){
-                request.error(config.getErrorResId());
+                builder.error(config.getErrorResId());
             }
-
-
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
-
-                //com.bumptech.glide.load.resource.gif.GifDrawable
-
                 ImageViewTarget<GlideDrawable> viewTarget = new ImageViewTarget<GlideDrawable>(imageView) {
 
                     @Override
                     protected void setResource(GlideDrawable resource) {
                         view.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
+                        //用传入的view,不要用上方的imageview
                         if(resource instanceof GlideBitmapDrawable){
-                            GlideBitmapDrawable bitmapDrawable = (GlideBitmapDrawable) resource;
-                            Log.e("glideloader:","overrided-w:"+bitmapDrawable.getBitmap().getWidth()+"--h:"+bitmapDrawable.getBitmap().getHeight());
-                            imageView.setImageBitmap(bitmapDrawable.getBitmap());
+                            //GlideBitmapDrawable bitmapDrawable = (GlideBitmapDrawable) resource;
+//                            Log.e("glideloader:","overrided-w:"+bitmapDrawable.getBitmap().getWidth()+"--h:"+bitmapDrawable.getBitmap().getHeight());
+                            //view.setImageBitmap(bitmapDrawable.getBitmap());
+                            view.setImageDrawable(resource);
+                             if(config.getImageListener() != null && !TextUtils.isEmpty(config.getUrl())){
+                                 getFileFromDiskCache(config.getUrl(), new FileGetter() {
+                                     @Override
+                                     public void onSuccess(File file, int width, int height) {
+                                         config.getImageListener().onSuccess(file.getAbsolutePath(),width,height,null,0,0);
+                                     }
+
+                                     @Override
+                                     public void onFail(Throwable e) {
+
+                                     }
+                                 });
+
+                            }
                         }else if(resource instanceof GifDrawable){
                             GifDrawable gifDrawable = (GifDrawable) resource;
-                            imageView.setImageDrawable(gifDrawable);
+                            view.setImageDrawable(gifDrawable);
                             gifDrawable.start();
                         }
+                        /*if(config.getImageListener() != null){
+                            config.getImageListener().onSuccess("",0,0,null,0,0);
+                        }*/
 
                     }
 
@@ -223,9 +241,16 @@ public class GlideLoader implements ILoader {
 
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        if(e !=null){
+                            e.printStackTrace();
+                        }
                         if(config.getErrorResId() >0){
                             view.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
-                            view.setImageDrawable(errorDrawable);
+                           // view.setImageDrawable(errorDrawable);
+                        }
+                        if(config.getImageListener() != null){
+                            config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                         }
                     }
 
@@ -251,41 +276,62 @@ public class GlideLoader implements ILoader {
                         super.onLoadCleared(placeholder);
                     }
                 };
-                request.dontAnimate();
-
-
-                request.into(viewTarget);
-//todo
-               /* request.listener(new RequestListener<String,GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        //request.fitCenter();//todo 或者 imageview直接更改scaletype
-                        Log.e("dd",e.getMessage()+"--model:"+model);
-                        if(model.equals(config.getUrl())){
-                            ImageView imageView = (ImageView) config.getTarget();
-                            if(config.getErrorResId()>0 && config.getScaleMode()>0){
-                                imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode()));
-                            }
-                        }
-
-
-                        return true;
+                builder.dontAnimate();
+                builder.into(viewTarget);
+               //开始:
+                /*if(MyUtil.shouldSetPlaceHolder(config)){
+                    if(config.getLoadingResId() >0){
+                        imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
+                        imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getLoadingResId()));
+                    }else {
+                        imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
+                        imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
                     }
+                }
 
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        if(model.equals(config.getUrl())){
+               builder.listener(new RequestListener<String,GlideDrawable>() {
+                   @Override
+                   public boolean onException(Exception e,String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                       if(e != null){
+                           e.printStackTrace();
+                       }
+                       if(config.getImageListener() != null){
+                          config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
+                       }
+                       if(config.getErrorResId() >0){
+                           if(model != null && model.equals(config.getUsableString())){
+                               imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
+                           }
+                           // view.setImageDrawable(errorDrawable);
+                       }
 
-                        }
-                        return false;
-                    }
-                });*/
+                       return false;
+                   }
+
+                   @Override
+                   public boolean onResourceReady(GlideDrawable resource,String model, Target<GlideDrawable> target,
+                           boolean isFromMemoryCache, boolean isFirstResource) {
+                       if(config.getImageListener() != null){
+                           config.getImageListener().onSuccess("",0,0,null,0,0);
+                       }
+                       return false;
+                   }
+               });
+                builder.dontAnimate();
+                builder.into(imageView);*/
             }
-
-
         }
+    }
 
-
+    private int getUseableResId(SingleConfig config) {
+        if(config.getPlaceHolderResId() != 0){
+            config.setScaleMode(config.getPlaceHolderScaleType());
+            return config.getPlaceHolderResId();
+        }/*else if(config.getErrorResId() != 0){
+            config.setScaleMode(config.getErrorScaleType());
+            return config.getErrorResId();
+        }*/
+        return 0;
     }
 
     @Nullable
@@ -293,18 +339,28 @@ public class GlideLoader implements ILoader {
         DrawableTypeRequest request = null;
         if(!TextUtils.isEmpty(config.getUrl())){
             request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
-            request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存原图
         }else if(!TextUtils.isEmpty(config.getFilePath())){
             request= requestManager.load(config.getFilePath());
         }else if(!TextUtils.isEmpty(config.getContentProvider())){
             request= requestManager.loadFromMediaStore(Uri.parse(config.getContentProvider()));
-        }else if(config.getResId()>0){
+        }else if(config.getResId() != 0){
             request= requestManager.load(config.getResId());
+        }else if(config.getBytes() != null){
+            request = requestManager.load(config.getBytes());
+        } else {
+            //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
+            int resId = getUseableResId(config);
+            if(resId != 0){
+                request = requestManager.load(resId);
+            }else {
+                request= requestManager.load("");
+            }
         }
+        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
         return request;
     }
 
-    private void setShapeModeAndBlur(SingleConfig config, DrawableTypeRequest request) {
+    private void setShapeModeAndBlur(SingleConfig config, DrawableRequestBuilder builder) {
         int shapeMode = config.getShapeMode();
         List<Transformation> transformations = new ArrayList<>();
 
@@ -351,7 +407,7 @@ public class GlideLoader implements ILoader {
             for (int i = 0; i < transformations.size(); i++) {
                 forms[i] = transformations.get(i);
             }
-            request.bitmapTransform(forms);
+            builder.bitmapTransform(forms);
         }
 
 
@@ -423,35 +479,67 @@ public class GlideLoader implements ILoader {
     }
 
     @Override
-    public void getFileFromDiskCache(String url, final FileGetter getter) {
-        Glide.with(ImageLoader.context)
-                .load(url)
-                .downloadOnly(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-                        if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
-                            int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
-                            getter.onSuccess(resource,wh[0],wh[1]);
-                        }else {
-                            getter.onFail(new Throwable("resource not exist"));
-                        }
-                    }
+    public void getFileFromDiskCache(final String url, final FileGetter getter) {
+        MyUtil.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(ImageLoader.context)
+                        .load(url)
+                        .downloadOnly(new SimpleTarget<File>() {
+                            @Override
+                            public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+                                if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
+                                    int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
+                                    getter.onSuccess(resource,wh[0],wh[1]);
+                                }else {
+                                    getter.onFail(new Throwable("resource not exist"));
+                                }
+                            }
 
-                    @Override
-                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                        getter.onFail(e);
-                    }
-                });
+                            @Override
+                            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                                getter.onFail(e);
+                            }
+                        });
+            }
+        });
+
     }
 
     /**
      * 无法同步判断
      * 参见:https://github.com/bumptech/glide/issues/639
+     *
+     * 4.0以上可用：
+     * val file: File? = try {
+             Glide.with(view.context).downloadOnly().load(url).apply(RequestOptions().onlyRetrieveFromCache(true)).submit().get()
+             } catch (e: Exception) {
+             e.printStackTrace()
+             null
+             }
+     *https://github.com/bumptech/glide/issues/2972
+     *
      * @param url
      * @return
      */
     @Override
     public boolean isCached(String url) {
+
+       try {
+            /*File file = Glide.with(ImageLoader.context)
+                .load(url).downloadOnly(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+
+                    }
+                }).getRequest()
+                .apply(RequestOptions().onlyRetrieveFromCache(true))
+                .submit()
+                .get();*/
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
         return false;
     }
 

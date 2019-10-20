@@ -1,5 +1,6 @@
 package com.hss01248.image;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
@@ -15,11 +16,13 @@ import com.github.piasy.biv.BigImageViewer;
 import com.hss01248.image.bigimage.MyRecyclePagerAdapter;
 import com.hss01248.image.bigimage.RecycleAdapterForBigImage;
 import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.ILoader;
 
 import java.io.File;
 import java.util.List;
+import java.util.Stack;
 
 
 /**
@@ -39,13 +42,21 @@ public class ImageLoader {
 
     static Handler handler;
 
+    public static void setConfig(ILoaderConfig config) {
+        ImageLoader.config = config;
+    }
+
+    public static ILoaderConfig config;
+     public interface  ILoaderConfig{
+         Stack<Activity> getActivityStack();
+     }
+
 
 
     public static void init(final Context context, int cacheSizeInM,ILoader imageLoader){
         ImageLoader.context = context;
         GlobalConfig.init(context,cacheSizeInM,imageLoader);
         handler = new Handler(Looper.getMainLooper());
-        //imageLoader.init();
     }
 
     public static ILoader getActualLoader(){
@@ -74,7 +85,14 @@ public class ImageLoader {
         } else {
             new SingleConfig.ConfigBuilder(context).file(path).into(imageView);
         }
+    }
 
+    /**
+     * 自带ui
+     * @param desc
+     * @param path
+     */
+    public static void previewBigImgInDialog(String desc,String path){
 
     }
 

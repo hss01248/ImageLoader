@@ -1,6 +1,8 @@
 package com.hss01248.image.config;
 
 import android.text.TextUtils;
+import android.util.Log;
+import com.hss01248.image.utils.ContextUtil;
 
 import java.io.File;
 
@@ -13,9 +15,20 @@ public class ConfigChecker {
         if (!checkImageSource(config)) {
             return false;
         }
+        if(!isContextUsable(config)){
+            Log.w("imageloader","context is not usable:"+config.getContext());
+            return false;
+        }
         adjustWidthAndHeight(config);
         return true;
     }
+
+    private static boolean isContextUsable(SingleConfig config) {
+        Object obj = config.getContext();
+        return ContextUtil.isUseable(obj);
+    }
+
+
 
     /*
     根据view上设置的宽高来决定最终的resize option
@@ -42,6 +55,6 @@ public class ConfigChecker {
             return true;
         }
 
-        return false;
+        return true;
     }
 }

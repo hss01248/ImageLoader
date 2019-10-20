@@ -1,16 +1,16 @@
 package com.hss01248.image.config;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-
+import android.app.Activity;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.R;
 import com.hss01248.image.interfaces.ImageListener;
 
-import java.io.File;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import com.hss01248.image.utils.ContextUtil;
 
 /**
  * Created by Administrator on 2017/3/14 0014.
@@ -37,6 +37,10 @@ public class SingleConfig {
 
     public String getContentProvider() {
         return contentProvider;
+    }
+
+    public byte[] getBytes(){
+        return bytes;
     }
 
     public String getFilePath() {
@@ -78,6 +82,10 @@ public class SingleConfig {
         return resId;
     }
 
+    public void setScaleMode(int scaleMode) {
+        this.scaleMode = scaleMode;
+    }
+
     public int getScaleMode() {
         return scaleMode;
     }
@@ -92,6 +100,20 @@ public class SingleConfig {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getUsableString(){
+        if(!TextUtils.isEmpty(url)){
+            return url;
+        }
+        if(!TextUtils.isEmpty(filePath)){
+            return filePath;
+        }
+        if(!TextUtils.isEmpty(thumbnailUrl)){
+            return thumbnailUrl;
+        }
+        return "";
+
     }
 
     public int getWidth() {
@@ -131,6 +153,11 @@ public class SingleConfig {
     private String filePath;
     private int resId;
     private String contentProvider;
+
+    /**
+     * byte[]类型的图片源
+     */
+    private byte[] bytes;
     private boolean isGif;
 
     private View target;
@@ -248,6 +275,7 @@ public class SingleConfig {
         this.filePath = builder.filePath;
         this.resId = builder.resId;
         this.contentProvider = builder.contentProvider;
+        this.bytes = builder.bytes;
 
         this.ignoreCertificateVerify = builder.ignoreCertificateVerify;
 
@@ -288,17 +316,16 @@ public class SingleConfig {
         this.placeHolderScaleType = builder.placeHolderScaleType;
         this.loadingScaleType = builder.loadingScaleType;
         this.isUseARGB8888 = builder.isUseARGB8888;
+        this.imageListener = builder.imageListener;
 
 
 
     }
 
     private void setWH(ConfigBuilder builder) {
+        this.width = builder.width;
+        this.height = builder.height;
         if(!builder.asBitmap){
-
-            this.width = builder.width;
-            this.height = builder.height;
-
             View view = builder.target;
             if(view!=null){
                 ViewGroup.LayoutParams params = view.getLayoutParams();
@@ -306,14 +333,6 @@ public class SingleConfig {
                     //注意:返回的值都是px单位
                     int h = params.height;
                     int w = params.width;
-
-                    //todo
-                    // 1. 常用情况: view设置宽度match parent,高度wrap content,
-                    // 同时要求图片等比例缩小或放大,使宽度刚好是matchaprent,高度等比例,不能变形
-                    //2. 常见情况: 宽度match parent,高度一定
-
-
-
                     if(w >0){
                         if(builder.width<=0 || builder.width > w){
                             this.width = w;
@@ -370,6 +389,11 @@ public class SingleConfig {
         private String filePath;
         private int resId;
         private String contentProvider;
+
+        /**
+         * byte[]类型的图片源
+         */
+        private byte[] bytes;
         private boolean isGif=false;
 
         private View target;
@@ -379,6 +403,47 @@ public class SingleConfig {
 
         private int width;
         private int height;
+
+
+        /**
+         * 是否使用全局的默认图+centerinside
+         * @param useDefaultPlaceHolder
+         * @return
+         */
+        public ConfigBuilder defaultPlaceHolder(boolean useDefaultPlaceHolder) {
+            if(useDefaultPlaceHolder){
+                placeHolderResId= GlobalConfig.placeHolderResId;
+                placeHolderScaleType= GlobalConfig.placeHolderScaleType;
+            }
+            return this;
+        }
+
+        /**
+         * 是否使用全局的失败图+centerinside
+         * @param useDefaultErrorRes
+         * @return
+         */
+        public ConfigBuilder defaultErrorRes(boolean useDefaultErrorRes) {
+           if(useDefaultErrorRes){
+               errorScaleType= GlobalConfig.errorScaleType;
+               errorResId = GlobalConfig.errorResId;
+           }
+            return this;
+        }
+
+        /**
+         * glide支持不好,基本上用不上.
+         * fresco完美支持
+         * @param useDefaultLoadingRes
+         * @return
+         */
+        public ConfigBuilder defaultLoadingRes(boolean useDefaultLoadingRes) {
+            if(useDefaultLoadingRes){
+                loadingScaleType = GlobalConfig.loadingScaleType;
+                loadingResId = GlobalConfig.loadingResId;
+            }
+            return this;
+        }
 
         private boolean needBlur = false;//是否需要模糊
         private int blurRadius;
@@ -393,10 +458,7 @@ public class SingleConfig {
             return this;
         }
 
-        private int loadingScaleType = GlobalConfig.loadingScaleType;
 
-        //UI:
-        private int placeHolderResId= GlobalConfig.placeHolderResId;
         private boolean reuseable;//当前view是不是可重用的
 
 
@@ -407,12 +469,13 @@ public class SingleConfig {
 
         private boolean isUseARGB8888;
 
+        private int loadingScaleType;
+        private int placeHolderResId;
+        private int placeHolderScaleType;
+        private int errorScaleType;
 
-        private int placeHolderScaleType= GlobalConfig.placeHolderScaleType;
-        private int errorScaleType= GlobalConfig.errorScaleType;
-
-        private int loadingResId = GlobalConfig.loadingResId;
-        private int errorResId = GlobalConfig.errorResId;
+        private int loadingResId ;
+        private int errorResId ;
 
 
 
@@ -443,7 +506,10 @@ public class SingleConfig {
 
         public ConfigBuilder(Context context){
             this.context = context;
-
+            Activity activity = ContextUtil.getActivityFromContext(context);
+            if(activity != null){
+                this.context = activity;
+            }
         }
 
         /*public ConfigBuilder(SingleConfig config){
@@ -461,6 +527,10 @@ public class SingleConfig {
          * @return
          */
         public ConfigBuilder url(String url){
+            if(TextUtils.isEmpty(url)){
+                this.url = "";
+                return this;
+            }
             this.url = url;
             if(url.contains("gif")){
                 isGif = true;
@@ -504,16 +574,20 @@ public class SingleConfig {
         }
 
         public ConfigBuilder file(String filePath){
+            if(TextUtils.isEmpty(filePath)){
+                this.filePath = "";
+                return this;
+            }
             if(filePath.startsWith("content:")){
                 this.contentProvider = filePath;
                 return this;
             }
 
-            if(!new File(filePath).exists()){
-                //throw new RuntimeException("文件不存在");
-                Log.e("imageloader","文件不存在");
-                return this;
-            }
+//            if(!new File(filePath).exists()){
+//                //throw new RuntimeException("文件不存在");
+//                Log.e("imageloader","文件不存在");
+//                return this;
+//            }
 
             this.filePath = filePath;
             if(filePath.contains("gif")){
@@ -526,6 +600,12 @@ public class SingleConfig {
             this.resId = resId;
             return this;
         }
+
+        public ConfigBuilder bytes(byte[] bytes){
+            this.bytes = bytes;
+            return this;
+        }
+
         public ConfigBuilder content(String contentProvider){
             this.contentProvider = contentProvider;
             return this;

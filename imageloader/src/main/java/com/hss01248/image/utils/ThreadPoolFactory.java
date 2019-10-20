@@ -13,8 +13,8 @@ package com.hss01248.image.utils;
  * @updateDes TODO
  */
 public class ThreadPoolFactory {
-	static ThreadPoolProxy	mNormalPool;
-	static ThreadPoolProxy	mDownLoadPool;
+	private static volatile ThreadPoolProxy	mNormalPool;
+	private static volatile ThreadPoolProxy	mDownLoadPool;
 
 	/**得到一个普通的线程池*/
 	public static ThreadPoolProxy getNormalPool() {

@@ -5,10 +5,14 @@ import android.app.Application;
 import android.os.Bundle;
 
 import com.elvishew.xlog.XLog;
+import com.github.piasy.biv.BigImageViewer;
+import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.frescoloader.FrescoLoader;
+import com.hss01248.frescoloader.big.BigImageLoader;
 import com.hss01248.glideloader.GlideLoader;
+import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -23,7 +27,8 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ImageLoader.init(getApplicationContext(), 500,new FrescoLoader());
+        ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
+        //BigImageViewer.initialize(GlideBigLoader.with(this));
         //GlobalConfig.setBigImageDark(false);
         LeakCanary.install(this);
         MyToast.init(this,true,true);
