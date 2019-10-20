@@ -50,10 +50,11 @@ public class ScaleTypeActy extends Activity {
         resSmall = R.drawable.timg50;
         resBig = R.drawable.timg6;
         datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER_CROP,"center_crop",resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_XY,"fit_xy",resSmall));
         datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER,"center",resSmall));
         datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER_INSIDE,"center_inside",resSmall));
         datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_CENTER,"fit_center",resSmall));
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_XY,"fit_xy",resSmall));
+
         datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_START,"fit_start",resSmall));
         datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_END,"fit_end",resSmall));
         datas.add(new ScaleTypeInfo(ImageView.ScaleType.MATRIX,"matrix",resSmall));

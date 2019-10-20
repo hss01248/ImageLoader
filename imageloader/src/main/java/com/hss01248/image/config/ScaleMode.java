@@ -33,12 +33,13 @@ public interface ScaleMode {
      * 图片居中,如果太小,不会拉伸放大,导致外部显示view背景,如果太大,图片很多部位显示不出来
      */
     int CENTER = 3;
-    int FOCUS_CROP = 4;
+    int CENTER_INSIDE = 4;
     int FIT_CENTER = 5;
     int FIT_START = 6;
     int FIT_END = 7;
-    int CENTER_INSIDE = 8;
-    int FACE_CROP = 9;
+
+    int FACE_CROP = 8;
+    int FOCUS_CROP = 9;
 
 
 }

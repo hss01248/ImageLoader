@@ -477,6 +477,8 @@ public class MyUtil {
                 return ImageView.ScaleType.FIT_CENTER;
             case ScaleMode.FIT_START:
                 return ImageView.ScaleType.FIT_START;
+            case ScaleMode.FIT_END:
+                return ImageView.ScaleType.FIT_END;
             case ScaleMode.CENTER_INSIDE:
                 return ImageView.ScaleType.CENTER_INSIDE;
             default:
