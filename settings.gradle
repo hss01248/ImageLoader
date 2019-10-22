@@ -1,2 +1,2 @@
-include ':app', ':imageloader', ':fresco', ':glide',  ':glidev4'
+include ':app', ':imageloader', ':fresco', ':glide',  ':glidev4', ':memory'
 

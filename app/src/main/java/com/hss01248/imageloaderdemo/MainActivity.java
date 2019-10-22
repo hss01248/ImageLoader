@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.memory.ImageMemoryHookManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,13 +159,19 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_scale:
                 Intent intent6 = new Intent(this,ScaleTypeActy.class);
                 startActivity(intent6);
+
                 break;
             default:break;
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ImageMemoryHookManager.show(this);
+    }
 
-        /*Intent intent = new Intent(this,BigImageActy.class);
+    /*Intent intent = new Intent(this,BigImageActy.class);
         startActivity(intent);*/
 
 }

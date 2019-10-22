@@ -15,6 +15,7 @@ import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.memory.ImageMemoryHookManager;
 import com.squareup.leakcanary.LeakCanary;
 
 import es.dmoral.toasty.MyToast;
@@ -39,6 +40,7 @@ public class BaseApp extends Application {
         StyledDialog.init(this);
         //Logger.initialize(new Settings());
         XLog.init();
+        ImageMemoryHookManager.hook(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
