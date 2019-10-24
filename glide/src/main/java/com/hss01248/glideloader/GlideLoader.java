@@ -10,9 +10,11 @@ import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideBigLoader;
@@ -31,6 +33,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
@@ -206,7 +209,7 @@ public class GlideLoader implements ILoader {
             }
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
-                ImageViewTarget<GlideDrawable> viewTarget = new ImageViewTarget<GlideDrawable>(imageView) {
+                /*ImageViewTarget<GlideDrawable> viewTarget = new ImageViewTarget<GlideDrawable>(imageView) {
 
                     @Override
                     protected void setResource(GlideDrawable resource) {
@@ -229,16 +232,15 @@ public class GlideLoader implements ILoader {
 
                                      }
                                  });
-
                             }
                         }else if(resource instanceof GifDrawable){
                             GifDrawable gifDrawable = (GifDrawable) resource;
                             view.setImageDrawable(gifDrawable);
                             gifDrawable.start();
                         }
-                        /*if(config.getImageListener() != null){
+                        *//*if(config.getImageListener() != null){
                             config.getImageListener().onSuccess("",0,0,null,0,0);
-                        }*/
+                        }*//*
 
                     }
 
@@ -283,9 +285,62 @@ public class GlideLoader implements ILoader {
                     public void onLoadCleared(Drawable placeholder) {
                         super.onLoadCleared(placeholder);
                     }
-                };
+                };*/
                 builder.dontAnimate();
-                builder.into(viewTarget);
+
+                imageView.setTag(R.id.progressBar00,config);
+
+                builder.listener(new RequestListener() {
+                    @Override
+                    public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                        if(target instanceof ImageViewTarget){
+                            ImageViewTarget target1 = (ImageViewTarget) target;
+                            ImageView imageView1 = (ImageView) target1.getView();
+                            SingleConfig config1 = (SingleConfig) imageView1.getTag(R.id.progressBar00);
+                            if(config1 != null && config1.getErrorResId() >0){
+                                imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config1.getErrorScaleType(),true));
+                            }
+                            if(config1.getImageListener() != null){
+                                config1.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
+                            }
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if(target instanceof ImageViewTarget){
+                            ImageViewTarget target1 = (ImageViewTarget) target;
+                            ImageView imageView1 = (ImageView) target1.getView();
+                            final SingleConfig config1 = (SingleConfig) imageView1.getTag(R.id.progressBar00);
+                            if(config1 != null ){
+                                imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config1.getScaleMode(),true));
+
+                                if(config1.getImageListener() != null && !TextUtils.isEmpty(config1.getUrl())){
+                                    getFileFromDiskCache(config1.getUrl(), new FileGetter() {
+                                        @Override
+                                        public void onSuccess(File file, int width, int height) {
+                                            config1.getImageListener().onSuccess(file.getAbsolutePath(),width,height,null,0,0);
+                                        }
+
+                                        @Override
+                                        public void onFail(Throwable e) {
+
+                                        }
+                                    });
+                                }
+
+                            }
+
+                        }
+
+                        return false;
+                    }
+                }).into(imageView);
+
+
+
+                //builder.into(viewTarget);
             }
         }
     }

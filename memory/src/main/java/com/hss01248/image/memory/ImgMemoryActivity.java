@@ -24,6 +24,10 @@ public class ImgMemoryActivity extends Activity {
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.lv);
 
+        if(ImageMemoryHookManager.getList() == null || ImageMemoryHookManager.getList().isEmpty()){
+            finish();
+            return;
+        }
         listView.setAdapter(new CommonAdapter<Bitmap>(ImageMemoryHookManager.getList(),1) {
             @NonNull
             @Override
