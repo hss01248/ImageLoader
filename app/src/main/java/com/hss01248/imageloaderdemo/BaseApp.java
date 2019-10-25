@@ -40,7 +40,7 @@ public class BaseApp extends Application {
         StyledDialog.init(this);
         //Logger.initialize(new Settings());
         XLog.init();
-        ImageMemoryHookManager.hook(this);
+        //ImageMemoryHookManager.hook(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ImageMemoryHookManager.show(this);
+        //ImageMemoryHookManager.show(this);
     }
 
     /*Intent intent = new Intent(this,BigImageActy.class);

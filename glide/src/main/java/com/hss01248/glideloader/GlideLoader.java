@@ -4,6 +4,8 @@ import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.disklrucache.DiskLruCache;
+import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskCache;
@@ -15,6 +17,9 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.EmptySignature;
+import com.bumptech.glide.util.LruCache;
+import com.bumptech.glide.util.Util;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideBigLoader;
@@ -46,6 +51,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -609,22 +618,21 @@ public class GlideLoader implements ILoader {
     @Override
     public boolean isCached(String url) {
 
-       try {
-            /*File file = Glide.with(ImageLoader.context)
-                .load(url).downloadOnly(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
 
-                    }
-                }).getRequest()
-                .apply(RequestOptions().onlyRetrieveFromCache(true))
-                .submit()
-                .get();*/
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return false;
+           OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
+           SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
+           String safeKey = safeKeyGenerator.getSafeKey(originalKey);
+           try {
+               DiskLruCache diskLruCache = DiskLruCache.open(new File(GlobalConfig.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
+               DiskLruCache.Value value = diskLruCache.get(safeKey);
+               if (value != null && value.getFile(0).exists() && value.getFile(0).length() > 30) {
+                   return true;
+               }
+           } catch (Exception e) {
+               e.printStackTrace();
+           }
+           return false;
+
     }
 
     @Override
@@ -673,7 +681,76 @@ public class GlideLoader implements ILoader {
     }
 
 
+    private static class OriginalKey implements Key {
 
+        private final String id;
+        private final Key signature;
+
+        public OriginalKey(String id, Key signature) {
+            this.id = id;
+            this.signature = signature;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            OriginalKey that = (OriginalKey) o;
+
+            if (!id.equals(that.id)) {
+                return false;
+            }
+            if (!signature.equals(that.signature)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id.hashCode();
+            result = 31 * result + signature.hashCode();
+            return result;
+        }
+
+        @Override
+        public void updateDiskCacheKey(MessageDigest messageDigest) throws UnsupportedEncodingException {
+            messageDigest.update(id.getBytes(STRING_CHARSET_NAME));
+            signature.updateDiskCacheKey(messageDigest);
+        }
+    }
+
+    private static class SafeKeyGenerator {
+        private final LruCache<Key, String> loadIdToSafeHash = new LruCache<Key, String>(1000);
+
+        public String getSafeKey(Key key) {
+            String safeKey;
+            synchronized (loadIdToSafeHash) {
+                safeKey = loadIdToSafeHash.get(key);
+            }
+            if (safeKey == null) {
+                try {
+                    MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+                    key.updateDiskCacheKey(messageDigest);
+                    safeKey = Util.sha256BytesToHex(messageDigest.digest());
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                synchronized (loadIdToSafeHash) {
+                    loadIdToSafeHash.put(key, safeKey);
+                }
+            }
+            return safeKey;
+        }
+    }
 
 
 
