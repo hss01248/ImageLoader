@@ -251,10 +251,11 @@ public class SingleConfig {
 
     private void show(){
         if(ConfigChecker.check(this)){
-            GlobalConfig.getLoader().request(this);
             if(GlobalConfig.debug){
                 GlobalConfig.getLoader().debug(this);
             }
+            GlobalConfig.getLoader().request(this);
+
         }
 
     }

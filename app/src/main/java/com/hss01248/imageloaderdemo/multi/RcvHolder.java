@@ -63,16 +63,17 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
             .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
             .loadingDefault()
             .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
+                .rectRoundCorner(5,0)
             .into(itemView);
 
 
-        itemView.setOnClickListener(new View.OnClickListener() {
+        /*itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context,BigImageActy.class);
                 intent.putExtra("url",data);
                 context.startActivity(intent);
             }
-        });
+        });*/
     }
 }

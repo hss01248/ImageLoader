@@ -63,9 +63,9 @@ public class RecycleViewActy extends Activity {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                    ImageLoader.getActualLoader().resume();
+                   // ImageLoader.getActualLoader().resume();
                 }else {
-                    ImageLoader.getActualLoader().pause();
+                   // ImageLoader.getActualLoader().pause();
                 }
             }
         });
