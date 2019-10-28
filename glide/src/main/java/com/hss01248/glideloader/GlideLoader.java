@@ -9,6 +9,7 @@ import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskCache;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
@@ -16,6 +17,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SquaringDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.EmptySignature;
 import com.bumptech.glide.util.LruCache;
@@ -49,6 +51,7 @@ import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -188,7 +191,7 @@ public class GlideLoader implements ILoader {
                 builder.placeholder(config.getPlaceHolderResId());
             }
 
-            int scaleMode = config.getScaleMode();
+           /* int scaleMode = config.getScaleMode();
             switch (scaleMode){
                 case ScaleMode.CENTER_CROP:
                 case ScaleMode.CENTER:
@@ -212,18 +215,25 @@ public class GlideLoader implements ILoader {
                 default:
                     builder.centerCrop();
                     break;
-            }
+            }*/
             if(config.getWidth()>0 && config.getHeight()>0){
                 builder.override(config.getWidth(),config.getHeight());
             }
-            setShapeModeAndBlur(config, builder);
+          builder =   setShapeModeAndBlur(config, builder);
             if(config.getErrorResId() >0){
                 builder.error(config.getErrorResId());
             }
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
 
-               /* ImageViewTarget<GlideDrawable> viewTarget = new ImageViewTarget<GlideDrawable>(imageView) {
+                if(config.getWidth()>0 && config.getHeight()>0){
+                    ViewGroup.LayoutParams params = imageView.getLayoutParams();
+                    params.width = config.getWidth();
+                    params.height = config.getHeight();
+                    imageView.setLayoutParams(params);
+                }
+
+               ImageViewTarget<GlideDrawable> viewTarget = new ImageViewTarget<GlideDrawable>(imageView) {
 
                     private static final float SQUARE_RATIO_MARGIN = 0.05f;
                     private int maxLoopCount;
@@ -316,12 +326,13 @@ public class GlideLoader implements ILoader {
                     public void onLoadCleared(Drawable placeholder) {
                         super.onLoadCleared(placeholder);
                     }
-                };*/
+                };
+
                 builder.dontAnimate();
                 imageView.setTag(R.id.progressBar00,config);
 
                 //start
-                if(config.getLoadingResId() != 0){
+                /*if(config.getLoadingResId() != 0){
                     //CircularProgressDrawable progressDrawable = new CircularProgressDrawable(imageView.getContext());
                     // progressDrawable.setCenterRadius(50);
                     //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
@@ -347,10 +358,23 @@ public class GlideLoader implements ILoader {
                     @Override
                     public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
                         //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
+                        if(config.getImageListener() != null && !TextUtils.isEmpty(config.getUrl())) {
+                            getFileFromDiskCache(config.getUrl(), new FileGetter() {
+                                @Override
+                                public void onSuccess(File file, int width, int height) {
+                                    config.getImageListener().onSuccess(file.getAbsolutePath(), width, height, null, 0, 0);
+                                }
+
+                                @Override
+                                public void onFail(Throwable e) {
+
+                                }
+                            });
+                        }
                         return false;
                     }
-                }).into(imageView);
-                //builder.into(imageView);
+                }).into(imageView);*/
+                builder.into(viewTarget);
             }
         }
     }
@@ -400,7 +424,10 @@ public class GlideLoader implements ILoader {
             }
 
 
-        } else {
+        }else if (drawable instanceof SquaringDrawable){
+            SquaringDrawable bitmap = (SquaringDrawable) drawable;
+            desc += "SquaringDrawable, w:"+bitmap.getIntrinsicWidth() +",h:"+bitmap.getIntrinsicHeight();
+        }else {
             desc += "drawable:"+drawable;
         }
 
@@ -458,7 +485,7 @@ public class GlideLoader implements ILoader {
         return request;
     }
 
-    private void setShapeModeAndBlur(SingleConfig config, DrawableRequestBuilder builder) {
+    private DrawableRequestBuilder setShapeModeAndBlur(SingleConfig config, DrawableRequestBuilder builder) {
         int shapeMode = config.getShapeMode();
         List<Transformation> transformations = new ArrayList<>();
 
@@ -479,8 +506,16 @@ public class GlideLoader implements ILoader {
                 }
                 break;
             case ShapeMode.RECT_ROUND:
+            case ShapeMode.RECT_ROUND_ONLY_TOP:
+                /*if(config.getScaleMode() == ScaleMode.CENTER_CROP){
+                    transformations.add(new CenterCrop(config.getContext()));
+                }*/
+                RoundedCornersTransformation.CornerType cornerType = RoundedCornersTransformation.CornerType.ALL;
+                if(shapeMode == ShapeMode.RECT_ROUND_ONLY_TOP){
+                    cornerType = RoundedCornersTransformation.CornerType.TOP;
+                }
                 transformations.add(new RoundedCornersTransformation(config.getContext(),
-                        config.getRectRoundRadius(), 0, RoundedCornersTransformation.CornerType.ALL));
+                        config.getRectRoundRadius(), 0, cornerType));
 
                 if(config.getBorderWidth()>0){
 
@@ -498,17 +533,17 @@ public class GlideLoader implements ILoader {
 
                 }
                 break;
+            default:break;
         }
 
-        if(transformations.size()>0){
+        if(!transformations.isEmpty()){
             Transformation[] forms = new Transformation[transformations.size()];
             for (int i = 0; i < transformations.size(); i++) {
                 forms[i] = transformations.get(i);
             }
-            builder.bitmapTransform(forms);
+           return builder.bitmapTransform(forms);
         }
-
-
+        return builder;
 
     }
 

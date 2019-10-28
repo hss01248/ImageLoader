@@ -703,6 +703,14 @@ public class SingleConfig {
             return this;
         }
 
+        public ConfigBuilder rectRoundCornerTop(int rectRoundRadius,int overlayColorWhenGif){
+            this.rectRoundRadius = MyUtil.dip2px(rectRoundRadius);
+            this.shapeMode = ShapeMode.RECT_ROUND_ONLY_TOP;
+            this.roundOverlayColor  = overlayColorWhenGif;
+
+            return this;
+        }
+
         /**
          * 拉伸/裁剪模式
          * @param scaleMode 取值ScaleMode

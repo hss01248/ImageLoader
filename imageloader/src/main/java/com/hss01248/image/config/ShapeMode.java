@@ -15,6 +15,8 @@ public interface ShapeMode {
      */
     int RECT_ROUND = 1;
 
+    int RECT_ROUND_ONLY_TOP = 3;
+
     /**
      * 椭圆/圆
      */
