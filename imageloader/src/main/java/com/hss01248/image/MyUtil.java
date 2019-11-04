@@ -106,8 +106,7 @@ public class MyUtil {
             return false;
         }
 
-        if (config.getResId() > 0 || !TextUtils.isEmpty(config.getFilePath()) || GlobalConfig.getLoader()
-                .isCached(config.getUrl())) {
+        if (config.getResId() > 0 || !TextUtils.isEmpty(config.getFilePath()) || GlobalConfig.getLoader().isCached(config.getUrl())) {
             return false;
         } else {//只有在图片源为网络图片,并且图片没有缓存到本地时,才给显示placeholder
             return true;

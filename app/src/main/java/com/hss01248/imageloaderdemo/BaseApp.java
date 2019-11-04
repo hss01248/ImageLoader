@@ -31,6 +31,8 @@ public class BaseApp extends Application {
         super.onCreate();
         ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
         GlobalConfig.debug = true;
+        GlobalConfig.placeHolderResId = R.drawable.im_item_list_opt;
+        GlobalConfig.errorResId = R.drawable.im_item_list_opt_error;
         //BigImageViewer.initialize(GlideBigLoader.with(this));
         //GlobalConfig.setBigImageDark(false);
         LeakCanary.install(this);

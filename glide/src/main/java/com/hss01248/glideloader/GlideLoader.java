@@ -50,6 +50,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -186,36 +187,11 @@ public class GlideLoader implements ILoader {
             if(request ==null){
                 return;
             }
-            DrawableRequestBuilder builder = request.thumbnail(0.85f);
+            DrawableRequestBuilder builder = request.thumbnail(1.0f);
             if(MyUtil.shouldSetPlaceHolder(config)){
                 builder.placeholder(config.getPlaceHolderResId());
             }
 
-           /* int scaleMode = config.getScaleMode();
-            switch (scaleMode){
-                case ScaleMode.CENTER_CROP:
-                case ScaleMode.CENTER:
-                    builder.centerCrop();
-                    break;
-                case ScaleMode.CENTER_INSIDE:
-                    builder.fitCenter();
-                    break;
-                case ScaleMode.FIT_CENTER:
-                case ScaleMode.FIT_START:
-                case ScaleMode.FIT_END:
-                    builder.fitCenter();
-                    break;
-                case ScaleMode.FIT_XY:
-                    builder.fitCenter();
-                    break;
-                case ScaleMode.FOCUS_CROP:
-                    builder.centerCrop();
-                    break;
-
-                default:
-                    builder.centerCrop();
-                    break;
-            }*/
             if(config.getWidth()>0 && config.getHeight()>0){
                 builder.override(config.getWidth(),config.getHeight());
             }
@@ -226,129 +202,11 @@ public class GlideLoader implements ILoader {
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
 
-                if(config.getWidth()>0 && config.getHeight()>0){
-                    ViewGroup.LayoutParams params = imageView.getLayoutParams();
-                    params.width = config.getWidth();
-                    params.height = config.getHeight();
-                    imageView.setLayoutParams(params);
-                }
-
-               ImageViewTarget<GlideDrawable> viewTarget = new ImageViewTarget<GlideDrawable>(imageView) {
-
-                    private static final float SQUARE_RATIO_MARGIN = 0.05f;
-                    private int maxLoopCount;
-                    private GlideDrawable resource;
-
-                    @Override
-                    protected void setResource(GlideDrawable resource) {
-                        view.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
-                        //用传入的view,不要用上方的imageview
-                        if(resource instanceof GlideBitmapDrawable){
-                            view.setImageBitmap(((GlideBitmapDrawable) resource).getBitmap());
-                             if(config.getImageListener() != null && !TextUtils.isEmpty(config.getUrl())){
-                                 getFileFromDiskCache(config.getUrl(), new FileGetter() {
-                                     @Override
-                                     public void onSuccess(File file, int width, int height) {
-                                         config.getImageListener().onSuccess(file.getAbsolutePath(),width,height,null,0,0);
-                                     }
-
-                                     @Override
-                                     public void onFail(Throwable e) {
-
-                                     }
-                                 });
-                            }
-                            this.resource = null;
-                        }else if(resource instanceof GifDrawable){
-                            GifDrawable gifDrawable = (GifDrawable) resource;
-                            view.setImageDrawable(gifDrawable);
-                            gifDrawable.start();
-                            this.resource = resource;
-                        }else {
-                            view.setImageDrawable(resource);
-                            this.resource = null;
-                        }
-                        if(config.getImageListener() != null){
-                            config.getImageListener().onSuccess("",0,0,null,0,0);
-                        }
-
-                    }
-
-                    @Override
-                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        super.onResourceReady(resource, glideAnimation);
-                    }
-
-                    @Override
-                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                        super.onLoadFailed(e, errorDrawable);
-                        if(e !=null){
-                            e.printStackTrace();
-                        }
-                        if(config.getErrorResId() >0){
-                            view.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
-                        }
-                        if(config.getImageListener() != null){
-                            config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
-                        }
-                    }
-
-                    @Override
-                    public void onLoadStarted(Drawable placeholder) {
-                        if(config.getLoadingResId() >0){
-                            //CircularProgressDrawable progressDrawable = new CircularProgressDrawable(imageView.getContext());
-                           // progressDrawable.setCenterRadius(50);
-                            view.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
-                            view.setImageDrawable(view.getContext().getResources().getDrawable(config.getLoadingResId()));
-                           // view.setImageDrawable(progressDrawable);
-                        }else {
-                            view.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
-                            view.setImageDrawable(placeholder);
-                        }
-
-                    }
-
-                    @Override
-                    public void onStart() {
-                        if (resource != null) {
-                            resource.start();
-                        }
-                    }
-
-                    @Override
-                    public void onStop() {
-                        if (resource != null) {
-                            resource.stop();
-                        }
-                    }
-
-                    @Override
-                    public void onLoadCleared(Drawable placeholder) {
-                        super.onLoadCleared(placeholder);
-                    }
-                };
-
                 builder.dontAnimate();
-                imageView.setTag(R.id.progressBar00,config);
-
-                //start
-                /*if(config.getLoadingResId() != 0){
-                    //CircularProgressDrawable progressDrawable = new CircularProgressDrawable(imageView.getContext());
-                    // progressDrawable.setCenterRadius(50);
-                    //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
-                    imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getLoadingResId()));
-                    // view.setImageDrawable(progressDrawable);
-                }else if(config.getPlaceHolderResId() != 0){
-                    //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
-                    imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
-                }
 
                 builder.listener(new RequestListener() {
                     @Override
                     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
-                        if(config.getErrorResId() >0){
-                            //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
-                        }
                         if(config.getImageListener() != null){
                             config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                         }
@@ -357,8 +215,9 @@ public class GlideLoader implements ILoader {
 
                     @Override
                     public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                       // Log.e("dd","thread :"+Thread.currentThread().getName() +",onResourceReady");
                         //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
-                        if(config.getImageListener() != null && !TextUtils.isEmpty(config.getUrl())) {
+                       /* if(config.getImageListener() != null && !TextUtils.isEmpty(config.getUrl())) {
                             getFileFromDiskCache(config.getUrl(), new FileGetter() {
                                 @Override
                                 public void onSuccess(File file, int width, int height) {
@@ -370,11 +229,11 @@ public class GlideLoader implements ILoader {
 
                                 }
                             });
-                        }
+                        }*/
                         return false;
                     }
-                }).into(imageView);*/
-                builder.into(viewTarget);
+                }).into(imageView);
+               // builder.into(viewTarget);
             }
         }
     }
@@ -659,7 +518,7 @@ public class GlideLoader implements ILoader {
     public boolean isCached(String url) {
 
 
-           OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
+          /* OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
            SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
            String safeKey = safeKeyGenerator.getSafeKey(originalKey);
            try {
@@ -670,7 +529,7 @@ public class GlideLoader implements ILoader {
                }
            } catch (Exception e) {
                e.printStackTrace();
-           }
+           }*/
            return false;
 
     }

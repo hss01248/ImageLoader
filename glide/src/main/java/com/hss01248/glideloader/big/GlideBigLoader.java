@@ -63,7 +63,7 @@ public final class GlideBigLoader implements BigLoader {
     private GlideBigLoader(Context context, OkHttpClient okHttpClient) {
         //observable = new Observable();
         //GlideProgressSupport.init(Glide.get(context), okHttpClient);
-        OkHttpClient client=  okHttpClient.newBuilder().addNetworkInterceptor(new ProgressInterceptor()).build();
+        OkHttpClient client=  okHttpClient.newBuilder().build();//.addNetworkInterceptor(new ProgressInterceptor()).build();
         Glide.get(context).register(GlideUrl.class, InputStream.class,
                 new OkHttpUrlLoader.Factory(client));
         mRequestManager = Glide.with(context);

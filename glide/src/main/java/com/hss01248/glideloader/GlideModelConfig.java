@@ -45,7 +45,7 @@ public class GlideModelConfig extends OkHttpGlideModule {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         setIgnoreAll(builder);
-        OkHttpClient client=new OkHttpClient.Builder()
+        OkHttpClient client=builder
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)

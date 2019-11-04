@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 // .res(R.drawable.thegif)
                 .placeHolder(R.mipmap.ic_launcher,false)
                 .widthHeight(250, 150)
-                .asCircle(R.color.colorAccent)
+                .asCircle(R.color.colorAccent);
                //.blur(40)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });*/
-                .into(ivUrl);
+               // .into(ivUrl);
 
 
         ImageLoader.with(this)
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 .res(R.drawable.thegif)
                 //.url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 .widthHeight(100, 80)
-                .rectRoundCorner(5, R.color.colorPrimary)
+                .rectRoundCorner(5, R.color.colorPrimary);
                // .blur(5)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
@@ -113,21 +113,21 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });*/
-        .into(ivRes);
+        //.into(ivRes);
 
         ImageLoader.with(this)
             .widthHeight(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
             .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
-            .rectRoundCorner(5,R.color.bg_white)
-            .into(ivFile);
+            .rectRoundCorner(5,R.color.bg_white);
+            //.into(ivFile);
 
         ImageLoader.with(this)
                 .cropFace()
                 .widthHeight(100,100)
                 .asCircle(R.color.colorAccent)
                 .blur(10)
-                .url("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg")
-                .into(ivUrlBlur);
+                .url("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg");
+                //.into(ivUrlBlur);
 
 
     }

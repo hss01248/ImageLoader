@@ -3,17 +3,27 @@ package com.hss01248.imageloaderdemo.multi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Debug;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.facebook.imagepipeline.systrace.FrescoSystrace;
+import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.imageloaderdemo.BigImageActy;
 import com.hss01248.imageloaderdemo.R;
+
+import java.util.List;
 
 /**
  * Created by huangshuisheng on 2017/9/28.
@@ -54,19 +64,40 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     }
 
     @Override
+    public void assignDatasAndEvents(Activity context, String data, int position, boolean isLast, boolean isListViewFling, List datas, SuperRvAdapter superRecyAdapter) {
+        super.assignDatasAndEvents(context, data, position, isLast, isListViewFling, datas, superRecyAdapter);
+        if(position == 3){
+            Debug.startMethodTracing("imageloader");
+        }
+
+        //loadByGlide(context,data);
+
+        ImageLoader.with(context)
+                //.widthHeight(imageSize,imageSize)
+                .url(data)
+                //.blur(5)
+                .defaultErrorRes(true)
+                //.loadingDefault()
+                //.scale(ScaleMode.CENTER_CROP)
+                //.rectRoundCornerTop(5,0)
+                .defaultPlaceHolder(true)
+                //.rectRoundCorner(5,0)
+                .into(itemView);
+
+        if(position == 3){
+            Debug.stopMethodTracing();
+        }
+    }
+
+    @Override
     public void assignDatasAndEvents(final Activity context, final String data) {
         super.assignDatasAndEvents(context, data);
 
-        ImageLoader.with(context)
-            .widthHeight(imageSize,imageSize)
-            .url(data)
-            .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
-            //.loadingDefault()
-                .scale(ScaleMode.CENTER_CROP)
-                //.rectRoundCornerTop(5,0)
-            .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
-                //.rectRoundCorner(5,0)
-            .into(itemView);
+
+
+
+
+
 
 
         /*itemView.setOnClickListener(new View.OnClickListener() {
@@ -77,5 +108,23 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 context.startActivity(intent);
             }
         });*/
+    }
+
+    private void loadByGlide(Activity context, String data) {
+        Glide.with(context).load(data)
+                .placeholder(R.drawable.im_item_list_opt)
+                .error(R.drawable.im_item_list_opt_error)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        return false;
+                    }
+                })
+                .into((ImageView) itemView);
     }
 }

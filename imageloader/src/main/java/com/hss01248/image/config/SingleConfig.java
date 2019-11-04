@@ -286,7 +286,7 @@ public class SingleConfig {
         this.target = builder.target;
 
         //结合view本身的宽高
-        setWH(builder);
+        //setWH(builder);
 
 
         this.shapeMode = builder.shapeMode;
