@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -45,7 +46,7 @@ public class RecycleViewActy extends Activity {
             @Override
             protected SuperRvHolder generateCoustomViewHolder(ViewGroup viewGroup, int i) {
               return   new RcvHolder(
-                        View.inflate(RecycleViewActy.this,R.layout.item_iv,null)).setColumnNum(3);
+                        View.inflate(RecycleViewActy.this,R.layout.item_iv,null));//.setColumnNum(3);
             }
         };
         adapter.refresh(datas);
@@ -53,7 +54,7 @@ public class RecycleViewActy extends Activity {
        /* StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3, OrientationHelper.VERTICAL);
         layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         recyclerView.setLayoutManager(layoutManager);*/
-        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
        /* recyclerView.addItemDecoration(new DividerItemDecoration(
             this, DividerItemDecoration.HORIZONTAL));*/
         recyclerView.setAdapter(adapter);

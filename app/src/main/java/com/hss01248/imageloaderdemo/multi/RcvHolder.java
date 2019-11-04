@@ -2,9 +2,7 @@ package com.hss01248.imageloaderdemo.multi;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Debug;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -14,23 +12,17 @@ import android.widget.ImageView;
 
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.elvishew.xlog.XLog;
-import com.facebook.imagepipeline.systrace.FrescoSystrace;
+
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
-import com.hss01248.glideloader.BlurTransform;
+import com.hss01248.glideloader.drawable.AutoRotateDrawable;
 import com.hss01248.image.ImageLoader;
-import com.hss01248.image.config.ScaleMode;
-import com.hss01248.imageloaderdemo.BigImageActy;
 import com.hss01248.imageloaderdemo.R;
 
 import java.util.List;
-
-import jp.wasabeef.glide.transformations.BlurTransformation;
 
 /**
  * Created by huangshuisheng on 2017/9/28.
@@ -75,19 +67,22 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         super.assignDatasAndEvents(context, data, position, isLast, isListViewFling, datas, superRecyAdapter);
 
 
-        loadByGlide(context,data,position);
+        //loadByGlide(context,data,position);
 
-        /*ImageLoader.with(context)
+        ImageLoader.with(context)
                 //.widthHeight(imageSize,imageSize)
                 .url(data)
                 //.blur(5)
                 .defaultErrorRes(true)
+                .loading(R.drawable.iv_loading_trans)
                 //.loadingDefault()
                 //.scale(ScaleMode.CENTER_CROP)
                 //.rectRoundCornerTop(5,0)
-                .defaultPlaceHolder(true)
+                //.placeHolder()
+                //.placeHolder(R.drawable.spinner_1s_200px1)
+                //.defaultPlaceHolder(true)
                 //.rectRoundCorner(5,0)
-                .into(itemView);*/
+                .into(itemView);
 
 
     }
@@ -115,11 +110,15 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
 
     private void loadByGlide(Activity context, String data, final int position) {
         if(position == 3){
-            Debug.startMethodTracing("imageloader");
+            //Debug.startMethodTracing("imageloader");
         }
+
+        Drawable drawable = new AutoRotateDrawable(context.getResources().getDrawable(R.drawable.iv_loading_trans), 1200);
         Glide.with(context).load(data)
-                .override(360,360)
-                .placeholder(R.drawable.im_item_list_opt)
+                //.override(360,360)
+                //.placeholder(R.drawable.spinner_1s_200px1)
+                //.placeholder(new CircularProgressDrawable(context))
+                .placeholder(drawable)
                 .error(R.drawable.im_item_list_opt_error)
                /* .bitmapTransform(new BlurTransform(context.getApplicationContext(),5){
                     @Override
@@ -150,7 +149,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 })
                 .into((ImageView) itemView);
         if(position == 3){
-            Debug.stopMethodTracing();
+            //Debug.stopMethodTracing();
         }
     }
 }
