@@ -3,6 +3,7 @@ package com.hss01248.imageloaderdemo.multi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Debug;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -12,18 +13,23 @@ import android.widget.ImageView;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.elvishew.xlog.XLog;
 import com.facebook.imagepipeline.systrace.FrescoSystrace;
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
+import com.hss01248.glideloader.BlurTransform;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.imageloaderdemo.BigImageActy;
 import com.hss01248.imageloaderdemo.R;
 
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 /**
  * Created by huangshuisheng on 2017/9/28.
@@ -66,13 +72,11 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     @Override
     public void assignDatasAndEvents(Activity context, String data, int position, boolean isLast, boolean isListViewFling, List datas, SuperRvAdapter superRecyAdapter) {
         super.assignDatasAndEvents(context, data, position, isLast, isListViewFling, datas, superRecyAdapter);
-        if(position == 3){
-            Debug.startMethodTracing("imageloader");
-        }
 
-        //loadByGlide(context,data);
 
-        ImageLoader.with(context)
+        loadByGlide(context,data,position);
+
+        /*ImageLoader.with(context)
                 //.widthHeight(imageSize,imageSize)
                 .url(data)
                 //.blur(5)
@@ -82,11 +86,9 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 //.rectRoundCornerTop(5,0)
                 .defaultPlaceHolder(true)
                 //.rectRoundCorner(5,0)
-                .into(itemView);
+                .into(itemView);*/
 
-        if(position == 3){
-            Debug.stopMethodTracing();
-        }
+
     }
 
     @Override
@@ -110,10 +112,25 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         });*/
     }
 
-    private void loadByGlide(Activity context, String data) {
+    private void loadByGlide(Activity context, String data, final int position) {
         Glide.with(context).load(data)
                 .placeholder(R.drawable.im_item_list_opt)
                 .error(R.drawable.im_item_list_opt_error)
+                .bitmapTransform(new BlurTransform(context.getApplicationContext(),5){
+                    @Override
+                    public Resource<Bitmap> transform(Resource<Bitmap> resource, int outWidth, int outHeight) {
+                        XLog.w("in width:"+outWidth+",outHeight"+outHeight+",resourse:"+resource.get().getWidth()+"x"+resource.get().getHeight());
+                        if(position == 3){
+                            Debug.startMethodTracing("imageloader");
+                        }
+                        Resource<Bitmap> bitmapResource =  super.transform(resource, outWidth, outHeight);
+                        if(position == 3){
+                            Debug.stopMethodTracing();
+                        }
+                        XLog.w("out2 width:"+outWidth+",outHeight"+outHeight+",resourse2:"+bitmapResource.get().getWidth()+"x"+bitmapResource.get().getHeight());
+                        return bitmapResource;
+                    }
+                })
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
