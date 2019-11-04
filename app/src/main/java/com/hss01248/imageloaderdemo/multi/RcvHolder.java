@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Debug;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -113,27 +114,32 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     }
 
     private void loadByGlide(Activity context, String data, final int position) {
+        if(position == 3){
+            Debug.startMethodTracing("imageloader");
+        }
         Glide.with(context).load(data)
+                .override(360,360)
                 .placeholder(R.drawable.im_item_list_opt)
                 .error(R.drawable.im_item_list_opt_error)
-                .bitmapTransform(new BlurTransform(context.getApplicationContext(),5){
+               /* .bitmapTransform(new BlurTransform(context.getApplicationContext(),5){
                     @Override
                     public Resource<Bitmap> transform(Resource<Bitmap> resource, int outWidth, int outHeight) {
                         XLog.w("in width:"+outWidth+",outHeight"+outHeight+",resourse:"+resource.get().getWidth()+"x"+resource.get().getHeight());
-                        if(position == 3){
-                            Debug.startMethodTracing("imageloader");
-                        }
+
                         Resource<Bitmap> bitmapResource =  super.transform(resource, outWidth, outHeight);
-                        if(position == 3){
-                            Debug.stopMethodTracing();
-                        }
+
                         XLog.w("out2 width:"+outWidth+",outHeight"+outHeight+",resourse2:"+bitmapResource.get().getWidth()+"x"+bitmapResource.get().getHeight());
                         return bitmapResource;
                     }
-                })
+                })*/
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        Log.w("onException",model);
+                        if(e != null){
+                           e.printStackTrace();
+                       }
+
                         return false;
                     }
 
@@ -143,5 +149,8 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                     }
                 })
                 .into((ImageView) itemView);
+        if(position == 3){
+            Debug.stopMethodTracing();
+        }
     }
 }
