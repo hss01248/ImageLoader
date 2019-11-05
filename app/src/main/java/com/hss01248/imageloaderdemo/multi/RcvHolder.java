@@ -2,6 +2,7 @@ package com.hss01248.imageloaderdemo.multi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -16,12 +17,16 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import com.elvishew.xlog.XLog;
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
 import com.hss01248.glideloader.drawable.AutoRotateDrawable;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.interfaces.FileGetter;
+import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.imageloaderdemo.R;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -63,18 +68,39 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     }
 
     @Override
-    public void assignDatasAndEvents(Activity context, String data, int position, boolean isLast, boolean isListViewFling, List datas, SuperRvAdapter superRecyAdapter) {
+    public void assignDatasAndEvents(Activity context, final String data, int position, boolean isLast, boolean isListViewFling, List datas, SuperRvAdapter superRecyAdapter) {
         super.assignDatasAndEvents(context, data, position, isLast, isListViewFling, datas, superRecyAdapter);
 
 
         //loadByGlide(context,data,position);
 
         ImageLoader.with(context)
-                //.widthHeight(imageSize,imageSize)
+                .widthHeightByPx(360,0)
                 .url(data)
                 //.blur(5)
                 .defaultErrorRes(true)
                 .loading(R.drawable.iv_loading_trans)
+                .setImageListener(new ImageListener() {
+                    @Override
+                    public void onSuccess(Drawable drawable, Bitmap bitmap, int bWidth, int bHeight) {
+                        /*ImageLoader.getActualLoader().getFileFromDiskCache(data, new FileGetter() {
+                            @Override
+                            public void onSuccess(File file, int width, int height) {
+                                XLog.w(file.getAbsolutePath()+" ,"+width+"x"+height);
+                            }
+
+                            @Override
+                            public void onFail(Throwable e) {
+
+                            }
+                        });*/
+                    }
+
+                    @Override
+                    public void onFail(Throwable e) {
+
+                    }
+                })
                 //.loadingDefault()
                 //.scale(ScaleMode.CENTER_CROP)
                 //.rectRoundCornerTop(5,0)

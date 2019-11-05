@@ -10,7 +10,11 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.hss01248.image.interfaces.LoadInterceptor;
 import com.hss01248.image.utils.ContextUtil;
+
+import java.util.Arrays;
 
 /**
  * Created by Administrator on 2017/3/14 0014.
@@ -48,16 +52,6 @@ public class SingleConfig {
     }
 
     public int getHeight() {
-        if(height<=0){
-            //先去imageview里取,如果为0,则赋值成matchparent
-            if(target!=null){
-                height=  target.getMeasuredHeight();
-            }
-            /*if(height<=0){
-                height=GlobalConfig.getWinWidth();
-            }*/
-        }
-
         return height;
     }
     private boolean isUseARGB8888;
@@ -117,15 +111,6 @@ public class SingleConfig {
     }
 
     public int getWidth() {
-        if(width<=0){
-            //先去imageview里取,如果为0,则赋值成matchparent
-            if(target!=null){
-              width=  target.getMeasuredWidth();
-            }
-           /* if(width<=0){
-                width=GlobalConfig.getWinWidth();
-            }*/
-        }
         return width;
     }
 
@@ -143,6 +128,11 @@ public class SingleConfig {
     }
 
     private  boolean ignoreCertificateVerify ;
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     private String url;
 
     public String getThumbnailUrl() {
@@ -153,6 +143,12 @@ public class SingleConfig {
     private String filePath;
     private int resId;
     private String contentProvider;
+
+    public LoadInterceptor getInterceptor() {
+        return interceptor;
+    }
+
+    private  LoadInterceptor interceptor;
 
     /**
      * byte[]类型的图片源
@@ -254,12 +250,56 @@ public class SingleConfig {
             if(GlobalConfig.debug){
                 GlobalConfig.getLoader().debug(this);
             }
+            if(interceptor != null && interceptor.intercept(this)){
+                return;
+            }
             GlobalConfig.getLoader().request(this);
 
         }
-
     }
 
+    @Override
+    public String toString() {
+        return "SingleConfig{" +
+                "context=" + context +
+                ", isUseARGB8888=" + isUseARGB8888 +
+                ", ignoreCertificateVerify=" + ignoreCertificateVerify +
+                ", url='" + url + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", resId=" + resId +
+                ", contentProvider='" + contentProvider + '\'' +
+                ", interceptor=" + interceptor +
+                ", bytes=" + Arrays.toString(bytes) +
+                ", isGif=" + isGif +
+                ", target=" + target +
+                ", width=" + width +
+                ", height=" + height +
+                ", needBlur=" + needBlur +
+                ", blurRadius=" + blurRadius +
+                ", placeHolderResId=" + placeHolderResId +
+                ", reuseable=" + reuseable +
+                ", placeHolderScaleType=" + placeHolderScaleType +
+                ", errorScaleType=" + errorScaleType +
+                ", loadingScaleType=" + loadingScaleType +
+                ", loadingResId=" + loadingResId +
+                ", errorResId=" + errorResId +
+                ", shapeMode=" + shapeMode +
+                ", rectRoundRadius=" + rectRoundRadius +
+                ", roundOverlayColor=" + roundOverlayColor +
+                ", scaleMode=" + scaleMode +
+                ", borderWidth=" + borderWidth +
+                ", borderColor=" + borderColor +
+                ", asBitmap=" + asBitmap +
+                ", bitmapListener=" + bitmapListener +
+                ", cropFace=" + cropFace +
+                ", widthWrapContent=" + widthWrapContent +
+                ", heightWrapContent=" + heightWrapContent +
+                ", widthMatchParent=" + widthMatchParent +
+                ", heightMatchParent=" + heightMatchParent +
+                ", imageListener=" + imageListener +
+                '}';
+    }
 
     public boolean isGif() {
         return isGif;
@@ -286,7 +326,8 @@ public class SingleConfig {
         this.target = builder.target;
 
         //结合view本身的宽高
-        //setWH(builder);
+        this.width = builder.width;
+        this.height = builder.height;
 
 
         this.shapeMode = builder.shapeMode;
@@ -321,49 +362,12 @@ public class SingleConfig {
         this.loadingScaleType = builder.loadingScaleType;
         this.isUseARGB8888 = builder.isUseARGB8888;
         this.imageListener = builder.imageListener;
+        this.interceptor = builder.interceptor;
 
 
 
     }
 
-    private void setWH(ConfigBuilder builder) {
-        this.width = builder.width;
-        this.height = builder.height;
-        if(!builder.asBitmap){
-            View view = builder.target;
-            if(view!=null){
-                ViewGroup.LayoutParams params = view.getLayoutParams();
-                if(params!=null){
-                    //注意:返回的值都是px单位
-                    int h = params.height;
-                    int w = params.width;
-                    if(w >0){
-                        if(builder.width<=0 || builder.width > w){
-                            this.width = w;
-                        }
-                    }/*else {
-                        if(builder.width == ViewGroup.LayoutParams.MATCH_PARENT){
-                            this.width = GlobalConfig.getWinWidth();
-                        }
-                    }*/
-                    if(h >0){
-                        if(builder.height<=0 || builder.height>h){
-                            this.height = h;
-                        }
-                    }/*else {
-                        if(builder.height<=0){
-                            if(builder.height == ViewGroup.LayoutParams.MATCH_PARENT){
-                                this.height = GlobalConfig.getWinHeight();
-                            }
-                        }
-                    }*/
-                }
-            }
-        }else {
-            this.width = builder.width;
-            this.height = builder.height;
-        }
-    }
 
 
     public interface BitmapListener{
@@ -480,6 +484,13 @@ public class SingleConfig {
 
         private int loadingResId ;
         private int errorResId ;
+
+        public ConfigBuilder setInterceptor(LoadInterceptor interceptor) {
+            this.interceptor = interceptor;
+            return this;
+        }
+
+        private  LoadInterceptor interceptor = GlobalConfig.interceptor;
 
 
 

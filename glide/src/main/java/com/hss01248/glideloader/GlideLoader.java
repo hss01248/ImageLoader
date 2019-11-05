@@ -198,7 +198,7 @@ public class GlideLoader implements ILoader {
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
 
-                builder.dontAnimate();
+                //builder.dontAnimate();
 
                 builder.listener(new RequestListener() {
                     @Override
@@ -233,25 +233,37 @@ public class GlideLoader implements ILoader {
                             GifDrawable gifDrawable = (GifDrawable) resource;
                             //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
                             Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+                        }else{
+                            Log.e("onResourceReady",resource+"");
                         }
                         Log.d("onResourceReady","model :"+model);
                         Log.d("onResourceReady","Target :"+target);
                         Log.d("onResourceReady","isFromMemoryCache :"+isFromMemoryCache);
                         Log.d("onResourceReady","isFirstResource :"+isFirstResource);
-                        //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
-                       /* if(config.getImageListener() != null && !TextUtils.isEmpty(config.getUrl())) {
-                            getFileFromDiskCache(config.getUrl(), new FileGetter() {
-                                @Override
-                                public void onSuccess(File file, int width, int height) {
-                                    config.getImageListener().onSuccess(file.getAbsolutePath(), width, height, null, 0, 0);
+                        if(config.getImageListener() != null ) {
+                            if(resource instanceof GlideBitmapDrawable){
+                                GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
+                                Bitmap bitmap = drawable.getBitmap();
+                                config.getImageListener().onSuccess(drawable,bitmap,bitmap.getWidth(),bitmap.getHeight());
+                            }else if(resource instanceof GifDrawable){
+                                GifDrawable gifDrawable = (GifDrawable) resource;
+                                config.getImageListener().onSuccess(gifDrawable,gifDrawable.getFirstFrame(),gifDrawable.getFirstFrame().getWidth(),gifDrawable.getFirstFrame().getHeight());
+                                if(gifDrawable.getFrameCount()> 8){
+                                    Log.e("onResourceReady gif","gif frame count too many:"+gifDrawable.getFrameCount());
+                                }
+                                //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
+                                Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+                            }else {
+                                Log.e("onResourceReady",resource+"");
+                                if(resource instanceof Drawable){
+                                    config.getImageListener().onSuccess((Drawable)resource,null,0,0);
+                                }else{
+                                    config.getImageListener().onSuccess(null,null,0,0);
+                                    Log.e("onResourceReady!!!",resource+", not instance of drawable");
                                 }
 
-                                @Override
-                                public void onFail(Throwable e) {
-
-                                }
-                            });
-                        }*/
+                            }
+                        }
                         return false;
                     }
                 }).into(imageView);
@@ -502,6 +514,7 @@ public class GlideLoader implements ILoader {
                         .downloadOnly(new SimpleTarget<File>() {
                             @Override
                             public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+                                Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",downloadOnly");
                                 if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
                                     int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
                                     getter.onSuccess(resource,wh[0],wh[1]);

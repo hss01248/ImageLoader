@@ -1,6 +1,9 @@
 package com.hss01248.image.interfaces;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by huangshuisheng on 2018/3/21.
@@ -8,7 +11,7 @@ import android.graphics.Bitmap;
 
 public interface ImageListener {
 
-    void onSuccess(String filePath, int width, int height, Bitmap bitmap,int bWidth,int bHeight);
+    void onSuccess(@NonNull Drawable drawable, @Nullable Bitmap bitmap, int bWidth, int bHeight);
 
     //void onSuccess(InputStream is);
 

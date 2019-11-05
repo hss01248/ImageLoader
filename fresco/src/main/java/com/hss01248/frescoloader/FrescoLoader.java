@@ -274,15 +274,16 @@ public class FrescoLoader implements ILoader {
                 if(TextUtils.isEmpty(config.getUrl())){
                     return;
                 }
-                File file = getFileFromDiskCache(config.getUrl());
-                if(file!=null && file.exists()){
-                    if(imageInfo ==null){
-                        imageInfo = new FileImageInfo(file.getAbsolutePath());
-                    }
-                    config.getImageListener().onSuccess(file.getAbsolutePath(),imageInfo.getWidth(),imageInfo.getHeight(),null,0,0);
-                }else {
-                    config.getBitmapListener().onFail(new Throwable("file not found:"+config.getUrl()));
-                }
+                config.getImageListener().onSuccess(null,null,imageInfo.getWidth(),imageInfo.getHeight());
+//                File file = getFileFromDiskCache(config.getUrl());
+//                if(file!=null && file.exists()){
+//                    if(imageInfo ==null){
+//                        imageInfo = new FileImageInfo(file.getAbsolutePath());
+//                    }
+//                    config.getImageListener().onSuccess(null,null,0,0);
+//                }else {
+//                    config.getBitmapListener().onFail(new Throwable("file not found:"+config.getUrl()));
+//                }
 
 
             }

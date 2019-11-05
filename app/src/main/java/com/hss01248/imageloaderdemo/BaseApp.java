@@ -3,6 +3,7 @@ package com.hss01248.imageloaderdemo;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
@@ -15,6 +16,8 @@ import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.interfaces.LoadInterceptor;
 import com.hss01248.image.memory.ImageMemoryHookManager;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -31,8 +34,40 @@ public class BaseApp extends Application {
         super.onCreate();
         ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
         GlobalConfig.debug = true;
-        GlobalConfig.placeHolderResId = R.drawable.im_item_list_opt;
-        GlobalConfig.errorResId = R.drawable.im_item_list_opt_error;
+        GlobalConfig.interceptor = new LoadInterceptor() {
+            @Override
+            public boolean intercept(SingleConfig config) {
+
+                XLog.w(config.toString());
+                if(config.getWidth()> 0 || config.getHeight() >0){
+                    if(!TextUtils.isEmpty(config.getUrl())){
+                        if(config.getUrl().contains("w=") ||config.getUrl().contains("h=")){
+                            return false;
+                        }
+                        String line = "";
+                        if(config.getWidth() >0){
+                            line += "w="+config.getWidth();
+                            if(config.getHeight() >0){
+                                line += "&";
+                            }
+                        }
+                        if(config.getHeight() >0){
+                            line += "h="+config.getHeight();
+                        }
+
+                        if(config.getUrl().contains("?")){
+                            config.setUrl(config.getUrl()+"&"+line);
+                        }else{
+                            config.setUrl(config.getUrl()+"?"+line);
+                        }
+                    }
+                }
+                XLog.w(config.toString());
+                return false;
+            }
+        };
+       // GlobalConfig.placeHolderResId = R.drawable.im_item_list_opt;
+       // GlobalConfig.errorResId = R.drawable.im_item_list_opt_error;
         //BigImageViewer.initialize(GlideBigLoader.with(this));
         //GlobalConfig.setBigImageDark(false);
         LeakCanary.install(this);

@@ -8,6 +8,7 @@ import android.view.WindowManager;
 
 import com.hss01248.image.R;
 import com.hss01248.image.interfaces.ILoader;
+import com.hss01248.image.interfaces.LoadInterceptor;
 
 /**
  * Created by Administrator on 2017/3/14 0014.
@@ -108,12 +109,14 @@ public class GlobalConfig {
         return loader;
     }
 
-    public static int placeHolderResId = R.drawable.imageloader_placeholder_125;
-    public static int placeHolderScaleType = ScaleMode.CENTER_INSIDE;
-    public static int errorResId = R.drawable.imageloader_failure_image_104;
-    public static int errorScaleType  = ScaleMode.CENTER_INSIDE;
-    public static int loadingResId = R.drawable.imageloader_loading_50;
-    public static int loadingScaleType = ScaleMode.CENTER_INSIDE;
+    public static LoadInterceptor interceptor;
+
+    public static int placeHolderResId = R.drawable.im_item_list_opt;
+    public static int placeHolderScaleType = ScaleMode.FIT_CENTER;
+    public static int errorResId = R.drawable.im_item_list_opt_error;
+    public static int errorScaleType  = ScaleMode.FIT_CENTER;
+    public static int loadingResId = R.drawable.iv_loading_trans;
+    public static int loadingScaleType = ScaleMode.FIT_CENTER;
 
     public static void setDefaultPlaceHolder(int placeHolderResId){
         GlobalConfig.placeHolderResId = placeHolderResId;
@@ -133,6 +136,8 @@ public class GlobalConfig {
     public static void setDefaultLoadingHolder(int loadingResId){
         GlobalConfig.loadingResId =loadingResId;
     }
+
+
 
 
 

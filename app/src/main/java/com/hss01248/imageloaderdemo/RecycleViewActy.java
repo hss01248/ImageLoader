@@ -89,6 +89,7 @@ public class RecycleViewActy extends Activity {
         datas.add("http://images.epochweekly.com/493/66-01.jpg");
         datas.add("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif");
         datas.add("http://pix10.agoda.net/hotelImages/271/271354/271354_17080815220055007573.jpg?s=1024x768");
+        datas.add("https://d12x8ezp3au6m3.cloudfront.net/item/yEDHKC4jp_mPfaUr91viPoY9npCFf032oVJ021WbQN4.png");
         datas.add("http://n.sinaimg.cn/translate/20170725/DYCJ-fyiiahy9953034.jpg");
         datas.add("http://i4.download.fd.pchome.net/g1/M00/08/13/ooYBAFOVe3KICOm0AAigSrK-BVoAABlqQHJDioACKBi325.jpg");
         datas.add("http://n.sinaimg.cn/translate/20170427/b3dI-fyeqcac2218956.jpg");
