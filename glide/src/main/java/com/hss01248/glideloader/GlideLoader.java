@@ -182,6 +182,9 @@ public class GlideLoader implements ILoader {
             if(request ==null){
                 return;
             }
+
+
+
             DrawableRequestBuilder builder = request.thumbnail(1.0f);
             if(config.getLoadingResId() != 0){
                 Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
@@ -202,6 +205,44 @@ public class GlideLoader implements ILoader {
                 final ImageView imageView = (ImageView) config.getTarget();
 
                 builder.dontAnimate();
+
+
+                //gif
+                if(config.getUrl() != null && config.getUrl().contains(".gif") && GlobalConfig.useThirdPartyGifLoader){
+                    if(config.getLoadingResId() != 0){
+                        Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
+                        imageView.setImageDrawable(drawable);
+                    }else if(MyUtil.shouldSetPlaceHolder(config)){
+                        imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
+                    }
+                    Glide.with(config.getContext())
+                            .load(config.getUrl())
+                            .downloadOnly(new SimpleTarget<File>() {
+                                @Override
+                                public void onResourceReady(File file, GlideAnimation<? super File> glideAnimation) {
+                                    pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
+                                    try {
+                                        gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file);
+                                        imageView.setImageDrawable(gifDrawable2);
+                                    } catch (Throwable e) {
+                                        e.printStackTrace();
+                                        if(config.getErrorResId() >0){
+                                            imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
+                                        }
+
+                                    }
+                                }
+
+                                @Override
+                                public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                                    super.onLoadFailed(e, errorDrawable);
+                                    if(config.getErrorResId() >0){
+                                        imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
+                                    }
+                                }
+                            });
+                    return;
+                }
 
                 builder.listener(new RequestListener() {
                     @Override
