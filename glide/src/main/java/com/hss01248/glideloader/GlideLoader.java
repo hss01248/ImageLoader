@@ -9,6 +9,7 @@ import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -42,6 +43,7 @@ import android.renderscript.RSRuntimeException;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -170,7 +172,7 @@ public class GlideLoader implements ILoader {
             }
 
             final RequestManager requestManager =  Glide.with(config.getContext());
-             DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
+             final DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
 
             if(request ==null){
                 return;
@@ -199,6 +201,15 @@ public class GlideLoader implements ILoader {
                 builder.listener(new RequestListener() {
                     @Override
                     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                        Log.d("onException","thread :"+Thread.currentThread().getName() +",onException");
+                        Log.d("onException","model :"+model);
+                        Log.d("onException","Target :"+target);
+                        Log.d("onException","isFirstResource :"+isFirstResource);
+                        if(e != null){
+                            e.printStackTrace();
+                        }
+
+
                         if(config.getImageListener() != null){
                             config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                         }
@@ -207,7 +218,24 @@ public class GlideLoader implements ILoader {
 
                     @Override
                     public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
-                       // Log.e("dd","thread :"+Thread.currentThread().getName() +",onResourceReady");
+
+
+                        Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",onResourceReady");
+                        Log.d("onResourceReady","resource :"+resource);
+                        if(resource instanceof GlideBitmapDrawable){
+                            GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
+                            Bitmap bitmap = drawable.getBitmap();
+                            Log.i("onResourceReady","drawable :"+drawable.getIntrinsicWidth()+"x"+drawable.getIntrinsicHeight()+"," +
+                                    "bitmap:"+bitmap.getWidth()+"x"+bitmap.getHeight());
+                        }else if(resource instanceof GifDrawable){
+                            GifDrawable gifDrawable = (GifDrawable) resource;
+                            //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
+                            Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+                        }
+                        Log.d("onResourceReady","model :"+model);
+                        Log.d("onResourceReady","Target :"+target);
+                        Log.d("onResourceReady","isFromMemoryCache :"+isFromMemoryCache);
+                        Log.d("onResourceReady","isFirstResource :"+isFirstResource);
                         //imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
                        /* if(config.getImageListener() != null && !TextUtils.isEmpty(config.getUrl())) {
                             getFileFromDiskCache(config.getUrl(), new FileGetter() {

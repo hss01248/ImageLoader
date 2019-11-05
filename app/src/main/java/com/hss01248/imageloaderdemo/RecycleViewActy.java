@@ -79,15 +79,15 @@ public class RecycleViewActy extends Activity {
     }
 
     private void addDatas() {
-        datas.add("http://img05.tooopen.com/images/20150725/tooopen_sy_135363119132.jpg");
+        datas.add("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif");
         datas.add("http://www.cingjing.gov.tw/upload/grass_b/0898a3792067e612b0a87f3c5058dae6.jpg");
         datas.add("http://www.cingjing.gov.tw/upload/grass_b/c7c860cb7eb08a85e1db34ccd68b0891.jpg");
-        datas.add("http://www.wall001.com/nature/blue_sky_white_clound/mxxx01/[wall001.com]_blue_sky_white_clound_AP2303723033.jpg");
+        datas.add("http://ww2.sinaimg.cn/large/85cc5ccbgy1fi7jt5or6sg20rs0ku4qr.jpg");//gif
         datas.add("http://image.wenweipo.com/2017/02/09/20170209zf0010.jpg");
         datas.add("http://hk.on.cc/hk/bkn/cnt/entertainment/20170725/photo/bkn-20170725220154919-0725_00862_001_02p.jpg?20170726000127");
         datas.add("http://img.mp.itc.cn/upload/20170101/43c903083d904a58a8d9e06511c5641a_th.png");
         datas.add("http://images.epochweekly.com/493/66-01.jpg");
-        datas.add("https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/%E5%B9%BF%E5%B7%9E%E7%99%BD%E4%BA%91%E5%9B%BD%E9%99%85%E4%BC%9A%E8%AE%AE%E4%B8%AD%E5%BF%83.JPG/1200px-%E5%B9%BF%E5%B7%9E%E7%99%BD%E4%BA%91%E5%9B%BD%E9%99%85%E4%BC%9A%E8%AE%AE%E4%B8%AD%E5%BF%83.JPG");
+        datas.add("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif");
         datas.add("http://pix10.agoda.net/hotelImages/271/271354/271354_17080815220055007573.jpg?s=1024x768");
         datas.add("http://n.sinaimg.cn/translate/20170725/DYCJ-fyiiahy9953034.jpg");
         datas.add("http://i4.download.fd.pchome.net/g1/M00/08/13/ooYBAFOVe3KICOm0AAigSrK-BVoAABlqQHJDioACKBi325.jpg");
