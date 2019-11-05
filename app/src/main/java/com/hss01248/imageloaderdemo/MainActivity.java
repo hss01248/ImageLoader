@@ -1,6 +1,8 @@
 package com.hss01248.imageloaderdemo;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -10,9 +12,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.Request;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.animation.GlideAnimationFactory;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.memory.ImageMemoryHookManager;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +35,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pl.droidsonroids.gif.GifDrawable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -128,6 +144,89 @@ public class MainActivity extends AppCompatActivity {
                 .blur(10)
                 .url("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg");
                 //.into(ivUrlBlur);
+
+        Glide.with(MainActivity.this)
+                .load("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif")
+                //.asGif()
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
+                        ImageLoader.getActualLoader().getFileFromDiskCache(model, new FileGetter() {
+                            @Override
+                            public void onSuccess(File file, int width, int height) {
+                                GifDrawable gifDrawable = null;
+                                try {
+                                    gifDrawable = new GifDrawable(file);
+                                    ivUrl.setImageDrawable(gifDrawable);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFail(Throwable e) {
+
+                            }
+                        });
+                        return true;
+                    }
+                })
+               /* .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
+
+
+                        ImageLoader.getActualLoader().getFileFromDiskCache(model, new FileGetter() {
+                            @Override
+                            public void onSuccess(File file, int width, int height) {
+                                GifDrawable gifDrawable = null;
+                                try {
+                                    gifDrawable = new GifDrawable(file);
+                                    ivFile.setImageDrawable(gifDrawable);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onFail(Throwable e) {
+
+                            }
+                        });
+                        return true;
+                    }
+                })*/
+                .into(ivUrl);
+
+        /*Glide.with(this).load("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif")
+                .downloadOnly(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+                        GifDrawable gifDrawable = null;
+                        try {
+                            gifDrawable = new GifDrawable(resource);
+                            ivFile.setImageDrawable(gifDrawable);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                });*/
 
 
     }

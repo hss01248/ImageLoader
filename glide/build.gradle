@@ -40,4 +40,5 @@ dependencies {
     //compile 'com.github.aryarohit07:glide-facedetection-transformation:0.3.0'//https://github.com/aryarohit07/GlideFaceDetectionTransformation
     provided 'com.android.support:appcompat-v7:26.1.0'
     provided 'com.android.support:recyclerview-v7:26.1.0'
+    api 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
 }

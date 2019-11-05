@@ -1,5 +1,6 @@
 package com.hss01248.glideloader;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
@@ -52,11 +53,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -198,7 +201,7 @@ public class GlideLoader implements ILoader {
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
 
-                //builder.dontAnimate();
+                builder.dontAnimate();
 
                 builder.listener(new RequestListener() {
                     @Override
@@ -219,7 +222,7 @@ public class GlideLoader implements ILoader {
                     }
 
                     @Override
-                    public boolean onResourceReady(Object resource, Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    public boolean onResourceReady(Object resource, final Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
 
 
                         Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",onResourceReady");
@@ -246,13 +249,68 @@ public class GlideLoader implements ILoader {
                                 Bitmap bitmap = drawable.getBitmap();
                                 config.getImageListener().onSuccess(drawable,bitmap,bitmap.getWidth(),bitmap.getHeight());
                             }else if(resource instanceof GifDrawable){
-                                GifDrawable gifDrawable = (GifDrawable) resource;
+                                final GifDrawable gifDrawable = (GifDrawable) resource;
                                 config.getImageListener().onSuccess(gifDrawable,gifDrawable.getFirstFrame(),gifDrawable.getFirstFrame().getWidth(),gifDrawable.getFirstFrame().getHeight());
                                 if(gifDrawable.getFrameCount()> 8){
                                     Log.e("onResourceReady gif","gif frame count too many:"+gifDrawable.getFrameCount());
                                 }
                                 //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
                                 Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+
+                                ImageLoader.getActualLoader().getFileFromDiskCache((String) model, new FileGetter() {
+                                    @Override
+                                    public void onSuccess(File file, int width, int height) {
+                                        pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
+                                        try {
+                                            gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file);
+                                            //gifDrawable.recycle();
+                                            imageView.setImageDrawable(gifDrawable2);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                            imageView.setImageDrawable(gifDrawable);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFail(Throwable e) {
+                                        e.printStackTrace();
+                                        imageView.setImageDrawable(gifDrawable);
+                                    }
+                                });
+                                return true;
+
+                                /*ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            //final File file2 = getCacheFile((String) model);
+                                            final File file2 = Glide.with(config.getContext())
+                                                    .load(model)
+                                                    .downloadOnly(gifDrawable.getFirstFrame().getWidth(),gifDrawable.getFirstFrame().getHeight())
+                                                    .get();
+                                            Log.w("ff",file2.getAbsolutePath());
+                                            MyUtil.runOnUIThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
+                                                    try {
+                                                        gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file2);
+                                                        //gifDrawable.recycle();
+                                                        imageView.setImageDrawable(gifDrawable2);
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            });
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                return true;*/
+
+
+
                             }else {
                                 Log.e("onResourceReady",resource+"");
                                 if(resource instanceof Drawable){
@@ -271,6 +329,23 @@ public class GlideLoader implements ILoader {
             }
         }
     }
+
+    public File getCacheFile(String url) {
+        OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
+        SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
+        String safeKey = safeKeyGenerator.getSafeKey(originalKey);
+        try {
+            DiskLruCache diskLruCache = DiskLruCache.open(new File(GlobalConfig.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
+            DiskLruCache.Value value = diskLruCache.get(safeKey);
+            if (value != null) {
+                return value.getFile(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     @Override
     public void debug(final SingleConfig config) {
@@ -374,7 +449,14 @@ public class GlideLoader implements ILoader {
                 request= requestManager.load("");
             }
         }
+       /* if(!TextUtils.isEmpty(config.getUrl()) && config.getUrl().contains(".gif")){
+            request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存result
+        }else{
+            request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
+        }*/
+
         request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
+
         return request;
     }
 
