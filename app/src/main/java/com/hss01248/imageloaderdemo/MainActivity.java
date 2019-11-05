@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                         return true;
                     }
-                })
+                });
                /* .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 })*/
-                .into(ivUrl);
+               // .into(ivUrl);
 
         /*Glide.with(this).load("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif")
                 .downloadOnly(new SimpleTarget<File>() {

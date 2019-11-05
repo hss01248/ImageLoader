@@ -256,61 +256,29 @@ public class GlideLoader implements ILoader {
                                 }
                                 //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
                                 Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+                                if(GlobalConfig.useThirdPartyGifLoader){
+                                    ImageLoader.getActualLoader().getFileFromDiskCache((String) model, new FileGetter() {
+                                        @Override
+                                        public void onSuccess(File file, int width, int height) {
+                                            pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
+                                            try {
+                                                gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file);
+                                                imageView.setImageDrawable(gifDrawable2);
+                                                gifDrawable.stop();
+                                            } catch (Throwable e) {
+                                                e.printStackTrace();
+                                                imageView.setImageDrawable(gifDrawable);
+                                            }
+                                        }
 
-                                ImageLoader.getActualLoader().getFileFromDiskCache((String) model, new FileGetter() {
-                                    @Override
-                                    public void onSuccess(File file, int width, int height) {
-                                        pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
-                                        try {
-                                            gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file);
-                                            //gifDrawable.recycle();
-                                            imageView.setImageDrawable(gifDrawable2);
-                                        } catch (IOException e) {
+                                        @Override
+                                        public void onFail(Throwable e) {
                                             e.printStackTrace();
                                             imageView.setImageDrawable(gifDrawable);
                                         }
-                                    }
-
-                                    @Override
-                                    public void onFail(Throwable e) {
-                                        e.printStackTrace();
-                                        imageView.setImageDrawable(gifDrawable);
-                                    }
-                                });
-                                return true;
-
-                                /*ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            //final File file2 = getCacheFile((String) model);
-                                            final File file2 = Glide.with(config.getContext())
-                                                    .load(model)
-                                                    .downloadOnly(gifDrawable.getFirstFrame().getWidth(),gifDrawable.getFirstFrame().getHeight())
-                                                    .get();
-                                            Log.w("ff",file2.getAbsolutePath());
-                                            MyUtil.runOnUIThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
-                                                    try {
-                                                        gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file2);
-                                                        //gifDrawable.recycle();
-                                                        imageView.setImageDrawable(gifDrawable2);
-                                                    } catch (IOException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            });
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                                return true;*/
-
-
-
+                                    });
+                                    return true;
+                                }
                             }else {
                                 Log.e("onResourceReady",resource+"");
                                 if(resource instanceof Drawable){
