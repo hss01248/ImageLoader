@@ -4,6 +4,7 @@ import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.SquaringDrawable;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.EmptySignature;
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
 import com.github.piasy.biv.BigImageViewer;
@@ -538,7 +540,7 @@ public class GlideLoader implements ILoader {
     public boolean isCached(String url) {
 
 
-          /* OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
+           OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
            SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
            String safeKey = safeKeyGenerator.getSafeKey(originalKey);
            try {
@@ -549,7 +551,7 @@ public class GlideLoader implements ILoader {
                }
            } catch (Exception e) {
                e.printStackTrace();
-           }*/
+           }
            return false;
 
     }
