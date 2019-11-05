@@ -19,6 +19,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
@@ -561,6 +562,37 @@ public class MyUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static String printBitmap(Bitmap bitmap){
+        if(bitmap == null){
+            return "null";
+        }
+        StringBuilder stringBuilder = new StringBuilder("bitmap:");
+        stringBuilder.append(bitmap.getWidth())
+                .append("x")
+                .append(bitmap.getHeight())
+                .append(",")
+                .append(bitmap.getConfig().name())
+                .append(",isRecycled:")
+                .append(bitmap.isRecycled())
+                .append(",\nByteCount:")
+                .append(formatFileSize(bitmap.getByteCount()))
+                .append(",density:")
+                .append(bitmap.getDensity())
+                .append(",hasAlpha:")
+                .append(bitmap.hasAlpha());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            stringBuilder.append("\n,hasMipMap:").append(bitmap.hasMipMap());
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            stringBuilder.append(",allocationByteCount:").append(formatFileSize(bitmap.getAllocationByteCount()));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            stringBuilder.append(",ColorSpace:").append(bitmap.getColorSpace());
+        }
+        stringBuilder.append(",GenerationId:").append(bitmap.getGenerationId());
+        return stringBuilder.toString();
     }
 
 

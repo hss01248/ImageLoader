@@ -22,6 +22,8 @@ import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
 import com.hss01248.glideloader.drawable.AutoRotateDrawable;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.MyUtil;
+import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.imageloaderdemo.R;
@@ -75,40 +77,24 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         //loadByGlide(context,data,position);
 
         ImageLoader.with(context)
-                .widthHeightByPx(360,0)
+                .widthHeightByPx(360,360)
                 .url(data)
-                .blur(5)
+                //.blur(5)
                 .defaultErrorRes(true)
                 .loading(R.drawable.iv_loading_trans)
-                .setImageListener(new ImageListener() {
+                .asBitmap(new SingleConfig.BitmapListener() {
                     @Override
-                    public void onSuccess(Drawable drawable, Bitmap bitmap, int bWidth, int bHeight) {
-                        /*ImageLoader.getActualLoader().getFileFromDiskCache(data, new FileGetter() {
-                            @Override
-                            public void onSuccess(File file, int width, int height) {
-                                XLog.w(file.getAbsolutePath()+" ,"+width+"x"+height);
-                            }
-
-                            @Override
-                            public void onFail(Throwable e) {
-
-                            }
-                        });*/
+                    public void onSuccess(Bitmap bitmap) {
+                        Log.w("onsuccess", MyUtil.printBitmap(bitmap));
+                        ((ImageView)itemView).setImageBitmap(bitmap);
                     }
 
                     @Override
                     public void onFail(Throwable e) {
 
                     }
-                })
-                //.loadingDefault()
-                //.scale(ScaleMode.CENTER_CROP)
-                //.rectRoundCornerTop(5,0)
-                //.placeHolder()
-                //.placeHolder(R.drawable.spinner_1s_200px1)
-                //.defaultPlaceHolder(true)
-                //.rectRoundCorner(5,0)
-                .into(itemView);
+                });
+
 
 
     }
