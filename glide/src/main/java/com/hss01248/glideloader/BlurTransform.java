@@ -45,7 +45,10 @@ public class BlurTransform implements Transformation<Bitmap> {
         int width = source.getWidth();
         int height = source.getHeight();
 
-        int samplesize = calculateInSampleSize(width,height,outWidth,outHeight)*2;
+        int samplesize = calculateInSampleSize(width,height,outWidth,outHeight);
+        if(samplesize >1){
+            samplesize = samplesize *2;
+        }
 
 
         int scaledWidth = width / samplesize;

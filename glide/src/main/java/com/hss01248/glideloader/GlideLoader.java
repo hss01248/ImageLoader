@@ -203,6 +203,7 @@ public class GlideLoader implements ILoader {
             }
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
+                imageView.setTag(R.drawable.im_item_list_opt,config);
 
                 builder.dontAnimate();
 
@@ -220,6 +221,9 @@ public class GlideLoader implements ILoader {
                             .downloadOnly(new SimpleTarget<File>() {
                                 @Override
                                 public void onResourceReady(File file, GlideAnimation<? super File> glideAnimation) {
+                                    if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                        return;
+                                    }
                                     pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
                                     try {
                                         gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file);
@@ -236,6 +240,9 @@ public class GlideLoader implements ILoader {
                                 @Override
                                 public void onLoadFailed(Exception e, Drawable errorDrawable) {
                                     super.onLoadFailed(e, errorDrawable);
+                                    if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                        return;
+                                    }
                                     if(config.getErrorResId() >0){
                                         imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
                                     }
@@ -301,6 +308,9 @@ public class GlideLoader implements ILoader {
                                     ImageLoader.getActualLoader().getFileFromDiskCache((String) model, new FileGetter() {
                                         @Override
                                         public void onSuccess(File file, int width, int height) {
+                                            if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                                return;
+                                            }
                                             pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
                                             try {
                                                 gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file);
@@ -314,6 +324,9 @@ public class GlideLoader implements ILoader {
 
                                         @Override
                                         public void onFail(Throwable e) {
+                                            if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                                return;
+                                            }
                                             e.printStackTrace();
                                             imageView.setImageDrawable(gifDrawable);
                                         }
@@ -478,7 +491,7 @@ public class GlideLoader implements ILoader {
         }
 
         if(config.isNeedBlur()){
-            transformations.add(new BlurTransformation(config.getContext(), config.getBlurRadius()));
+            transformations.add(new BlurTransform(config.getContext(), config.getBlurRadius()));
         }
 
 
