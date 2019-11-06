@@ -42,6 +42,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -268,6 +269,7 @@ public class GlideLoader implements ILoader {
                     return;
                 }
 
+                config.loadStartTime = System.currentTimeMillis();
                 builder.listener(new RequestListener() {
                     @Override
                     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
@@ -276,8 +278,12 @@ public class GlideLoader implements ILoader {
                             Log.d("onException","model :"+model);
                             Log.d("onException","Target :"+target);
                             Log.d("onException","isFirstResource :"+isFirstResource);
-                            if(config.equals(imageView.getTag(R.drawable.im_item_list_opt)) && !model.toString().startsWith("http")){
-                                Log.w("onException",config.toString());
+                            if(config.equals(imageView.getTag(R.drawable.im_item_list_opt)) ){
+                                if(!model.toString().startsWith("http")){
+                                    Log.w("onException",config.toString());
+                                }
+                                config.setErrorDes(MyUtil.printException(e));
+                                config.cost  = System.currentTimeMillis() - config.loadStartTime;
                             }
                             if(e != null){
                                 e.printStackTrace();
@@ -296,6 +302,10 @@ public class GlideLoader implements ILoader {
                         if(GlobalConfig.debug){
                             Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",onResourceReady");
                             Log.d("onResourceReady","resource :"+resource);
+
+                            if(config.equals(imageView.getTag(R.drawable.im_item_list_opt)) ){
+                                config.cost  = System.currentTimeMillis() - config.loadStartTime;
+                            }
                         }
 
                         if(resource instanceof GlideBitmapDrawable){
@@ -424,7 +434,12 @@ public class GlideLoader implements ILoader {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if(event.getAction() == MotionEvent.ACTION_DOWN){
-                        showPop((ImageView)v,config);
+                        Object o = v.getTag(R.drawable.im_item_list_opt);
+                        if(o instanceof SingleConfig){
+                            SingleConfig singleConfig = (SingleConfig) o;
+                            showPop((ImageView)v,singleConfig);
+                        }
+
                     }
                     return false;
                 }
@@ -442,31 +457,54 @@ public class GlideLoader implements ILoader {
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         final TextView textView = new TextView(v.getContext());
-        String desc = config.getUrl()+"\n";
+        String desc = config.getUrl()+"\n\n";
+        desc += "load cost :"+config.cost+"ms\n\n";
+
+        if(!"null".equals(config.getErrorDes()) && !TextUtils.isEmpty(config.getErrorDes())){
+            desc += config.getErrorDes()+"\n\n";
+        }
+
         Drawable drawable = v.getDrawable();
         if(drawable instanceof GlideBitmapDrawable){
             GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) drawable;
             Bitmap bitmap = glideBitmapDrawable.getBitmap();
             desc += MyUtil.printBitmap(bitmap)+"\n";
+            if (MyUtil.isBitmapTooLarge(bitmap.getWidth(),bitmap.getHeight(), v)) {
+                textView.setTextColor(Color.RED);
+            }
         }else if(drawable instanceof BitmapDrawable){
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             Bitmap bitmap = bitmapDrawable.getBitmap();
             desc += MyUtil.printBitmap(bitmap)+"\n";
+            if (MyUtil.isBitmapTooLarge(bitmap.getWidth(),bitmap.getHeight(), v)) {
+                textView.setTextColor(Color.RED);
+            }
         }else if (drawable instanceof SquaringDrawable){
             SquaringDrawable bitmap = (SquaringDrawable) drawable;
-            desc += "SquaringDrawable, w:"+bitmap.getIntrinsicWidth() +",h:"+bitmap.getIntrinsicHeight();
+            desc += "\nSquaringDrawable, w:"+bitmap.getIntrinsicWidth() +",h:"+bitmap.getIntrinsicHeight()+"\n";
+            if (MyUtil.isBitmapTooLarge(bitmap.getIntrinsicWidth(),bitmap.getIntrinsicHeight(), v)) {
+                textView.setTextColor(Color.RED);
+            }
         }else if(drawable instanceof GifDrawable){
             GifDrawable gifDrawable = (GifDrawable) drawable;
             //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
             desc +="gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount();
-            if(gifDrawable.getFrameCount() > 10){
-                desc += "\nframeCount is too many!!!!!!!!";
+
+            if (MyUtil.isBitmapTooLarge(gifDrawable.getIntrinsicWidth(),gifDrawable.getIntrinsicHeight(), v)) {
+                textView.setTextColor(Color.RED);
             }
+            if(gifDrawable.getFrameCount() > 10){
+                desc += "\nframeCount is too many!!!!!!!!\n";
+                textView.setTextColor(Color.parseColor("#8F0005"));
+            }
+
         }else {
             desc += "drawable:"+drawable;
         }
 
-        desc += "\nimageview:"+v.getMeasuredWidth() +" x " + v.getMeasuredHeight()+","+v.getScaleType().name();
+        desc += "\n" + MyUtil.printImageView(v);
+
+
 
         textView.setText(desc);
 

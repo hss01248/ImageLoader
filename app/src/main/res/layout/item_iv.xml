@@ -8,6 +8,7 @@
 <com.hss01248.glideloader.ImageLoaderRoundImageView
 		android:id="@+id/item_iv"
 		 android:layout_width="match_parent"
+    android:background="@drawable/shape_main_list_bg"
 	android:layout_marginBottom="5dp"
 	android:adjustViewBounds="true"
 		android:layout_height="wrap_content">

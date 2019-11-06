@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -568,7 +569,7 @@ public class MyUtil {
         if(bitmap == null){
             return "null";
         }
-        StringBuilder stringBuilder = new StringBuilder("bitmap:");
+        StringBuilder stringBuilder = new StringBuilder("bitmap:\n");
         stringBuilder.append(bitmap.getWidth())
                 .append("x")
                 .append(bitmap.getHeight())
@@ -578,21 +579,96 @@ public class MyUtil {
                 .append(bitmap.isRecycled())
                 .append(",\nByteCount:")
                 .append(formatFileSize(bitmap.getByteCount()))
-                .append(",density:")
+                .append("\ndensity:")
                 .append(bitmap.getDensity())
-                .append(",hasAlpha:")
+                .append("\nhasAlpha:")
                 .append(bitmap.hasAlpha());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             stringBuilder.append("\n,hasMipMap:").append(bitmap.hasMipMap());
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            stringBuilder.append(",allocationByteCount:").append(formatFileSize(bitmap.getAllocationByteCount()));
+            stringBuilder.append("\nallocationByteCount:").append(formatFileSize(bitmap.getAllocationByteCount()));
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stringBuilder.append(",ColorSpace:").append(bitmap.getColorSpace());
+            stringBuilder.append("\nColorSpace:").append(bitmap.getColorSpace());
         }
-        stringBuilder.append(",GenerationId:").append(bitmap.getGenerationId());
+        stringBuilder.append("\nGenerationId:").append(bitmap.getGenerationId());
         return stringBuilder.toString();
+    }
+
+    public static String printImageView(ImageView imageView){
+        if(imageView == null){
+            return "null";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder("imageView:\n");
+        stringBuilder.append(imageView.getMeasuredWidth())
+                .append("x")
+                .append(imageView.getMeasuredHeight())
+                .append("\nscaleType:")
+                .append(imageView.getScaleType().name())
+                .append("\nLayoutParams:")
+                .append(logWH(imageView.getLayoutParams().width))
+                .append("x")
+                .append(logWH(imageView.getLayoutParams().height))
+                .append("\nid:")
+                .append(imageView.getResources().getResourceEntryName(imageView.getId()))
+                .append("\ntag:")
+                .append(imageView.getTag());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            stringBuilder.append("\n,CropToPadding:").append(imageView.getCropToPadding());
+            stringBuilder.append("\nAdjustViewBounds:").append(imageView.getAdjustViewBounds());
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            if(imageView.getClipBounds() != null){
+                stringBuilder.append("\nClipBounds:").append(imageView.getClipBounds().toString());
+            }
+            stringBuilder.append("\nImageAlpha:").append(imageView.getImageAlpha());
+            stringBuilder.append("\nAlpha:").append(imageView.getAlpha());
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            stringBuilder.append("\nTintMode:").append(imageView.getImageTintMode());
+        }
+        stringBuilder.append("\nforground:");
+        stringBuilder.append(imageView.getDrawable());
+        if(imageView.getDrawable() != null){
+            stringBuilder.append(",").append(imageView.getDrawable().getIntrinsicWidth())
+                    .append("x").append(imageView.getDrawable().getIntrinsicHeight());
+        }
+        stringBuilder.append("\nbackground:");
+        stringBuilder.append(imageView.getBackground()).append("\n");
+        stringBuilder.append(imageView.toString());
+        return stringBuilder.toString();
+    }
+
+    public static String logWH(int wh){
+        if(wh >0){
+            return wh+"";
+        }
+        if(wh == ViewGroup.LayoutParams.MATCH_PARENT){
+            return " MATCH_PARENT ";
+        }else if(wh == ViewGroup.LayoutParams.WRAP_CONTENT){
+            return " WRAP_CONTENT ";
+        }else {
+            return wh+"";
+        }
+    }
+
+    public static String printException(Throwable e){
+        if(e == null){
+            return "exception is null";
+        }
+        return "exception:\n"+e.getClass().getName()+":"+e.getMessage();
+    }
+
+    public static boolean isBitmapTooLarge(float bw,float bh,ImageView imageView){
+
+        float bitmapArea =  bw * bh;
+        float ivArea = imageView.getMeasuredWidth() * imageView.getMeasuredHeight();
+        if(ivArea ==0){
+            return false;
+        }
+        return (bitmapArea / ivArea) > 1.25f;
     }
 
 

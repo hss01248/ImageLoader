@@ -31,6 +31,20 @@ public class SingleConfig {
 
     private Context context;
 
+    public String getErrorDes() {
+        return errorDes;
+    }
+
+    public void setErrorDes(String errorDes) {
+        this.errorDes = errorDes;
+    }
+
+    private String errorDes;
+
+    public long  loadStartTime;
+
+    public long  cost;
+
     public int getBorderColor() {
         return borderColor;
     }
