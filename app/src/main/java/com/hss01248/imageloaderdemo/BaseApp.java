@@ -33,7 +33,7 @@ public class BaseApp extends Application {
     public void onCreate() {
         super.onCreate();
         ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
-        GlobalConfig.debug = true;
+        GlobalConfig.debug = false;
         GlobalConfig.interceptor = new LoadInterceptor() {
             @Override
             public boolean intercept(SingleConfig config) {

@@ -256,14 +256,15 @@ public class GlideLoader implements ILoader {
                 builder.listener(new RequestListener() {
                     @Override
                     public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
-                        Log.d("onException","thread :"+Thread.currentThread().getName() +",onException");
-                        Log.d("onException","model :"+model);
-                        Log.d("onException","Target :"+target);
-                        Log.d("onException","isFirstResource :"+isFirstResource);
-                        if(e != null){
-                            e.printStackTrace();
+                        if(GlobalConfig.debug){
+                            Log.d("onException","thread :"+Thread.currentThread().getName() +",onException");
+                            Log.d("onException","model :"+model);
+                            Log.d("onException","Target :"+target);
+                            Log.d("onException","isFirstResource :"+isFirstResource);
+                            if(e != null){
+                                e.printStackTrace();
+                            }
                         }
-
 
                         if(config.getImageListener() != null){
                             config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
@@ -274,25 +275,34 @@ public class GlideLoader implements ILoader {
                     @Override
                     public boolean onResourceReady(Object resource, final Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
 
+                        if(GlobalConfig.debug){
+                            Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",onResourceReady");
+                            Log.d("onResourceReady","resource :"+resource);
+                        }
 
-                        Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",onResourceReady");
-                        Log.d("onResourceReady","resource :"+resource);
                         if(resource instanceof GlideBitmapDrawable){
                             GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
                             Bitmap bitmap = drawable.getBitmap();
-                            Log.i("onResourceReady","drawable :"+drawable.getIntrinsicWidth()+"x"+drawable.getIntrinsicHeight()+"," +
-                                    "bitmap:"+bitmap.getWidth()+"x"+bitmap.getHeight());
+                            if(GlobalConfig.debug){
+                                Log.d("onResourceReady",MyUtil.printBitmap(bitmap));
+                            }
                         }else if(resource instanceof GifDrawable){
                             GifDrawable gifDrawable = (GifDrawable) resource;
                             //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
                             Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
                         }else{
-                            Log.e("onResourceReady",resource+"");
+                            if(GlobalConfig.debug){
+                                Log.e("onResourceReady",resource+"");
+                            }
+
                         }
-                        Log.d("onResourceReady","model :"+model);
-                        Log.d("onResourceReady","Target :"+target);
-                        Log.d("onResourceReady","isFromMemoryCache :"+isFromMemoryCache);
-                        Log.d("onResourceReady","isFirstResource :"+isFirstResource);
+                        if(GlobalConfig.debug){
+                            Log.d("onResourceReady","model :"+model);
+                            Log.d("onResourceReady","Target :"+target);
+                            Log.d("onResourceReady","isFromMemoryCache :"+isFromMemoryCache);
+                            Log.d("onResourceReady","isFirstResource :"+isFirstResource);
+                        }
+
                         if(config.getImageListener() != null ) {
                             if(resource instanceof GlideBitmapDrawable){
                                 GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
@@ -302,10 +312,16 @@ public class GlideLoader implements ILoader {
                                 final GifDrawable gifDrawable = (GifDrawable) resource;
                                 config.getImageListener().onSuccess(gifDrawable,gifDrawable.getFirstFrame(),gifDrawable.getFirstFrame().getWidth(),gifDrawable.getFirstFrame().getHeight());
                                 if(gifDrawable.getFrameCount()> 8){
-                                    Log.e("onResourceReady gif","gif frame count too many:"+gifDrawable.getFrameCount());
+                                    if(GlobalConfig.debug){
+                                        Log.e("onResourceReady gif","gif frame count too many:"+gifDrawable.getFrameCount());
+                                    }
+
                                 }
                                 //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
-                                Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+                                if(GlobalConfig.debug){
+                                    Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+                                }
+
                                 if(GlobalConfig.useThirdPartyGifLoader){
                                     ImageLoader.getActualLoader().getFileFromDiskCache((String) model, new FileGetter() {
                                         @Override
@@ -319,7 +335,9 @@ public class GlideLoader implements ILoader {
                                                 imageView.setImageDrawable(gifDrawable2);
                                                 gifDrawable.stop();
                                             } catch (Throwable e) {
-                                                e.printStackTrace();
+                                                if(GlobalConfig.debug){
+                                                    e.printStackTrace();
+                                                }
                                                 imageView.setImageDrawable(gifDrawable);
                                             }
                                         }
@@ -329,19 +347,28 @@ public class GlideLoader implements ILoader {
                                             if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
                                                 return;
                                             }
-                                            e.printStackTrace();
+                                            if(GlobalConfig.debug){
+                                                e.printStackTrace();
+                                            }
+
                                             imageView.setImageDrawable(gifDrawable);
                                         }
                                     });
                                     return true;
                                 }
                             }else {
-                                Log.e("onResourceReady",resource+"");
+                                if(GlobalConfig.debug){
+                                    Log.e("onResourceReady",resource+"");
+                                }
+
                                 if(resource instanceof Drawable){
                                     config.getImageListener().onSuccess((Drawable)resource,null,0,0);
                                 }else{
                                     config.getImageListener().onSuccess(null,null,0,0);
-                                    Log.e("onResourceReady!!!",resource+", not instance of drawable");
+                                    if(GlobalConfig.debug){
+                                        Log.e("onResourceReady!!!",resource+", not instance of drawable");
+                                    }
+
                                 }
 
                             }
