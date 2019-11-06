@@ -19,7 +19,7 @@ public class GlobalConfig {
     public static String baseUrl;
 
     public static Context context;
-    public static boolean useThirdPartyGifLoader = true;
+    public static boolean useThirdPartyGifLoader = false;
 
     public static Handler getMainHandler() {
         if(mainHandler==null){

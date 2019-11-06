@@ -8,6 +8,7 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp3.OkHttpGlideModule;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
 import com.bumptech.glide.load.model.GlideUrl;
 import okhttp3.OkHttpClient;
 
@@ -35,6 +36,10 @@ public class GlideModelConfig extends OkHttpGlideModule {
        /* builder.setDiskCache(new DiskLruCacheFactory(new File(context.getCacheDir(), GlobalConfig.cacheFolderName).getAbsolutePath(),
                 GlobalConfig.cacheMaxSize*1024*1024));*/
         Log.i("glide","applyOptions---");
+
+       /* builder.setResizeService(new FifoPriorityThreadPoolExecutor(4))
+                .setDiskCacheService(new FifoPriorityThreadPoolExecutor(4));*/
+
     }
 
     @Override

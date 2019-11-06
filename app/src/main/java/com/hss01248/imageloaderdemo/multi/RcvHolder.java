@@ -82,7 +82,8 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 //.blur(5)
                 .defaultErrorRes(true)
                 .loading(R.drawable.iv_loading_trans)
-                .asBitmap(new SingleConfig.BitmapListener() {
+                .into(rootView);
+                /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         Log.w("onsuccess", MyUtil.printBitmap(bitmap));
@@ -93,7 +94,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                     public void onFail(Throwable e) {
 
                     }
-                });
+                });*/
 
 
 
