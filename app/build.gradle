@@ -68,6 +68,8 @@ dependencies {
     compile 'com.joooonho:selectableroundedimageview:1.0.1'
     compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 
+    compile 'org.raphets:roundimageview:1.2.0'
+
 
 
 }

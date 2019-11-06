@@ -34,6 +34,8 @@ import com.hss01248.imageloaderdemo.BigImageActy;
 import com.hss01248.imageloaderdemo.R;
 import com.makeramen.roundedimageview.RoundedImageView;
 
+import org.raphets.roundimageview.RoundImageView;
+
 import java.io.File;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -46,13 +48,15 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     //public ImageView imageView;
     private int imageSize;
     private int columnNumber;
-    private RoundedImageView roundedImageView2;
+    //private RoundedImageView roundedImageView2;
     private ImageLoaderRoundImageView roundImageView;
+    private RoundImageView roundImageView3;
     public RcvHolder(View itemView) {
         super(itemView);
         this.rootView = itemView;
         roundImageView =  itemView.findViewById(R.id.item_iv);
-        roundedImageView2 = itemView.findViewById(R.id.iv_round2);
+        //roundedImageView2 = itemView.findViewById(R.id.iv_round2);
+        roundImageView3 = itemView.findViewById(R.id.iv_round3);
         //imageView = (ImageView) itemView.findViewById(R.id.item_iv);
 
     }
@@ -87,26 +91,36 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
 
         //loadByGlide(context,data,position);
 
-        roundImageView.isCircle(true);
-        roundImageView.setBorderWidth(2);
-        roundImageView.setBorderColor(Color.BLUE);
+        roundImageView.setCornerRadius(20,20,0,0);
+        //roundImageView.setBorderWidth(2);
+        //roundImageView.setBorderColor(Color.BLUE);
         ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data)
                 //.scale(ScaleMode.CENTER_CROP)
                 //.blur(2)
                 .defaultErrorRes(true)
-                .loading(R.drawable.iv_loading_trans)
+                //.loading(R.drawable.iv_loading_trans)
+                .placeHolder(R.color.colorAccent)
                 .into(roundImageView);
 
-        ImageLoader.with(context)
+       /* ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data+"?t=4")
-                .scale(ScaleMode.CENTER_CROP)
+                //.scale(ScaleMode.CENTER_CROP)
                 //.blur(2)
                 .defaultErrorRes(true)
                 .loading(R.drawable.iv_loading_trans)
-                .into(roundedImageView2);
+                .into(roundedImageView2);*/
+
+        ImageLoader.with(context)
+                //.widthHeightByPx(360,360)
+                .url(data+"?t=5")
+                //.scale(ScaleMode.CENTER_CROP)
+                //.blur(2)
+                .defaultErrorRes(true)
+                .loading(R.drawable.iv_loading_trans)
+                .into(roundImageView3);
 
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override

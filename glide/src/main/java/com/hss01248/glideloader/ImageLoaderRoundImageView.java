@@ -41,6 +41,7 @@ public class ImageLoaderRoundImageView extends AppCompatImageView {
     private int borderColor = Color.WHITE;
 
     private int cornerRadius;
+   private float leftTop, rightTop,  rightBottom,  leftBottom;
 
     private Xfermode xfermode;
 
@@ -105,6 +106,9 @@ public class ImageLoaderRoundImageView extends AppCompatImageView {
         } else {
             xfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_OUT);
             srcPath = new Path();
+        }
+        if(cornerRadius>0){
+            setCornerRadius(cornerRadius);
         }
         calculateRadii();
     }
@@ -209,17 +213,43 @@ public class ImageLoaderRoundImageView extends AppCompatImageView {
         if (isCircle) {
             return;
         }
-        if (cornerRadius > 0) {
-            for (int i = 0; i < borderRadii.length; i++) {
+        if (getMaxCorner() > 0) {
+            borderRadii[0] = leftTop;
+            borderRadii[1] = leftTop;
+            borderRadii[2] = rightTop;
+            borderRadii[3] = rightTop;
+            borderRadii[4] = rightBottom;
+            borderRadii[5] = rightBottom;
+            borderRadii[6] = leftBottom;
+            borderRadii[7] = leftBottom;
+
+
+            srcRadii[0] = leftTop - borderWidth / 2.0f;
+            srcRadii[1] = leftTop - borderWidth / 2.0f;
+            srcRadii[2] = rightTop- borderWidth / 2.0f;
+            srcRadii[3] = rightTop- borderWidth / 2.0f;
+            srcRadii[4] = rightBottom- borderWidth / 2.0f;
+            srcRadii[5] = rightBottom- borderWidth / 2.0f;
+            srcRadii[6] = leftBottom- borderWidth / 2.0f;
+            srcRadii[7] = leftBottom- borderWidth / 2.0f;
+
+
+
+
+            /*for (int i = 0; i < borderRadii.length; i++) {
                 borderRadii[i] = cornerRadius;
                 srcRadii[i] = cornerRadius - borderWidth / 2.0f;
-            }
+            }*/
         }
     }
 
     private void calculateRadiiAndRectf(boolean reset) {
         if (reset) {
             cornerRadius = 0;
+            leftTop = 0;
+            leftBottom = 0;
+            rightBottom = 0;
+            rightTop = 0;
         }
         calculateRadii();
         initBorderRectf();
@@ -235,6 +265,10 @@ public class ImageLoaderRoundImageView extends AppCompatImageView {
         invalidate();
     }
 
+    public float getMaxCorner(){
+        return  Math.max(rightBottom,Math.max(leftBottom,Math.max(leftTop,rightTop)));
+    }
+
     /**
      * 设置圆角
      *
@@ -242,6 +276,17 @@ public class ImageLoaderRoundImageView extends AppCompatImageView {
      */
     public void setCornerRadius(int cornerRadius) {
         this.cornerRadius = MyUtil.dip2px(cornerRadius);
+        this.leftTop = cornerRadius;
+        this.rightTop = cornerRadius;
+        this.leftBottom = cornerRadius;
+        this.rightBottom = cornerRadius;
+        calculateRadiiAndRectf(false);
+    }
+    public void setCornerRadius(float leftTop, float rightTop,  float leftBottom,float rightBottom) {
+        this.leftTop = MyUtil.dip2px(leftTop);
+        this.rightTop = MyUtil.dip2px(rightTop);
+        this.leftBottom = MyUtil.dip2px(leftBottom);
+        this.rightBottom = MyUtil.dip2px(rightBottom);
         calculateRadiiAndRectf(false);
     }
 
