@@ -2,7 +2,9 @@ package com.hss01248.imageloaderdemo.multi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -20,16 +22,21 @@ import com.bumptech.glide.request.target.Target;
 import com.elvishew.xlog.XLog;
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
+import com.hss01248.glideloader.ImageLoaderRoundImageView;
 import com.hss01248.glideloader.drawable.AutoRotateDrawable;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
+import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ImageListener;
+import com.hss01248.imageloaderdemo.BigImageActy;
 import com.hss01248.imageloaderdemo.R;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.io.File;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * Created by huangshuisheng on 2017/9/28.
@@ -39,9 +46,13 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     //public ImageView imageView;
     private int imageSize;
     private int columnNumber;
+    private RoundedImageView roundedImageView2;
+    private ImageLoaderRoundImageView roundImageView;
     public RcvHolder(View itemView) {
         super(itemView);
         this.rootView = itemView;
+        roundImageView =  itemView.findViewById(R.id.item_iv);
+        roundedImageView2 = itemView.findViewById(R.id.iv_round2);
         //imageView = (ImageView) itemView.findViewById(R.id.item_iv);
 
     }
@@ -76,13 +87,27 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
 
         //loadByGlide(context,data,position);
 
+        roundImageView.isCircle(true);
+        roundImageView.setBorderWidth(2);
+        roundImageView.setBorderColor(Color.BLUE);
         ImageLoader.with(context)
-                .widthHeightByPx(360,360)
+                //.widthHeightByPx(360,360)
                 .url(data)
-                .blur(2)
+                //.scale(ScaleMode.CENTER_CROP)
+                //.blur(2)
                 .defaultErrorRes(true)
                 .loading(R.drawable.iv_loading_trans)
-                .into(rootView);
+                .into(roundImageView);
+
+        ImageLoader.with(context)
+                //.widthHeightByPx(360,360)
+                .url(data+"?t=4")
+                .scale(ScaleMode.CENTER_CROP)
+                //.blur(2)
+                .defaultErrorRes(true)
+                .loading(R.drawable.iv_loading_trans)
+                .into(roundedImageView2);
+
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
@@ -103,22 +128,14 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     @Override
     public void assignDatasAndEvents(final Activity context, final String data) {
         super.assignDatasAndEvents(context, data);
-
-
-
-
-
-
-
-
-        /*itemView.setOnClickListener(new View.OnClickListener() {
+        itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,BigImageActy.class);
+                Intent intent = new Intent(context, BigImageActy.class);
                 intent.putExtra("url",data);
                 context.startActivity(intent);
             }
-        });*/
+        });
     }
 
     private void loadByGlide(Activity context, String data, final int position) {

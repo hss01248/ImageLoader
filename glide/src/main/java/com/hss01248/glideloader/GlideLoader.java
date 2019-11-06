@@ -1,6 +1,7 @@
 package com.hss01248.glideloader;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.IntentUtils;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
@@ -28,6 +29,7 @@ import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.glideloader.drawable.AutoRotateDrawable;
@@ -37,6 +39,7 @@ import com.hss01248.image.utils.ThreadPoolFactory;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -49,8 +52,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -203,6 +209,15 @@ public class GlideLoader implements ILoader {
             if(config.getErrorResId() >0){
                 builder.error(config.getErrorResId());
             }
+
+            if(config.getScaleMode() == ScaleMode.CENTER_CROP){
+                builder.centerCrop();
+            }else{
+                builder.fitCenter();
+            }
+
+
+
             if(config.getTarget() instanceof ImageView){
                 final ImageView imageView = (ImageView) config.getTarget();
                 imageView.setTag(R.drawable.im_item_list_opt,config);
@@ -261,6 +276,9 @@ public class GlideLoader implements ILoader {
                             Log.d("onException","model :"+model);
                             Log.d("onException","Target :"+target);
                             Log.d("onException","isFirstResource :"+isFirstResource);
+                            if(config.equals(imageView.getTag(R.drawable.im_item_list_opt)) && !model.toString().startsWith("http")){
+                                Log.w("onException",config.toString());
+                            }
                             if(e != null){
                                 e.printStackTrace();
                             }
@@ -402,17 +420,13 @@ public class GlideLoader implements ILoader {
     public void debug(final SingleConfig config) {
         if(config.getTarget() instanceof ImageView) {
              ImageView imageView = (ImageView) config.getTarget();
-            /* imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                 @Override
-                 public boolean onLongClick(View v) {
-                     showPop((ImageView)v,config);
-                     return true;
-                 }
-             });*/
-            imageView.setOnClickListener(new View.OnClickListener() {
+            imageView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View v) {
-                    showPop((ImageView)v,config);
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN){
+                        showPop((ImageView)v,config);
+                    }
+                    return false;
                 }
             });
 
@@ -421,46 +435,74 @@ public class GlideLoader implements ILoader {
 
     private void showPop(ImageView v, final SingleConfig config) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(v.getContext());
+        Context context;
+        ScrollView scrollView = new ScrollView(v.getContext());
+        LinearLayout linearLayout = new LinearLayout(v.getContext());
+        scrollView.addView(linearLayout);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
         final TextView textView = new TextView(v.getContext());
         String desc = config.getUrl()+"\n";
-        desc += v.getScaleType().name()+"\n";
         Drawable drawable = v.getDrawable();
         if(drawable instanceof GlideBitmapDrawable){
             GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) drawable;
-            desc += "bitmap, w:"+glideBitmapDrawable.getIntrinsicWidth() +",h:"+glideBitmapDrawable.getIntrinsicHeight();
             Bitmap bitmap = glideBitmapDrawable.getBitmap();
-            if(bitmap != null){
-                desc += "\nconfig:"+bitmap.getConfig().name()+",size:"+MyUtil.formatFileSize(bitmap.getByteCount());
-            }else {
-
-            }
+            desc += MyUtil.printBitmap(bitmap)+"\n";
         }else if(drawable instanceof BitmapDrawable){
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             Bitmap bitmap = bitmapDrawable.getBitmap();
-            if(bitmap != null){
-                desc += "bitmap, w:"+bitmap.getWidth() +",h:"+bitmap.getHeight();
-                desc += "\nconfig:"+bitmap.getConfig().name()+",size:"+MyUtil.formatFileSize(bitmap.getByteCount());
-            }
-
-
+            desc += MyUtil.printBitmap(bitmap)+"\n";
         }else if (drawable instanceof SquaringDrawable){
             SquaringDrawable bitmap = (SquaringDrawable) drawable;
             desc += "SquaringDrawable, w:"+bitmap.getIntrinsicWidth() +",h:"+bitmap.getIntrinsicHeight();
+        }else if(drawable instanceof GifDrawable){
+            GifDrawable gifDrawable = (GifDrawable) drawable;
+            //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
+            desc +="gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount();
+            if(gifDrawable.getFrameCount() > 10){
+                desc += "\nframeCount is too many!!!!!!!!";
+            }
         }else {
             desc += "drawable:"+drawable;
         }
 
-        desc += "\nimageview:"+v.getMeasuredWidth() +" x " + v.getMeasuredHeight();
+        desc += "\nimageview:"+v.getMeasuredWidth() +" x " + v.getMeasuredHeight()+","+v.getScaleType().name();
 
         textView.setText(desc);
 
         textView.setPadding(20,20,20,20);
-        dialog.setView(textView);
+
+        ImageView imageView =  new ImageView(v.getContext());
+        imageView.setImageDrawable(drawable);
+        linearLayout.addView(imageView);
+        linearLayout.addView(textView);
+        linearLayout.setPadding(10,30,10,20);
+
+
+
+        dialog.setView(scrollView);
         dialog.setPositiveButton("拷贝链接", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 MyUtil.copyText(config.getUrl());
                 Toast.makeText(textView.getContext(),"已拷贝链接",Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setNegativeButton("拷贝，并在浏览器中打开此链接", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    MyUtil.copyText(config.getUrl());
+                    Toast.makeText(textView.getContext(),"已拷贝链接",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    Uri content_url = Uri.parse(config.getUrl());
+                    intent.setData(content_url);
+                    textView.getContext().startActivity(intent);
+                }catch (Throwable e){
+                    e.printStackTrace();
+                }
+
             }
         });
         dialog.show();

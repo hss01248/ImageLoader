@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/item_root"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+<com.hss01248.glideloader.ImageLoaderRoundImageView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/item_iv"
 	android:background="@drawable/shape_main_list_bg"
 		 android:layout_width="match_parent"
+	android:layout_marginBottom="5dp"
 	android:adjustViewBounds="true"
 		android:layout_height="wrap_content">
 
-</ImageView>
+</com.hss01248.glideloader.ImageLoaderRoundImageView>
+
+<com.makeramen.roundedimageview.RoundedImageView
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:id="@+id/iv_round2"
+	android:background="@drawable/shape_main_list_bg"
+	android:layout_width="match_parent"
+	android:adjustViewBounds="true"
+	android:layout_height="wrap_content"
+android:scaleType="fitCenter"
+app:riv_corner_radius="10dip"
+app:riv_border_width="2dip"
+app:riv_border_color="#333333"
+app:riv_mutate_background="true" />
+</LinearLayout>
