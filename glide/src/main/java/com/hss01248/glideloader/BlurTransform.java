@@ -46,9 +46,7 @@ public class BlurTransform implements Transformation<Bitmap> {
         int height = source.getHeight();
 
         int samplesize = calculateInSampleSize(width,height,outWidth,outHeight);
-        if(samplesize >1){
-            samplesize = samplesize *2;
-        }
+
 
 
         int scaledWidth = width / samplesize;
@@ -90,9 +88,9 @@ public class BlurTransform implements Transformation<Bitmap> {
 
         if (height > reqHeight || width > reqWidth) {
             //计算图片高度和我们需要高度的最接近比例值
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int heightRatio = Math.round(((float) height / (float) reqHeight)*2);
             //宽度比例值
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            final int widthRatio = Math.round(((float) width / (float) reqWidth)*2);
             //取比例值中的较大值作为inSampleSize
             inSampleSize = heightRatio > widthRatio ? heightRatio : widthRatio;
         }

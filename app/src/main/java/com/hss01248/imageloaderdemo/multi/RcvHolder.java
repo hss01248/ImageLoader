@@ -79,7 +79,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         ImageLoader.with(context)
                 .widthHeightByPx(360,360)
                 .url(data)
-                //.blur(5)
+                .blur(2)
                 .defaultErrorRes(true)
                 .loading(R.drawable.iv_loading_trans)
                 .into(rootView);
