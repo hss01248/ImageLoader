@@ -706,12 +706,30 @@ public class SingleConfig {
         }
 
 
-
+        /**
+         * fresco 用
+         * @param overlayColorWhenGif
+         * @return
+         */
         public ConfigBuilder asCircle(int overlayColorWhenGif){
             this.shapeMode = ShapeMode.OVAL;
             this.roundOverlayColor  = overlayColorWhenGif;
             return this;
         }
+
+        public ConfigBuilder asCircle(){
+            this.shapeMode = ShapeMode.OVAL;
+            return this;
+        }
+
+        public ConfigBuilder asCircleWithBorder(int borderWidth,int borderColor){
+            this.shapeMode = ShapeMode.OVAL;
+            this.borderColor  = borderColor;
+            this.borderWidth = borderWidth;
+            return this;
+        }
+
+
 
 
 

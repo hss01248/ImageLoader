@@ -24,8 +24,7 @@ import com.bumptech.glide.util.Util;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideBigLoader;
-import com.hss01248.glideloader.transform.BlurTransform;
-import com.hss01248.glideloader.transform.RoundCornerTransForm;
+import com.hss01248.glideloader.transform.CropCircleWithBorderTransformation;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
@@ -636,7 +635,13 @@ public class GlideLoader implements ILoader {
                         config.getRectRoundRadius(), config.getBorderWidth(), cornerType));
                 break;
             case ShapeMode.OVAL:
-                transformations.add( new CropCircleTransformation(config.getContext()));
+                if(config.getBorderWidth() > 0 && config.getBorderColor() != 0){
+                    transformations.add( new CropCircleWithBorderTransformation(config.getContext(),
+                            config.getBorderWidth(),config.getContext().getResources().getColor(config.getBorderColor())));
+                }else {
+                    transformations.add( new CropCircleTransformation(config.getContext()));
+                }
+
 
                 break;
             default:break;

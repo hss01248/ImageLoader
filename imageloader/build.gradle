@@ -52,7 +52,7 @@ dependencies {
     compile ('am.util:viewpager:25.3.0'){
         exclude group: 'com.android.support'
     }
-    compile 'com.blankj:utilcode:1.9.8'
+    compile 'com.blankj:utilcode:1.9.6'
 
    /* compile 'com.github.piasy:BigImageViewer:1.2.7'
     compile 'com.github.piasy:ProgressPieIndicator:1.2.7'
