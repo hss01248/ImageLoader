@@ -10,6 +10,7 @@ import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -68,6 +69,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import jp.wasabeef.glide.transformations.internal.FastBlur;
@@ -207,12 +209,6 @@ public class GlideLoader implements ILoader {
 
             if(config.getErrorResId() >0){
                 builder.error(config.getErrorResId());
-            }
-
-            if(config.getScaleMode() == ScaleMode.CENTER_CROP){
-                builder.centerCrop();
-            }else{
-                //builder.fitCenter();
             }
 
 
@@ -613,9 +609,13 @@ public class GlideLoader implements ILoader {
             // transformations.add(new FaceCenterCrop());//脸部识别
         }
 
-        if(config.isNeedBlur()){
-            transformations.add(new BlurTransform(config.getContext(), config.getBlurRadius(),shapeMode > 0 ? 1: 2));
+        if(config.getScaleMode() == ScaleMode.CENTER_CROP){
+            transformations.add(new CenterCrop(config.getContext()));
+        }else{
+            transformations.add(new FitCenter(config.getContext()));
         }
+
+
 
 
         switch (shapeMode){
@@ -627,30 +627,28 @@ public class GlideLoader implements ILoader {
                 break;
             case ShapeMode.RECT_ROUND:
             case ShapeMode.RECT_ROUND_ONLY_TOP:
-                if(config.getScaleMode() == ScaleMode.CENTER_CROP){
-                    transformations.add(new CenterCrop(config.getContext()));
-                }
+
                 RoundedCornersTransformation.CornerType cornerType = RoundedCornersTransformation.CornerType.ALL;
                 if(shapeMode == ShapeMode.RECT_ROUND_ONLY_TOP){
                     cornerType = RoundedCornersTransformation.CornerType.TOP;
                 }
                 transformations.add(new RoundedCornersTransformation(config.getContext(),
-                        config.getRectRoundRadius(), 0, cornerType));
-
+                        config.getRectRoundRadius(), config.getBorderWidth(), cornerType));
                 break;
             case ShapeMode.OVAL:
                 transformations.add( new CropCircleTransformation(config.getContext()));
-                if(config.getBorderWidth()>0){
 
-                }
-                if(config.isGif() && config.getRoundOverlayColor()>0){
-
-                }
                 break;
             default:break;
         }
+        if(config.isNeedBlur()){
+            transformations.add(new BlurTransformation(config.getContext(), config.getBlurRadius()));
+        }
 
         if(!transformations.isEmpty()){
+            if(transformations.size() >1){
+                builder.skipMemoryCache(GlobalConfig.debug);
+            }
             Transformation[] forms = new Transformation[transformations.size()];
             for (int i = 0; i < transformations.size(); i++) {
                 forms[i] = transformations.get(i);

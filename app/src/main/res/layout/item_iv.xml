@@ -19,8 +19,7 @@
 		android:id="@+id/iv_round3"
 		android:background="@drawable/shape_main_list_bg"
 		android:layout_width="match_parent"
-		android:adjustViewBounds="true"
-		android:layout_height="wrap_content" />
+		android:layout_height="60dp" />
 
 <!--<com.makeramen.roundedimageview.RoundedImageView
 android:id="@+id/iv_round2"

@@ -17,6 +17,7 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestListener;
@@ -152,12 +153,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         Glide.with(MainActivity.this)
-               // .load("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg")
-                .load("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif")
+                .load("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg")
+                //.load("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif")
                // .asGif()
                 //.asBitmap()
-                .bitmapTransform(new RoundedCornersTransformation(this,30,0))
+                .bitmapTransform(new CenterCrop(this),new RoundedCornersTransformation(this,30,0))
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .skipMemoryCache(true)
                 .into(ivUrl);
                /* .listener(new RequestListener<String, Bitmap>() {
                     @Override
