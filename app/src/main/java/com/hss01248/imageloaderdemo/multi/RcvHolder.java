@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Debug;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -95,20 +96,20 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         //roundImageView.setBorderWidth(2);
         //roundImageView.setBorderColor(Color.BLUE);
         if(position == 3){
-            //Debug.startMethodTracing("imageloader");
+            Debug.startMethodTracing("imageloaderfresco");
         }
         ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data)
                 .scale(ScaleMode.CENTER_CROP)
-                .rectRoundCornerTop(10,Color.WHITE)
+                .rectRoundCorner(10,Color.WHITE)
                 //.blur(2)
                 .defaultErrorRes(true)
                 //.loading(R.drawable.iv_loading_trans)
                 .placeHolder(R.color.colorAccent)
                 .into(roundImageView3);
         if(position == 3){
-            //Debug.stopMethodTracing();
+            Debug.stopMethodTracing();
         }
        /* ImageLoader.with(context)
                 //.widthHeightByPx(360,360)

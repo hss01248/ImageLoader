@@ -249,7 +249,7 @@ public class FrescoLoader implements ILoader {
         builder.setImageRequest(request);
 
         if(!config.isAsBitmap()){
-            builder.setAutoPlayAnimations(true);//自动播放gif动画
+            builder.setAutoPlayAnimations(false);//自动播放gif动画
         }
 
 

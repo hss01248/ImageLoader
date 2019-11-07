@@ -32,7 +32,7 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
+        ImageLoader.init(getApplicationContext(), 500,new FrescoLoader());
         GlobalConfig.debug = true;
         GlobalConfig.interceptor = new LoadInterceptor() {
             @Override
