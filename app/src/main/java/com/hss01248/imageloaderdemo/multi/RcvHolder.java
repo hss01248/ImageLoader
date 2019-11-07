@@ -99,9 +99,9 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
             //Debug.startMethodTracing("imageloaderfresco2");
         }
         ImageLoader.with(context)
-                .widthHeightByPx(360,360)
+                //.widthHeightByPx(360,360)
                 .url(data)
-               // .scale(ScaleMode.CENTER_CROP)
+                .scale(ScaleMode.CENTER_CROP)
                 //.rectRoundCorner(10,Color.WHITE)
                 //.blur(2)
                 .asCircleWithBorder(5,R.color.colorPrimary)
