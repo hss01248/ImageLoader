@@ -22,6 +22,9 @@ import java.security.MessageDigest;
  * time:2019/11/7
  * author:hss
  * desription:
+ * https://github.com/jeasonlzy/ViewCore/blob/master/view-core/src/main/java/com/lzy/widget/CircleImageView.java
+ *
+ * https://www.jianshu.com/p/bf578f230cfc
  */
 public class CropCircleWithBorderTransformation extends BitmapTransformation {
     private static final int VERSION = 1;
