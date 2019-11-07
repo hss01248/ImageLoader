@@ -96,20 +96,20 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         //roundImageView.setBorderWidth(2);
         //roundImageView.setBorderColor(Color.BLUE);
         if(position == 3){
-            Debug.startMethodTracing("imageloaderfresco");
+            //Debug.startMethodTracing("imageloaderfresco2");
         }
         ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data)
-                .scale(ScaleMode.CENTER_CROP)
-                .rectRoundCorner(10,Color.WHITE)
+               // .scale(ScaleMode.CENTER_CROP)
+                //.rectRoundCorner(10,Color.WHITE)
                 //.blur(2)
-                .defaultErrorRes(true)
+                .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
+                .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
                 //.loading(R.drawable.iv_loading_trans)
-                .placeHolder(R.color.colorAccent)
                 .into(roundImageView3);
         if(position == 3){
-            Debug.stopMethodTracing();
+            //Debug.stopMethodTracing();
         }
        /* ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
