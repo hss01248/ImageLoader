@@ -1,9 +1,12 @@
 package com.hss01248.imageloaderdemo;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -72,8 +75,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 show();
+
+                Debug.startMethodTracing("sp-read");
+                SharedPreferences sharedPreferences = getSharedPreferences("ky", Context.MODE_PRIVATE);
+                sharedPreferences.getString("shss","ddddd");
+                Debug.stopMethodTracing();
             }
-        }, 1000);
+        }, 5000);
+
+        /*Debug.startMethodTracing("sp-write");
+        SharedPreferences sharedPreferences = getSharedPreferences("ky", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString("shss","1233444hhhhh").commit();
+        //sharedPreferences.getString("shss","ddddd");
+        Debug.stopMethodTracing();*/
+
     }
 
     @Override
