@@ -271,9 +271,9 @@ public class FrescoLoader implements ILoader {
                 if(config.getImageListener() ==null){
                     return;
                 }
-                if(TextUtils.isEmpty(config.getUrl())){
+                /*if(TextUtils.isEmpty(config.getUrl())){
                     return;
-                }
+                }*/
                 config.getImageListener().onSuccess(null,null,imageInfo.getWidth(),imageInfo.getHeight());
 //                File file = getFileFromDiskCache(config.getUrl());
 //                if(file!=null && file.exists()){
