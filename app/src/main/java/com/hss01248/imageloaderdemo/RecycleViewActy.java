@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 
 import com.hss01248.adapter.SuperRvAdapter;
@@ -16,6 +17,7 @@ import com.hss01248.adapter.SuperRvHolder;
 import com.hss01248.dialog.adapter.SuperRcvAdapter;
 import com.hss01248.dialog.adapter.SuperRcvHolder;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.config.ScaleMode;
 import com.hss01248.imageloaderdemo.multi.RcvHolder;
 
 import java.util.ArrayList;
@@ -32,12 +34,19 @@ public class RecycleViewActy extends Activity {
     List<String> datas ;
     int oldScrollState;
 
+    ImageView iv1,iv2,iv3,iv4;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acty_recycle_list);
 
         recyclerView = (RecyclerView) findViewById(R.id.recy);
+        iv1 = findViewById(R.id.iv_1);
+        iv2 = findViewById(R.id.iv_2);
+        iv3 = findViewById(R.id.iv_3);
+        iv4 = findViewById(R.id.iv_4);
+
         datas = new ArrayList<>();
         addDatas();
 
@@ -71,10 +80,14 @@ public class RecycleViewActy extends Activity {
             }
         });
 
+        setIv();
+    }
 
-
-
-
+    private void setIv() {
+        ImageLoader.with(this)
+                .url("http://www.cingjing.gov.tw/upload/grass_b/0898a3792067e612b0a87f3c5058dae6.jpg")
+                .scale(ScaleMode.CENTER_CROP)
+                .into(iv1);
 
     }
 

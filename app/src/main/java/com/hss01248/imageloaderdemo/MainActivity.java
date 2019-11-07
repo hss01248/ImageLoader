@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestListener;
@@ -38,6 +39,7 @@ import java.util.concurrent.Executor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import pl.droidsonroids.gif.GifDrawable;
 
 public class MainActivity extends AppCompatActivity {
@@ -150,11 +152,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         Glide.with(MainActivity.this)
-                .load("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif")
-                .asGif()
+               // .load("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg")
+                .load("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif")
+               // .asGif()
                 //.asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE);
-                //.into(ivUrl);
+                .bitmapTransform(new RoundedCornersTransformation(this,30,0))
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(ivUrl);
                /* .listener(new RequestListener<String, Bitmap>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {

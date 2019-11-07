@@ -1,18 +1,15 @@
 package com.hss01248.glideloader;
 
-import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.IntentUtils;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskCache;
-import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -26,6 +23,8 @@ import com.bumptech.glide.util.Util;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideBigLoader;
+import com.hss01248.glideloader.transform.BlurTransform;
+import com.hss01248.glideloader.transform.RoundCornerTransForm;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
@@ -68,9 +67,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import jp.wasabeef.glide.transformations.internal.FastBlur;
@@ -207,6 +204,7 @@ public class GlideLoader implements ILoader {
                 builder.override(config.getWidth(),config.getHeight());
             }
           builder =   setShapeModeAndBlur(config, builder);
+
             if(config.getErrorResId() >0){
                 builder.error(config.getErrorResId());
             }
@@ -214,7 +212,7 @@ public class GlideLoader implements ILoader {
             if(config.getScaleMode() == ScaleMode.CENTER_CROP){
                 builder.centerCrop();
             }else{
-                builder.fitCenter();
+                //builder.fitCenter();
             }
 
 
@@ -504,6 +502,22 @@ public class GlideLoader implements ILoader {
 
         desc += "\n" + MyUtil.printImageView(v);
 
+        getFileFromDiskCache(config.getUrl(), new FileGetter() {
+            @Override
+            public void onSuccess(File file, int width, int height) {
+                String text = textView.getText().toString();
+                text += "\n\ncache file:\n" + file.getAbsolutePath() +"\nsize:"+ MyUtil.formatFileSize(file.length());
+                text += "\nwh:"+width+"x"+height;
+                text += "\nexif: todo";
+                textView.setText(text);
+            }
+
+            @Override
+            public void onFail(Throwable e) {
+
+            }
+        });
+
 
 
         textView.setText(desc);
@@ -600,7 +614,7 @@ public class GlideLoader implements ILoader {
         }
 
         if(config.isNeedBlur()){
-            transformations.add(new BlurTransform(config.getContext(), config.getBlurRadius()));
+            transformations.add(new BlurTransform(config.getContext(), config.getBlurRadius(),shapeMode > 0 ? 1: 2));
         }
 
 
@@ -613,9 +627,9 @@ public class GlideLoader implements ILoader {
                 break;
             case ShapeMode.RECT_ROUND:
             case ShapeMode.RECT_ROUND_ONLY_TOP:
-                /*if(config.getScaleMode() == ScaleMode.CENTER_CROP){
+                if(config.getScaleMode() == ScaleMode.CENTER_CROP){
                     transformations.add(new CenterCrop(config.getContext()));
-                }*/
+                }
                 RoundedCornersTransformation.CornerType cornerType = RoundedCornersTransformation.CornerType.ALL;
                 if(shapeMode == ShapeMode.RECT_ROUND_ONLY_TOP){
                     cornerType = RoundedCornersTransformation.CornerType.TOP;
@@ -623,12 +637,6 @@ public class GlideLoader implements ILoader {
                 transformations.add(new RoundedCornersTransformation(config.getContext(),
                         config.getRectRoundRadius(), 0, cornerType));
 
-                if(config.getBorderWidth()>0){
-
-                }
-                if(config.isGif() && config.getRoundOverlayColor()>0){
-
-                }
                 break;
             case ShapeMode.OVAL:
                 transformations.add( new CropCircleTransformation(config.getContext()));

@@ -50,7 +50,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     private int columnNumber;
     //private RoundedImageView roundedImageView2;
     private ImageLoaderRoundImageView roundImageView;
-    private RoundImageView roundImageView3;
+    private ImageView roundImageView3;
     public RcvHolder(View itemView) {
         super(itemView);
         this.rootView = itemView;
@@ -91,19 +91,25 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
 
         //loadByGlide(context,data,position);
 
-        roundImageView.setCornerRadius(20,20,0,0);
+        //roundImageView.setCornerRadius(20,20,0,0);
         //roundImageView.setBorderWidth(2);
         //roundImageView.setBorderColor(Color.BLUE);
+        if(position == 3){
+            //Debug.startMethodTracing("imageloader");
+        }
         ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data)
                 //.scale(ScaleMode.CENTER_CROP)
+                //.rectRoundCorner(10,Color.WHITE)
                 //.blur(2)
                 .defaultErrorRes(true)
                 //.loading(R.drawable.iv_loading_trans)
                 .placeHolder(R.color.colorAccent)
-                .into(roundImageView);
-
+                .into(roundImageView3);
+        if(position == 3){
+            //Debug.stopMethodTracing();
+        }
        /* ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data+"?t=4")
@@ -113,14 +119,14 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 .loading(R.drawable.iv_loading_trans)
                 .into(roundedImageView2);*/
 
-        ImageLoader.with(context)
+        /*ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data+"?t=5")
                 //.scale(ScaleMode.CENTER_CROP)
                 //.blur(2)
                 .defaultErrorRes(true)
                 .loading(R.drawable.iv_loading_trans)
-                .into(roundImageView3);
+                .into(roundImageView);*/
 
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override

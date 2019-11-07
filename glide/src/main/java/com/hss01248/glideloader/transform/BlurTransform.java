@@ -1,4 +1,4 @@
-package com.hss01248.glideloader;
+package com.hss01248.glideloader.transform;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,6 +9,7 @@ import android.os.Build;
 import android.renderscript.RSRuntimeException;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
@@ -29,10 +30,17 @@ public class BlurTransform implements Transformation<Bitmap> {
     private BitmapPool mBitmapPool;
 
     private int mRadius;
-    public BlurTransform(Context context, int radius) {
+    private int subsamplingRatio = 1;
+    public BlurTransform(Context context, int radius,int subsamplingRatio) {
         mContext = context.getApplicationContext();
         mBitmapPool = Glide.get(mContext).getBitmapPool();
         mRadius = radius;
+        this.subsamplingRatio = subsamplingRatio;
+        if(subsamplingRatio <=0){
+            subsamplingRatio = 1;
+        }else if(subsamplingRatio > 2){
+            subsamplingRatio = 2;
+        }
     }
 
 
@@ -45,7 +53,7 @@ public class BlurTransform implements Transformation<Bitmap> {
         int width = source.getWidth();
         int height = source.getHeight();
 
-        int samplesize = calculateInSampleSize(width,height,outWidth,outHeight);
+        int samplesize = MyUtil.calculateScaleRatio(width,height,outWidth,outHeight,subsamplingRatio);
 
 
 
@@ -82,19 +90,5 @@ public class BlurTransform implements Transformation<Bitmap> {
     }
 
 
-    public static int calculateInSampleSize(int width,int height, int reqWidth, int reqHeight) {
 
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            //计算图片高度和我们需要高度的最接近比例值
-            final int heightRatio = Math.round(((float) height / (float) reqHeight)*2);
-            //宽度比例值
-            final int widthRatio = Math.round(((float) width / (float) reqWidth)*2);
-            //取比例值中的较大值作为inSampleSize
-            inSampleSize = heightRatio > widthRatio ? heightRatio : widthRatio;
-        }
-
-        return inSampleSize;
-    }
 }

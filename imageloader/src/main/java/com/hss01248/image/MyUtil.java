@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -612,7 +613,7 @@ public class MyUtil {
                 .append("x")
                 .append(logWH(imageView.getLayoutParams().height))
                 .append("\nid:")
-                .append(imageView.getResources().getResourceEntryName(imageView.getId()))
+                .append(getIdName(imageView))
                 .append("\ntag:")
                 .append(imageView.getTag());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -639,6 +640,19 @@ public class MyUtil {
         stringBuilder.append(imageView.getBackground()).append("\n");
         stringBuilder.append(imageView.toString());
         return stringBuilder.toString();
+    }
+
+    private static String getIdName(View view) {
+        if(view == null){
+            return "";
+        }
+        try {
+          return   view.getResources().getResourceEntryName(view.getId());
+        }catch (Throwable e){
+            e.printStackTrace();
+            return view.getId()+"";
+        }
+
     }
 
     public static String logWH(int wh){
@@ -670,6 +684,24 @@ public class MyUtil {
         }
         return (bitmapArea / ivArea) > 1.25f;
     }
+
+    public static int calculateScaleRatio(int width,int height, int reqWidth, int reqHeight,int multiplRatio) {
+
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            //计算图片高度和我们需要高度的最接近比例值
+            final int heightRatio = Math.round(((float) height / (float) reqHeight)*multiplRatio);
+            //宽度比例值
+            final int widthRatio = Math.round(((float) width / (float) reqWidth)*multiplRatio);
+            //取比例值中的较大值作为inSampleSize
+            inSampleSize = heightRatio > widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
+    }
+
+
 
 
 

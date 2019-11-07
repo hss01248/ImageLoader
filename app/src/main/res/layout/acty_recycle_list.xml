@@ -1,10 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="match_parent"
+	android:orientation="vertical"
 		android:layout_height="match_parent">
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_weight="1"
+		android:visibility="gone"
+		android:layout_height="0dp">
+		<LinearLayout
+			android:orientation="vertical"
+			android:padding="15dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+			<ImageView
+				android:id="@+id/iv_1"
+				android:background="@drawable/shape_main_list_bg"
+				android:layout_width="150dp"
+				android:layout_height="150dp" />
+			<ImageView
+				android:id="@+id/iv_2"
+				android:background="@drawable/shape_main_list_bg"
+				android:layout_width="match_parent"
+				android:layout_height="150dp" />
+			<ImageView
+				android:id="@+id/iv_3"
+				android:background="@drawable/shape_main_list_bg"
+				android:layout_width="wrap_content"
+				android:adjustViewBounds="true"
+				android:layout_height="150dp" />
+			<ImageView
+				android:id="@+id/iv_4"
+				android:background="@drawable/shape_main_list_bg"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</LinearLayout>
+	</ScrollView>
+
 	<android.support.v7.widget.RecyclerView
 			android:id="@+id/recy"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
+		android:layout_weight="2"
+			android:layout_height="0dp"/>
 
 </LinearLayout>

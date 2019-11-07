@@ -11,9 +11,16 @@
     android:background="@drawable/shape_main_list_bg"
 	android:layout_marginBottom="5dp"
 	android:adjustViewBounds="true"
+	android:visibility="gone"
 		android:layout_height="wrap_content">
 
 </com.hss01248.glideloader.ImageLoaderRoundImageView>
+	<ImageView
+		android:id="@+id/iv_round3"
+		android:background="@drawable/shape_main_list_bg"
+		android:layout_width="match_parent"
+		android:adjustViewBounds="true"
+		android:layout_height="wrap_content" />
 
 <!--<com.makeramen.roundedimageview.RoundedImageView
 android:id="@+id/iv_round2"
@@ -27,7 +34,7 @@ app:riv_border_width="2dip"
 app:riv_border_color="#333333"
 app:riv_mutate_background="true" />-->
 
-	<org.raphets.roundimageview.RoundImageView
+	<!--<org.raphets.roundimageview.RoundImageView
 		android:layout_width="match_parent"
 		android:adjustViewBounds="true"
 		android:layout_height="wrap_content"
@@ -39,5 +46,5 @@ app:riv_mutate_background="true" />-->
 		app:leftTop_corner_radius="30dp"
 		app:rightBottom_corner_radius="30dp"
 		app:rightTop_corner_radius="0dp"
-		app:type="round" />
+		app:type="round" />-->
 </LinearLayout>
