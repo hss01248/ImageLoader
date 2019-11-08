@@ -101,10 +101,10 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data)
-                .scale(ScaleMode.CENTER_CROP)
+                //.scale(ScaleMode.CENTER_CROP)
                 //.rectRoundCorner(10,Color.WHITE)
                 //.blur(2)
-                .asCircleWithBorder(5,R.color.colorPrimary)
+                //.asCircleWithBorder(5,R.color.colorPrimary)
                 .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
                 .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
