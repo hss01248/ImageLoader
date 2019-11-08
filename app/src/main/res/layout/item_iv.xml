@@ -18,9 +18,8 @@
 	<ImageView
 		android:id="@+id/iv_round3"
 		android:background="@drawable/shape_main_list_bg"
-		android:scaleType="fitStart"
 		android:layout_width="match_parent"
-		android:layout_height="60dp" />
+		android:layout_height="100dp" />
 
 <!--<com.makeramen.roundedimageview.RoundedImageView
 android:id="@+id/iv_round2"

@@ -1,5 +1,6 @@
 package com.hss01248.glideloader;
 
+import com.bumptech.glide.BitmapTypeRequest;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
@@ -15,9 +16,11 @@ import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.SquaringDrawable;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.bumptech.glide.signature.EmptySignature;
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
@@ -109,7 +112,7 @@ public class GlideLoader implements ILoader {
                         // for demonstration purposes, let's just set it to an ImageView
                         // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
                         //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
-                        if(config.isNeedBlur()){
+                        /*if(config.isNeedBlur()){
                             bitmap = blur(bitmap,config.getBlurRadius(),false);
                             Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
                         }
@@ -119,7 +122,7 @@ public class GlideLoader implements ILoader {
                         }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
                             bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
                             Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }
+                        }*/
 
                         config.getBitmapListener().onSuccess(bitmap);
                     }
@@ -141,7 +144,7 @@ public class GlideLoader implements ILoader {
                         // for demonstration purposes, let's just set it to an ImageView
                         // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
                         //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
-                        if(config.isNeedBlur()){
+                        /*if(config.isNeedBlur()){
                             bitmap = blur(bitmap,config.getBlurRadius(),false);
                             Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
                         }
@@ -151,7 +154,7 @@ public class GlideLoader implements ILoader {
                         }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
                             bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
                             Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }
+                        }*/
 
                         config.getBitmapListener().onSuccess(bitmap);
                     }
@@ -168,13 +171,22 @@ public class GlideLoader implements ILoader {
             }
 
             RequestManager requestManager =  Glide.with(config.getContext());
-            DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
-            if(config.getWidth()>0 && config.getHeight()>0){
-                request.override(config.getWidth(),config.getHeight());
+            int width = config.getWidth();
+            int height = config.getHeight();
+            if(width <=0){
+                width = Target.SIZE_ORIGINAL;
             }
-
-           // setShapeModeAndBlur(config, request);
-            request.asBitmap().approximate().into(target);
+            if(height <=0){
+                height = Target.SIZE_ORIGINAL;
+            }
+            getDrawableTypeRequest(config, requestManager)
+                    .asBitmap()
+                    .override(width, height)
+                    .transform(getBitmapTransFormations(config))
+                    .approximate().into(target);
+           /* if(config.getWidth()>0 && config.getHeight()>0){
+               request.override(config.getWidth(),config.getHeight());
+            }*/
 
         }else {
 
@@ -196,15 +208,23 @@ public class GlideLoader implements ILoader {
             if(config.getLoadingResId() != 0){
                 Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
                 builder.placeholder(drawable);
+                if(config.getTarget() instanceof ImageView){
+                    ImageView imageView = (ImageView) config.getTarget();
+                    imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
+                }
             }else if(MyUtil.shouldSetPlaceHolder(config)){
                 builder.placeholder(config.getPlaceHolderResId());
+                if(config.getTarget() instanceof ImageView){
+                    ImageView imageView = (ImageView) config.getTarget();
+                    imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
+                }
             }
 
 
             if(config.getWidth()>0 && config.getHeight()>0){
                 builder.override(config.getWidth(),config.getHeight());
             }
-          builder =   setShapeModeAndBlur(config, builder);
+            builder = builder .bitmapTransform(getBitmapTransFormations(config));
 
             if(config.getErrorResId() >0){
                 builder.error(config.getErrorResId());
@@ -282,6 +302,11 @@ public class GlideLoader implements ILoader {
                                 e.printStackTrace();
                             }
                         }
+                        if(target instanceof ImageViewTarget){
+                            ImageViewTarget view = (ImageViewTarget) target;
+                            ImageView imageView1 = (ImageView) view.getView();
+                            imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
+                        }
 
                         if(config.getImageListener() != null){
                             config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
@@ -291,6 +316,12 @@ public class GlideLoader implements ILoader {
 
                     @Override
                     public boolean onResourceReady(Object resource, final Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if(target instanceof ImageViewTarget){
+                            ImageViewTarget view = (ImageViewTarget) target;
+                            ImageView imageView1 = (ImageView) view.getView();
+                            imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
+                        }
+
 
                         if(GlobalConfig.debug){
                             Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",onResourceReady");
@@ -600,7 +631,9 @@ public class GlideLoader implements ILoader {
         return request;
     }
 
-    private DrawableRequestBuilder setShapeModeAndBlur(SingleConfig config, DrawableRequestBuilder builder) {
+    private Transformation[] getBitmapTransFormations(SingleConfig config) {
+
+        Transformation[] forms = null;
         int shapeMode = config.getShapeMode();
         List<Transformation> transformations = new ArrayList<>();
 
@@ -615,7 +648,9 @@ public class GlideLoader implements ILoader {
         }
 
 
-
+        if(config.isNeedBlur()){
+            transformations.add(new BlurTransformation(config.getContext(), config.getBlurRadius()));
+        }
 
         switch (shapeMode){
             case ShapeMode.RECT:
@@ -646,21 +681,15 @@ public class GlideLoader implements ILoader {
                 break;
             default:break;
         }
-        if(config.isNeedBlur()){
-            transformations.add(new BlurTransformation(config.getContext(), config.getBlurRadius()));
-        }
 
         if(!transformations.isEmpty()){
-            if(transformations.size() >1){
-                builder.skipMemoryCache(GlobalConfig.debug);
-            }
-            Transformation[] forms = new Transformation[transformations.size()];
+             forms = new Transformation[transformations.size()];
             for (int i = 0; i < transformations.size(); i++) {
                 forms[i] = transformations.get(i);
             }
-           return builder.bitmapTransform(forms);
+           return forms;
         }
-        return builder;
+        return forms;
 
     }
 
