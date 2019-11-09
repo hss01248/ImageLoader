@@ -27,8 +27,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.animation.GlideAnimationFactory;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.request.target.Target;
+
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.memory.ImageMemoryHookManager;
@@ -88,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences.edit().putString("shss","1233444hhhhh").commit();
         //sharedPreferences.getString("shss","ddddd");
         Debug.stopMethodTracing();*/
+
+
 
     }
 

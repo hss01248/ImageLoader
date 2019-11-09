@@ -5,6 +5,7 @@ import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.exif.ExifUtil;
 import com.hss01248.image.utils.RoundedCornersTransformation2;
 
 import android.app.Activity;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,6 +40,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -46,6 +51,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import it.sephiroth.android.library.exif2.ExifInterface;
+import it.sephiroth.android.library.exif2.ExifTag;
 import okhttp3.OkHttpClient;
 
 
@@ -356,7 +363,6 @@ public class MyUtil {
      *
      * @param file file
      * @return size
-     * @throws Exception
      */
     public static long getFolderSize(File file) {
         long size = 0;
@@ -701,8 +707,40 @@ public class MyUtil {
         return inSampleSize;
     }
 
+    /**
+     * https://www.exif.org/Exif2-2.PDF
+     * @param filePath
+     * @return
+     */
+    public static String printExif(String filePath){
+        return ExifUtil.readExif(filePath);
+    }
 
 
+    public static String getTagName(int tagId){
+        return getMap().get(tagId);
+    }
+
+    static Map<Integer,String> tagMap;
+    private static Map<Integer,String>  getMap() {
+        Class c = ExifInterface.class;
+        Field[] f = c.getDeclaredFields();
+        if (tagMap == null) {
+            tagMap = new HashMap<>();
+            for (Field fie : f) {
+                try {
+                    Log.w("fields", fie.getName() + ":" + fie.getInt(null));
+                    tagMap.put(fie.getInt(null), fie.getName().toLowerCase());
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+            return tagMap;
+        } else {
+            return tagMap;
+        }
+
+    }
 
 
 

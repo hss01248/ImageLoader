@@ -35,6 +35,7 @@ import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.glideloader.drawable.AutoRotateDrawable;
+import com.hss01248.image.exif.ExifUtil;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
 import com.hss01248.image.utils.ThreadPoolFactory;
@@ -534,13 +535,19 @@ public class GlideLoader implements ILoader {
                 String text = textView.getText().toString();
                 text += "\n\ncache file:\n" + file.getAbsolutePath() +"\nsize:"+ MyUtil.formatFileSize(file.length());
                 text += "\nwh:"+width+"x"+height;
-                text += "\nexif: todo";
+                text += "\n\n" + MyUtil.printExif(file.getAbsolutePath());
                 textView.setText(text);
             }
 
             @Override
             public void onFail(Throwable e) {
+                String text = textView.getText().toString();
+                text += "\n\n get cache file failed :\n" ;
+                if(e != null){
+                    text +=  e.getClass().getName()+" "+e.getMessage();
+                }
 
+                textView.setText(text);
             }
         });
 

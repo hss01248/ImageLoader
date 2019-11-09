@@ -14,8 +14,6 @@ import android.widget.ImageView;
 
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
-import com.hss01248.dialog.adapter.SuperRcvAdapter;
-import com.hss01248.dialog.adapter.SuperRcvHolder;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.utils.ImageLoaderDebugTool;
@@ -51,6 +49,8 @@ public class RecycleViewActy extends Activity {
         datas = new ArrayList<>();
         addDatas();
         ImageLoaderDebugTool.warnBigBitmapInCurrentViewTree(recyclerView);
+
+
 
 
         adapter = new SuperRvAdapter(this) {
