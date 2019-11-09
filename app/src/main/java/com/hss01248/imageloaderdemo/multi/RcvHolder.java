@@ -99,15 +99,15 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
             //Debug.startMethodTracing("imageloaderfresco2");
         }
         ImageLoader.with(context)
-                .widthHeightByPx(360,360)
+                //.widthHeightByPx(360,360)
                 .url(data)
-                .scale(ScaleMode.CENTER_CROP)
+                .scale(ScaleMode.FIT_CENTER)
                 //.rectRoundCorner(10,Color.WHITE)
                 .blur(10)
                 .asCircleWithBorder(5,R.color.colorPrimary)
                 .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
                 .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
-                .asBitmap(new SingleConfig.BitmapListener() {
+                /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         XLog.i(MyUtil.printBitmap(bitmap));
@@ -118,9 +118,9 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                     public void onFail(Throwable e) {
 
                     }
-                });
+                });*/
                 //.loading(R.drawable.iv_loading_trans)
-                //.into(roundImageView3);
+                .into(roundImageView3);
         if(position == 3){
             //Debug.stopMethodTracing();
         }

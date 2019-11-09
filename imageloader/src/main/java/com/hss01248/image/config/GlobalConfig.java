@@ -119,6 +119,8 @@ public class GlobalConfig {
     public static int loadingResId = R.drawable.iv_loading_trans;
     public static int loadingScaleType = ScaleMode.FIT_CENTER;
 
+    public static int scaleType  = ScaleMode.FIT_CENTER;
+
     public static void setDefaultPlaceHolder(int placeHolderResId){
         GlobalConfig.placeHolderResId = placeHolderResId;
     }

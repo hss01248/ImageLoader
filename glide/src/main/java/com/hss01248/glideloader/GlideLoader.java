@@ -319,7 +319,7 @@ public class GlideLoader implements ILoader {
                         if(target instanceof ImageViewTarget){
                             ImageViewTarget view = (ImageViewTarget) target;
                             ImageView imageView1 = (ImageView) view.getView();
-                            imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true));
+                            imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),false));
                         }
 
 

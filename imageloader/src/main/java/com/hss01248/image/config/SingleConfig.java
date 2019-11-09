@@ -517,7 +517,7 @@ public class SingleConfig {
         }
 
         private int roundOverlayColor;//圆角/圆外覆盖一层背景色
-        private int scaleMode;//填充模式,默认centercrop,可选fitXY,centerInside...
+        private int scaleMode = GlobalConfig.errorScaleType;//填充模式,默认centercrop,可选fitXY,centerInside...
 
         private int borderWidth;//边框的宽度
         private int borderColor;//边框颜色

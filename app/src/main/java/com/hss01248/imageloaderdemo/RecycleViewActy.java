@@ -18,6 +18,7 @@ import com.hss01248.dialog.adapter.SuperRcvAdapter;
 import com.hss01248.dialog.adapter.SuperRcvHolder;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.ScaleMode;
+import com.hss01248.image.utils.ImageLoaderDebugTool;
 import com.hss01248.imageloaderdemo.multi.RcvHolder;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class RecycleViewActy extends Activity {
 
         datas = new ArrayList<>();
         addDatas();
+        ImageLoaderDebugTool.warnBigBitmapInCurrentViewTree(recyclerView);
 
 
         adapter = new SuperRvAdapter(this) {
