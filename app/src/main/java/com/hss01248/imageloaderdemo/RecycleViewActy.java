@@ -102,6 +102,13 @@ public class RecycleViewActy extends Activity {
         datas.add("http://qntemp.bejson.com/upload/15942127644639826Xnip2019-07-31_18-21-49.jpg?imageView2/0/format/webp");
         datas.add("http://img.mp.itc.cn/upload/20170101/43c903083d904a58a8d9e06511c5641a_th.png");
         datas.add("http://images.epochweekly.com/493/66-01.jpg");
+
+        //巨图
+        datas.add("https://s3.51cto.com/wyfs02/M02/06/ED/wKiom1nAst7gJXLWAApAOtlw0r4105.jpg");
+        datas.add("https://s3.51cto.com/wyfs02/M00/A5/A5/wKioL1nA-WrQ8NSkAADpAlDnsrM054.jpg");
+        datas.add("https://s2.51cto.com/wyfs02/M02/06/F4/wKiom1nA9iSRwF1BADe7ZVL2w4Q127.jpg");
+
+
         datas.add("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif");
         datas.add("http://pix10.agoda.net/hotelImages/271/271354/271354_17080815220055007573.jpg?s=1024x768");
         datas.add("https://d12x8ezp3au6m3.cloudfront.net/item/yEDHKC4jp_mPfaUr91viPoY9npCFf032oVJ021WbQN4.png");
@@ -145,6 +152,7 @@ public class RecycleViewActy extends Activity {
         datas.add("https://i2.wp.com/chunyingtravel.com/wp-content/uploads/2015/06/Day-2-Toilet-near-the-Ger-Camp.jpg");
         datas.add("http://image.juntu.com/uploadfile/2017/0818/20170818095821327.jpg");
         datas.add("https://b1-q.mafengwo.net/s6/M00/D2/55/wKgB4lOSj5-ATEDcAAHO0z7f3v887.jpeg?imageView2%2F2%2Fw%2F600%2Fq%2F90");
+
 
 
 

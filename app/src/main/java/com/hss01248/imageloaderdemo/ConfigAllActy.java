@@ -232,9 +232,9 @@ public class ConfigAllActy extends Activity {
 
         sbWidth.setMax(100);
         sbHeight.setMax(100);
-        sbBlurRate.setMax(100);
-        sbBorderWidth.setMax(100);
-        sbRoundcornerRadis.setMax(100);
+        sbBlurRate.setMax(30);
+        sbBorderWidth.setMax(30);
+        sbRoundcornerRadis.setMax(50);
 
          placeHolderRes = new int[]{R.drawable.placeholder1_36dp, R.drawable.placeholder2_48dp,
              R.drawable.placeholder3_24dp, R.drawable.placeholder4_18dp};
@@ -494,9 +494,16 @@ public class ConfigAllActy extends Activity {
 
 
             int shapeId =   rgShape.getCheckedRadioButtonId();
+            int border = sbBorderWidth.getProgress();
             if(shapeId == R.id.et_as_cirle){
-                builder.asCircle(R.color.colorAccent);
+                if(border ==0){
+                    builder.asCircle(R.color.colorAccent);
+                }else{
+                    builder.asCircleWithBorder(border,R.color.colorAccent);
+                }
+
             }else if(shapeId == R.id.et_roundcorner){
+
                 builder.rectRoundCorner(sbRoundcornerRadis.getProgress(),R.color.colorAccent);
             }
             //高斯模糊

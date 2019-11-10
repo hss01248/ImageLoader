@@ -47,6 +47,11 @@ public class ViewpagerActy extends Activity {
         urls.add("http://pic.netbian.com/uploads/allimg/191022/000653-1571674013ac2d.jpg");
         urls.add("http://pic.netbian.com/uploads/allimg/191015/231304-1571152384273d.jpg");
         urls.add("https://images2.alphacoders.com/751/thumb-1920-751214.jpg");
+        //巨图
+        urls.add("https://s3.51cto.com/wyfs02/M02/06/ED/wKiom1nAst7gJXLWAApAOtlw0r4105.jpg");
+        urls.add("https://s3.51cto.com/wyfs02/M00/A5/A5/wKioL1nA-WrQ8NSkAADpAlDnsrM054.jpg");
+        urls.add("https://s2.51cto.com/wyfs02/M02/06/F4/wKiom1nA9iSRwF1BADe7ZVL2w4Q127.jpg");
+
         urls.add("http://up.deskcity.org/pic_source/e5/33/0b/e5330b32f2221ffebb34f4d662c7b1c2.jpg");
         urls.add("http://up.deskcity.org/pic_source/20/7f/28/207f2829d593e1cbfcdbc82490ee238d.jpg");
         urls.add("http://up.deskcity.org/pic_source/af/6d/a7/af6da7cfcfb6ec554fd2fe532f36f743.jpg");
