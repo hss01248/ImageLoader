@@ -249,6 +249,12 @@ public class SingleConfig {
 
     private ImageListener imageListener;
 
+    public boolean isUseThirdPartyGifLoader() {
+        return useThirdPartyGifLoader;
+    }
+
+    private  boolean useThirdPartyGifLoader;
+
     public ImageListener getImageListener() {
         return imageListener;
     }
@@ -377,6 +383,7 @@ public class SingleConfig {
         this.isUseARGB8888 = builder.isUseARGB8888;
         this.imageListener = builder.imageListener;
         this.interceptor = builder.interceptor;
+        this.useThirdPartyGifLoader = builder.useThirdPartyGifLoader;
 
 
 
@@ -522,6 +529,13 @@ public class SingleConfig {
         private int borderWidth;//边框的宽度
         private int borderColor;//边框颜色
         private boolean cropFace;
+
+        private  boolean useThirdPartyGifLoader = GlobalConfig.useThirdPartyGifLoader;
+
+        public ConfigBuilder useThirdPartyGifLoader(boolean useThirdPartyGifLoader){
+            this.useThirdPartyGifLoader = useThirdPartyGifLoader;
+            return this;
+        }
 
         /*private BigImageView bigImageView ;//可放大和缩放的大图
 

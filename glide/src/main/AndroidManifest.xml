@@ -13,7 +13,7 @@
         android:supportsRtl="true">
 
         <meta-data
-            android:name="com.hss01248.glideloader.GlideModelConfig"
+            android:name="com.hss01248.glideloader.config.GlideModelConfig"
             android:value="GlideModule"/>
 
     </application>

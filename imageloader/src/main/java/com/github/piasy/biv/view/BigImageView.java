@@ -34,6 +34,7 @@ import com.github.piasy.biv.event.ProgressEvent;
 import com.github.piasy.biv.indicator.ProgressIndicator;
 import com.github.piasy.biv.indicator.ProgressPieIndicatorNew;
 import com.github.piasy.biv.loader.BigLoader;
+import com.hss01248.image.MyUtil;
 import com.hss01248.image.R;
 import com.hss01248.image.config.GlobalConfig;
 
@@ -56,39 +57,47 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.droidsonroids.gif.GifDrawable;
+
 /**
  * Created by Piasy{github.com/Piasy} on 06/11/2016.
- *
+ * <p>
  * Use FrameLayout for extensibility.
  */
 
-public class BigImageView extends FrameLayout  implements BigImageHierarchy{
+public class BigImageView extends FrameLayout implements BigImageHierarchy {
     public static final int INIT_SCALE_TYPE_CENTER_INSIDE = 1;
     public static final int INIT_SCALE_TYPE_CENTER_CROP = 2;
     public static final int INIT_SCALE_TYPE_AUTO = 3;
-
+    public static final int STATE_NONE = 0;
+    public static final int STATE_STATRTED = 1;
+    public static final int STATE_PROGRESSING = 2;
+    public static final int STATE_CONTENT = 3;
+    public static final int STATE_ERROR = 4;
     private final SubsamplingScaleImageView mImageView;
+    private final BigLoader mImageLoader;
+    int currentState;
     private View progressView;
+
+    // private View progressView;
     private View errorView;
     private View mThumbnailView;
     private View placeHolder;
-
-    private final BigLoader mImageLoader;
-    private  Map<String,File> mTempImages;
-
-   // private View progressView;
-
-
+    private ImageView gifView;
+    private LinearLayout llLoading;
+    private Map<String, File> mTempImages;
     private ImageSaveCallback mImageSaveCallback;
     private File mCurrentImageFile;
     private Uri mThumbnail;
-
     private ProgressIndicator mProgressIndicator;
     private final ProgressNotifyRunnable mProgressNotifyRunnable
             = new ProgressNotifyRunnable() {
@@ -103,18 +112,8 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     private DisplayOptimizeListener mDisplayOptimizeListener;
     private int mInitScaleType;
     private boolean mOptimizeDisplay;
-    int currentState;
-    public static final int STATE_NONE = 0;
-    public static final int STATE_STATRTED = 1;
-    public static final int STATE_PROGRESSING = 2;
-    public static final int STATE_CONTENT = 3;
-    public static final int STATE_ERROR = 4;
-
     private boolean darkTheme = GlobalConfig.isBigImageDark;
-
-    public void updateHierachy(){
-
-    }
+    private String url;
 
     public BigImageView(Context context) {
         this(context, null);
@@ -144,18 +143,19 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         //解决图片旋转的问题,
         //参见; https://github.com/davemorrissey/subsampling-scale-image-view/issues/231
         mImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
-        errorView = View.inflate(context,isDarkTheme()? R.layout.error_view_dark : R.layout.error_view,null);
+        errorView = View.inflate(context, isDarkTheme() ? R.layout.error_view_dark : R.layout.error_view, null);
         LayoutParams params2 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         errorView.setLayoutParams(params2);
         addView(errorView);
 
-        //placeHolder = View.inflate(context,R.layout.view_placeholder,null);
-        placeHolder = View.inflate(context,isDarkTheme()? R.layout.ui_progress_pie_indicator_new_dark : R.layout.ui_progress_pie_indicator_new,null);
+        placeHolder = View.inflate(context, isDarkTheme() ? R.layout.ui_progress_pie_indicator_new_dark : R.layout.ui_progress_pie_indicator_new, null);
         LayoutParams params3 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         placeHolder.setLayoutParams(params3);
         addView(placeHolder);
+        gifView = placeHolder.findViewById(R.id.iv_image);
+        llLoading = placeHolder.findViewById(R.id.ll_loading);
 
         setProgressIndicator(new ProgressPieIndicatorNew());
 
@@ -166,12 +166,17 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         mTempImages = new HashMap<>();
 
 
-       // EventBus.getDefault().register(this);
+        // EventBus.getDefault().register(this);
     }
 
-    public void setCachedFileMap(Map<String,File> cachedFileMap){
+    public void updateHierachy() {
+
+    }
+
+    public void setCachedFileMap(Map<String, File> cachedFileMap) {
         mTempImages = cachedFileMap;
     }
+
     public boolean isDarkTheme() {
         return darkTheme;
     }
@@ -224,33 +229,33 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         mImageSaveCallback = imageSaveCallback;
     }
 
-    public void setErrorView(View error){
-        if(error !=null && errorView ==null){
-           errorView = error;
+    public void setErrorView(View error) {
+        if (error != null && errorView == null) {
+            errorView = error;
             addView(errorView);
         }
 
     }
 
     public void setProgressIndicator(ProgressIndicator progressIndicator) {
-        if(progressIndicator==null){
-            mProgressIndicator =null;
-            if(progressView!=null){
+        if (progressIndicator == null) {
+            mProgressIndicator = null;
+            if (progressView != null) {
                 removeView(progressView);
             }
 
         }
 
 
-        if( progressIndicator.equals(mProgressIndicator) ){
+        if (progressIndicator.equals(mProgressIndicator)) {
             return;
         }
 
-        if(mProgressIndicator ==null){
+        if (mProgressIndicator == null) {
             mProgressIndicator = progressIndicator;
             progressView = mProgressIndicator.getView(this);
-            if(progressView.getParent() !=null){
-              ViewGroup viewGroup = (ViewGroup) progressView.getParent();
+            if (progressView.getParent() != null) {
+                ViewGroup viewGroup = (ViewGroup) progressView.getParent();
                 viewGroup.removeView(progressView);
             }
             addView(progressView);
@@ -290,16 +295,13 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         }
     }
 
-
-    private String url;
-
     public void showImage(Uri uri) {
         showImage(Uri.EMPTY, uri);
     }
 
     public void showImage(Uri thumbnail, Uri uri) {
         //Log.d("BigImageView", "showImage new url: "+ uri.toString());
-       // Log.d("BigImageView", "showImage  old url: " + this.url);
+        // Log.d("BigImageView", "showImage  old url: " + this.url);
 
        /* if(TextUtils.isEmpty(this.url) || !this.url.equals(uri.toString())){
             onStart();
@@ -307,29 +309,27 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
 
         this.url = uri.toString();
         mThumbnail = thumbnail;
-        if(url.startsWith("file:///")){
+        if (url.startsWith("file:///")) {
             onStart();
             showContent(new File(url.substring(8)));
             return;
         }
 
 
-        if(mTempImages.containsKey(this.url)){
-            Log.e("dd","mTempImages.containsKey(this.url),show content");
+        if (mTempImages.containsKey(this.url)) {
+            Log.e("dd", "mTempImages.containsKey(this.url),show content");
             //onStart();
             showContent(mTempImages.get(this.url));
-        }else {
+        } else {
             onStart();
             mImageLoader.loadImage(uri);
         }
-
 
 
         //EventBus.getDefault().post(new StartEvent(url));
         //currentState = STATE_STATRTED;
 
     }
-
 
 
     private void doOnFinish() {
@@ -384,8 +384,6 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     }
 
 
-
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -393,28 +391,25 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
         EventBus.getDefault().register(this);
 
 
-
-
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-       // EventBus.getDefault().removeAllStickyEvents();
+        // EventBus.getDefault().removeAllStickyEvents();
         EventBus.getDefault().unregister(this);
 
     }
 
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onProgressEvent(ProgressEvent event){
-        //Log.d("BigImageView", "onProgressEvent---event url: " + event.url);
-       // Log.d("BigImageView", "onProgressEvent---old url: " + this.url);
-        if(this.url.equals(event.url)){
+    public void onProgressEvent(ProgressEvent event) {
+
+        if (this.url.equals(event.url)) {
+            Log.d("BigImageView", event.progress + "-onProgressEvent---event url: " + event.url);
             showProgress(event.progress);
-            if(event.progress ==100){
-               // doOnFinish();//动画
+            if (event.progress == 100) {
+                // doOnFinish();//动画
                 //showContent(null);
 
             }
@@ -423,10 +418,10 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onErrorEvent(ErrorEvent event){
-        Log.d("BigImageView", "onFailEvent---event url: " + event.url);
-        Log.d("BigImageView", "onFailEvent---old url: " + this.url);
-        if(this.url.equals(event.url)){
+    public void onErrorEvent(ErrorEvent event) {
+
+        if (this.url.equals(event.url)) {
+            Log.d("BigImageView", "onErrorEvent---event url: " + event.url + " ,---old url:" + this.url);
             showError();
         }
 
@@ -434,20 +429,19 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onCacheHitEvent(CacheHitEvent event){
-        Log.d("BigImageView", "onCacheHitEvent---event url: " + event.url);
-        Log.d("BigImageView", "onCacheHitEvent---old url: " + this.url);
-        if(this.url.equals(event.url) && event.file!=null && event.file.exists() && event.file.length() > 100){
+    public void onCacheHitEvent(CacheHitEvent event) {
+        if (this.url.equals(event.url) && event.file != null && event.file.exists() && event.file.length() > 100) {
+            Log.d("BigImageView", "onCacheHitEvent---event url: " + event.url);
             mCurrentImageFile = event.file;
-            mTempImages.put(this.url,event.file);
+            mTempImages.put(this.url, event.file);
             showContent(event.file);
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onCacheHitEvent(CacheHitEvent2 event){
-        Log.d("BigImageView", "onCacheHitEvent2---event url: " + event.url);
-        Log.d("BigImageView", "onCacheHitEvent2---old url: " + this.url);
-        if(this.url.equals(event.url) ){
+    public void onCacheHitEvent(CacheHitEvent2 event) {
+        if (this.url.equals(event.url)) {
+            Log.d("BigImageView", "onCacheHitEvent2---event url: " + event.url);
             mImageView.setImage(ImageSource.uri(event.uri));
             showContent(null);
 
@@ -464,40 +458,48 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     @Override
     public void showContent(File image) {
 
-
-      /*  if(!mTempImages.containsKey(this.url)){
-            mTempImages.put(this.url,image);
-        }*/
-        mImageView.setVisibility(VISIBLE);
-        if(image!=null)
-        mImageView.setImage(ImageSource.uri(Uri.fromFile(image)));
-        Log.d("BigImageView", "mImageView.setImage: " + image.getAbsolutePath());
-
-
-            currentState = STATE_CONTENT;
-            if(progressView!=null)
-                progressView.setVisibility(GONE);
-            if(mThumbnailView!=null)
-                mThumbnailView.setVisibility(GONE);
-            if(errorView!=null)
-                errorView.setVisibility(GONE);
-            if(placeHolder!=null){
+        if ("gif".equals(MyUtil.getRealType(image))) {
+            try {
+                GifDrawable gif = new GifDrawable(image.getAbsolutePath());
+                placeHolder.setVisibility(VISIBLE);
+                gifView.setVisibility(VISIBLE);
+                llLoading.setVisibility(GONE);
+                gifView.setImageDrawable(gif);
+            } catch (IOException e) {
+                e.printStackTrace();
+                showError();
+            }
+        } else {
+            mImageView.setVisibility(VISIBLE);
+            if (image != null)
+                mImageView.setImage(ImageSource.uri(Uri.fromFile(image)));
+            Log.d("BigImageView", "mImageView.setImage: " + image.getAbsolutePath());
+            if (placeHolder != null) {
                 placeHolder.setVisibility(GONE);
             }
+        }
+        currentState = STATE_CONTENT;
+        if (progressView != null)
+            progressView.setVisibility(GONE);
+        if (mThumbnailView != null)
+            mThumbnailView.setVisibility(GONE);
+        if (errorView != null)
+            errorView.setVisibility(GONE);
+
     }
 
     @Override
     public void showProgress(int progress) {
-        if(currentState != STATE_PROGRESSING){
+        if (currentState != STATE_PROGRESSING) {
             currentState = STATE_PROGRESSING;
             mImageView.setVisibility(GONE);
-            if(progressView!=null)
+            if (progressView != null)
                 progressView.setVisibility(VISIBLE);
-            if(mThumbnailView!=null)
+            if (mThumbnailView != null)
                 mThumbnailView.setVisibility(GONE);
-            if(errorView!=null)
+            if (errorView != null)
                 errorView.setVisibility(GONE);
-            if(placeHolder!=null){
+            if (placeHolder != null) {
                 placeHolder.setVisibility(GONE);
             }
         }
@@ -509,17 +511,17 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     @Override
     public void showError() {
 
-            currentState = STATE_ERROR;
-            mImageView.setVisibility(GONE);
-            if(progressView!=null)
+        currentState = STATE_ERROR;
+        mImageView.setVisibility(GONE);
+        if (progressView != null)
             progressView.setVisibility(GONE);
-            if(mThumbnailView!=null)
+        if (mThumbnailView != null)
             mThumbnailView.setVisibility(GONE);
-            if(errorView!=null)
+        if (errorView != null)
             errorView.setVisibility(VISIBLE);
-            if(placeHolder!=null){
-                placeHolder.setVisibility(GONE);
-            }
+        if (placeHolder != null) {
+            placeHolder.setVisibility(GONE);
+        }
 
 
         //todo 点击重试
@@ -529,15 +531,15 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     @Override
     public void showThumbnail() {
 
-            currentState = STATE_STATRTED;
+        currentState = STATE_STATRTED;
         mImageView.setVisibility(GONE);
-        if(progressView!=null)
+        if (progressView != null)
             progressView.setVisibility(GONE);
-        if(mThumbnailView!=null)
+        if (mThumbnailView != null)
             mThumbnailView.setVisibility(VISIBLE);
-        if(errorView!=null)
+        if (errorView != null)
             errorView.setVisibility(GONE);
-        if(placeHolder!=null){
+        if (placeHolder != null) {
             placeHolder.setVisibility(GONE);
         }
 
@@ -546,17 +548,19 @@ public class BigImageView extends FrameLayout  implements BigImageHierarchy{
     @Override
     public void onStart() {
 
-            currentState = STATE_STATRTED;
-            mImageView.setVisibility(GONE);
-            if(progressView!=null)
-                progressView.setVisibility(GONE);
-            if(mThumbnailView!=null)
-                mThumbnailView.setVisibility(GONE);
-            if(errorView!=null)
-                errorView.setVisibility(GONE);
-            if(placeHolder!=null){
-                placeHolder.setVisibility(VISIBLE);
-            }
+        currentState = STATE_STATRTED;
+        mImageView.setVisibility(GONE);
+        if (progressView != null)
+            progressView.setVisibility(GONE);
+        if (mThumbnailView != null)
+            mThumbnailView.setVisibility(GONE);
+        if (errorView != null)
+            errorView.setVisibility(GONE);
+        if (placeHolder != null) {
+            placeHolder.setVisibility(VISIBLE);
+            gifView.setVisibility(GONE);
+            llLoading.setVisibility(VISIBLE);
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-package com.hss01248.glideloader;
+package com.hss01248.glideloader.config;
 
 import android.content.Context;
 import android.os.Build;
@@ -8,8 +8,9 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp3.OkHttpGlideModule;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.github.piasy.biv.progress.ProgressInterceptor;
+
 import okhttp3.OkHttpClient;
 
 import javax.net.ssl.*;
@@ -51,6 +52,7 @@ public class GlideModelConfig extends OkHttpGlideModule {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         setIgnoreAll(builder);
         OkHttpClient client=builder
+                .addNetworkInterceptor(new ProgressInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)

@@ -166,6 +166,12 @@ public class MyUtil {
 
 
     public static String getRealType(File file) {
+        if(!file.exists()){
+            return "";
+        }
+        if(file.getName().endsWith(".gif")){
+            return "gif";
+        }
         FileInputStream is = null;
         try {
             is = new FileInputStream(file);
@@ -717,30 +723,6 @@ public class MyUtil {
     }
 
 
-    public static String getTagName(int tagId){
-        return getMap().get(tagId);
-    }
-
-    static Map<Integer,String> tagMap;
-    private static Map<Integer,String>  getMap() {
-        Class c = ExifInterface.class;
-        Field[] f = c.getDeclaredFields();
-        if (tagMap == null) {
-            tagMap = new HashMap<>();
-            for (Field fie : f) {
-                try {
-                    Log.w("fields", fie.getName() + ":" + fie.getInt(null));
-                    tagMap.put(fie.getInt(null), fie.getName().toLowerCase());
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-            return tagMap;
-        } else {
-            return tagMap;
-        }
-
-    }
 
 
 

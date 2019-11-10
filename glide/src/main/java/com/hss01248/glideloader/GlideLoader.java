@@ -241,7 +241,7 @@ public class GlideLoader implements ILoader {
 
 
                 //gif
-                if(config.getUrl() != null && config.getUrl().contains(".gif") && GlobalConfig.useThirdPartyGifLoader){
+                if(config.getUrl() != null && config.getUrl().contains(".gif") && config.isUseThirdPartyGifLoader()){
                     if(config.getLoadingResId() != 0){
                         Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
                         imageView.setImageDrawable(drawable);
@@ -375,7 +375,7 @@ public class GlideLoader implements ILoader {
                                     Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
                                 }
 
-                                if(GlobalConfig.useThirdPartyGifLoader){
+                                if(config.isUseThirdPartyGifLoader()){
                                     ImageLoader.getActualLoader().getFileFromDiskCache((String) model, new FileGetter() {
                                         @Override
                                         public void onSuccess(File file, int width, int height) {
@@ -458,14 +458,20 @@ public class GlideLoader implements ILoader {
             imageView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if(event.getAction() == MotionEvent.ACTION_DOWN){
-                        Object o = v.getTag(R.drawable.im_item_list_opt);
-                        if(o instanceof SingleConfig){
-                            SingleConfig singleConfig = (SingleConfig) o;
-                            showPop((ImageView)v,singleConfig);
-                        }
-
+                    if(event.getAction() != MotionEvent.ACTION_DOWN){
+                        return false;
                     }
+
+                    Object o = v.getTag(R.drawable.im_item_list_opt);
+                    if(!(o instanceof SingleConfig)){
+                        return false;
+                    }
+                    if(event.getX() > MyUtil.dip2px(20) || event.getY() > MyUtil.dip2px(20)){
+                        return false;
+                    }
+
+                    SingleConfig singleConfig = (SingleConfig) o;
+                    showPop((ImageView)v,singleConfig);
                     return false;
                 }
             });

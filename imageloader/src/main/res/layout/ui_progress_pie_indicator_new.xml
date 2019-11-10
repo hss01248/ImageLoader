@@ -30,6 +30,7 @@
     android:background="@android:color/white"
     android:layout_width="match_parent">
 	<LinearLayout
+		android:id="@+id/ll_loading"
 			android:orientation="vertical"
 			android:layout_centerInParent="true"
 			android:layout_width="wrap_content"
@@ -49,6 +50,7 @@
 				android:textColor="#666666"
 				android:textSize="14sp"
 				android:layout_marginTop="8dp"
+			android:text="loading..."
 				android:layout_gravity="center_horizontal"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
@@ -56,6 +58,8 @@
 	</LinearLayout>
 
 <ImageView
+	android:id="@+id/iv_image"
+	android:layout_centerInParent="true"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content" />
 </RelativeLayout>

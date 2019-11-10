@@ -175,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
                 //.asBitmap()
                 .bitmapTransform(new CenterCrop(this),new RoundedCornersTransformation(this,30,0))
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .skipMemoryCache(true)
-                .into(ivUrl);
+                .skipMemoryCache(true);
+                //.into(ivUrl);
                /* .listener(new RequestListener<String, Bitmap>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
