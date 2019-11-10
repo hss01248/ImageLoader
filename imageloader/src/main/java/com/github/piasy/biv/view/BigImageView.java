@@ -167,7 +167,9 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         mTempImages = new HashMap<>();
 
 
-        // EventBus.getDefault().register(this);
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
     }
 
     public void updateHierachy() {
@@ -399,7 +401,10 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         //EventBus.getDefault().unregister(this);
-        EventBus.getDefault().register(this);
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+
 
 
     }
@@ -408,7 +413,10 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // EventBus.getDefault().removeAllStickyEvents();
-        EventBus.getDefault().unregister(this);
+        if(EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+
 
     }
 

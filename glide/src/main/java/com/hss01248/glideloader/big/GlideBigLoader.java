@@ -45,6 +45,7 @@ import com.github.piasy.biv.progress.OkHttpProgressResponseBody;
 import com.github.piasy.biv.progress.ProgressInterceptor;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.R;
+import com.hss01248.glideloader.config.ProgressableGlideUrl;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -74,15 +75,10 @@ public final class GlideBigLoader implements BigLoader {
     @Override
     public void loadImage(final Uri uri) {
         String url = uri.toString();
-        /*if(url.startsWith("http")){
-            if(!url.contains(OkHttpProgressResponseBody.KEY_PREGRESS)){
-                url += OkHttpProgressResponseBody.KEY_PREGRESS;
-            }
-        }*/
         Log.w("load big image:",url);
         final String finalUrl = url;
         mRequestManager
-                .load(uri)
+                .load(new ProgressableGlideUrl(url))
                 //.asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate()
                 .downloadOnly(new SimpleTarget<File>() {
                     @Override
