@@ -4,6 +4,9 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.hss01248.image.MyUtil;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -113,9 +116,20 @@ public class ExifUtil {
             ExifInterface exifInterface1 = new ExifInterface();
             exifInterface1.readExif(path,ExifInterface.Options.OPTION_ALL);
             int quality = exifInterface1.getQualityGuess();
+            int[] wh = MyUtil.getImageWidthHeight(path);
 
             StringBuilder sb = new StringBuilder();
-            sb.append("exif info:");
+            sb.append("file info:");
+            sb.append("\n")
+                    .append(path)
+                    .append("\nwh")
+                    .append(wh[0])
+                    .append("x")
+                    .append(wh[1])
+                    .append("\nsize:")
+                    .append(MyUtil.formatFileSize(new File(path).length()))
+                    .append("\ntype:")
+                    .append(MyUtil.getRealType(new File(path)));
             sb.append("\njpeg quality guess:").append(quality);
             sb.append("\norientation degree:").append(degree);
             for (String tag: tags) {

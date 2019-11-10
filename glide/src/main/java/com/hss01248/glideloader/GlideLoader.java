@@ -539,8 +539,6 @@ public class GlideLoader implements ILoader {
             @Override
             public void onSuccess(File file, int width, int height) {
                 String text = textView.getText().toString();
-                text += "\n\ncache file:\n" + file.getAbsolutePath() +"\nsize:"+ MyUtil.formatFileSize(file.length());
-                text += "\nwh:"+width+"x"+height;
                 text += "\n\n" + MyUtil.printExif(file.getAbsolutePath());
                 textView.setText(text);
             }
