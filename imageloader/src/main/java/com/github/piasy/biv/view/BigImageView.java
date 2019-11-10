@@ -34,6 +34,7 @@ import com.github.piasy.biv.event.ProgressEvent;
 import com.github.piasy.biv.indicator.ProgressIndicator;
 import com.github.piasy.biv.indicator.ProgressPieIndicatorNew;
 import com.github.piasy.biv.loader.BigLoader;
+import com.github.piasy.biv.progress.OkHttpProgressResponseBody;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.R;
 import com.hss01248.image.config.GlobalConfig;
@@ -308,6 +309,16 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         }*/
 
         this.url = uri.toString();
+        if(url.startsWith("http")){
+            if(!url.contains(OkHttpProgressResponseBody.KEY_PREGRESS)){
+                url += OkHttpProgressResponseBody.KEY_PREGRESS;
+            }
+        }
+
+
+
+
+
         mThumbnail = thumbnail;
         if (url.startsWith("file:///")) {
             onStart();
@@ -322,7 +333,7 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
             showContent(mTempImages.get(this.url));
         } else {
             onStart();
-            mImageLoader.loadImage(uri);
+            mImageLoader.loadImage(Uri.parse(url));
         }
 
 

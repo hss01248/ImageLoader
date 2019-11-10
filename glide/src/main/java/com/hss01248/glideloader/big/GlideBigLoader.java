@@ -74,24 +74,25 @@ public final class GlideBigLoader implements BigLoader {
     @Override
     public void loadImage(final Uri uri) {
         String url = uri.toString();
-        if(url.startsWith("http")){
+        /*if(url.startsWith("http")){
             if(!url.contains(OkHttpProgressResponseBody.KEY_PREGRESS)){
                 url += OkHttpProgressResponseBody.KEY_PREGRESS;
             }
-        }
+        }*/
         Log.w("load big image:",url);
+        final String finalUrl = url;
         mRequestManager
-                .load(Uri.parse(url))
+                .load(uri)
                 //.asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate()
                 .downloadOnly(new SimpleTarget<File>() {
                     @Override
                     public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
                         if(resource.exists() && resource.isFile() && resource.length() > 100){
                             Log.i("glide onResourceReady","onResourceReady  --"+ resource.getAbsolutePath());
-                            EventBus.getDefault().post(new CacheHitEvent(resource,uri.toString()));
+                            EventBus.getDefault().post(new CacheHitEvent(resource, finalUrl));
                         }else {
-                            Log.w(" glide onloadfailed","onLoadFailed  --"+ uri.toString());
-                            EventBus.getDefault().post(new ErrorEvent(uri.toString()));
+                            Log.w(" glide onloadfailed","onLoadFailed  --"+ finalUrl);
+                            EventBus.getDefault().post(new ErrorEvent(finalUrl));
                         }
 
                     }
@@ -104,10 +105,10 @@ public final class GlideBigLoader implements BigLoader {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
-                        Log.e("glide onloadfailed","onLoadFailed  --"+ uri.toString());
+                        Log.e("glide onloadfailed","onLoadFailed  --"+ finalUrl);
                         if(e!=null)
                         e.printStackTrace();
-                        EventBus.getDefault().post(new ErrorEvent(uri.toString()));
+                        EventBus.getDefault().post(new ErrorEvent(finalUrl));
                     }
 
                     /**
