@@ -53,8 +53,14 @@ dependencies {
     compile ('am.util:viewpager:25.3.0'){
         exclude group: 'com.android.support'
     }
-    compile 'com.blankj:utilcode:1.9.6'
-    compile 'it.sephiroth.android.exif:library:+'
+    implementation 'com.blankj:utilcode:1.9.6'
+
+    api ('it.sephiroth.android.exif:library:+'){
+        exclude group: 'commons-io'
+    }
+    //implementation 'org.apache.commons:commons-compress:1.11'
+    //implementation 'org.apache.commons:commons-lang3:3.4'
+   //implementation 'org.apache.commons:commons-io:1.3.2'
     api 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
 
    /* compile 'com.github.piasy:BigImageViewer:1.2.7'

@@ -104,7 +104,8 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 .scale(ScaleMode.FIT_CENTER)
                 //.rectRoundCorner(10,Color.WHITE)
                 .blur(10)
-                .asCircleWithBorder(5,R.color.colorPrimary)
+                .asCircle()
+                .border(5,R.color.colorPrimary)
                 .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
                 .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
                 /*.asBitmap(new SingleConfig.BitmapListener() {

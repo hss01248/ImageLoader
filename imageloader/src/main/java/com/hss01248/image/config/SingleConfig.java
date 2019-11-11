@@ -213,6 +213,24 @@ public class SingleConfig {
     private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
     private int rectRoundRadius;//圆角矩形时圆角的半径
 
+    public int getLeftTopRadius() {
+        return leftTopRadius;
+    }
+
+    public int getRightTopRadius() {
+        return rightTopRadius;
+    }
+
+    public int getLeftBottomRadius() {
+        return leftBottomRadius;
+    }
+
+    public int getRightBottomRadius() {
+        return rightBottomRadius;
+    }
+
+    private int leftTopRadius,  rightTopRadius, leftBottomRadius, rightBottomRadius;
+
     private int roundOverlayColor;//圆角/圆外覆盖一层背景色
     private int scaleMode;//填充模式,默认centercrop,可选fitXY,centerInside...
 
@@ -385,6 +403,11 @@ public class SingleConfig {
         this.interceptor = builder.interceptor;
         this.useThirdPartyGifLoader = builder.useThirdPartyGifLoader;
 
+        this.leftTopRadius = builder.leftTopRadius;
+        this.rightTopRadius = builder.rightTopRadius;
+        this.leftBottomRadius = builder.leftBottomRadius;
+        this.rightBottomRadius = builder.rightBottomRadius;
+
 
 
     }
@@ -434,6 +457,7 @@ public class SingleConfig {
         private int height;
 
 
+        private int leftTopRadius,  rightTopRadius, leftBottomRadius, rightBottomRadius;
         /**
          * 是否使用全局的默认图+centerinside
          * @param useDefaultPlaceHolder
@@ -736,16 +760,6 @@ public class SingleConfig {
             return this;
         }
 
-        public ConfigBuilder asCircleWithBorder(int borderWidth,int borderColor){
-            this.shapeMode = ShapeMode.OVAL;
-            this.borderColor  = borderColor;
-            this.borderWidth = borderWidth;
-            return this;
-        }
-
-
-
-
 
         /**
          * 形状为圆角矩形时的圆角半径
@@ -760,11 +774,12 @@ public class SingleConfig {
             return this;
         }
 
-        public ConfigBuilder rectRoundCornerTop(int rectRoundRadius,int overlayColorWhenGif){
-            this.rectRoundRadius = MyUtil.dip2px(rectRoundRadius);
-            this.shapeMode = ShapeMode.RECT_ROUND_ONLY_TOP;
-            this.roundOverlayColor  = overlayColorWhenGif;
-
+        public ConfigBuilder rectRoundCorner(int leftTopRadius, int rightTopRadius,int leftBottomRadius,int rightBottomRadius){
+            this.leftTopRadius = MyUtil.dip2px(leftTopRadius);
+            this.rightTopRadius = MyUtil.dip2px(rightTopRadius);
+            this.leftBottomRadius = MyUtil.dip2px(leftBottomRadius);
+            this.rightBottomRadius = MyUtil.dip2px(rightBottomRadius);
+            this.shapeMode = ShapeMode.RECT_ROUND;
             return this;
         }
 
