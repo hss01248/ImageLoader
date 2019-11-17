@@ -221,14 +221,13 @@ public class ConfigAllActy extends Activity {
 
     private void initData() {
         urls = new ArrayList<>();
-        urls.add("http://pic137.nipic.com/file/20170801/21016265_111024595000_2.jpg");
+
         urls.add("http://img02.tooopen.com/images/20141231/sy_78327074576.jpg");
-        urls.add("http://img06.tooopen.cn/images/20170106/tooopen_sy_195886579867.jpg");
-        urls.add("error--http://img06.tooopen.cn/images/20170814/tooopen_sy_220490839847.jpg");
-        urls.add("http://img06.tooopen.cn/images/20170818/tooopen_sy_221040993375.jpg");
-        urls.add("http://img07.tooopen.cn/images/20170320/tooopen_sy_202527818519.jpg");
-        urls.add("http://s9.rr.itc.cn/r/wapChange/201612_24_10/a1tuxc4889097989855.jpg");
-        urls.add("https://img.jianke.com/article/201704/20170417174402188.gif");
+        urls.add("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif");
+        urls.add("http://qntemp.bejson.com/upload/15942127644639826Xnip2019-07-31_18-21-49.jpg?imageView2/0/format/webp");
+        urls.add("http://img.mp.itc.cn/upload/20170101/43c903083d904a58a8d9e06511c5641a_th.png");
+        urls.add("https://s3.51cto.com/wyfs02/M02/06/ED/wKiom1nAst7gJXLWAApAOtlw0r4105.jpg");
+        urls.add("http://image.juntu.com/uploadfile/2017/0818/20170818095821327.jpg");
 
         sbWidth.setMax(100);
         sbHeight.setMax(100);
@@ -496,16 +495,13 @@ public class ConfigAllActy extends Activity {
             int shapeId =   rgShape.getCheckedRadioButtonId();
             int border = sbBorderWidth.getProgress();
             if(shapeId == R.id.et_as_cirle){
-                if(border ==0){
-                    builder.asCircle(R.color.colorAccent);
-                }else{
-                    builder.asCircleWithBorder(border,R.color.colorAccent);
-                }
+                builder.asCircle(R.color.colorAccent);
 
             }else if(shapeId == R.id.et_roundcorner){
 
                 builder.rectRoundCorner(sbRoundcornerRadis.getProgress(),R.color.colorAccent);
             }
+            builder.border(border,R.color.colorAccent);
             //高斯模糊
             int blurRate = sbBlurRate.getProgress();
             if(blurRate>0){
