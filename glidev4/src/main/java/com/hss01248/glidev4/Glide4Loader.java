@@ -396,6 +396,7 @@ public class Glide4Loader extends ILoader {
         RequestOptions options = new RequestOptions()
                 .format(DecodeFormat.PREFER_RGB_565)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .skipMemoryCache(GlobalConfig.debug)
                 .transform(getBitmapTransFormations(config));
         return options;
     }
