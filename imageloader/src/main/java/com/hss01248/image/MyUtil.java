@@ -472,16 +472,23 @@ public class MyUtil {
         return bitmap;
     }
 
-    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode, boolean isContent) {
+    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode, boolean isContent){
+        return getScaleTypeForImageView(scaleMode,isContent,false);
+    }
+
+    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode, boolean isContent,boolean isGlide) {
         switch (scaleMode) {
             case 0:
                 if (isContent) {
-                    return ImageView.ScaleType.CENTER_CROP;
+                    return ImageView.ScaleType.FIT_CENTER;
                 } else {
                     return ImageView.ScaleType.CENTER_INSIDE;
                 }
 
             case ScaleMode.CENTER_CROP:
+                if(isContent && isGlide){
+                    return ImageView.ScaleType.FIT_CENTER;
+                }
                 return ImageView.ScaleType.CENTER_CROP;
             case ScaleMode.FIT_XY:
                 return ImageView.ScaleType.FIT_XY;
@@ -497,7 +504,7 @@ public class MyUtil {
                 return ImageView.ScaleType.CENTER_INSIDE;
             default:
                 if (isContent) {
-                    return ImageView.ScaleType.CENTER_CROP;
+                    return ImageView.ScaleType.FIT_CENTER;
                 } else {
                     return ImageView.ScaleType.CENTER_INSIDE;
                 }

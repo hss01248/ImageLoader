@@ -1,4 +1,4 @@
-package com.hss01248.image.drawable;
+package com.hss01248.glidebase.drawable;
 
 /**
  * time:2019/11/4

@@ -11,43 +11,46 @@ import java.io.File;
  * Created by Administrator on 2017/3/14 0014.
  */
 
-public interface ILoader {
+public abstract  class ILoader {
 
-    void init(Context context,int cacheSizeInM);
-
-    void request(SingleConfig config);
-
-    void debug(SingleConfig config);
+   public abstract void init(Context context,int cacheSizeInM);
 
 
-    void pause();
+    public abstract void requestAsBitmap(SingleConfig config);
 
-    void resume();
+    public abstract void requestForNormalDiaplay(SingleConfig config);
 
-    void clearDiskCache();
-
-    void clearMomoryCache();
-
-    long getCacheSize();
-
-    void clearCacheByUrl(String url);
-
-    void clearMomoryCache(View view);
-    void clearMomoryCache(String url);
-
-    File getFileFromDiskCache(String url);
-
-    void getFileFromDiskCache(String url,FileGetter getter);
+    public abstract void debug(SingleConfig config);
 
 
+    public abstract void pause();
+
+    public abstract void resume();
+
+    public abstract void clearDiskCache();
+
+    public abstract void clearMomoryCache();
+
+    public abstract long getCacheSize();
+
+    public abstract void clearCacheByUrl(String url);
+
+    public abstract void clearMomoryCache(View view);
+    public abstract void clearMomoryCache(String url);
+
+    public abstract File getFileFromDiskCache(String url);
+
+    public abstract void getFileFromDiskCache(String url,FileGetter getter);
 
 
 
-   boolean  isCached(String url);
 
-    void trimMemory(int level);
 
-    void onLowMemory();
+    public abstract boolean  isCached(String url);
+
+    public abstract void trimMemory(int level);
+
+    public abstract void onLowMemory();
 
 
     /**
@@ -56,6 +59,6 @@ public interface ILoader {
      * @param url
      * @param getter
      */
-    void download(String url,FileGetter getter);
+    public abstract  void download(String url,FileGetter getter);
 
 }

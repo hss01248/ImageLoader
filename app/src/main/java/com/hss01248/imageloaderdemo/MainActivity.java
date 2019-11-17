@@ -18,14 +18,9 @@ import android.widget.ScrollView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.executor.FifoPriorityThreadPoolExecutor;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.Request;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.animation.GlideAnimationFactory;
+
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import com.hss01248.image.ImageLoader;
@@ -42,7 +37,7 @@ import java.util.concurrent.Executor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
 import pl.droidsonroids.gif.GifDrawable;
 
 public class MainActivity extends AppCompatActivity {
@@ -173,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
                 //.load("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif")
                // .asGif()
                 //.asBitmap()
-                .bitmapTransform(new CenterCrop(this),new RoundedCornersTransformation(this,30,0))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+               // .bitmapTransform(new CenterCrop(this),new RoundedCornersTransformation(this,30,0))
+                //.diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .skipMemoryCache(true);
                 //.into(ivUrl);
                /* .listener(new RequestListener<String, Bitmap>() {

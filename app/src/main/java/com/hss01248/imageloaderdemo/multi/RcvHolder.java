@@ -3,6 +3,7 @@ package com.hss01248.imageloaderdemo.multi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -13,14 +14,14 @@ import android.widget.ImageView;
 
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
-import com.hss01248.glideloader.ImageLoaderRoundImageView;
-import com.hss01248.image.drawable.AutoRotateDrawable;
+
+import com.hss01248.glidebase.drawable.AutoRotateDrawable;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.imageloaderdemo.BigImageActy;
@@ -37,12 +38,12 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
     private int imageSize;
     private int columnNumber;
     //private RoundedImageView roundedImageView2;
-    private ImageLoaderRoundImageView roundImageView;
+   // private ImageLoaderRoundImageView roundImageView;
     private ImageView roundImageView3;
     public RcvHolder(View itemView) {
         super(itemView);
         this.rootView = itemView;
-        roundImageView =  itemView.findViewById(R.id.item_iv);
+        //roundImageView =  itemView.findViewById(R.id.item_iv);
         //roundedImageView2 = itemView.findViewById(R.id.iv_round2);
         roundImageView3 = itemView.findViewById(R.id.iv_round3);
         //imageView = (ImageView) itemView.findViewById(R.id.item_iv);
@@ -88,11 +89,11 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         ImageLoader.with(context)
                 //.widthHeightByPx(360,360)
                 .url(data)
-                .scale(ScaleMode.FIT_CENTER)
-                //.rectRoundCorner(10,Color.WHITE)
+                .scale(ScaleMode.CENTER_CROP)
+                .rectRoundCorner(10, Color.WHITE)
                 .blur(10)
-                .asCircle()
-                .border(5,R.color.colorPrimary)
+                //.asCircle()
+                //.border(5,R.color.colorPrimary)
                 .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
                 .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
@@ -160,48 +161,5 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         });
     }
 
-    private void loadByGlide(Activity context, String data, final int position) {
-        if(position == 3){
-            //Debug.startMethodTracing("imageloader");
-        }
 
-        Drawable drawable = new AutoRotateDrawable(context.getResources().getDrawable(R.drawable.iv_loading_trans), 1200);
-        Glide.with(context).load(data)
-                //.override(360,360)
-                //.placeholder(R.drawable.spinner_1s_200px1)
-                //.placeholder(new CircularProgressDrawable(context))
-                .placeholder(drawable)
-                .error(R.drawable.im_item_list_opt_error)
-               /* .bitmapTransform(new BlurTransform(context.getApplicationContext(),5){
-                    @Override
-                    public Resource<Bitmap> transform(Resource<Bitmap> resource, int outWidth, int outHeight) {
-                        XLog.w("in width:"+outWidth+",outHeight"+outHeight+",resourse:"+resource.get().getWidth()+"x"+resource.get().getHeight());
-
-                        Resource<Bitmap> bitmapResource =  super.transform(resource, outWidth, outHeight);
-
-                        XLog.w("out2 width:"+outWidth+",outHeight"+outHeight+",resourse2:"+bitmapResource.get().getWidth()+"x"+bitmapResource.get().getHeight());
-                        return bitmapResource;
-                    }
-                })*/
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        Log.w("onException",model);
-                        if(e != null){
-                           e.printStackTrace();
-                       }
-
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        return false;
-                    }
-                })
-                .into((ImageView) itemView);
-        if(position == 3){
-            //Debug.stopMethodTracing();
-        }
-    }
 }

@@ -1,42 +1,4 @@
-package com.hss01248.glideloader;
-
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.DrawableTypeRequest;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.disklrucache.DiskLruCache;
-import com.bumptech.glide.load.Key;
-import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.cache.DiskCache;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.FitCenter;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.ImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SquaringDrawable;
-import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.signature.EmptySignature;
-import com.bumptech.glide.util.LruCache;
-import com.bumptech.glide.util.Util;
-import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.view.BigImageView;
-import com.hss01248.glideloader.big.GlideBigLoader;
-import com.hss01248.glideloader.transform.BorderRoundTransformation;
-import com.hss01248.glideloader.transform.CropCircleWithBorderTransformation;
-import com.hss01248.image.ImageLoader;
-import com.hss01248.image.MyUtil;
-import com.hss01248.image.config.GlobalConfig;
-import com.hss01248.image.config.ScaleMode;
-import com.hss01248.image.config.ShapeMode;
-import com.hss01248.image.config.SingleConfig;
-import com.hss01248.glidebase.drawable.AutoRotateDrawable;
-import com.hss01248.image.interfaces.FileGetter;
-import com.hss01248.image.interfaces.ILoader;
-import com.hss01248.image.utils.ThreadPoolFactory;
+package com.hss01248.glidev4;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -62,6 +25,53 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.disklrucache.DiskLruCache;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.Key;
+import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.engine.cache.DiskCache;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
+
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
+
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.signature.EmptySignature;
+import com.bumptech.glide.util.LruCache;
+import com.bumptech.glide.util.Util;
+import com.github.piasy.biv.BigImageViewer;
+import com.github.piasy.biv.event.CacheHitEvent;
+import com.github.piasy.biv.event.ErrorEvent;
+import com.github.piasy.biv.view.BigImageView;
+
+import com.hss01248.glidev4.big.GlideBigLoader;
+import com.hss01248.glidev4.big.ProgressableGlideUrl;
+import com.hss01248.image.ImageLoader;
+import com.hss01248.image.MyUtil;
+import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.ScaleMode;
+import com.hss01248.image.config.ShapeMode;
+import com.hss01248.image.config.SingleConfig;
+import com.hss01248.glidebase.drawable.AutoRotateDrawable;
+import com.hss01248.image.interfaces.FileGetter;
+import com.hss01248.image.interfaces.ILoader;
+import com.hss01248.image.utils.ThreadPoolFactory;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -69,9 +79,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.CropCircleWithBorderTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import jp.wasabeef.glide.transformations.internal.FastBlur;
 import jp.wasabeef.glide.transformations.internal.RSBlur;
@@ -87,13 +100,15 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
  * glide 使用roundcorner+ center crop
  */
 
-public class GlideLoader extends ILoader {
+public class Glide4Loader extends ILoader {
+
+    private  ExecutorService executor;
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
 
         /*Glide.get(context)
                 .setMemoryCategory(MemoryCategory.NORMAL);*/
-        BigImageViewer.initialize(GlideBigLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
+        BigImageViewer.initialize(GlideBigLoader.with(context,null));
         GlobalConfig.cacheFolderName = DiskCache.Factory.DEFAULT_DISK_CACHE_DIR;
         GlobalConfig.cacheMaxSize =  DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE/1024/1024;
 
@@ -103,73 +118,6 @@ public class GlideLoader extends ILoader {
 
     @Override
     public void requestAsBitmap(final SingleConfig config) {
-        SimpleTarget target = null;
-        if(config.getWidth()>0 && config.getHeight()>0){
-            target = new SimpleTarget<Bitmap>(config.getWidth(),config.getHeight()) {
-                @Override
-                public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                    // do something with the bitmap
-                    // for demonstration purposes, let's just set it to an ImageView
-                    // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
-                    //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
-                        /*if(config.isNeedBlur()){
-                            bitmap = blur(bitmap,config.getBlurRadius(),false);
-                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }
-                        if(config.getShapeMode() == ShapeMode.OVAL){
-                            bitmap = MyUtil.cropCirle(bitmap,false);
-                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
-                            bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
-                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }*/
-
-                    config.getBitmapListener().onSuccess(bitmap);
-                }
-
-                @Override
-                public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                    super.onLoadFailed(e, errorDrawable);
-                    if(e !=null){
-                        e.printStackTrace();
-                    }
-                    config.getBitmapListener().onFail(e);
-                }
-            };
-        }else {
-            target = new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                    // do something with the bitmap
-                    // for demonstration purposes, let's just set it to an ImageView
-                    // BitmapPool mBitmapPool = Glide.get(BigLoader.context).getBitmapPool();
-                    //bitmap = Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight())
-                        /*if(config.isNeedBlur()){
-                            bitmap = blur(bitmap,config.getBlurRadius(),false);
-                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }
-                        if(config.getShapeMode() == ShapeMode.OVAL){
-                            bitmap = MyUtil.cropCirle(bitmap,false);
-                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }else if(config.getShapeMode() == ShapeMode.RECT_ROUND){
-                            bitmap = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
-                            Glide.get(GlobalConfig.context).getBitmapPool().put(bitmap);
-                        }*/
-
-                    config.getBitmapListener().onSuccess(bitmap);
-                }
-
-                @Override
-                public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                    super.onLoadFailed(e, errorDrawable);
-                    if(e !=null){
-                        e.printStackTrace();
-                    }
-                    config.getBitmapListener().onFail(e);
-                }
-            };
-        }
-
         RequestManager requestManager =  Glide.with(config.getContext());
         int width = config.getWidth();
         int height = config.getHeight();
@@ -179,34 +127,50 @@ public class GlideLoader extends ILoader {
         if(height <=0){
             height = Target.SIZE_ORIGINAL;
         }
-        getDrawableTypeRequest(config, requestManager)
-                .asBitmap()
-                .override(width, height)
-                .transform(getBitmapTransFormations(config))
-                .approximate().into(target);
+
+        RequestBuilder<Bitmap> builder =  requestManager.asBitmap().addListener(new RequestListener<Bitmap>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                if(e !=null){
+                    e.printStackTrace();
+                }
+                config.getBitmapListener().onFail(e);
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                config.getBitmapListener().onSuccess(resource);
+                return false;
+            }
+        });
+        RequestOptions options =  buildOptions(config);
+        getDrawableTypeRequest(config,  builder)
+                .apply(options)
+                .into(width,height);
     }
+
+
 
     @Override
     public void requestForNormalDiaplay(final SingleConfig config) {
-        final RequestManager requestManager =  Glide.with(config.getContext());
-        final DrawableTypeRequest request = getDrawableTypeRequest(config, requestManager);
 
-        if(request ==null){
+        final RequestBuilder builder = getDrawableTypeRequest(config,null);
+
+        if(builder ==null){
             return;
         }
+        RequestOptions requestOptions = buildOptions(config);
 
-
-
-        DrawableRequestBuilder builder = request.thumbnail(1.0f);
         if(config.getLoadingResId() != 0){
             Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
-            builder.placeholder(drawable);
+            requestOptions.placeholder(drawable);
             if(config.getTarget() instanceof ImageView){
                 ImageView imageView = (ImageView) config.getTarget();
                 imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
             }
         }else if(MyUtil.shouldSetPlaceHolder(config)){
-            builder.placeholder(config.getPlaceHolderResId());
+            requestOptions.placeholder(config.getPlaceHolderResId());
             if(config.getTarget() instanceof ImageView){
                 ImageView imageView = (ImageView) config.getTarget();
                 imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
@@ -215,12 +179,11 @@ public class GlideLoader extends ILoader {
 
 
         if(config.getWidth()>0 && config.getHeight()>0){
-            builder.override(config.getWidth(),config.getHeight());
+            requestOptions.override(config.getWidth(),config.getHeight());
         }
-        builder = builder .bitmapTransform(getBitmapTransFormations(config));
 
         if(config.getErrorResId() >0){
-            builder.error(config.getErrorResId());
+            requestOptions.error(config.getErrorResId());
         }
 
 
@@ -228,8 +191,9 @@ public class GlideLoader extends ILoader {
         if(config.getTarget() instanceof ImageView){
             final ImageView imageView = (ImageView) config.getTarget();
             imageView.setTag(R.drawable.im_item_list_opt,config);
+            requestOptions.dontAnimate();
+            builder.apply(requestOptions);
 
-            builder.dontAnimate();
 
 
             //gif
@@ -240,17 +204,19 @@ public class GlideLoader extends ILoader {
                 }else if(MyUtil.shouldSetPlaceHolder(config)){
                     imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
                 }
+
                 Glide.with(config.getContext())
                         .load(config.getUrl())
                         .downloadOnly(new SimpleTarget<File>() {
                             @Override
-                            public void onResourceReady(File file, GlideAnimation<? super File> glideAnimation) {
+                            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                                 if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
                                     return;
                                 }
                                 pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
                                 try {
-                                    gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(file);
+                                    gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(resource);
+                                    imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),false));
                                     imageView.setImageDrawable(gifDrawable2);
                                 } catch (Throwable e) {
                                     e.printStackTrace();
@@ -262,8 +228,8 @@ public class GlideLoader extends ILoader {
                             }
 
                             @Override
-                            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                                super.onLoadFailed(e, errorDrawable);
+                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                super.onLoadFailed(errorDrawable);
                                 if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
                                     return;
                                 }
@@ -278,7 +244,7 @@ public class GlideLoader extends ILoader {
             config.loadStartTime = System.currentTimeMillis();
             builder.listener(new RequestListener() {
                 @Override
-                public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
                     if(GlobalConfig.debug){
                         Log.d("onException","thread :"+Thread.currentThread().getName() +",onException");
                         Log.d("onException","model :"+model);
@@ -308,7 +274,7 @@ public class GlideLoader extends ILoader {
                 }
 
                 @Override
-                public boolean onResourceReady(Object resource, final Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
                     if(target instanceof ImageViewTarget){
                         ImageViewTarget view = (ImageViewTarget) target;
                         ImageView imageView1 = (ImageView) view.getView();
@@ -325,13 +291,13 @@ public class GlideLoader extends ILoader {
                         }
                     }
 
-                    if(resource instanceof GlideBitmapDrawable){
+                    /*if(resource instanceof Bitmapdr){
                         GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
                         Bitmap bitmap = drawable.getBitmap();
                         if(GlobalConfig.debug){
                             Log.d("onResourceReady",MyUtil.printBitmap(bitmap));
                         }
-                    }else if(resource instanceof GifDrawable){
+                    }else */if(resource instanceof GifDrawable){
                         GifDrawable gifDrawable = (GifDrawable) resource;
                         //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
                         Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
@@ -344,16 +310,16 @@ public class GlideLoader extends ILoader {
                     if(GlobalConfig.debug){
                         Log.d("onResourceReady","model :"+model);
                         Log.d("onResourceReady","Target :"+target);
-                        Log.d("onResourceReady","isFromMemoryCache :"+isFromMemoryCache);
+                        Log.d("onResourceReady","isFromMemoryCache :");
                         Log.d("onResourceReady","isFirstResource :"+isFirstResource);
                     }
 
                     if(config.getImageListener() != null ) {
-                        if(resource instanceof GlideBitmapDrawable){
+                        /*if(resource instanceof GlideBitmapDrawable){
                             GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
                             Bitmap bitmap = drawable.getBitmap();
                             config.getImageListener().onSuccess(drawable,bitmap,bitmap.getWidth(),bitmap.getHeight());
-                        }else if(resource instanceof GifDrawable){
+                        }else */if(resource instanceof GifDrawable){
                             final GifDrawable gifDrawable = (GifDrawable) resource;
                             config.getImageListener().onSuccess(gifDrawable,gifDrawable.getFirstFrame(),gifDrawable.getFirstFrame().getWidth(),gifDrawable.getFirstFrame().getHeight());
                             if(gifDrawable.getFrameCount()> 8){
@@ -421,8 +387,17 @@ public class GlideLoader extends ILoader {
                     return false;
                 }
             }).into(imageView);
-            // builder.into(viewTarget);
+
         }
+    }
+
+
+    private RequestOptions buildOptions(SingleConfig config) {
+        RequestOptions options = new RequestOptions()
+                .format(DecodeFormat.PREFER_RGB_565)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .transform(getBitmapTransFormations(config));
+        return options;
     }
 
     public File getCacheFile(String url) {
@@ -487,27 +462,27 @@ public class GlideLoader extends ILoader {
         }
 
         Drawable drawable = v.getDrawable();
-        if(drawable instanceof GlideBitmapDrawable){
+       /* if(drawable instanceof GlideBitmapDrawable){
             GlideBitmapDrawable glideBitmapDrawable = (GlideBitmapDrawable) drawable;
             Bitmap bitmap = glideBitmapDrawable.getBitmap();
             desc += MyUtil.printBitmap(bitmap)+"\n";
             if (MyUtil.isBitmapTooLarge(bitmap.getWidth(),bitmap.getHeight(), v)) {
                 textView.setTextColor(Color.RED);
             }
-        }else if(drawable instanceof BitmapDrawable){
+        }else */if(drawable instanceof BitmapDrawable){
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             Bitmap bitmap = bitmapDrawable.getBitmap();
             desc += MyUtil.printBitmap(bitmap)+"\n";
             if (MyUtil.isBitmapTooLarge(bitmap.getWidth(),bitmap.getHeight(), v)) {
                 textView.setTextColor(Color.RED);
             }
-        }else if (drawable instanceof SquaringDrawable){
+        }else /*if (drawable instanceof SquaringDrawable){
             SquaringDrawable bitmap = (SquaringDrawable) drawable;
             desc += "\nSquaringDrawable, w:"+bitmap.getIntrinsicWidth() +",h:"+bitmap.getIntrinsicHeight()+"\n";
             if (MyUtil.isBitmapTooLarge(bitmap.getIntrinsicWidth(),bitmap.getIntrinsicHeight(), v)) {
                 textView.setTextColor(Color.RED);
             }
-        }else if(drawable instanceof GifDrawable){
+        }else*/ if(drawable instanceof GifDrawable){
             GifDrawable gifDrawable = (GifDrawable) drawable;
             //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
             desc +="gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount();
@@ -601,34 +576,50 @@ public class GlideLoader extends ILoader {
     }
 
     @Nullable
-    private DrawableTypeRequest getDrawableTypeRequest(SingleConfig config, RequestManager requestManager) {
-        DrawableTypeRequest request = null;
-        if(!TextUtils.isEmpty(config.getUrl())){
-            request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
-        }else if(!TextUtils.isEmpty(config.getFilePath())){
-            request= requestManager.load(config.getFilePath());
-        }else if(!TextUtils.isEmpty(config.getContentProvider())){
-            request= requestManager.loadFromMediaStore(Uri.parse(config.getContentProvider()));
-        }else if(config.getResId() != 0){
-            request= requestManager.load(config.getResId());
-        }else if(config.getBytes() != null){
-            request = requestManager.load(config.getBytes());
-        } else {
-            //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
-            int resId = getUseableResId(config);
-            if(resId != 0){
-                request = requestManager.load(resId);
-            }else {
-                request= requestManager.load("");
+    private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
+        RequestBuilder request = null;
+        if(requestManager  != null){
+            if(!TextUtils.isEmpty(config.getUrl())){
+                request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
+            }else if(!TextUtils.isEmpty(config.getFilePath())){
+                request= requestManager.load(config.getFilePath());
+            }else if(!TextUtils.isEmpty(config.getContentProvider())){
+                request= requestManager.load(Uri.parse(config.getContentProvider()));
+            }else if(config.getResId() != 0){
+                request= requestManager.load(config.getResId());
+            }else if(config.getBytes() != null){
+                request = requestManager.load(config.getBytes());
+            } else {
+                //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
+                int resId = getUseableResId(config);
+                if(resId != 0){
+                    request = requestManager.load(resId);
+                }else {
+                    request= requestManager.load("");
+                }
+            }
+        }else {
+            RequestManager requestManager1 = Glide.with(config.getContext());
+            if(!TextUtils.isEmpty(config.getUrl())){
+                request= requestManager1.load(MyUtil.appendUrl(config.getUrl()));
+            }else if(!TextUtils.isEmpty(config.getFilePath())){
+                request= requestManager1.load(config.getFilePath());
+            }else if(!TextUtils.isEmpty(config.getContentProvider())){
+                request= requestManager1.load(Uri.parse(config.getContentProvider()));
+            }else if(config.getResId() != 0){
+                request= requestManager1.load(config.getResId());
+            }else if(config.getBytes() != null){
+                request = requestManager1.load(config.getBytes());
+            } else {
+                //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
+                int resId = getUseableResId(config);
+                if(resId != 0){
+                    request = requestManager1.load(resId);
+                }else {
+                    request= requestManager1.load("");
+                }
             }
         }
-       /* if(!TextUtils.isEmpty(config.getUrl()) && config.getUrl().contains(".gif")){
-            request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存result
-        }else{
-            request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
-        }*/
-
-        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
 
         return request;
     }
@@ -644,14 +635,14 @@ public class GlideLoader extends ILoader {
         }
 
         if(config.getScaleMode() == ScaleMode.CENTER_CROP){
-            transformations.add(new CenterCrop(config.getContext()));
+            transformations.add(new CenterCrop());
         }else{
-            transformations.add(new FitCenter(config.getContext()));
+            transformations.add(new FitCenter());
         }
 
 
         if(config.isNeedBlur()){
-            transformations.add(new BlurTransformation(config.getContext(), config.getBlurRadius()));
+            transformations.add(new BlurTransformation( config.getBlurRadius()));
         }
 
         switch (shapeMode){
@@ -672,22 +663,22 @@ public class GlideLoader extends ILoader {
                         config.getRectRoundRadius(), 0,config.getBorderWidth(),
                         config.getContext().getResources().getColor(config.getBorderColor()),0x0b1100));*/
 
-                if(config.getBorderWidth() > 0 && config.getBorderColor() != 0){
+                /*if(config.getBorderWidth() > 0 && config.getBorderColor() != 0){
                     transformations.add(new BorderRoundTransformation(config.getContext(),
                             config.getRectRoundRadius(), 0,config.getBorderWidth(),
                             config.getContext().getResources().getColor(config.getBorderColor()),0x0b1100));
-                }else {
-                    transformations.add(new RoundedCornersTransformation(config.getContext(),
+                }else {*/
+                    transformations.add(new RoundedCornersTransformation(
                             config.getRectRoundRadius(),config.getBorderWidth(), cornerType));
-                }
+               // }
 
                 break;
             case ShapeMode.OVAL:
                 if(config.getBorderWidth() > 0 && config.getBorderColor() != 0){
-                    transformations.add( new CropCircleWithBorderTransformation(config.getContext(),
+                    transformations.add( new CropCircleWithBorderTransformation(
                             config.getBorderWidth(),config.getContext().getResources().getColor(config.getBorderColor())));
                 }else {
-                    transformations.add( new CropCircleTransformation(config.getContext()));
+                    transformations.add( new CropCircleTransformation());
                 }
 
 
@@ -746,12 +737,11 @@ public class GlideLoader extends ILoader {
 
     @Override
     public void clearCacheByUrl(String url) {
-
     }
 
     @Override
     public void clearMomoryCache(View view) {
-        Glide.clear(view);
+        Glide.with(view).clear(view);
     }
 
     @Override
@@ -772,28 +762,48 @@ public class GlideLoader extends ILoader {
 
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
-        MyUtil.runOnUIThread(new Runnable() {
+        if(executor == null){
+            executor = Executors.newCachedThreadPool();
+        }
+
+        executor.execute(new Runnable() {
             @Override
             public void run() {
-                Glide.with(ImageLoader.context)
-                        .load(url)
-                        .downloadOnly(new SimpleTarget<File>() {
+                try {
+                    final File resource =    Glide.with(GlobalConfig.context)
+                            .asFile()
+                            .load(new ProgressableGlideUrl(url))
+                            .submit().get();
+                    if(resource.exists() && resource.isFile() && resource.length() > 50){
+                        Log.i("glide onResourceReady","onResourceReady  --"+ resource.getAbsolutePath());
+                        final int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
+                        MyUtil.runOnUIThread(new Runnable() {
                             @Override
-                            public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-                                Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",downloadOnly");
-                                if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
-                                    int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
-                                    getter.onSuccess(resource,wh[0],wh[1]);
-                                }else {
-                                    getter.onFail(new Throwable("resource not exist"));
-                                }
-                            }
-
-                            @Override
-                            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                                getter.onFail(e);
+                            public void run() {
+                                getter.onSuccess(resource,wh[0],wh[1]);
                             }
                         });
+
+
+                    }else {
+                        Log.w(" glide onloadfailed","onLoadFailed  --"+ url);
+                        MyUtil.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getter.onFail(new Throwable("file not exist"));
+                            }
+                        });
+                    }
+                }catch (final Throwable throwable){
+                    throwable.printStackTrace();
+                    MyUtil.runOnUIThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getter.onFail(throwable);
+                        }
+                    });
+
+                }
             }
         });
 
@@ -837,12 +847,12 @@ public class GlideLoader extends ILoader {
 
     @Override
     public void trimMemory(int level) {
-        Glide.with(GlobalConfig.context).onTrimMemory(level);
+        Glide.get(GlobalConfig.context).onTrimMemory(level );
     }
 
     @Override
     public void onLowMemory() {
-        Glide.with(GlobalConfig.context).onLowMemory();
+        Glide.get(GlobalConfig.context).onLowMemory();
     }
 
     @Override
@@ -920,8 +930,12 @@ public class GlideLoader extends ILoader {
         }
 
         @Override
-        public void updateDiskCacheKey(MessageDigest messageDigest) throws UnsupportedEncodingException {
-            messageDigest.update(id.getBytes(STRING_CHARSET_NAME));
+        public void updateDiskCacheKey(MessageDigest messageDigest) {
+            try {
+                messageDigest.update(id.getBytes(STRING_CHARSET_NAME));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             signature.updateDiskCacheKey(messageDigest);
         }
     }
@@ -940,8 +954,6 @@ public class GlideLoader extends ILoader {
                     key.updateDiskCacheKey(messageDigest);
                     safeKey = Util.sha256BytesToHex(messageDigest.digest());
                 } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
                 synchronized (loadIdToSafeHash) {

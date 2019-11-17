@@ -45,7 +45,7 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
     compile project(':fresco')
-    compile project(':glide')
+    compile project(':glidev4')
     compile project(':memory')
     //compile project(':picasso')
 
@@ -74,6 +74,26 @@ dependencies {
 
     compile 'org.raphets:roundimageview:1.2.0'
 
+    configurations.all{
+        resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.12.0'
+        resolutionStrategy.force 'com.squareup.okio:okio:1.15.0'
+    }
+
 
 
 }
+
+configurations.all {
+
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '28.0.0' //这里改为你项目使用的版本即可
+            }
+        }
+    }
+
+}
+
+

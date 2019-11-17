@@ -80,7 +80,7 @@ import static com.hss01248.image.config.GlobalConfig.context;
  * 参考: https://github.com/ladingwu/ImageLoaderFramework/blob/5b943f69f042d153fdde3bb767d68072422f696d/fresco/src/main/java/com/ladingwu/frescolibrary/FrescoImageLoader.java
  */
 
-public class FrescoLoader implements ILoader {
+public class FrescoLoader extends ILoader {
     @Override
     public void init(final Context context, int cacheSizeInM) {
         DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(context)
@@ -113,24 +113,22 @@ public class FrescoLoader implements ILoader {
 
     }
 
+
+
     @Override
-    public void request(SingleConfig config) {
-        if(config.isAsBitmap()){
-            requestBitmap(config);
+    public void requestAsBitmap(SingleConfig config) {
+        requestBitmap(config);
+    }
+
+    @Override
+    public void requestForNormalDiaplay(SingleConfig config) {
+        if(config.getTarget() instanceof SimpleDraweeView){
+            requestForSimpleDraweeView((SimpleDraweeView) config.getTarget(),config);
+        }else if(config.getTarget() instanceof ImageView){
+            requestForImageView((ImageView) config.getTarget(),config);
         }else {
-            //requestForImageView(config);
-            if(config.getTarget() instanceof BigImageView){
-                MyUtil.viewBigImage(config);
-            }else if(config.getTarget() instanceof SimpleDraweeView){
-                requestForSimpleDraweeView((SimpleDraweeView) config.getTarget(),config);
-            }else if(config.getTarget() instanceof ImageView){
-                requestForImageView((ImageView) config.getTarget(),config);
-            }else {
-                //todo 抛出异常
-            }
+            //todo 抛出异常
         }
-
-
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.hss01248.image.config;
 
 import android.app.Activity;
+
+import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.R;
 import com.hss01248.image.interfaces.ImageListener;
@@ -291,7 +293,15 @@ public class SingleConfig {
             if(interceptor != null && interceptor.intercept(this)){
                 return;
             }
-            GlobalConfig.getLoader().request(this);
+
+            if(isAsBitmap()){
+                GlobalConfig.getLoader().requestAsBitmap(this);
+            }else if(target instanceof BigImageView){
+                MyUtil.viewBigImage(this);
+            }else {
+                GlobalConfig.getLoader().requestForNormalDiaplay(this);
+            }
+
 
         }
     }
