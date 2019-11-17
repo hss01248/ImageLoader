@@ -64,6 +64,8 @@ import android.widget.LinearLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -324,7 +326,8 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         mThumbnail = thumbnail;
         if (url.startsWith("file:///")) {
             onStart();
-            showContent(new File(url.substring(8)));
+
+            showContent(new File(URLDecoder.decode(url.substring(8))));
             return;
         }
 
