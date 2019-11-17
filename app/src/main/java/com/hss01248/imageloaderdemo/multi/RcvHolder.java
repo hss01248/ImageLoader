@@ -3,10 +3,7 @@ package com.hss01248.imageloaderdemo.multi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Debug;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -20,26 +17,16 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import com.elvishew.xlog.XLog;
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
 import com.hss01248.glideloader.ImageLoaderRoundImageView;
-import com.hss01248.glideloader.drawable.AutoRotateDrawable;
+import com.hss01248.image.drawable.AutoRotateDrawable;
 import com.hss01248.image.ImageLoader;
-import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.ScaleMode;
-import com.hss01248.image.config.SingleConfig;
-import com.hss01248.image.interfaces.FileGetter;
-import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.imageloaderdemo.BigImageActy;
 import com.hss01248.imageloaderdemo.R;
-import com.makeramen.roundedimageview.RoundedImageView;
 
-import org.raphets.roundimageview.RoundImageView;
-
-import java.io.File;
 import java.util.List;
-import java.util.PriorityQueue;
 
 /**
  * Created by huangshuisheng on 2017/9/28.

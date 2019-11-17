@@ -1,4 +1,4 @@
-package com.hss01248.glideloader.drawable;
+package com.hss01248.image.drawable;
 
 /**
  * time:2019/11/4

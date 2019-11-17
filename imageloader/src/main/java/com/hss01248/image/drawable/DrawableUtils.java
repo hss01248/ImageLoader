@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.hss01248.glideloader.drawable;
+package com.hss01248.image.drawable;
 
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;

@@ -34,23 +34,17 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.event.CacheHitEvent;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.loader.BigLoader;
-import com.github.piasy.biv.progress.OkHttpProgressResponseBody;
-import com.github.piasy.biv.progress.ProgressInterceptor;
 import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.R;
-import com.hss01248.glideloader.config.ProgressableGlideUrl;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.InputStream;
 
 import okhttp3.OkHttpClient;
 

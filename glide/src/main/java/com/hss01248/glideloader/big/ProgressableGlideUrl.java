@@ -1,4 +1,4 @@
-package com.hss01248.glideloader.config;
+package com.hss01248.glideloader.big;
 
 import android.net.Uri;
 import android.util.Log;
