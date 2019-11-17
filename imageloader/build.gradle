@@ -2,12 +2,11 @@ apply plugin: 'com.android.library'
 
 android {
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -35,12 +34,12 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    provided 'com.android.support:appcompat-v7:26.1.0'
-    provided 'com.android.support:recyclerview-v7:26.1.0'
-    api "com.android.support:exifinterface:26.1.0"
+    provided 'com.android.support:appcompat-v7:28.0.0'
+    provided 'com.android.support:recyclerview-v7:28.0.0'
+    api "com.android.support:exifinterface:28.0.0"
     testCompile 'junit:junit:4.12'
     //compile "com.facebook.fresco:imagepipeline-okhttp3:0.12.0+"
-    compile 'com.squareup.okhttp3:okhttp:3.9.1'
+    compile 'com.squareup.okhttp3:okhttp:3.14.4'
     compile ('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'){
         exclude group: 'com.android.support'
     }
@@ -60,8 +59,10 @@ dependencies {
     }
     //implementation 'org.apache.commons:commons-compress:1.11'
     //implementation 'org.apache.commons:commons-lang3:3.4'
-   //implementation 'org.apache.commons:commons-io:1.3.2'
-    api 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
+    api 'org.apache.commons:commons-io:1.3.2'
+    api ('pl.droidsonroids.gif:android-gif-drawable:1.2.19'){
+        exclude group: 'com.android.support'
+    }
 
    /* compile 'com.github.piasy:BigImageViewer:1.2.7'
     compile 'com.github.piasy:ProgressPieIndicator:1.2.7'
