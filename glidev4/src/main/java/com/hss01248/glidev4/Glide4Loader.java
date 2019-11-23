@@ -218,10 +218,18 @@ public class Glide4Loader extends ILoader {
                                     gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(resource);
                                     imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),false));
                                     imageView.setImageDrawable(gifDrawable2);
+                                    if(config.getImageListener() != null){
+                                        config.getImageListener().onSuccess(gifDrawable2,null,
+                                                gifDrawable2.getIntrinsicWidth(),gifDrawable2.getIntrinsicHeight());
+                                    }
                                 } catch (Throwable e) {
                                     e.printStackTrace();
                                     if(config.getErrorResId() >0){
+                                        imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
                                         imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
+                                    }
+                                    if(config.getImageListener() != null){
+                                        config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                                     }
 
                                 }

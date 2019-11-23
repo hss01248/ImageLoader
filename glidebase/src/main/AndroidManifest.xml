@@ -1,2 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hss01248.glidebase" />
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.hss01248.glidebase">
+    <uses-sdk tools:overrideLibrary="kale.adapter,pl.droidsonroids.gif,org.raphets.roundimageview"></uses-sdk>
+</manifest>

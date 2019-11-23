@@ -693,10 +693,7 @@ public class SingleConfig {
              new SingleConfig(this).show();
         }
 
-        public ConfigBuilder listener(BitmapListener bitmapListener){
-            this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
-            return this;
-        }
+
 
         public void asBitmap(BitmapListener bitmapListener){
             this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
