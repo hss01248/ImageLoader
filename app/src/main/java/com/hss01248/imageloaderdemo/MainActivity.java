@@ -1,5 +1,6 @@
 package com.hss01248.imageloaderdemo;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
+import com.blankj.utilcode.util.PermissionUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -26,6 +29,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.memory.ImageMemoryHookManager;
+import com.hss01248.imagelist.album.ImageListView;
+import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.activity_main)
     ScrollView activityMain;
 
+    @BindView(R.id.btn_album)
+    Button btnAlbum;
+    @BindView(R.id.btn_dir)
+    Button btnDir;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences.edit().putString("shss","1233444hhhhh").commit();
         //sharedPreferences.getString("shss","ddddd");
         Debug.stopMethodTracing();*/
+
 
 
 
@@ -163,14 +174,14 @@ public class MainActivity extends AppCompatActivity {
                 //.into(ivUrlBlur);
 
 
-        Glide.with(MainActivity.this)
+        /*Glide.with(MainActivity.this)
                 .load("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg")
                 //.load("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif")
                // .asGif()
                 //.asBitmap()
                // .bitmapTransform(new CenterCrop(this),new RoundedCornersTransformation(this,30,0))
                 //.diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .skipMemoryCache(true);
+                .skipMemoryCache(true);*/
                 //.into(ivUrl);
                /* .listener(new RequestListener<String, Bitmap>() {
                     @Override
@@ -253,7 +264,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager,R.id.btn_recycle,R.id.btn_fresco,R.id.btn_scale})
+    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager,R.id.btn_recycle,R.id.btn_fresco,R.id.btn_scale
+    ,R.id.btn_album,R.id.btn_dir})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_bigpic:{
@@ -263,6 +275,36 @@ public class MainActivity extends AppCompatActivity {
             }
 
                 break;
+            case R.id.btn_album:{
+                /*oid.providers.media.MediaProvider uri content://media/external/images/media from
+                pid=31500, uid=10576 requires android.permission.READ_EXTERNAL_STORAGE, or grantUriPermission()*/
+
+                PermissionUtils.requestPermissions(this,9, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        new PermissionUtils.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+                                ImageListView view1 = new ImageListView(MainActivity.this);
+                                ImageMediaCenterUtil.showViewAsDialog(view1);
+                                view1.showAllAlbums();
+                            }
+
+                            @Override
+                            public void onPermissionDenied(String[] deniedPermissions) {
+
+                            }
+                        });
+
+
+            }
+
+            break;
+            case R.id.btn_dir:{
+                ImageListView view1 = new ImageListView(this);
+                ImageMediaCenterUtil.showViewAsDialog(view1);
+                view1.showImagesInDir(new File(Environment.getExternalStorageDirectory(),"36021").getAbsolutePath());
+            }
+
+            break;
             case R.id.btn_bigpic_viewpager:{
                 Intent intent = new Intent(this,ViewpagerActy.class);
                 startActivity(intent);

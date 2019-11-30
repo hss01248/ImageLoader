@@ -300,11 +300,11 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         }
     }
 
-    public void showImage(Uri uri) {
+    public void showImage(String uri) {
         showImage(Uri.EMPTY, uri);
     }
 
-    public void showImage(Uri thumbnail, Uri uri) {
+    public void showImage(Uri thumbnail, String uri) {
         //Log.d("BigImageView", "showImage new url: "+ uri.toString());
         // Log.d("BigImageView", "showImage  old url: " + this.url);
 
@@ -312,7 +312,7 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
             onStart();
         }*/
 
-        this.url = uri.toString();
+        this.url = uri;
         if(url.startsWith("http")){
             if(!url.contains(OkHttpProgressResponseBody.KEY_PREGRESS)){
                 url += OkHttpProgressResponseBody.KEY_PREGRESS;
@@ -326,8 +326,12 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         mThumbnail = thumbnail;
         if (url.startsWith("file:///")) {
             onStart();
-
             showContent(new File(URLDecoder.decode(url.substring(8))));
+            return;
+        }
+
+        if(new File(url).exists()){
+            showContent(new File(url));
             return;
         }
 
@@ -340,11 +344,6 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
             onStart();
             mImageLoader.loadImage(Uri.parse(url));
         }
-
-
-        //EventBus.getDefault().post(new StartEvent(url));
-        //currentState = STATE_STATRTED;
-
     }
 
 

@@ -95,7 +95,7 @@ public class MyUtil {
 
     public static void viewBigImage(SingleConfig config) {
         BigImageView bigImageView = (BigImageView) config.getTarget();
-        bigImageView.showImage(buildUriByType(config));
+        bigImageView.showImage(getUsablePath(config));
         //bigimageview对缩略图的支持并不好
        /* if(TextUtils.isEmpty(config.getThumbnailUrl())){
             if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){
@@ -242,7 +242,7 @@ public class MyUtil {
      */
     public static Uri buildUriByType(SingleConfig config) {
 
-        Log.e("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
+        Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
                 .getContentProvider());
 
         if (!TextUtils.isEmpty(config.getUrl())) {
@@ -272,6 +272,39 @@ public class MyUtil {
         }
 
         return null;
+    }
+
+    public static String getUsablePath(SingleConfig config){
+        Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
+                .getContentProvider());
+
+        if (!TextUtils.isEmpty(config.getUrl())) {
+            String url = MyUtil.appendUrl(config.getUrl());
+            return url;
+        }
+
+        if (config.getResId() > 0) {
+            return "res://imageloader/" + config.getResId();
+        }
+
+        if (!TextUtils.isEmpty(config.getFilePath())) {
+            File file = new File(config.getFilePath());
+            if (file.exists()) {
+                return config.getFilePath();
+            } else {
+                return "";
+            }
+        }
+
+        if (!TextUtils.isEmpty(config.getContentProvider())) {
+            String content = config.getContentProvider();
+            if (!content.startsWith("content")) {
+                content = "content://" + content;
+            }
+            return content;
+        }
+
+        return "";
     }
 
 

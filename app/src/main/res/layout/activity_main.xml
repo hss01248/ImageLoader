@@ -19,6 +19,20 @@
         android:layout_height="match_parent">
 
         <Button
+            android:id="@+id/btn_album"
+            android:layout_marginBottom="30dp"
+            android:text="浏览系统相册"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btn_dir"
+            android:text="浏览特定文件夹"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:id="@+id/btn_bigpic"
             android:text="加载大图"
             android:layout_width="match_parent"
@@ -46,6 +60,8 @@
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+
 
     <ImageView
         android:id="@+id/iv_url"

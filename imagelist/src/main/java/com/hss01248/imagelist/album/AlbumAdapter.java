@@ -1,0 +1,73 @@
+package com.hss01248.imagelist.album;
+
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
+import com.hss01248.image.ImageLoader;
+import com.hss01248.image.MyUtil;
+import com.hss01248.image.config.ScaleMode;
+import com.hss01248.image.interfaces.FileGetter;
+import com.hss01248.image.interfaces.ImageListener;
+import com.hss01248.imagelist.R;
+
+import java.io.File;
+import java.util.List;
+
+/**
+ * time:2019/11/12
+ * author:hss
+ * desription:
+ */
+public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implements SectionTitleProvider {
+    public AlbumAdapter(int layoutResId, @Nullable List<Album> data) {
+        super(layoutResId, data);
+    }
+
+    public AlbumAdapter(@Nullable List<Album> data) {
+        super(data);
+    }
+
+    public AlbumAdapter(int layoutResId) {
+        super(layoutResId);
+    }
+
+    @Override
+    protected void convert(@NonNull final BaseViewHolder helper, final Album item) {
+        helper.getView(R.id.item_iv).setTag(R.id.item_iv,item);
+        ImageView imageView = helper.getView(R.id.item_iv);
+        imageView.setAdjustViewBounds(false);
+        ImageLoader.with(helper.itemView.getContext())
+                .file(item.cover)
+                .scale(ScaleMode.CENTER_CROP)
+                .loading(R.drawable.iv_loading_trans)
+                .error(R.drawable.im_item_list_opt_error)
+                .into(imageView);
+        helper.setText(R.id.tv_info,item.name);
+        helper.getConvertView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageListView listView = new ImageListView(v.getContext());
+                ImageMediaCenterUtil.showViewAsDialog(listView);
+                listView.showImagesInAlbum(item.name);
+            }
+        });
+
+
+
+
+
+    }
+
+
+    @Override
+    public String getSectionTitle(int position) {
+        return position+"";
+    }
+}

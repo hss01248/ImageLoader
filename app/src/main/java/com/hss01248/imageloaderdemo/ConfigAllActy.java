@@ -17,7 +17,7 @@ import com.elvishew.xlog.XLog;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.interfaces.MyItemDialogListener;
 import com.hss01248.frescoloader.FrescoLoader;
-import com.hss01248.glidev4.Glide4Loader;
+import com.hss01248.glideloader.GlideLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
@@ -445,9 +445,9 @@ public class ConfigAllActy extends Activity {
 
             }else if(loaderId == R.id.rb_glide){
                 if(hasGlideInited){
-                    GlobalConfig.setLoader(new Glide4Loader());
+                    GlobalConfig.setLoader(new GlideLoader());
                 }else {
-                    ImageLoader.init(getApplicationContext(),60,new Glide4Loader());
+                    ImageLoader.init(getApplicationContext(),60,new GlideLoader());
                     hasGlideInited = true;
                 }
             }else if(loaderId == R.id.rb_picasso){
