@@ -540,7 +540,9 @@ public class GlideLoader extends ILoader {
 
         desc += "\n" + MyUtil.printImageView(v);
 
-        getFileFromDiskCache(config.getUrl(), new FileGetter() {
+        textView.setText(desc);
+
+        getFileFromDiskCache(config.getUsableString(), new FileGetter() {
             @Override
             public void onSuccess(File file, int width, int height) {
                 String text = textView.getText().toString();
@@ -562,7 +564,11 @@ public class GlideLoader extends ILoader {
 
 
 
-        textView.setText(desc);
+
+
+
+
+
 
         textView.setPadding(20,20,20,20);
 

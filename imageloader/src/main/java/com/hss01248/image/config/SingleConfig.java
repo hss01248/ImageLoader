@@ -112,18 +112,10 @@ public class SingleConfig {
         return url;
     }
 
-    public String getUsableString(){
-        if(!TextUtils.isEmpty(url)){
-            return url;
-        }
-        if(!TextUtils.isEmpty(filePath)){
-            return filePath;
-        }
-        if(!TextUtils.isEmpty(thumbnailUrl)){
-            return thumbnailUrl;
-        }
-        return "";
 
+
+    public String getUsableString(){
+       return MyUtil.getUsablePath(this);
     }
 
     public int getWidth() {
