@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -43,6 +44,10 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         helper.getView(R.id.item_iv).setTag(R.id.item_iv,item);
         ImageView imageView = helper.getView(R.id.item_iv);
         imageView.setAdjustViewBounds(false);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
+        params.height = imageView.getContext().getResources().getDisplayMetrics().widthPixels/2;
+        imageView.setLayoutParams(params);
+
         ImageLoader.with(helper.itemView.getContext())
                 .file(item.cover)
                 .scale(ScaleMode.CENTER_CROP)
@@ -55,7 +60,7 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
             public void onClick(View v) {
                 ImageListView listView = new ImageListView(v.getContext());
                 ImageMediaCenterUtil.showViewAsDialog(listView);
-                listView.showImagesInAlbum(item.name);
+                listView.showImagesInAlbum(item);
             }
         });
 

@@ -3,6 +3,8 @@ package com.hss01248.imagelist.album;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.File;
+
 /**
  * Created by Darshan on 4/18/2015.
  */
@@ -10,6 +12,26 @@ public class Image implements Parcelable {
     public long id;
     public String name;
     public String path;
+    public long fileSize;
+    public long addDate;
+    public long modifiedTime;
+    public long width;
+    public long height;
+    public String mimeType;
+
+    public Image(long id, String name, String path, long fileSize, long addDate,
+                 long modifiedTime, long width, long height, String mimeType) {
+        this.id = id;
+        this.name = name;
+        this.path = path;
+        this.fileSize = fileSize;
+        this.addDate = addDate;
+        this.modifiedTime = modifiedTime;
+        this.width = width;
+        this.height = height;
+        this.mimeType = mimeType;
+    }
+
     public boolean isSelected;
     public int quality = -1;
 
@@ -18,6 +40,12 @@ public class Image implements Parcelable {
         this.name = name;
         this.path = path;
         this.isSelected = isSelected;
+    }
+
+    public void initFileSize(){
+        if(fileSize == 0){
+            this.fileSize = new File(path).length();
+        }
     }
 
     @Override

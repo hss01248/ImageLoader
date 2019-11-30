@@ -1,10 +1,12 @@
 package com.hss01248.imagelist.album;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
@@ -28,6 +31,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,6 +51,11 @@ public class ImageListView extends FrameLayout {
     boolean isAll;
     FastScroller fastScroller;
     RecyclerView.Adapter adapter;
+    RelativeLayout titleBar;
+    TextView title;
+    TextView tvRIght;
+
+
 
     public ImageListView( Context context) {
         this(context,null,0);
@@ -64,7 +75,66 @@ public class ImageListView extends FrameLayout {
         this.addView(layout,0);
          recyclerView = findViewById(R.id.list);
         fastScroller = (FastScroller) findViewById(R.id.fastscroll);
+        titleBar = findViewById(R.id.titlebar);
+        title = findViewById(R.id.title);
+        tvRIght = findViewById(R.id.tv_right);
+        initTitlebar();
 
+    }
+
+    private void initTitlebar() {
+        tvRIght.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final BaseQuickAdapter adapter= (BaseQuickAdapter) recyclerView.getAdapter();
+                final List datas = adapter.getData();
+                if(datas.get(0) instanceof Image){
+                    String[] strings = new String[]{"日期","日期(倒序)","文件名","文件大小","文件大小(倒序)"};
+
+                    new AlertDialog.Builder(v.getContext())
+                            .setItems(strings, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, final int which) {
+                                    dialog.dismiss();
+
+                                    List<Image> datas2 = datas;
+                                    Collections.sort(datas2, new Comparator<Image>() {
+                                        @Override
+                                        public int compare(Image o1, Image o2) {
+                                            if(which ==0){
+                                                return (int) (o1.addDate- o2.addDate);
+                                            }else if(which == 1){
+                                                return (int) (o2.addDate- o1.addDate);
+                                            }else if(which == 2){
+                                                return o1.name.compareTo(o2.name);
+                                            }else if(which == 3){
+                                                return (int) (o1.fileSize- o2.fileSize);
+                                            }else if(which == 4){
+                                                return (int) (o2.fileSize- o1.fileSize);
+                                            }else {
+                                                return (int) (o2.addDate- o1.addDate);
+                                            }
+
+                                        }
+                                    });
+                                    adapter.replaceData(datas2);
+
+                                }
+                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            }).create().show();
+
+
+
+
+
+                }
+
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -86,6 +156,7 @@ public class ImageListView extends FrameLayout {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         fastScroller.setRecyclerView(recyclerView);
+        fastScroller.setVisibility(VISIBLE);
 
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -98,7 +169,7 @@ public class ImageListView extends FrameLayout {
 
 
 
-    public void showImagesInDir(String dirPath){
+    public void showImagesInDir(final String dirPath){
         File dir = new File(dirPath);
         if(!dir.exists() || !dir.isDirectory()){
             Log.w(TAG,dirPath  + " is not exist or not a directory!");
@@ -115,52 +186,69 @@ public class ImageListView extends FrameLayout {
             return;
         }
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(files.length > 100 ? 3 : 2, StaggeredGridLayoutManager.VERTICAL));
-        final List<String> paths = new ArrayList<>();
+
+        final List<Image> images = new ArrayList<>();
         for (String name : files) {
-            paths.add(dirPath+"/"+name);
+
+            Image image = new Image(0,name,dirPath+"/"+name,false);
+            images.add(image);
         }
-        ImgItemAdapter imgItemAdapter = null;
-        if(adapter !=null && adapter instanceof ImgItemAdapter){
-             imgItemAdapter = (ImgItemAdapter) adapter;
-            imgItemAdapter.replaceData(paths);
-        }else {
-             imgItemAdapter = new ImgItemAdapter(R.layout.imglist_item_iv, paths);
-            adapter = imgItemAdapter;
-            recyclerView.setAdapter(imgItemAdapter);
-            imgItemAdapter.notifyDataSetChanged();
-            fastScroller.setRecyclerView(recyclerView);
-        }
+
+        final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, images);
+        adapter = imgItemAdapter;
+        recyclerView.setAdapter(imgItemAdapter);
+        imgItemAdapter.notifyDataSetChanged();
+        fastScroller.setRecyclerView(recyclerView);
+        fastScroller.setVisibility(VISIBLE);
+        titleBar.setVisibility(VISIBLE);
+
         imgItemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                final List<String> paths = new ArrayList<>();
+                List<Image> images2 = imgItemAdapter.getData();
+                for (Image image : images2) {
+                    paths.add(image.path);
+                }
                 ImageMediaCenterUtil.showBigImag(getContext(),paths,position);
             }
         });
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (Image image : images) {
+                   image.initFileSize();
+                }
+            }
+        }).start();
 
 
 
 
     }
 
-    public void showImagesInAlbum(String albumName){
-
-        ImageMediaCenterUtil.listImagesByAlbumName(getContext(), albumName, new NormalCallback<List<Image>>() {
+    public void showImagesInAlbum(Album album){
+        titleBar.setVisibility(VISIBLE);
+        ImageMediaCenterUtil.listImagesByAlbumName(getContext(), album.id, new NormalCallback<List<Image>>() {
             @Override
-            public void onSuccess(List<Image> images, Object extra) {
-                final List<String> paths = new ArrayList<>(images.size());
-                for (Image image : images) {
-                    paths.add(image.path);
-                }
+            public void onSuccess(final List<Image> images, Object extra) {
                 recyclerView.setLayoutManager(new StaggeredGridLayoutManager(images.size() > 100 ? 3 : 2, StaggeredGridLayoutManager.VERTICAL));
-                ImgItemAdapter imgItemAdapter = new ImgItemAdapter(R.layout.imglist_item_iv, paths);
+                final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, images);
                 adapter = imgItemAdapter;
                 recyclerView.setAdapter(imgItemAdapter);
                 imgItemAdapter.notifyDataSetChanged();
                 fastScroller.setRecyclerView(recyclerView);
+                fastScroller.setVisibility(VISIBLE);
 
                 imgItemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                     @Override
                     public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                        final List<String> paths = new ArrayList<>();
+                        List<Image> images2 = imgItemAdapter.getData();
+                        for (Image image : images2) {
+                            paths.add(image.path);
+                        }
                         ImageMediaCenterUtil.showBigImag(getContext(),paths,position);
                     }
                 });
@@ -187,6 +275,7 @@ public class ImageListView extends FrameLayout {
                 recyclerView.setAdapter(imgItemAdapter);
                 imgItemAdapter.notifyDataSetChanged();
                 fastScroller.setRecyclerView(recyclerView);
+                fastScroller.setVisibility(VISIBLE);
 
 
             }

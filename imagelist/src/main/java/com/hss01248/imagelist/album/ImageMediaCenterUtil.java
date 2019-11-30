@@ -89,7 +89,7 @@ public class ImageMediaCenterUtil {
                             file = new File(image);
                             Log.d("ImageMediaCenterUtil",file.getAbsolutePath());
                             if (file.exists()) {
-                                Album album1 = new Album(album, image);
+                                Album album1 = new Album(album, image,albumId);
                                 albums.add(album1);
                                 albumSet.add(albumId);
 
@@ -134,17 +134,25 @@ public class ImageMediaCenterUtil {
         thread.start();
     }
 
-    public static void listImagesByAlbumName(final Context context, final String albumName, final NormalCallback<List<Image>> callback){
+    public static void listImagesByAlbumName(final Context context, final long albumId, final NormalCallback<List<Image>> callback){
         final Handler mainHandler = new Handler(Looper.getMainLooper());
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                 String[] projection = new String[]{MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA};
+                 String[] projection = new String[]{MediaStore.Images.Media._ID,
+                         MediaStore.Images.Media.DISPLAY_NAME,
+                         MediaStore.Images.Media.DATA,
+                         MediaStore.Images.Media.SIZE,
+                         MediaStore.Images.Media.DATE_ADDED,
+                         MediaStore.Images.Media.DATE_MODIFIED,
+                         MediaStore.Images.Media.WIDTH,
+                         MediaStore.Images.Media.HEIGHT,
+                         MediaStore.Images.Media.MIME_TYPE};
 
                 android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
                 Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
-                        MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?", new String[]{albumName}, MediaStore.Images.Media.DATE_ADDED);
+                        MediaStore.Images.Media.BUCKET_ID + " =?", new String[]{albumId+""}, MediaStore.Images.Media.DATE_ADDED);
                 if (cursor == null) {
                     mainHandler.post(new Runnable() {
                         @Override
@@ -169,15 +177,28 @@ public class ImageMediaCenterUtil {
                             return;
                         }
 
-                        long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
-                        String name = cursor.getString(cursor.getColumnIndex(projection[1]));
+                        //long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
+                       // String name = cursor.getString(cursor.getColumnIndex(projection[1]));
                         String path = cursor.getString(cursor.getColumnIndex(projection[2]));
 
 
                         File file = new File(path);
                         Log.i("path", path);
                         if (file.exists()) {
-                            images.add(new Image(id, name, path, false));
+                            images.add(new Image(
+                                    cursor.getLong(cursor.getColumnIndex(projection[0])),//_ID
+                                    cursor.getString(cursor.getColumnIndex(projection[1])),//DISPLAY_NAME
+                                    path,//DATA
+                                    cursor.getLong(cursor.getColumnIndex(projection[3])),//SIZE
+                                    cursor.getLong(cursor.getColumnIndex(projection[4])),//DATE_ADDED
+                                    cursor.getLong(cursor.getColumnIndex(projection[5])),//DATE_MODIFIED
+                                    cursor.getLong(cursor.getColumnIndex(projection[6])),//WIDTH
+                                    cursor.getLong(cursor.getColumnIndex(projection[6])),//HEIGHT
+                                    cursor.getString(cursor.getColumnIndex(projection[7]))//MIME_TYPE
+
+
+
+                            ));
                         }
 
                     } while (cursor.moveToPrevious());

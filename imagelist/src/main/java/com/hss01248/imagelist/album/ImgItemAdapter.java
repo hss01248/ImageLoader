@@ -70,6 +70,8 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
                 })
                 .into(helper.getView(R.id.item_iv));
 
+        //helper.setText(R.id.tv_info,width+"x"+height+","+ MyUtil.formatFileSize(file.length()));
+
 
 
     }
