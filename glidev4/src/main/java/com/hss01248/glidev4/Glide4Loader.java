@@ -771,6 +771,12 @@ public class Glide4Loader extends ILoader {
 
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
+        File file = new File(url);
+        if(file.exists() && file.isFile()){
+            int[] wh = MyUtil.getImageWidthHeight(url);
+            getter.onSuccess(file,wh[0],wh[1]);
+            return;
+        }
         if(executor == null){
             executor = Executors.newCachedThreadPool();
         }

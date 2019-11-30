@@ -45,6 +45,7 @@ import com.hss01248.glideloader.R;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.net.URLDecoder;
 
 import okhttp3.OkHttpClient;
 
@@ -70,6 +71,19 @@ public final class GlideBigLoader implements BigLoader {
     public void loadImage(final Uri uri) {
         String url = uri.toString();
         Log.w("load big image:",url);
+
+            /*if (url.startsWith("file:///")) {
+                String path = url.substring(8);
+                showContent(new File(URLDecoder.decode(url.substring(8))));
+                return;
+            }
+            EventBus.getDefault().post(new CacheHitEvent(resource, finalUrl));
+            return;*/
+
+
+
+
+
         final String finalUrl = url;
         mRequestManager
                 .load(new ProgressableGlideUrl(url))

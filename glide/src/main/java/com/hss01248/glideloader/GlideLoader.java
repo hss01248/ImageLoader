@@ -471,7 +471,7 @@ public class GlideLoader extends ILoader {
                     if(!(o instanceof SingleConfig)){
                         return false;
                     }
-                    if(event.getX() > MyUtil.dip2px(20) || event.getY() > MyUtil.dip2px(20)){
+                    if(event.getX() > MyUtil.dip2px(40) || event.getY() > MyUtil.dip2px(40)){
                         return false;
                     }
 
@@ -786,6 +786,12 @@ public class GlideLoader extends ILoader {
 
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
+        File file = new File(url);
+        if(file.exists() && file.isFile()){
+            int[] wh = MyUtil.getImageWidthHeight(url);
+            getter.onSuccess(file,wh[0],wh[1]);
+            return;
+        }
         MyUtil.runOnUIThread(new Runnable() {
             @Override
             public void run() {
