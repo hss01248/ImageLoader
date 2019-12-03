@@ -9,6 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -295,10 +296,24 @@ public class ImageListView extends FrameLayout {
 
 
     private void downloadAndSave(final String title, List<String> urls, String downloadDir, boolean hideDir) {
-        final File dir = new File (downloadDir);
-        if(!dir.exists()){
-            dir.mkdirs();
+        if(TextUtils.isEmpty(downloadDir)){
+            return;
         }
+        final File dir = new File (downloadDir);
+
+        if(!dir.exists()){
+         boolean succes =    dir.mkdirs();
+         if(!succes){
+             Log.w("Imagelistview","mkdir failed:"+downloadDir);
+             return;
+         }
+        }else {
+            if(!dir.isDirectory()){
+                Log.w("Imagelistview","not a directory:"+downloadDir);
+                return;
+            }
+        }
+
         if(hideDir){
             File hidden = new File(dir,".nomedia");
             if(!hidden.exists()){

@@ -2,18 +2,23 @@ package com.hss01248.glideloader.config;
 
 import android.content.Context;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp3.OkHttpGlideModule;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.cache.DiskLruCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.github.piasy.biv.progress.ProgressInterceptor;
+import com.hss01248.image.config.GlobalConfig;
 
 import okhttp3.OkHttpClient;
 
 import javax.net.ssl.*;
+
+import java.io.File;
 import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -34,8 +39,13 @@ public class GlideModelConfig extends OkHttpGlideModule {
             builder.setDecodeFormat(DecodeFormat.PREFER_RGB_565);
         }//解决rgb565部分手机上出现绿色问题
         //比较耗时,所以反向设置
-       /* builder.setDiskCache(new DiskLruCacheFactory(new File(context.getCacheDir(), GlobalConfig.cacheFolderName).getAbsolutePath(),
-                GlobalConfig.cacheMaxSize*1024*1024));*/
+        if(GlobalConfig.cacheMaxSize != 250 && !DiskLruCacheFactory.DEFAULT_DISK_CACHE_DIR.equals(GlobalConfig.cacheFolderName)){
+            builder.setDiskCache(new DiskLruCacheFactory(new File(context.getCacheDir(),
+                    TextUtils.isEmpty(GlobalConfig.cacheFolderName) ? DiskLruCacheFactory.DEFAULT_DISK_CACHE_DIR: GlobalConfig.cacheFolderName)
+                    .getAbsolutePath(),
+                    GlobalConfig.cacheMaxSize*1024*1024));
+        }
+
         Log.i("glide","applyOptions---");
 
        /* builder.setResizeService(new FifoPriorityThreadPoolExecutor(4))

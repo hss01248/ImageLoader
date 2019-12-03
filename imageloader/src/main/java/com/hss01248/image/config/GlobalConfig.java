@@ -80,7 +80,7 @@ public class GlobalConfig {
     /**
      * 缓存文件夹
      */
-    public static String cacheFolderName = "imageCache";
+    public static String cacheFolderName = "";
 
     /**
      * bitmap是888还是565编码,后者内存占用相当于前者一般,前者显示效果要好一点点,但两者效果不会差太多
