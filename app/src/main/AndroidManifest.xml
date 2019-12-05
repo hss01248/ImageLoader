@@ -4,6 +4,7 @@
     package="com.hss01248.imageloaderdemo">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <uses-sdk tools:overrideLibrary="kale.adapter,pl.droidsonroids.gif,org.raphets.roundimageview"></uses-sdk>
 

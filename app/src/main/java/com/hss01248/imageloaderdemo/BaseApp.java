@@ -18,6 +18,7 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.LoadInterceptor;
 import com.hss01248.image.memory.ImageMemoryHookManager;
+import com.simple.spiderman.SpiderMan;
 import com.squareup.leakcanary.LeakCanary;
 
 import es.dmoral.toasty.MyToast;
@@ -31,8 +32,10 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        SpiderMan.init(this);
         ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
         GlobalConfig.debug = true;
+        ImageMemoryHookManager.hook(this);
         GlobalConfig.interceptor = new LoadInterceptor() {
             @Override
             public boolean intercept(SingleConfig config) {

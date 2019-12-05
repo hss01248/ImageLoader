@@ -9,12 +9,12 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.ColorSpace;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.hardware.SensorManager;
 import android.os.Build;
-
-import com.taobao.android.dexposed.DexposedBridge;
-import com.taobao.android.dexposed.XC_MethodHook;
+import android.util.DisplayMetrics;
 
 import java.io.FileDescriptor;
 import java.io.InputStream;
@@ -22,9 +22,16 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.robv.android.xposed.DexposedBridge;
+import de.robv.android.xposed.XC_MethodHook;
+
+import static android.content.Context.SENSOR_SERVICE;
 
 
 /**
@@ -55,23 +62,37 @@ public class ImageMemoryHookManager {
                 bitmaps.add(weakReference.get());
             }
         }
+        if(!bitmaps.isEmpty()){
+            Collections.sort(bitmaps, new Comparator<Bitmap>() {
+                @Override
+                public int compare(Bitmap o1, Bitmap o2) {
+                    return (int) (getSize(o2) - getSize(o1));
+                }
+            });
+        }
         return bitmaps;
+    }
+
+     static long getSize(Bitmap bitmap){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return bitmap.getAllocationByteCount();
+        }else {
+            return bitmap.getRowBytes() * bitmap.getHeight();
+        }
     }
 
 
 
     public static void hook(final Application application) {
-        if( Build.VERSION.SDK_INT > 23){
-            return;
-        }
 
-        ShakeUtils shakeUtils = new ShakeUtils(application);
-        shakeUtils.setOnShakeListener(new ShakeUtils.OnShakeListener() {
+        SensorManager sensorManager = (SensorManager) application.getSystemService(SENSOR_SERVICE);
+        ShakeDetector sd = new ShakeDetector(new ShakeDetector.Listener() {
             @Override
-            public void onShake() {
+            public void hearShake() {
                 show(application);
             }
         });
+        sd.start(sensorManager);
 
 
 
@@ -79,7 +100,8 @@ public class ImageMemoryHookManager {
             @Override
             public void run() {
                 try {
-                    DexposedBridge.findAndHookMethod(BitmapFactory.class, "decodeStream", new Object[]{InputStream.class, Rect.class, Options.class, new XC_MethodHook() {
+                    DexposedBridge.findAndHookMethod(BitmapFactory.class, "decodeStream",
+                            InputStream.class, Rect.class, Options.class, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                            add(param);
@@ -90,8 +112,10 @@ public class ImageMemoryHookManager {
                         }
 
 
-                    }});
-                    DexposedBridge.findAndHookMethod(BitmapFactory.class, "decodeByteArray", new Object[]{byte[].class, Integer.TYPE, Integer.TYPE, Options.class, new XC_MethodHook() {
+                    });
+                    DexposedBridge.findAndHookMethod(BitmapFactory.class, "decodeByteArray",
+                            byte[].class, Integer.TYPE, Integer.TYPE, Options.class,
+                            new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         }
@@ -100,8 +124,10 @@ public class ImageMemoryHookManager {
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             add(param);
                         }
-                    }});
-                    DexposedBridge.findAndHookMethod(BitmapFactory.class, "decodeFileDescriptor", new Object[]{FileDescriptor.class, Rect.class, Options.class, new XC_MethodHook() {
+                    });
+                    DexposedBridge.findAndHookMethod(BitmapFactory.class, "decodeFileDescriptor",
+
+                            FileDescriptor.class, Rect.class, Options.class, new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         }
@@ -110,8 +136,12 @@ public class ImageMemoryHookManager {
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             add(param);
                         }
-                    }});
-                    DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap", new Object[]{Bitmap.class, Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE, Matrix.class, Boolean.TYPE, new XC_MethodHook() {
+                    });
+
+                    //调用到nativeCreate相关的java方法
+                    DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap",
+                            Bitmap.class, Integer.TYPE, Integer.TYPE, Integer.TYPE, Integer.TYPE, Matrix.class, Boolean.TYPE,
+                            new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         }
@@ -120,8 +150,40 @@ public class ImageMemoryHookManager {
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             add(param);
                         }
-                    }});
-                    DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap", new Object[]{Integer.TYPE, Integer.TYPE, Config.class, new XC_MethodHook() {
+                    });
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap",
+                                DisplayMetrics.class,Integer.TYPE, Integer.TYPE, Config.class,Boolean.TYPE, ColorSpace.class,
+                                new XC_MethodHook() {
+                                    @Override
+                                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                    }
+
+                                    @Override
+                                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                        add(param);
+                                    }
+                                });
+                    }
+                    //public static Bitmap createBitmap(@NonNull DisplayMetrics display,
+                    //            @NonNull @ColorInt int[] colors, int offset, int stride,
+                    //            int width, int height, @NonNull Config config)
+                    DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap",
+                            DisplayMetrics.class,int[].class,Integer.TYPE, Integer.TYPE,Integer.TYPE, Integer.TYPE, Config.class,
+                            new XC_MethodHook() {
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                }
+
+                                @Override
+                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                    add(param);
+                                }
+                            });
+                    //Bitmap.createBitmap(width, height, Config.ARGB_8888)
+                    DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap",
+                            Integer.TYPE, Integer.TYPE, Config.class,
+                            new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         }
@@ -130,8 +192,11 @@ public class ImageMemoryHookManager {
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             add(param);
                         }
-                    }});
-                    DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap", new Object[]{int[].class, Integer.TYPE, Integer.TYPE, Config.class, new XC_MethodHook() {
+                    });
+
+                    DexposedBridge.findAndHookMethod(Bitmap.class, "createBitmap",
+                            int[].class, Integer.TYPE, Integer.TYPE, Config.class,
+                            new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         }
@@ -140,8 +205,10 @@ public class ImageMemoryHookManager {
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             add(param);
                         }
-                    }});
-                    DexposedBridge.findAndHookMethod(Bitmap.class, "copy", new Object[]{Config.class, Boolean.TYPE, new XC_MethodHook() {
+                    });
+                    DexposedBridge.findAndHookMethod(Bitmap.class, "copy",
+                            Config.class, Boolean.TYPE,
+                                    new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         }
@@ -150,11 +217,13 @@ public class ImageMemoryHookManager {
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                            add(param);
                         }
-                    }});
+                    });
+
+
 //
 
-                    Class<?> cls = Class.forName("android.graphics.Bitmap$BitmapFinalizer");
-                    DexposedBridge.findAndHookMethod(cls, "finalize", new Object[]{new XC_MethodHook() {
+                    /*Class<?> cls = Class.forName("android.graphics.Bitmap$BitmapFinalizer");
+                    DexposedBridge.findAndHookMethod(cls, "finalize", new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             Integer hashcode = param.thisObject.hashCode();
@@ -165,7 +234,7 @@ public class ImageMemoryHookManager {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         }
-                    }});
+                    });*/
                 } catch (Throwable var2) {
                     var2.printStackTrace();
                 }
@@ -207,7 +276,7 @@ public class ImageMemoryHookManager {
      static String getInfo(Bitmap bitmap){
         StringBuilder builder = new StringBuilder();
             builder.append(bitmap.getWidth()).append("x").append(bitmap.getHeight())
-                    .append(",size:").append(formatFileSize(bitmap.getByteCount())).append(",config:")
+                    .append(",内存占用:").append(formatFileSize(getSize(bitmap))).append(",config:")
             .append(bitmap.getConfig().name());
 
         return builder.toString();

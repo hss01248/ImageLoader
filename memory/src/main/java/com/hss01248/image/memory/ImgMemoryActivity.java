@@ -3,12 +3,21 @@ package com.hss01248.image.memory;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.ListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import kale.adapter.CommonAdapter;
-import kale.adapter.item.AdapterItem;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
 
 /**
  * time:2019/10/22
@@ -17,23 +26,73 @@ import kale.adapter.item.AdapterItem;
  */
 public class ImgMemoryActivity extends Activity {
 
-    ListView listView;
+    RecyclerView listView;
+    Timer timer;
+    TextView textView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_img_memorylist);
         listView = findViewById(R.id.lv);
+        textView = findViewById(R.id.tv_imgs_imfo);
 
-        if(ImageMemoryHookManager.getList() == null || ImageMemoryHookManager.getList().isEmpty()){
+        List<Bitmap> bitmaps = ImageMemoryHookManager.getList();
+        setImgsInfo(bitmaps);
+        /*if(bitmaps == null || bitmaps.isEmpty()){
+            Log.w("ImgMemoryActivity","ImageMemoryHookManager.getList().isEmpty");
+            Toast.makeText(getApplicationContext(),"ImageMemoryHookManager.getList().isEmpty",Toast.LENGTH_SHORT).show();
             finish();
             return;
+        }*/
+
+        if (bitmaps == null){
+            bitmaps = new ArrayList<>();
         }
-        listView.setAdapter(new CommonAdapter<Bitmap>(ImageMemoryHookManager.getList(),1) {
-            @NonNull
+        final BaseQuickAdapter adapter = new ImgItem(R.layout.img_item_show,bitmaps);
+        listView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+         timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
-            public AdapterItem createItem(Object type) {
-                return new ImgItem();
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Bitmap> bitmaps = ImageMemoryHookManager.getList();
+                        setImgsInfo(bitmaps);
+                        adapter.replaceData(bitmaps);
+                    }
+                });
+
+
             }
-        });
+        },3000,3000);
+
+
+    }
+
+    private void setImgsInfo(List<Bitmap> bitmaps) {
+        if(bitmaps == null || bitmaps.isEmpty()){
+            textView.setText("ImageMemoryHookManager.getList().isEmpty");
+            return;
+        }
+        long size = 0;
+        for (Bitmap bi :
+                bitmaps) {
+            size += ImageMemoryHookManager.getSize(bi);
+        }
+        textView.setText("bitmap count:"+bitmaps.size()+",占用内存共:"+ImageMemoryHookManager.formatFileSize(size));
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(timer != null){
+            timer.cancel();
+        }
+
     }
 }

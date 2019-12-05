@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -18,32 +16,19 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 
 import com.blankj.utilcode.util.PermissionUtils;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.FitCenter;
-
-import com.bumptech.glide.request.target.SimpleTarget;
 
 import com.hss01248.image.ImageLoader;
-import com.hss01248.image.interfaces.FileGetter;
-import com.hss01248.image.memory.ImageMemoryHookManager;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import pl.droidsonroids.gif.GifDrawable;
 
 public class MainActivity extends AppCompatActivity {
 
