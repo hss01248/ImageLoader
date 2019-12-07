@@ -16,6 +16,9 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.util.DisplayMetrics;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+
 import java.io.FileDescriptor;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
@@ -70,6 +73,11 @@ public class ImageMemoryHookManager {
                 }
             });
         }
+
+        //另外一个方式,直接从glide的bitmappool中取:
+
+
+
         return bitmaps;
     }
 
@@ -218,7 +226,24 @@ public class ImageMemoryHookManager {
                            add(param);
                         }
                     });
+                    /*DexposedBridge.findAndHookMethod(BitmapPool.class, "put",
+                            Bitmap.class,
+                            new XC_MethodHook() {
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                    try {
+                                        addBitmap((Bitmap) param.args[0]);
+                                    }catch (Throwable e){
+                                        e.printStackTrace();
+                                    }
 
+                                }
+
+                                @Override
+                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                    //add(param);
+                                }
+                            });*/
 
 //
 

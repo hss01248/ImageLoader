@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -17,13 +18,25 @@ import android.widget.ScrollView;
 
 import com.blankj.utilcode.util.PermissionUtils;
 
+import com.bumptech.glide.Glide;
+
+import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
+import com.elvishew.xlog.XLog;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.memory.ImageMemoryHookManager;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 import butterknife.BindView;
@@ -87,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //GlideFaceDetector.releaseDetector();
+        if(timer != null){
+            timer.cancel();
+        }
     }
 
     private void show() {
@@ -312,11 +328,81 @@ public class MainActivity extends AppCompatActivity {
             default:break;
         }
     }
-
+    Timer timer;
     @Override
     protected void onResume() {
         super.onResume();
         //ImageMemoryHookManager.show(this);
+        List<Bitmap> bitmaps = getBitmapsFromGlidePool();
+         timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getBitmapsFromGlidePool();
+            }
+        },3000,3000);
+
+
+    }
+
+
+    private List<Bitmap> getBitmapsFromGlidePool() {
+        List<Bitmap> bitmaps = new ArrayList<>();
+        try {
+            LruBitmapPool lruBitmapPool = (LruBitmapPool) Glide.get(this).getBitmapPool();
+            //lruBitmapPool.put()
+
+            Class clz = lruBitmapPool.getClass();
+            Field field = clz.getDeclaredField("strategy");
+            field.setAccessible(true);
+
+            Object strategy =  field.get(lruBitmapPool);
+            XLog.d(strategy);
+
+            Class clz2 = strategy.getClass();
+            Field field2 = clz2.getDeclaredField("groupedMap");
+            field2.setAccessible(true);
+
+            Object groupedMap =  field2.get(strategy);
+            XLog.d(groupedMap);
+
+            Class clz3 = groupedMap.getClass();
+            Field field3 = clz3.getDeclaredField("keyToEntry");
+            field3.setAccessible(true);
+
+            Map map = (Map) field3.get(groupedMap);
+            XLog.d(map);
+
+            for(Object key: map.keySet()){
+                Object linkedEntry = map.get(key);//LinkedEntry.
+                Class clz4 = linkedEntry.getClass();
+                Field field4 = clz4.getDeclaredField("values");
+                field4.setAccessible(true);
+                XLog.d(linkedEntry);
+
+                List<Bitmap> values = (List<Bitmap>) field4.get(linkedEntry);
+                XLog.d(values);
+                if(values != null){
+                    bitmaps.addAll(values);
+                }
+
+            }
+            XLog.d("bitmaps.size():"+bitmaps.size());
+
+            //GroupedLinkedMap<Object, Bitmap> groupedMap =
+
+
+
+
+            /*Method method = clz.getMethod("setPrice", int.class);
+            Constructor constructor = clz.getConstructor();
+            Object object = constructor.newInstance();
+            method.invoke(object, 4);*/
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+
+        }
+        return bitmaps;
     }
 
     /*Intent intent = new Intent(this,BigImageActy.class);
