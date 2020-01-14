@@ -243,7 +243,7 @@ public class SingleConfig {
     private boolean asBitmap;//只获取bitmap
 
     public void setBitmapListener(BitmapListener bitmapListener) {
-        this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
+        this.bitmapListener = MyUtil.getProxy(bitmapListener);
     }
 
     private BitmapListener bitmapListener;
@@ -279,24 +279,35 @@ public class SingleConfig {
    // private BigImageView bigImageView ;//可放大和缩放的大图
 
     private void show(){
-        if(ConfigChecker.check(this)){
-            if(GlobalConfig.debug){
-                GlobalConfig.getLoader().debug(this);
-            }
-            if(interceptor != null && interceptor.intercept(this)){
-                return;
-            }
+        try {
+            if(ConfigChecker.check(this)){
+                if(GlobalConfig.debug){
+                    GlobalConfig.getLoader().debug(this);
+                }
+                if(interceptor != null && interceptor.intercept(this)){
+                    return;
+                }
 
-            if(isAsBitmap()){
-                GlobalConfig.getLoader().requestAsBitmap(this);
-            }else if(target instanceof BigImageView){
-                MyUtil.viewBigImage(this);
+                if(isAsBitmap()){
+                    GlobalConfig.getLoader().requestAsBitmap(this);
+                }else if(target instanceof BigImageView){
+                    MyUtil.viewBigImage(this);
+                }else {
+                    GlobalConfig.getLoader().requestForNormalDiaplay(this);
+                }
+            }
+        }catch (Throwable e){
+            if(GlobalConfig.getExceptionHandler() != null){
+                try {
+                    GlobalConfig.getExceptionHandler().onError(e);
+                }catch (Throwable e2){
+                    e2.printStackTrace();
+                }
             }else {
-                GlobalConfig.getLoader().requestForNormalDiaplay(this);
+                e.printStackTrace();
             }
-
-
         }
+
     }
 
     @Override
@@ -509,7 +520,7 @@ public class SingleConfig {
         }
 
         public ConfigBuilder setImageListener(ImageListener imageListener) {
-            this.imageListener = imageListener;
+            this.imageListener = MyUtil.getProxy(imageListener);
             return this;
         }
 
@@ -688,7 +699,7 @@ public class SingleConfig {
 
 
         public void asBitmap(BitmapListener bitmapListener){
-            this.bitmapListener = MyUtil.getBitmapListenerProxy(bitmapListener);
+            this.bitmapListener = MyUtil.getProxy(bitmapListener);
             this.asBitmap = true;
             new SingleConfig(this).show();
         }

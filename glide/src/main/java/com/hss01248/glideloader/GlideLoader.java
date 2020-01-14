@@ -27,6 +27,7 @@ import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.glideloader.transform.BorderRoundTransformation;
 import com.hss01248.glideloader.transform.CropCircleWithBorderTransformation;
+import com.hss01248.image.ImageLoadFailException;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.config.GlobalConfig;
@@ -130,10 +131,8 @@ public class GlideLoader extends ILoader {
                 @Override
                 public void onLoadFailed(Exception e, Drawable errorDrawable) {
                     super.onLoadFailed(e, errorDrawable);
-                    if(e !=null){
-                        e.printStackTrace();
-                    }
                     config.getBitmapListener().onFail(e);
+                    MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
                 }
             };
         }else {
@@ -162,10 +161,8 @@ public class GlideLoader extends ILoader {
                 @Override
                 public void onLoadFailed(Exception e, Drawable errorDrawable) {
                     super.onLoadFailed(e, errorDrawable);
-                    if(e !=null){
-                        e.printStackTrace();
-                    }
                     config.getBitmapListener().onFail(e);
+                    MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
                 }
             };
         }
@@ -194,8 +191,6 @@ public class GlideLoader extends ILoader {
         if(request ==null){
             return;
         }
-
-
 
         DrawableRequestBuilder builder = request.thumbnail(1.0f);
         if(config.getLoadingResId() != 0){
@@ -258,7 +253,6 @@ public class GlideLoader extends ILoader {
                                                 gifDrawable2.getIntrinsicWidth(),gifDrawable2.getIntrinsicHeight());
                                     }
                                 } catch (Throwable e) {
-                                    e.printStackTrace();
                                     if(config.getErrorResId() >0){
                                         imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
                                         imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
@@ -266,6 +260,8 @@ public class GlideLoader extends ILoader {
                                     if(config.getImageListener() != null){
                                         config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                                     }
+                                    MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
+
 
                                 }
                             }
@@ -273,6 +269,7 @@ public class GlideLoader extends ILoader {
                             @Override
                             public void onLoadFailed(Exception e, Drawable errorDrawable) {
                                 super.onLoadFailed(e, errorDrawable);
+
                                 if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
                                     return;
                                 }
@@ -283,15 +280,20 @@ public class GlideLoader extends ILoader {
                                 if(config.getImageListener() != null){
                                     config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                                 }
+                                MyUtil.handleException(new ImageLoadFailException(config.getUrl(),e));
                             }
                         });
                 return;
             }
 
             config.loadStartTime = System.currentTimeMillis();
-            builder.listener(new RequestListener() {
+            builder.listener(MyUtil.getProxy(new RequestListener() {
                 @Override
                 public boolean onException(Exception e, Object model, Target target, boolean isFirstResource) {
+                    if (!isSame(config, imageView, model, target)) {
+                        return false;
+                    }
+                    String path = "";
                     if(GlobalConfig.debug){
                         Log.d("onException","thread :"+Thread.currentThread().getName() +",onException");
                         Log.d("onException","model :"+model);
@@ -317,11 +319,16 @@ public class GlideLoader extends ILoader {
                     if(config.getImageListener() != null){
                         config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                     }
+                    MyUtil.handleException(new ImageLoadFailException(model.toString(),e));
                     return false;
                 }
 
                 @Override
-                public boolean onResourceReady(Object resource, final Object model, Target target, boolean isFromMemoryCache, boolean isFirstResource) {
+                public boolean onResourceReady(Object resource, final Object model, Target target,
+                                               boolean isFromMemoryCache, boolean isFirstResource) {
+                    if(!isSame(config,imageView,model,target)){
+                        return false;
+                    }
 
                     if(target instanceof ImageViewTarget){
                         ImageViewTarget view = (ImageViewTarget) target;
@@ -394,10 +401,8 @@ public class GlideLoader extends ILoader {
                                             imageView.setImageDrawable(gifDrawable2);
                                             gifDrawable.stop();
                                         } catch (Throwable e) {
-                                            if(GlobalConfig.debug){
-                                                e.printStackTrace();
-                                            }
                                             imageView.setImageDrawable(gifDrawable);
+                                            MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
                                         }
                                     }
 
@@ -434,9 +439,13 @@ public class GlideLoader extends ILoader {
                     }
                     return false;
                 }
-            }).into(imageView);
+            })).into(imageView);
             // builder.into(viewTarget);
         }
+    }
+
+    private boolean isSame(SingleConfig config, ImageView imageView, Object model, Target target) {
+        return config.equals(imageView.getTag(R.drawable.im_item_list_opt));
     }
 
     public File getCacheFile(String url) {
@@ -791,13 +800,15 @@ public class GlideLoader extends ILoader {
     }
 
     @Override
-    public void getFileFromDiskCache(final String url, final FileGetter getter) {
+    public void getFileFromDiskCache(final String url,  FileGetter getter) {
+        getter = MyUtil.getProxy(getter);
         File file = new File(url);
         if(file.exists() && file.isFile()){
             int[] wh = MyUtil.getImageWidthHeight(url);
             getter.onSuccess(file,wh[0],wh[1]);
             return;
         }
+        final FileGetter finalGetter = getter;
         MyUtil.runOnUIThread(new Runnable() {
             @Override
             public void run() {
@@ -809,15 +820,15 @@ public class GlideLoader extends ILoader {
                                 Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",downloadOnly");
                                 if(resource.exists() && resource.isFile() ){//&& resource.length() > 70
                                     int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
-                                    getter.onSuccess(resource,wh[0],wh[1]);
+                                    finalGetter.onSuccess(resource,wh[0],wh[1]);
                                 }else {
-                                    getter.onFail(new Throwable("resource not exist"));
+                                    finalGetter.onFail(new Throwable("resource not exist"));
                                 }
                             }
 
                             @Override
                             public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                                getter.onFail(e);
+                                finalGetter.onFail(e);
                             }
                         });
             }

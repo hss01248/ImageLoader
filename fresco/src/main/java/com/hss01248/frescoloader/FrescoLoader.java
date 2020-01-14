@@ -640,6 +640,7 @@ public class FrescoLoader extends ILoader {
 
     @Override
     public void download(String url, FileGetter getter) {
+        getter = MyUtil.getProxy(getter);
         if(isCached(url)){
             File file = getFileFromDiskCache(url);
             if(file!=null && file.exists()){

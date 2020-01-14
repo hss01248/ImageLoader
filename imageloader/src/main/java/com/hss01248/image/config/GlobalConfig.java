@@ -8,6 +8,7 @@ import android.view.WindowManager;
 
 import com.hss01248.image.R;
 import com.hss01248.image.interfaces.ILoader;
+import com.hss01248.image.interfaces.ImageLoaderExceptionHandler;
 import com.hss01248.image.interfaces.LoadInterceptor;
 
 /**
@@ -52,6 +53,16 @@ public class GlobalConfig {
     private static int winHeight;
     private static int winWidth;
     private static boolean userFresco;
+
+    public static ImageLoaderExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
+
+    public static void setExceptionHandler(ImageLoaderExceptionHandler exceptionHandler) {
+        GlobalConfig.exceptionHandler = exceptionHandler;
+    }
+
+    private static ImageLoaderExceptionHandler exceptionHandler;
     //private static int oritation;
 
     public static void init(Context context,int cacheSizeInM,ILoader imageLoader){

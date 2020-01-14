@@ -6,6 +6,7 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.exif.ExifUtil;
+import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.image.utils.RoundedCornersTransformation2;
 
 import android.app.Activity;
@@ -63,28 +64,37 @@ import okhttp3.OkHttpClient;
 public class MyUtil {
 
 
-    public static SingleConfig.BitmapListener getBitmapListenerProxy(final SingleConfig.BitmapListener listener) {
-        return (SingleConfig.BitmapListener) Proxy.newProxyInstance(SingleConfig.class.getClassLoader(),
+    @SuppressWarnings("unchecked")
+    public static <T> T getProxy(final T listener) {
+        return (T) Proxy.newProxyInstance(listener.getClass().getClassLoader(),
                 listener.getClass().getInterfaces(), new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, final Method method, final Object[] args) throws Throwable {
-
-                        runOnUIThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Object object = method.invoke(listener, args);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        return null;
+                        try {
+                            Object object = method.invoke(listener, args);
+                            return object;
+                        } catch (Throwable e) {
+                            handleException(e);
+                            return null;
+                        }
                     }
                 });
 
+    }
+
+    public static void handleException(Throwable e){
+        if(e == null){
+            return;
+        }
+        if(GlobalConfig.getExceptionHandler() != null){
+            try {
+                GlobalConfig.getExceptionHandler().onError(e);
+            }catch (Throwable e2){
+                e2.printStackTrace();
+            }
+        }else {
+            e.printStackTrace();
+        }
     }
 
 

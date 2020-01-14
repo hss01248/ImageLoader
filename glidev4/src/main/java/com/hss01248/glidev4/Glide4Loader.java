@@ -772,7 +772,8 @@ public class Glide4Loader extends ILoader {
     }
 
     @Override
-    public void getFileFromDiskCache(final String url, final FileGetter getter) {
+    public void getFileFromDiskCache(final String url, FileGetter getter) {
+        getter = MyUtil.getProxy(getter);
         File file = new File(url);
         if(file.exists() && file.isFile()){
             int[] wh = MyUtil.getImageWidthHeight(url);
@@ -783,6 +784,7 @@ public class Glide4Loader extends ILoader {
             executor = Executors.newCachedThreadPool();
         }
 
+        final FileGetter finalGetter = getter;
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -797,7 +799,7 @@ public class Glide4Loader extends ILoader {
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                getter.onSuccess(resource,wh[0],wh[1]);
+                                finalGetter.onSuccess(resource,wh[0],wh[1]);
                             }
                         });
 
@@ -807,7 +809,7 @@ public class Glide4Loader extends ILoader {
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                getter.onFail(new Throwable("file not exist"));
+                                finalGetter.onFail(new Throwable("file not exist"));
                             }
                         });
                     }
@@ -816,7 +818,7 @@ public class Glide4Loader extends ILoader {
                     MyUtil.runOnUIThread(new Runnable() {
                         @Override
                         public void run() {
-                            getter.onFail(throwable);
+                            finalGetter.onFail(throwable);
                         }
                     });
 
