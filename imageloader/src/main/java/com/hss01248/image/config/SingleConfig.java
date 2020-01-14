@@ -48,6 +48,8 @@ public class SingleConfig {
 
     public long  cost;
 
+    public String urlForCacheKey;
+
     public int getBorderColor() {
         return borderColor;
     }

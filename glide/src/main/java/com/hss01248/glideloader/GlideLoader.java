@@ -9,6 +9,7 @@ import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.cache.DiskCache;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
@@ -51,6 +52,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -236,7 +238,7 @@ public class GlideLoader extends ILoader {
                     imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
                 }
                 Glide.with(config.getContext())
-                        .load(config.getUrl())
+                        .load(getGlideUrl(config))
                         .downloadOnly(new SimpleTarget<File>() {
                             @Override
                             public void onResourceReady(File file, GlideAnimation<? super File> glideAnimation) {
@@ -444,6 +446,19 @@ public class GlideLoader extends ILoader {
         }
     }
 
+    @NonNull
+    private GlideUrl getGlideUrl(final SingleConfig config) {
+        return new GlideUrl(config.getUrl()){
+            @Override
+            public String getCacheKey() {
+                if(!TextUtils.isEmpty(config.urlForCacheKey)){
+                    return config.urlForCacheKey;
+                }
+                return super.getCacheKey();
+            }
+        };
+    }
+
     private boolean isSame(SingleConfig config, ImageView imageView, Object model, Target target) {
         return config.equals(imageView.getTag(R.drawable.im_item_list_opt));
     }
@@ -633,7 +648,7 @@ public class GlideLoader extends ILoader {
     private DrawableTypeRequest getDrawableTypeRequest(SingleConfig config, RequestManager requestManager) {
         DrawableTypeRequest request = null;
         if(!TextUtils.isEmpty(config.getUrl())){
-            request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
+            request= requestManager.load(getGlideUrl(config));
         }else if(!TextUtils.isEmpty(config.getFilePath())){
             request= requestManager.load(config.getFilePath());
         }else if(!TextUtils.isEmpty(config.getContentProvider())){
