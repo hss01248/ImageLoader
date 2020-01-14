@@ -9,6 +9,7 @@ import com.hss01248.image.interfaces.ImageListener;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -409,9 +410,7 @@ public class SingleConfig {
         this.rightTopRadius = builder.rightTopRadius;
         this.leftBottomRadius = builder.leftBottomRadius;
         this.rightBottomRadius = builder.rightBottomRadius;
-
-
-
+        this.context = builder.context;
     }
 
 
@@ -423,6 +422,7 @@ public class SingleConfig {
 
     public static class ConfigBuilder{
         private Context context;
+
 
         private  boolean ignoreCertificateVerify = GlobalConfig.ignoreCertificateVerify;
 
