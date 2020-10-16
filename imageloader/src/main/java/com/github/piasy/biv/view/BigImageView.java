@@ -146,6 +146,7 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         //解决图片旋转的问题,
         //参见; https://github.com/davemorrissey/subsampling-scale-image-view/issues/231
         mImageView.setOrientation(SubsamplingScaleImageView.ORIENTATION_USE_EXIF);
+        //mImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
         errorView = View.inflate(context, isDarkTheme() ? R.layout.error_view_dark : R.layout.error_view, null);
         LayoutParams params2 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
@@ -211,7 +212,7 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
                 break;
             case INIT_SCALE_TYPE_CENTER_INSIDE:
             default:
-                mImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
+                mImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
                 break;
         }
         if (mDisplayOptimizeListener != null) {

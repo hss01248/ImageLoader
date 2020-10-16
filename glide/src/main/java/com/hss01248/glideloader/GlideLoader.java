@@ -212,7 +212,7 @@ public class GlideLoader extends ILoader {
 
 
         if(config.getWidth()>0 && config.getHeight()>0){
-            builder.override(config.getWidth(),config.getHeight());
+            //builder.override(config.getWidth(),config.getHeight());
         }
         builder = builder .bitmapTransform(getBitmapTransFormations(config));
 
@@ -648,7 +648,11 @@ public class GlideLoader extends ILoader {
     private DrawableTypeRequest getDrawableTypeRequest(SingleConfig config, RequestManager requestManager) {
         DrawableTypeRequest request = null;
         if(!TextUtils.isEmpty(config.getUrl())){
-            request= requestManager.load(getGlideUrl(config));
+            if(config.getUrl().startsWith("http")){
+                request= requestManager.load(getGlideUrl(config));
+            }else {
+                request= requestManager.load(config.getUrl());
+            }
         }else if(!TextUtils.isEmpty(config.getFilePath())){
             request= requestManager.load(config.getFilePath());
         }else if(!TextUtils.isEmpty(config.getContentProvider())){

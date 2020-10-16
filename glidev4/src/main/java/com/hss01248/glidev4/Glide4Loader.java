@@ -37,6 +37,7 @@ import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.engine.cache.DiskCache;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
 
@@ -178,9 +179,9 @@ public class Glide4Loader extends ILoader {
         }
 
 
-        if(config.getWidth()>0 && config.getHeight()>0){
+        /*if(config.getWidth()>0 && config.getHeight()>0){
             requestOptions.override(config.getWidth(),config.getHeight());
-        }
+        }*/
 
         if(config.getErrorResId() >0){
             requestOptions.error(config.getErrorResId());
@@ -197,14 +198,17 @@ public class Glide4Loader extends ILoader {
 
 
             //gif
-            if(config.getUrl() != null && config.getUrl().contains(".gif") && config.isUseThirdPartyGifLoader()){
-                if(config.getLoadingResId() != 0){
-                    Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
-                    imageView.setImageDrawable(drawable);
-                }else if(MyUtil.shouldSetPlaceHolder(config)){
-                    imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
-                }
 
+            if(config.getUrl() != null && config.getUrl().contains(".gif") && config.isUseThirdPartyGifLoader()){
+                if(imageView.getDrawable() == null){
+                    // 解决每次刷新显示PlaceHolder/LoadingResId,快速多次刷新,会一闪一闪
+                    if(config.getLoadingResId() != 0){
+                        Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
+                        imageView.setImageDrawable(drawable);
+                    }else if(MyUtil.shouldSetPlaceHolder(config)){
+                        imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
+                    }
+                }
                 Glide.with(config.getContext())
                         .load(config.getUrl())
                         .downloadOnly(new SimpleTarget<File>() {
@@ -233,6 +237,7 @@ public class Glide4Loader extends ILoader {
                                     }
 
                                 }
+                                warn(imageView,gifDrawable2);
                             }
 
                             @Override
@@ -244,6 +249,7 @@ public class Glide4Loader extends ILoader {
                                 if(config.getErrorResId() >0){
                                     imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
                                 }
+                                warn(imageView,errorDrawable);
                             }
                         });
                 return;
@@ -298,7 +304,7 @@ public class Glide4Loader extends ILoader {
                             config.cost  = System.currentTimeMillis() - config.loadStartTime;
                         }
                     }
-
+                    warn(imageView,resource);
                     /*if(resource instanceof Bitmapdr){
                         GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
                         Bitmap bitmap = drawable.getBitmap();
@@ -359,6 +365,7 @@ public class Glide4Loader extends ILoader {
                                             }
                                             imageView.setImageDrawable(gifDrawable);
                                         }
+                                        warn(imageView,gifDrawable2);
                                     }
 
                                     @Override
@@ -371,6 +378,7 @@ public class Glide4Loader extends ILoader {
                                         }
 
                                         imageView.setImageDrawable(gifDrawable);
+                                        warn(imageView,gifDrawable);
                                     }
                                 });
                                 return true;
@@ -397,6 +405,23 @@ public class Glide4Loader extends ILoader {
             }).into(imageView);
 
         }
+    }
+
+    private void warn(ImageView imageView, Object resource) {
+        if(resource == null || imageView == null){
+            return;
+        }
+        if(!GlobalConfig.debug){
+            return;
+        }
+        if(resource instanceof BitmapDrawable){
+
+        }else if(resource instanceof GifDrawable){
+
+        }else if(resource instanceof pl.droidsonroids.gif.GifDrawable){
+
+        }
+
     }
 
 
@@ -585,14 +610,29 @@ public class Glide4Loader extends ILoader {
         }*/
         return 0;
     }
-
+    @NonNull
+    private GlideUrl getGlideUrl(final SingleConfig config) {
+        return new GlideUrl(config.getUrl()){
+            @Override
+            public String getCacheKey() {
+                if(!TextUtils.isEmpty(config.urlForCacheKey)){
+                    return config.urlForCacheKey;
+                }
+                return super.getCacheKey();
+            }
+        };
+    }
     @Nullable
     private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
         RequestBuilder request = null;
         if(requestManager  != null){
             if(!TextUtils.isEmpty(config.getUrl())){
-                request= requestManager.load(MyUtil.appendUrl(config.getUrl()));
-            }else if(!TextUtils.isEmpty(config.getFilePath())){
+                if(config.getUrl().startsWith("http")){
+                    request= requestManager.load(getGlideUrl(config));
+                }else {
+                    request= requestManager.load(config.getUrl());
+                }
+            } else if(!TextUtils.isEmpty(config.getFilePath())){
                 request= requestManager.load(config.getFilePath());
             }else if(!TextUtils.isEmpty(config.getContentProvider())){
                 request= requestManager.load(Uri.parse(config.getContentProvider()));
@@ -772,8 +812,7 @@ public class Glide4Loader extends ILoader {
     }
 
     @Override
-    public void getFileFromDiskCache(final String url, FileGetter getter) {
-        getter = MyUtil.getProxy(getter);
+    public void getFileFromDiskCache(final String url, final FileGetter getter) {
         File file = new File(url);
         if(file.exists() && file.isFile()){
             int[] wh = MyUtil.getImageWidthHeight(url);
@@ -784,7 +823,6 @@ public class Glide4Loader extends ILoader {
             executor = Executors.newCachedThreadPool();
         }
 
-        final FileGetter finalGetter = getter;
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -799,7 +837,7 @@ public class Glide4Loader extends ILoader {
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                finalGetter.onSuccess(resource,wh[0],wh[1]);
+                                getter.onSuccess(resource,wh[0],wh[1]);
                             }
                         });
 
@@ -809,7 +847,7 @@ public class Glide4Loader extends ILoader {
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                finalGetter.onFail(new Throwable("file not exist"));
+                                getter.onFail(new Throwable("file not exist"));
                             }
                         });
                     }
@@ -818,7 +856,7 @@ public class Glide4Loader extends ILoader {
                     MyUtil.runOnUIThread(new Runnable() {
                         @Override
                         public void run() {
-                            finalGetter.onFail(throwable);
+                            getter.onFail(throwable);
                         }
                     });
 

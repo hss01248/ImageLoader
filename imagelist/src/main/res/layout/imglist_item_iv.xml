@@ -12,7 +12,7 @@
         android:id="@+id/tv_info"
         android:textSize="12dp"
         android:padding="5dp"
-        android:textColor="#ff00ff"
+        android:textColor="#0000FF"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_height="wrap_content" />

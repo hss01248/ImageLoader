@@ -59,7 +59,7 @@ public class ExifUtil {
                 try {
                     tags.add(field.get(null).toString());
                 }catch (Throwable e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         }
