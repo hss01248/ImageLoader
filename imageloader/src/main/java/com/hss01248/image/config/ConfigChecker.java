@@ -38,20 +38,15 @@ public class ConfigChecker {
     }
 
     private static boolean checkImageSource(SingleConfig config) {
-        if (!TextUtils.isEmpty(config.getUrl())) {
-            return true;
-        }
-        if (!TextUtils.isEmpty(config.getFilePath())) {
-            File file = new File(config.getFilePath());
-            if (file.exists()) {
-                return true;
-            }
-        }
-        if (!TextUtils.isEmpty(config.getContentProvider())) {
+        if (!TextUtils.isEmpty(config.getSourceString())) {
             return true;
         }
 
+
         if (config.getResId() != 0) {
+            return true;
+        }
+        if(config.getBytes() != null){
             return true;
         }
 

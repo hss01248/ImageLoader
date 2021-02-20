@@ -42,7 +42,8 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
         helper.addOnClickListener(R.id.item_iv);
         ImageLoader.with(helper.itemView.getContext())
                 .url(item)
-                .loading(R.drawable.iv_loading_trans)
+                .defaultPlaceHolder(true)
+                //.loading(R.drawable.iv_loading_trans)
                 .error(R.drawable.im_item_list_opt_error)
                 .setImageListener(new ImageListener() {
                     @Override

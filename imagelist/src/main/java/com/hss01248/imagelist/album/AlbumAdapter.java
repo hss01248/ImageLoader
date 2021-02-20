@@ -49,9 +49,10 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         imageView.setLayoutParams(params);
 
         ImageLoader.with(helper.itemView.getContext())
-                .file(item.cover)
+                .load(item.cover)
                 .scale(ScaleMode.CENTER_CROP)
-                .loading(R.drawable.iv_loading_trans)
+                .defaultPlaceHolder(true)
+                //.loading(R.drawable.iv_loading_trans)
                 .error(R.drawable.im_item_list_opt_error)
                 .into(imageView);
         helper.setText(R.id.tv_info,item.name);

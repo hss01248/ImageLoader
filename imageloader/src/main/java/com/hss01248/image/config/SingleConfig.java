@@ -9,10 +9,9 @@ import com.hss01248.image.interfaces.ImageListener;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.hss01248.image.interfaces.LoadInterceptor;
 import com.hss01248.image.utils.ContextUtil;
@@ -58,16 +57,8 @@ public class SingleConfig {
         return borderWidth;
     }
 
-    public String getContentProvider() {
-        return contentProvider;
-    }
-
     public byte[] getBytes(){
         return bytes;
-    }
-
-    public String getFilePath() {
-        return filePath;
     }
 
     public int getHeight() {
@@ -111,15 +102,7 @@ public class SingleConfig {
         return target;
     }
 
-    public String getUrl() {
-        return url;
-    }
 
-
-
-    public String getUsableString(){
-       return MyUtil.getUsablePath(this);
-    }
 
     public int getWidth() {
         return width;
@@ -141,19 +124,19 @@ public class SingleConfig {
     private  boolean ignoreCertificateVerify ;
 
     public void setUrl(String url) {
-        this.url = url;
+        this.sourceString = url;
     }
 
-    private String url;
+
 
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
     private String thumbnailUrl;//小图的url
-    private String filePath;
+
     private int resId;
-    private String contentProvider;
+
 
     public LoadInterceptor getInterceptor() {
         return interceptor;
@@ -262,6 +245,20 @@ public class SingleConfig {
     public boolean widthMatchParent;
     public boolean heightMatchParent;
 
+
+    @Deprecated
+    public String getUrl() {
+        return sourceString;
+    }
+
+
+    public String getSourceString(){
+        Log.d("source",sourceString+"  ->>>>");
+        return sourceString;
+    }
+
+    private String sourceString;
+
     private ImageListener imageListener;
 
     public boolean isUseThirdPartyGifLoader() {
@@ -318,11 +315,9 @@ public class SingleConfig {
                 "context=" + context +
                 ", isUseARGB8888=" + isUseARGB8888 +
                 ", ignoreCertificateVerify=" + ignoreCertificateVerify +
-                ", url='" + url + '\'' +
+                ", source='" + sourceString + '\'' +
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
-                ", filePath='" + filePath + '\'' +
                 ", resId=" + resId +
-                ", contentProvider='" + contentProvider + '\'' +
                 ", interceptor=" + interceptor +
                 ", bytes=" + Arrays.toString(bytes) +
                 ", isGif=" + isGif +
@@ -368,11 +363,9 @@ public class SingleConfig {
     }
 
     public SingleConfig(ConfigBuilder builder){
-        this.url = builder.url;
+
         this.thumbnailUrl = builder.thumbnailUrl;
-        this.filePath = builder.filePath;
         this.resId = builder.resId;
-        this.contentProvider = builder.contentProvider;
         this.bytes = builder.bytes;
 
         this.ignoreCertificateVerify = builder.ignoreCertificateVerify;
@@ -424,6 +417,8 @@ public class SingleConfig {
         this.leftBottomRadius = builder.leftBottomRadius;
         this.rightBottomRadius = builder.rightBottomRadius;
         this.context = builder.context;
+
+        this.sourceString = builder.sourceString;
     }
 
 
@@ -439,28 +434,8 @@ public class SingleConfig {
 
         private  boolean ignoreCertificateVerify = GlobalConfig.ignoreCertificateVerify;
 
-        //图片源
-        /**
-         * 类型	SCHEME	示例
-         远程图片	http://, https://	HttpURLConnection 或者参考 使用其他网络加载方案
-         本地文件	file://	FileInputStream
-         Content provider	content://	ContentResolver
-         asset目录下的资源	asset://	AssetManager
-         res目录下的资源	res://	Resources.openRawResource
-         Uri中指定图片数据	data:mime/type;base64,	数据类型必须符合 rfc2397规定 (仅支持 UTF-8)
-         * @param config
-         * @return
-         */
-        private String url;
-        private String thumbnailUrl;//小图的url
-        private String filePath;
-        private int resId;
-        private String contentProvider;
 
-        /**
-         * byte[]类型的图片源
-         */
-        private byte[] bytes;
+
         private boolean isGif=false;
 
         private View target;
@@ -544,6 +519,24 @@ public class SingleConfig {
 
         private int loadingResId ;
         private int errorResId ;
+        /**
+         * 类型	SCHEME	示例
+         远程图片	http://, https://	HttpURLConnection 或者参考 使用其他网络加载方案
+         本地文件	file://	FileInputStream  或者/storage/
+         Content provider	content://	ContentResolver
+         asset目录下的资源	asset://	AssetManager
+         res目录下的资源	res://	Resources.openRawResource
+         Uri中指定图片数据	data:mime/type;base64,	数据类型必须符合 rfc2397规定 (仅支持 UTF-8)
+         * @param config
+         * @return
+         */
+        private String sourceString;
+        private String thumbnailUrl;//小图的url
+        private int resId;
+        /**
+         * byte[]类型的图片源
+         */
+        private byte[] bytes;
 
         public ConfigBuilder setInterceptor(LoadInterceptor interceptor) {
             this.interceptor = interceptor;
@@ -603,22 +596,7 @@ public class SingleConfig {
             return this;
         }
 
-        /**
-         * 设置网络路径
-         * @param url
-         * @return
-         */
-        public ConfigBuilder url(String url){
-            if(TextUtils.isEmpty(url)){
-                this.url = "";
-                return this;
-            }
-            this.url = url;
-            if(url.contains("gif")){
-                isGif = true;
-            }
-            return this;
-        }
+
         public ConfigBuilder thumbnail(String thumbnailUrl){
             this.thumbnailUrl = thumbnailUrl;
             return this;
@@ -655,31 +633,39 @@ public class SingleConfig {
             return this;
         }
 
+        public ConfigBuilder load(String sourceString){
+            this.sourceString = sourceString;
+            if(!TextUtils.isEmpty(sourceString)){
+                if(sourceString.endsWith(".gif")){
+                    isGif = true;
+                }
+            }
+            return this;
+        }
+        /**
+         * 设置网络路径
+         * @param url
+         * @return
+         */
+        @Deprecated
+        public ConfigBuilder url(String url){
+            load(url);
+            return this;
+        }
+        @Deprecated
         public ConfigBuilder file(String filePath){
-            if(TextUtils.isEmpty(filePath)){
-                this.filePath = "";
-                return this;
-            }
-            if(filePath.startsWith("content:")){
-                this.contentProvider = filePath;
-                return this;
-            }
-
-//            if(!new File(filePath).exists()){
-//                //throw new RuntimeException("文件不存在");
-//                Log.e("imageloader","文件不存在");
-//                return this;
-//            }
-
-            this.filePath = filePath;
-            if(filePath.contains("gif")){
-                isGif = true;
-            }
+            load(filePath);
+            return this;
+        }
+        @Deprecated
+        public ConfigBuilder content(String contentProvider){
+            load(contentProvider);
             return this;
         }
 
         public ConfigBuilder res(int resId){
             this.resId = resId;
+            //也可以转成content://xxx
             return this;
         }
 
@@ -688,10 +674,7 @@ public class SingleConfig {
             return this;
         }
 
-        public ConfigBuilder content(String contentProvider){
-            this.contentProvider = contentProvider;
-            return this;
-        }
+
 
         public void into(View targetView){
             this.target = targetView;
@@ -823,11 +806,11 @@ public class SingleConfig {
             return "{" +
                 "context:" + context +
                 ", ignoreCertificateVerify:" + ignoreCertificateVerify +
-                ", url:'" + url + '\'' +
+                ", source:'" + sourceString + '\'' +
                 ", thumbnailUrl:'" + thumbnailUrl + '\'' +
-                ", filePath:'" + filePath + '\'' +
+
                 ", resId=" + resId +
-                ", contentProvider:'" + contentProvider + '\'' +
+
                 ", isGif:" + isGif +
                 ", target:" + target +
                 ", asBitmap:" + asBitmap +

@@ -125,12 +125,13 @@ public class MyUtil {
         if (config.getPlaceHolderResId() <= 0) {
             return false;
         }
-
-        if (config.getResId() > 0 || !TextUtils.isEmpty(config.getFilePath())) {
-            return false;
-        } else {//只有在图片源为网络图片,并且图片没有缓存到本地时,才给显示placeholder
-            return true;
+        if(!TextUtils.isEmpty(config.getSourceString())){
+            if(config.getSourceString().startsWith("http")){
+                //只有在图片源为网络图片,并且图片没有缓存到本地时,才给显示placeholder
+                return true;
+            }
         }
+        return false;
     }
 
 
@@ -252,66 +253,42 @@ public class MyUtil {
      */
     public static Uri buildUriByType(SingleConfig config) {
 
-        Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
-                .getContentProvider());
+       // Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
+         //       .getContentProvider());
 
-        if (!TextUtils.isEmpty(config.getUrl())) {
-            String url = MyUtil.appendUrl(config.getUrl());
-            return Uri.parse(url);
+        if (!TextUtils.isEmpty(config.getSourceString())) {
+            //String url = MyUtil.appendUrl(config.getUrl());
+            if(config.getSourceString().startsWith("/storage/")){
+                File file = new File(config.getSourceString());
+                return Uri.fromFile(file);
+            }else if(config.getSourceString().startsWith("data:mime/type;base64")){
+                return Uri.parse(config.getSourceString());
+            }
+            return Uri.parse(config.getSourceString());
         }
 
         if (config.getResId() > 0) {
             return Uri.parse("res://imageloader/" + config.getResId());
         }
 
-        if (!TextUtils.isEmpty(config.getFilePath())) {
-            File file = new File(config.getFilePath());
-            if (file.exists()) {
-                return Uri.fromFile(file);
-            } else {
-                return Uri.parse(config.getFilePath());
-            }
-        }
-
-        if (!TextUtils.isEmpty(config.getContentProvider())) {
-            String content = config.getContentProvider();
-            if (!content.startsWith("content")) {
-                content = "content://" + content;
-            }
-            return Uri.parse(content);
+        if(config.getBytes() != null){
+            //?
         }
 
         return null;
     }
 
     public static String getUsablePath(SingleConfig config){
-        Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
-                .getContentProvider());
+       // Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
+            //    .getContentProvider());
 
-        if (!TextUtils.isEmpty(config.getUrl())) {
-            String url = MyUtil.appendUrl(config.getUrl());
-            return url;
+        if (!TextUtils.isEmpty(config.getSourceString())) {
+            //String url = MyUtil.appendUrl(config.getUrl());
+            return config.getSourceString();
         }
 
         if (config.getResId() > 0) {
             return "res://imageloader/" + config.getResId();
-        }
-
-        if (!TextUtils.isEmpty(config.getFilePath())) {
-            File file = new File(config.getFilePath());
-            if (file.exists()) {
-                return config.getFilePath();
-            } else {
-                return "";
-            }
-        }
-
-        if (!TextUtils.isEmpty(config.getContentProvider())) {
-            String content = config.getContentProvider();
-            if (!content.startsWith("content")) {
-                content = "content://" + content;
-            }
-            return content;
         }
 
         return "";

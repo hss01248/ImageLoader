@@ -54,9 +54,6 @@ import com.bumptech.glide.signature.EmptySignature;
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
 import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.event.CacheHitEvent;
-import com.github.piasy.biv.event.ErrorEvent;
-import com.github.piasy.biv.view.BigImageView;
 
 import com.hss01248.glidev4.big.GlideBigLoader;
 import com.hss01248.glidev4.big.ProgressableGlideUrl;
@@ -70,8 +67,6 @@ import com.hss01248.glidebase.drawable.AutoRotateDrawable;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
 import com.hss01248.image.utils.ThreadPoolFactory;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -537,7 +532,7 @@ public class Glide4Loader extends ILoader {
 
         textView.setText(desc);
 
-        getFileFromDiskCache(config.getUsableString(), new FileGetter() {
+        getFileFromDiskCache(config.getSourceString(), new FileGetter() {
             @Override
             public void onSuccess(File file, int width, int height) {
                 String text = textView.getText().toString();

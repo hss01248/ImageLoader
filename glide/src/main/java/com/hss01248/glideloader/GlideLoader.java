@@ -24,7 +24,6 @@ import com.bumptech.glide.signature.EmptySignature;
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
 import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.glideloader.big.GlideBigLoader;
 import com.hss01248.glideloader.transform.BorderRoundTransformation;
 import com.hss01248.glideloader.transform.CropCircleWithBorderTransformation;
@@ -134,7 +133,7 @@ public class GlideLoader extends ILoader {
                 public void onLoadFailed(Exception e, Drawable errorDrawable) {
                     super.onLoadFailed(e, errorDrawable);
                     config.getBitmapListener().onFail(e);
-                    MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
+                    MyUtil.handleException(new ImageLoadFailException(config.getSourceString(),e));
                 }
             };
         }else {
@@ -164,7 +163,7 @@ public class GlideLoader extends ILoader {
                 public void onLoadFailed(Exception e, Drawable errorDrawable) {
                     super.onLoadFailed(e, errorDrawable);
                     config.getBitmapListener().onFail(e);
-                    MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
+                    MyUtil.handleException(new ImageLoadFailException(config.getSourceString(),e));
                 }
             };
         }
@@ -194,7 +193,7 @@ public class GlideLoader extends ILoader {
             return;
         }
 
-        DrawableRequestBuilder builder = request.thumbnail(1.0f);
+        DrawableRequestBuilder builder = request.thumbnail(0.1f);
         if(config.getLoadingResId() != 0){
             Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
             builder.placeholder(drawable);
@@ -262,7 +261,7 @@ public class GlideLoader extends ILoader {
                                     if(config.getImageListener() != null){
                                         config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                                     }
-                                    MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
+                                    MyUtil.handleException(new ImageLoadFailException(config.getSourceString(),e));
 
 
                                 }
@@ -404,7 +403,7 @@ public class GlideLoader extends ILoader {
                                             gifDrawable.stop();
                                         } catch (Throwable e) {
                                             imageView.setImageDrawable(gifDrawable);
-                                            MyUtil.handleException(new ImageLoadFailException(config.getUsableString(),e));
+                                            MyUtil.handleException(new ImageLoadFailException(config.getSourceString(),e));
                                         }
                                     }
 
@@ -566,7 +565,7 @@ public class GlideLoader extends ILoader {
 
         textView.setText(desc);
 
-        getFileFromDiskCache(config.getUsableString(), new FileGetter() {
+        getFileFromDiskCache(config.getSourceString(), new FileGetter() {
             @Override
             public void onSuccess(File file, int width, int height) {
                 String text = textView.getText().toString();
@@ -647,16 +646,12 @@ public class GlideLoader extends ILoader {
     @Nullable
     private DrawableTypeRequest getDrawableTypeRequest(SingleConfig config, RequestManager requestManager) {
         DrawableTypeRequest request = null;
-        if(!TextUtils.isEmpty(config.getUrl())){
-            if(config.getUrl().startsWith("http")){
+        if(!TextUtils.isEmpty(config.getSourceString())){
+            if(config.getSourceString().startsWith("http")){
                 request= requestManager.load(getGlideUrl(config));
             }else {
-                request= requestManager.load(config.getUrl());
+                request= requestManager.load(config.getSourceString());
             }
-        }else if(!TextUtils.isEmpty(config.getFilePath())){
-            request= requestManager.load(config.getFilePath());
-        }else if(!TextUtils.isEmpty(config.getContentProvider())){
-            request= requestManager.loadFromMediaStore(Uri.parse(config.getContentProvider()));
         }else if(config.getResId() != 0){
             request= requestManager.load(config.getResId());
         }else if(config.getBytes() != null){
@@ -676,7 +671,7 @@ public class GlideLoader extends ILoader {
             request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
         }*/
 
-        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
+        request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存原图
 
         return request;
     }
