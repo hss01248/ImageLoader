@@ -193,7 +193,7 @@ public class GlideLoader extends ILoader {
             return;
         }
 
-        DrawableRequestBuilder builder = request.thumbnail(0.1f);
+        DrawableRequestBuilder builder = request.thumbnail(0.2f);
         if(config.getLoadingResId() != 0){
             Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
             builder.placeholder(drawable);

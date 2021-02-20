@@ -15,10 +15,13 @@ import android.view.View;
 import com.github.piasy.biv.BigImageViewer;
 import com.hss01248.image.bigimage.MyRecyclePagerAdapter;
 import com.hss01248.image.bigimage.RecycleAdapterForBigImage;
+import com.hss01248.image.bigimage2.MyRecyclePagerAdapter2;
+import com.hss01248.image.bigimage2.MyViewPagerAdapter3;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.ILoader;
+import com.hss01248.pagestate.PageStateManager;
 
 import java.io.File;
 import java.util.List;
@@ -47,6 +50,7 @@ public class ImageLoader {
     }
 
     public static ILoaderConfig config;
+
      public interface  ILoaderConfig{
          Stack<Activity> getActivityStack();
      }
@@ -108,11 +112,22 @@ public class ImageLoader {
         viewPager.setOffscreenPageLimit(1);
         //强制让左右缓存一个
        // ViewPager viewPager = new ViewPager(context);
-        if( viewPager.getAdapter()==null  ){
-            PagerAdapter adapter = new MyRecyclePagerAdapter(urls);
+       /* if( viewPager.getAdapter()==null  ){
+            PagerAdapter adapter = new MyRecyclePagerAdapter2(urls);
             viewPager.setAdapter(adapter);
-        }else if (viewPager.getAdapter() instanceof MyRecyclePagerAdapter){
-            MyRecyclePagerAdapter adapterForBigImage = (MyRecyclePagerAdapter) viewPager.getAdapter();
+        }else if (viewPager.getAdapter() instanceof MyRecyclePagerAdapter2){
+            MyRecyclePagerAdapter2 adapterForBigImage = (MyRecyclePagerAdapter2) viewPager.getAdapter();
+            adapterForBigImage.changeDatas(urls);
+        }else {
+            throw new RuntimeException("用于加载大图的viewPager应该专用,其adapter不要自己设置");
+        }*/
+
+
+        if( viewPager.getAdapter()==null  ){
+            PagerAdapter adapter = new MyViewPagerAdapter3(urls);
+            viewPager.setAdapter(adapter);
+        }else if (viewPager.getAdapter() instanceof MyViewPagerAdapter3){
+            MyViewPagerAdapter3 adapterForBigImage = (MyViewPagerAdapter3) viewPager.getAdapter();
             adapterForBigImage.changeDatas(urls);
         }else {
             throw new RuntimeException("用于加载大图的viewPager应该专用,其adapter不要自己设置");

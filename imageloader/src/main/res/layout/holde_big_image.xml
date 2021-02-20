@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <com.hss01248.image.bigimage2.MyLargeImageView
+        android:layout_width="match_parent"
+        android:id="@+id/my_big_image"
+        android:layout_height="match_parent"/>
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifview"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"/>
+</FrameLayout>

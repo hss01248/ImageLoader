@@ -3,7 +3,10 @@ apply plugin: 'com.android.library'
 android {
 
     compileSdkVersion 28
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
@@ -63,7 +66,8 @@ dependencies {
     api ('pl.droidsonroids.gif:android-gif-drawable:1.2.19'){
         exclude group: 'com.android.support'
     }
-
+    api 'com.shizhefei:LargeImageView:1.1.0'
+    api 'com.github.hss01248:PageStateManager:3.0.2-support'
    /* compile 'com.github.piasy:BigImageViewer:1.2.7'
     compile 'com.github.piasy:ProgressPieIndicator:1.2.7'
 
