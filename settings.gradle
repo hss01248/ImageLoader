@@ -1,2 +1,3 @@
+include ':bigimage'
 include ':app', ':imageloader', ':fresco', ':glide',  ':glidev4', ':memory', ':glidebase', ':imagelist'
 
