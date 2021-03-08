@@ -8,12 +8,13 @@ import java.io.File;
 
 public interface FileGetter {
 
-    void onSuccess(File file,int width,int height);
+    void onSuccess(File file, int width, int height);
 
     //void onSuccess(InputStream is);
 
     void onFail(Throwable e);
 
-   default void onProgress(int progress){}
+    default void onProgress(int progress) {
+    }
 
 }

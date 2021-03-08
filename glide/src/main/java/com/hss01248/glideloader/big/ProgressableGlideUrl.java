@@ -35,8 +35,8 @@ public class ProgressableGlideUrl extends GlideUrl {
 
     @Override
     public String getCacheKey() {
-        String url =    super.getCacheKey().replace(OkHttpProgressResponseBody.KEY_PREGRESS,"");
-        Log.d("getCacheKey",url);
+        String url = super.getCacheKey().replace(OkHttpProgressResponseBody.KEY_PREGRESS, "");
+        Log.d("getCacheKey", url);
         return url;
     }
 }

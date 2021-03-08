@@ -86,6 +86,7 @@ public class GifImageDecoder {
         }
         return mDelay;
     }
+
     /**
      * Gets the number of GifFrames read from file.
      *
@@ -215,7 +216,8 @@ public class GifImageDecoder {
      *
      * @return image
      */
-    @SuppressLint("NewApi") private Bitmap extractImage() {
+    @SuppressLint("NewApi")
+    private Bitmap extractImage() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
             outputStream.write(mGifHeader.bytes);

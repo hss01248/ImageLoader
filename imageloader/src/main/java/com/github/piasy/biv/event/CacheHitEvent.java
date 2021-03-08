@@ -10,7 +10,7 @@ public class CacheHitEvent {
     public File file;
     public String url;
 
-    public CacheHitEvent(File file,String url) {
+    public CacheHitEvent(File file, String url) {
         this.file = file;
         this.url = url;
     }

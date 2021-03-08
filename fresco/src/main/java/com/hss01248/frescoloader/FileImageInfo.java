@@ -13,9 +13,9 @@ import com.facebook.imagepipeline.image.QualityInfo;
 public class FileImageInfo implements ImageInfo {
 
     int width;
-    int height ;
+    int height;
 
-    public FileImageInfo(String path){
+    public FileImageInfo(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         /**
@@ -28,6 +28,7 @@ public class FileImageInfo implements ImageInfo {
         height = options.outHeight;
 
     }
+
     @Override
     public int getWidth() {
         return width;

@@ -10,8 +10,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
+
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -48,12 +50,10 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.image.QualityInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.imagepipeline.request.Postprocessor;
 import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.frescoloader.big.BigImageLoader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
@@ -76,7 +76,7 @@ import static com.hss01248.image.config.GlobalConfig.context;
 
 /**
  * Created by Administrator on 2017/3/15 0015.
- *
+ * <p>
  * 参考: https://github.com/ladingwu/ImageLoaderFramework/blob/5b943f69f042d153fdde3bb767d68072422f696d/fresco/src/main/java/com/ladingwu/frescolibrary/FrescoImageLoader.java
  */
 
@@ -84,7 +84,7 @@ public class FrescoLoader extends ILoader {
     @Override
     public void init(final Context context, int cacheSizeInM) {
         DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(context)
-                .setMaxCacheSize(cacheSizeInM*1024*1024)
+                .setMaxCacheSize(cacheSizeInM * 1024 * 1024)
                 .setBaseDirectoryName(GlobalConfig.cacheFolderName)
                 .setBaseDirectoryPathSupplier(new Supplier<File>() {
                     @Override
@@ -95,8 +95,8 @@ public class FrescoLoader extends ILoader {
                 .build();
         MyImageCacheStatsTracker imageCacheStatsTracker = new MyImageCacheStatsTracker();
 
-        OkHttpClient okHttpClient= MyUtil.getClient(GlobalConfig.ignoreCertificateVerify);
-        ImagePipelineConfig config = OkHttpImagePipelineConfigFactory.newBuilder(context,okHttpClient)
+        OkHttpClient okHttpClient = MyUtil.getClient(GlobalConfig.ignoreCertificateVerify);
+        ImagePipelineConfig config = OkHttpImagePipelineConfigFactory.newBuilder(context, okHttpClient)
                 //ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
                 .setMainDiskCacheConfig(diskCacheConfig)
                 .setImageCacheStatsTracker(imageCacheStatsTracker)
@@ -109,10 +109,9 @@ public class FrescoLoader extends ILoader {
                 .build();
         //Fresco.initialize(context, config);
 
-        BigImageViewer.initialize(BigImageLoader.with(context,config));
+        BigImageViewer.initialize(BigImageLoader.with(context, config));
 
     }
-
 
 
     @Override
@@ -122,11 +121,11 @@ public class FrescoLoader extends ILoader {
 
     @Override
     public void requestForNormalDiaplay(SingleConfig config) {
-        if(config.getTarget() instanceof SimpleDraweeView){
-            requestForSimpleDraweeView((SimpleDraweeView) config.getTarget(),config);
-        }else if(config.getTarget() instanceof ImageView){
-            requestForImageView((ImageView) config.getTarget(),config);
-        }else {
+        if (config.getTarget() instanceof SimpleDraweeView) {
+            requestForSimpleDraweeView((SimpleDraweeView) config.getTarget(), config);
+        } else if (config.getTarget() instanceof ImageView) {
+            requestForImageView((ImageView) config.getTarget(), config);
+        } else {
             //todo 抛出异常
         }
     }
@@ -145,13 +144,13 @@ public class FrescoLoader extends ILoader {
         setDraweeHierarchyForDraweeView(config);
 
         //controller
-        PipelineDraweeControllerBuilder controller = buildPipelineDraweeController(config,request);
+        PipelineDraweeControllerBuilder controller = buildPipelineDraweeController(config, request);
         controller.setOldController(target.getController());
 
         target.setController(controller.build());
     }
 
-    private void requestForImageView(ImageView imageView,final SingleConfig config) {
+    private void requestForImageView(ImageView imageView, final SingleConfig config) {
 
            /* config.setBitmapListener(new SingleConfig.BitmapListener() {
                 @Override
@@ -168,28 +167,28 @@ public class FrescoLoader extends ILoader {
             });
             requestBitmap(config);
             return;*/
-           checkWrapContentOrMatchParent(config);
+        checkWrapContentOrMatchParent(config);
 
 
         //GenericDraweeHierarchy hierarchy=null;
         GenericDraweeHierarchy hierarchy = GenericDraweeHierarchyBuilder.newInstance(imageView.getContext().getResources()).build();
-        setupHierarchy(hierarchy,config);
+        setupHierarchy(hierarchy, config);
 
         // 数据-model
         ImageRequest request = buildRequest(config);
 
         //设置controller
 
-        DraweeHolder draweeHolder= (DraweeHolder) imageView.getTag(R.id.fresco_drawee);
+        DraweeHolder draweeHolder = (DraweeHolder) imageView.getTag(R.id.fresco_drawee);
 
 
-        PipelineDraweeControllerBuilder controllerBuilder = buildPipelineDraweeController(config,request);
+        PipelineDraweeControllerBuilder controllerBuilder = buildPipelineDraweeController(config, request);
 
 
         if (draweeHolder == null) {
-            draweeHolder=DraweeHolder.create(hierarchy,imageView.getContext());
-        }else {
-             controllerBuilder.setOldController(draweeHolder.getController());
+            draweeHolder = DraweeHolder.create(hierarchy, imageView.getContext());
+        } else {
+            controllerBuilder.setOldController(draweeHolder.getController());
             draweeHolder.setHierarchy(hierarchy);
         }
 
@@ -197,7 +196,7 @@ public class FrescoLoader extends ILoader {
 
 
         //imageview的特殊处理
-        ViewStatesListener mStatesListener=new ViewStatesListener(draweeHolder);
+        ViewStatesListener mStatesListener = new ViewStatesListener(draweeHolder);
 
         imageView.addOnAttachStateChangeListener(mStatesListener);
 
@@ -214,7 +213,7 @@ public class FrescoLoader extends ILoader {
 //            draweeHolder.onAttach();
 //        }
         // 保证每一个ImageView中只存在一个draweeHolder
-        imageView.setTag(R.id.fresco_drawee,draweeHolder);
+        imageView.setTag(R.id.fresco_drawee, draweeHolder);
         // 拿到数据
         imageView.setImageDrawable(draweeHolder.getTopLevelDrawable());
 
@@ -222,19 +221,19 @@ public class FrescoLoader extends ILoader {
     }
 
     private void checkWrapContentOrMatchParent(SingleConfig config) {
-        if(!(config.getTarget() instanceof ImageView)){
+        if (!(config.getTarget() instanceof ImageView)) {
             return;
         }
-        ViewGroup.LayoutParams params=config.getTarget().getLayoutParams();
-        if (params==null) {
-            params=new ViewGroup.LayoutParams(200,200);
+        ViewGroup.LayoutParams params = config.getTarget().getLayoutParams();
+        if (params == null) {
+            params = new ViewGroup.LayoutParams(200, 200);
         }
 
-        if (params.width==WRAP_CONTENT){
+        if (params.width == WRAP_CONTENT) {
             //params.width=MATCH_PARENT;
             config.widthWrapContent = true;
         }
-        if (params.height==WRAP_CONTENT){
+        if (params.height == WRAP_CONTENT) {
             //params.height=MATCH_PARENT;
             config.heightWrapContent = true;
         }
@@ -243,10 +242,10 @@ public class FrescoLoader extends ILoader {
 
 
     private PipelineDraweeControllerBuilder buildPipelineDraweeController(final SingleConfig config, final ImageRequest request) {
-        final PipelineDraweeControllerBuilder builder =  Fresco.newDraweeControllerBuilder();
+        final PipelineDraweeControllerBuilder builder = Fresco.newDraweeControllerBuilder();
         builder.setImageRequest(request);
 
-        if(!config.isAsBitmap()){
+        if (!config.isAsBitmap()) {
             builder.setAutoPlayAnimations(false);//自动播放gif动画
         }
 
@@ -263,16 +262,16 @@ public class FrescoLoader extends ILoader {
                     config.setAsBitmap(true);
                     getLoader().request(config);
                 }*/
-                if(config.isAsBitmap()){
+                if (config.isAsBitmap()) {
                     return;
                 }
-                if(config.getImageListener() ==null){
+                if (config.getImageListener() == null) {
                     return;
                 }
                 /*if(TextUtils.isEmpty(config.getUrl())){
                     return;
                 }*/
-                config.getImageListener().onSuccess(null,null,imageInfo.getWidth(),imageInfo.getHeight());
+                config.getImageListener().onSuccess(null, null, imageInfo.getWidth(), imageInfo.getHeight());
 //                File file = getFileFromDiskCache(config.getUrl());
 //                if(file!=null && file.exists()){
 //                    if(imageInfo ==null){
@@ -301,10 +300,10 @@ public class FrescoLoader extends ILoader {
                 /*if(config.getBitmapListener()!=null){
                     config.getBitmapListener().onFail(throwable);
                 }*/
-                if(config.isAsBitmap()){
+                if (config.isAsBitmap()) {
                     return;
                 }
-                if(config.getImageListener() ==null){
+                if (config.getImageListener() == null) {
                     return;
                 }
                 config.getImageListener().onFail(throwable);
@@ -320,24 +319,24 @@ public class FrescoLoader extends ILoader {
 
     private void setDraweeHierarchyForDraweeView(SingleConfig config) {
         SimpleDraweeView simpleDraweeView = null;
-        if(config.isAsBitmap()){
+        if (config.isAsBitmap()) {
             return;
         }
 
-        if(config.getTarget() instanceof SimpleDraweeView){
+        if (config.getTarget() instanceof SimpleDraweeView) {
             simpleDraweeView = (SimpleDraweeView) config.getTarget();
         }
-        if(simpleDraweeView ==null){
+        if (simpleDraweeView == null) {
             return;
         }
 
         GenericDraweeHierarchy hierarchy = simpleDraweeView.getHierarchy();
 
-        if(hierarchy==null){
+        if (hierarchy == null) {
             hierarchy = new GenericDraweeHierarchyBuilder(context.getResources()).build();
         }
 
-        setupHierarchy(hierarchy,config);
+        setupHierarchy(hierarchy, config);
 
         simpleDraweeView.setHierarchy(hierarchy);
 
@@ -347,30 +346,30 @@ public class FrescoLoader extends ILoader {
     private void setupHierarchy(GenericDraweeHierarchy hierarchy, SingleConfig config) {
         //边角形状和边框
         int shapeMode = config.getShapeMode();
-        RoundingParams roundingParams =null;
+        RoundingParams roundingParams = null;
 
-        switch (shapeMode){
+        switch (shapeMode) {
             case ShapeMode.RECT:
                 roundingParams = RoundingParams.fromCornersRadius(0);
-                if(config.getBorderWidth()>0){
-                    roundingParams.setBorder(config.getBorderColor(),config.getBorderWidth());
+                if (config.getBorderWidth() > 0) {
+                    roundingParams.setBorder(config.getBorderColor(), config.getBorderWidth());
                 }
                 break;
             case ShapeMode.RECT_ROUND:
                 roundingParams = RoundingParams.fromCornersRadius(config.getRectRoundRadius());
-                if(config.getBorderWidth()>0){
-                    roundingParams.setBorder(config.getBorderColor(),config.getBorderWidth());
+                if (config.getBorderWidth() > 0) {
+                    roundingParams.setBorder(config.getBorderColor(), config.getBorderWidth());
                 }
-                if(config.isGif() && config.getRoundOverlayColor()>0){
+                if (config.isGif() && config.getRoundOverlayColor() > 0) {
                     roundingParams.setOverlayColor(config.getRoundOverlayColor());
                 }
                 break;
             case ShapeMode.OVAL:
                 roundingParams = RoundingParams.asCircle();
-                if(config.getBorderWidth()>0){
-                    roundingParams.setBorder(config.getBorderColor(),config.getBorderWidth());
+                if (config.getBorderWidth() > 0) {
+                    roundingParams.setBorder(config.getBorderColor(), config.getBorderWidth());
                 }
-                if(config.isGif() && config.getRoundOverlayColor()>0){
+                if (config.isGif() && config.getRoundOverlayColor() > 0) {
                     roundingParams.setOverlayColor(config.getRoundOverlayColor());
                 }
                 break;
@@ -381,13 +380,10 @@ public class FrescoLoader extends ILoader {
         hierarchy.setRoundingParams(roundingParams);
 
 
-
-
-
         //loading图
-        if(config.getLoadingResId()>0){
+        if (config.getLoadingResId() > 0) {
             ScalingUtils.ScaleType scaleType2 = ScalingUtils.ScaleType.CENTER_INSIDE;
-            if(config.getLoadingScaleType() >0){
+            if (config.getLoadingScaleType() > 0) {
                 scaleType2 = FrescoUtil.getActualScaleType(config.getLoadingScaleType());
             }
 //todo 提供几种选择，以及可以自己设置内部圈圈  另外,设置了loading,就不要占位图了
@@ -401,16 +397,16 @@ public class FrescoLoader extends ILoader {
 
             Object roundingParams1 = ImageLoader.context.getResources().getDrawable(config.getLoadingResId());//R.drawable.imageloader_loading_50
             roundingParams1 = new AutoRotateDrawable((Drawable) roundingParams1, 1200);
-            hierarchy.setProgressBarImage((Drawable) roundingParams1,scaleType2);
+            hierarchy.setProgressBarImage((Drawable) roundingParams1, scaleType2);
         }
 
         //占位图
-        if(MyUtil.shouldSetPlaceHolder(config)){
+        if (MyUtil.shouldSetPlaceHolder(config)) {
             ScalingUtils.ScaleType scaleType = ScalingUtils.ScaleType.CENTER_CROP;
-            if(config.getPlaceHolderScaleType() >0){
+            if (config.getPlaceHolderScaleType() > 0) {
                 scaleType = FrescoUtil.getActualScaleType(config.getPlaceHolderScaleType());
             }
-            if(config.getPlaceHolderResId() >0){
+            if (config.getPlaceHolderResId() > 0) {
                 hierarchy.setPlaceholderImage(config.getPlaceHolderResId(), scaleType);
             }
         }
@@ -420,31 +416,31 @@ public class FrescoLoader extends ILoader {
         hierarchy.setActualImageScaleType(scaleMode);
 
         //失败图
-        if(config.getErrorResId()>0){
+        if (config.getErrorResId() > 0) {
             ScalingUtils.ScaleType scaleType3 = ScalingUtils.ScaleType.CENTER_INSIDE;
-            if(config.getErrorScaleType() >0){
+            if (config.getErrorScaleType() > 0) {
                 scaleType3 = FrescoUtil.getActualScaleType(config.getErrorScaleType());
             }
-            hierarchy.setFailureImage(config.getErrorResId(),scaleType3);
+            hierarchy.setFailureImage(config.getErrorResId(), scaleType3);
         }
     }
 
     private ImageRequest buildRequest(SingleConfig config) {
         Uri uri = MyUtil.buildUriByType(config);
 
-        ImageRequestBuilder builder =   ImageRequestBuilder.newBuilderWithSource(uri);
+        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
 
-        if(!config.isAsBitmap()){
+        if (!config.isAsBitmap()) {
             builder.setProgressiveRenderingEnabled(true)//支持图片渐进式加载
                     .setLocalThumbnailPreviewsEnabled(true);
 
         }
 
-        Postprocessor postprocessor=null;
-        if(config.isNeedBlur()){
-            postprocessor = new BlurPostprocessor(context,config.getBlurRadius(),2);
+        Postprocessor postprocessor = null;
+        if (config.isNeedBlur()) {
+            postprocessor = new BlurPostprocessor(context, config.getBlurRadius(), 2);
         }
-        if(config.isCropFace()){
+        if (config.isCropFace()) {
             //postprocessor = new FaceCenterCrop(config.getWidth(), config.getHeight());//脸部识别
         }
 
@@ -452,9 +448,9 @@ public class FrescoLoader extends ILoader {
         ResizeOptions resizeOptions = getResizeOption(config);
 
         ImageDecodeOptionsBuilder decodeOptionsBuilder = ImageDecodeOptions.newBuilder();
-        if(config.isUseARGB8888()){
+        if (config.isUseARGB8888()) {
             decodeOptionsBuilder.setBitmapConfig(Bitmap.Config.ARGB_8888);
-        }else {
+        } else {
             decodeOptionsBuilder.setBitmapConfig(Bitmap.Config.RGB_565);
         }
         /*if(config.isAsBitmap()){
@@ -468,15 +464,14 @@ public class FrescoLoader extends ILoader {
                 .setAutoRotateEnabled(true);
 
 
-
         return builder.build();
     }
 
     private ResizeOptions getResizeOption(SingleConfig config) {
         ResizeOptions resizeOptions = null;
-        if (config.getWidth() >0 && config.getHeight() > 0){
-            resizeOptions = new ResizeOptions(config.getWidth(),config.getHeight());
-        }else {
+        if (config.getWidth() > 0 && config.getHeight() > 0) {
+            resizeOptions = new ResizeOptions(config.getWidth(), config.getHeight());
+        } else {
             //todo 通过图片宽高和view宽高计算出最合理的resization
 
         }
@@ -484,13 +479,11 @@ public class FrescoLoader extends ILoader {
     }
 
 
-
-
-
     /**
      * 千万不要把bitmap复制给onNewResultImpl函数范围之外的任何变量。订阅者执行完操作之后，image pipeline 会回收这个bitmap，释放内存。在这个函数范围内再次使用这个Bitmap对象进行绘制将会导致IllegalStateException。
-     Bitmap对象对象回调线程有可能是在UI主线程回调，也有可能在子线程中回调，如果需要更新UI，需要做判断进行不同的逻辑处理。
+     * Bitmap对象对象回调线程有可能是在UI主线程回调，也有可能在子线程中回调，如果需要更新UI，需要做判断进行不同的逻辑处理。
      * 注:能够拿到网络gif的第一帧图,但拿不到res,本地file的第一帧图
+     *
      * @param config
      */
     private void requestBitmap(final SingleConfig config) {
@@ -501,22 +494,22 @@ public class FrescoLoader extends ILoader {
 
         DataSource<CloseableReference<CloseableImage>> dataSource = Fresco.getImagePipeline().fetchDecodedImage(request, GlobalConfig.context);
 
-        dataSource.subscribe(new MyBaseBitmapDataSubscriber(finalUrl,config.getWidth(),config.getHeight()) {
+        dataSource.subscribe(new MyBaseBitmapDataSubscriber(finalUrl, config.getWidth(), config.getHeight()) {
             @Override
-            protected void onNewResultImpl(Bitmap bitmap,DataSource<CloseableReference<CloseableImage>> dataSource) {
+            protected void onNewResultImpl(Bitmap bitmap, DataSource<CloseableReference<CloseableImage>> dataSource) {
                 //注意，gif图片解码方法与普通图片不一样，是无法拿到bitmap的。如果要把gif的第一帧的bitmap返回，怎么做？
                 //GifImage.create(bytes).decode(1l,9).getFrameInfo(1).
                 Bitmap bitmap1 = null;
-                if(config.getShapeMode() == ShapeMode.OVAL){
-                    bitmap1 = MyUtil.cropCirle(bitmap,false);
+                if (config.getShapeMode() == ShapeMode.OVAL) {
+                    bitmap1 = MyUtil.cropCirle(bitmap, false);
 
-                }else if(config.getShapeMode() == ShapeMode.RECT_ROUND && config.getRectRoundRadius()>0){
-                    bitmap1 = MyUtil.rectRound(bitmap,config.getRectRoundRadius(),0);
-                }else {
+                } else if (config.getShapeMode() == ShapeMode.RECT_ROUND && config.getRectRoundRadius() > 0) {
+                    bitmap1 = MyUtil.rectRound(bitmap, config.getRectRoundRadius(), 0);
+                } else {
                     bitmap1 = Bitmap.createBitmap(bitmap);
                 }
                 //不要将bitmap放到fresco的内存池中,不然又被回收
-               // FrescoUtil.putIntoPool(bitmap1,finalUrl);
+                // FrescoUtil.putIntoPool(bitmap1,finalUrl);
                 config.getBitmapListener().onSuccess(bitmap1);
             }
 
@@ -527,7 +520,6 @@ public class FrescoLoader extends ILoader {
         }, CallerThreadExecutor.getInstance());
 
     }
-
 
 
     @Override
@@ -561,7 +553,7 @@ public class FrescoLoader extends ILoader {
         url = MyUtil.appendUrl(url);
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         Uri uri = Uri.parse(url);
-         imagePipeline.evictFromMemoryCache(uri);
+        imagePipeline.evictFromMemoryCache(uri);
         imagePipeline.evictFromDiskCache(uri);
         //imagePipeline.evictFromCache(uri);//这个包含了从内存移除和从硬盘移除
     }
@@ -584,9 +576,9 @@ public class FrescoLoader extends ILoader {
         url = MyUtil.appendUrl(url);
         File localFile = null;
         if (!TextUtils.isEmpty(url)) {
-            Log.d("getfilefromdisk","url is:"+url);
-            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(ImageRequest.fromUri(url),false);
-            Log.d("getfilefromdisk","cacheKey is:"+cacheKey);
+            Log.d("getfilefromdisk", "url is:" + url);
+            CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(ImageRequest.fromUri(url), false);
+            Log.d("getfilefromdisk", "cacheKey is:" + cacheKey);
             if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
                 BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
                 localFile = ((FileBinaryResource) resource).getFile();
@@ -600,7 +592,7 @@ public class FrescoLoader extends ILoader {
 
     @Override
     public void getFileFromDiskCache(String url, FileGetter getter) {
-        download(url,getter);
+        download(url, getter);
     }
 
     @Override
@@ -623,35 +615,35 @@ public class FrescoLoader extends ILoader {
 
         ImageRequest imageRequest = ImageRequest.fromUri(url);
         CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
-                .getEncodedCacheKey(imageRequest,null);
+                .getEncodedCacheKey(imageRequest, null);
         return ImagePipelineFactory.getInstance()
                 .getMainFileCache().hasKey(cacheKey);
     }
 
     @Override
-    public  void trimMemory(int level){
-       //todo  BitmapMemoryCacheTrimStrategy.getTrimRatio(trimType)
+    public void trimMemory(int level) {
+        //todo  BitmapMemoryCacheTrimStrategy.getTrimRatio(trimType)
     }
 
     @Override
-    public  void onLowMemory(){
+    public void onLowMemory() {
         Fresco.getImagePipeline().clearMemoryCaches();
     }
 
     @Override
     public void download(String url, FileGetter getter) {
         getter = MyUtil.getProxy(getter);
-        if(isCached(url)){
+        if (isCached(url)) {
             File file = getFileFromDiskCache(url);
-            if(file!=null && file.exists()){
+            if (file != null && file.exists()) {
 
                 int[] wh = MyUtil.getImageWidthHeight(file.getAbsolutePath());
-                getter.onSuccess(file,wh[0],wh[1]);
-            }else {
+                getter.onSuccess(file, wh[0], wh[1]);
+            } else {
                 getter.onFail(new Throwable("file does not exist"));
             }
-        }else {
-            downloadReally(url,getter);
+        } else {
+            downloadReally(url, getter);
         }
     }
 
@@ -662,14 +654,14 @@ public class FrescoLoader extends ILoader {
         DataSubscriber<Void> dataSubscriber = new DataSubscriber<Void>() {
             @Override
             public void onNewResult(DataSource<Void> dataSource) {
-                if(dataSource.hasFailed()){
+                if (dataSource.hasFailed()) {
                     onFailure(dataSource);
-                }else {
+                } else {
                     File file = getFileFromDiskCache(url);
-                    if(file!=null && file.exists()){
+                    if (file != null && file.exists()) {
                         int[] wh = MyUtil.getImageWidthHeight(file.getAbsolutePath());
-                        getter.onSuccess(file,wh[0],wh[1]);
-                    }else {
+                        getter.onSuccess(file, wh[0], wh[1]);
+                    } else {
                         getter.onFail(new Throwable("file does not exist after prefetched"));
                     }
                 }
@@ -694,7 +686,7 @@ public class FrescoLoader extends ILoader {
     }
 
 
-    public static Bitmap blur(Bitmap source,int mRadius,boolean recycleOriginal){
+    public static Bitmap blur(Bitmap source, int mRadius, boolean recycleOriginal) {
         int mSampling = 2;
         int width = source.getWidth();
         int height = source.getHeight();
@@ -719,7 +711,7 @@ public class FrescoLoader extends ILoader {
         } else {
             bitmap = FastBlur.blur(bitmap, mRadius, true);
         }
-        if(recycleOriginal){
+        if (recycleOriginal) {
             source.recycle();
         }
 

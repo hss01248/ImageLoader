@@ -30,7 +30,7 @@ import com.github.piasy.biv.loader.BigLoader;
 
 /**
  * Created by Piasy{github.com/Piasy} on 06/11/2016.
- *
+ * <p>
  * This is not a singleton, you can initialize it multiple times, but before you initialize it
  * again, it will use the same {@link BigLoader} globally.
  */

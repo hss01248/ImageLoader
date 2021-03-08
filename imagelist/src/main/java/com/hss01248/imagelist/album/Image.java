@@ -42,8 +42,8 @@ public class Image implements Parcelable {
         this.isSelected = isSelected;
     }
 
-    public void initFileSize(){
-        if(fileSize == 0){
+    public void initFileSize() {
+        if (fileSize == 0) {
             this.fileSize = new File(path).length();
         }
     }

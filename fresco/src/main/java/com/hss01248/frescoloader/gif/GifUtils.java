@@ -41,19 +41,19 @@ public class GifUtils {
         return bao.toByteArray();
     }
 
-    public static Bitmap getBitmapFromGifFile(File file){
+    public static Bitmap getBitmapFromGifFile(File file) {
 
         GifImageDecoder gifDecoder = new GifImageDecoder();
         FileInputStream fis = null;
         try {
-             fis = new FileInputStream(file);
+            fis = new FileInputStream(file);
             gifDecoder.read(fis);
             return gifDecoder.getBitmap();
         } catch (IOException e) {
             e.printStackTrace();
-            return  null;
-        }finally {
-            if (fis != null){
+            return null;
+        } finally {
+            if (fis != null) {
                 try {
                     fis.close();
                 } catch (IOException e) {

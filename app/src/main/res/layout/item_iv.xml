@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/item_root"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
-<!--<com.hss01248.glideloader.ImageLoaderRoundImageView
-		android:id="@+id/item_iv"
-		 android:layout_width="match_parent"
-    android:background="@drawable/shape_main_list_bg"
-	android:layout_marginBottom="5dp"
-	android:adjustViewBounds="true"
-	android:visibility="gone"
-		android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_root"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--<com.hss01248.glideloader.ImageLoaderRoundImageView
+            android:id="@+id/item_iv"
+             android:layout_width="match_parent"
+        android:background="@drawable/shape_main_list_bg"
+        android:layout_marginBottom="5dp"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+            android:layout_height="wrap_content">
 
-</com.hss01248.glideloader.ImageLoaderRoundImageView>-->
-	<ImageView
-		android:id="@+id/iv_round3"
-		android:background="@drawable/shape_main_list_bg"
-		android:layout_width="match_parent"
-		android:layout_height="100dp" />
+    </com.hss01248.glideloader.ImageLoaderRoundImageView>-->
+    <ImageView
+        android:id="@+id/iv_round3"
+        android:background="@drawable/shape_main_list_bg"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
 
-<!--<com.makeramen.roundedimageview.RoundedImageView
-android:id="@+id/iv_round2"
-	android:background="@drawable/shape_main_list_bg"
-	android:layout_width="match_parent"
-	android:adjustViewBounds="true"
-	android:layout_height="wrap_content"
-android:scaleType="fitCenter"
-app:riv_corner_radius="10dip"
-app:riv_border_width="2dip"
-app:riv_border_color="#333333"
-app:riv_mutate_background="true" />-->
+    <!--<com.makeramen.roundedimageview.RoundedImageView
+    android:id="@+id/iv_round2"
+        android:background="@drawable/shape_main_list_bg"
+        android:layout_width="match_parent"
+        android:adjustViewBounds="true"
+        android:layout_height="wrap_content"
+    android:scaleType="fitCenter"
+    app:riv_corner_radius="10dip"
+    app:riv_border_width="2dip"
+    app:riv_border_color="#333333"
+    app:riv_mutate_background="true" />-->
 
-	<!--<org.raphets.roundimageview.RoundImageView
-		android:layout_width="match_parent"
-		android:adjustViewBounds="true"
-		android:layout_height="wrap_content"
-		android:id="@+id/iv_round3"
-		app:border_width="3dp"
-		android:scaleType="fitCenter"
-		app:border_color="@android:color/holo_red_dark"
-		app:leftBottom_corner_radius="0dp"
-		app:leftTop_corner_radius="30dp"
-		app:rightBottom_corner_radius="30dp"
-		app:rightTop_corner_radius="0dp"
-		app:type="round" />-->
+    <!--<org.raphets.roundimageview.RoundImageView
+        android:layout_width="match_parent"
+        android:adjustViewBounds="true"
+        android:layout_height="wrap_content"
+        android:id="@+id/iv_round3"
+        app:border_width="3dp"
+        android:scaleType="fitCenter"
+        app:border_color="@android:color/holo_red_dark"
+        app:leftBottom_corner_radius="0dp"
+        app:leftTop_corner_radius="30dp"
+        app:rightBottom_corner_radius="30dp"
+        app:rightTop_corner_radius="0dp"
+        app:type="round" />-->
 </LinearLayout>

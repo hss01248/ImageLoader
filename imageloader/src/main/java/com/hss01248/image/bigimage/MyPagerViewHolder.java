@@ -16,20 +16,20 @@ import am.util.viewpager.adapter.RecyclePagerAdapter;
 
 public class MyPagerViewHolder extends RecyclePagerAdapter.PagerViewHolder {
     BigImageView imageView;
+
     public MyPagerViewHolder(ViewGroup parent) {
         super(new BigImageView(parent.getContext()));
         imageView = (BigImageView) itemView;
     }
 
-    public MyPagerViewHolder init(Map<String,File> caches){
+    public MyPagerViewHolder init(Map<String, File> caches) {
         imageView.setCachedFileMap(caches);
         return this;
     }
 
-    public void setData(String url){
-        ImageLoader.loadBigImage(imageView,url);
+    public void setData(String url) {
+        ImageLoader.loadBigImage(imageView, url);
     }
-
 
 
 }

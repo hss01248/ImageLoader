@@ -16,20 +16,20 @@ import am.util.viewpager.adapter.RecyclePagerAdapter;
  */
 
 public class MyPagerViewHolder2 extends RecyclePagerAdapter.PagerViewHolder {
-  public   MyLargeImageHolder imageViewHolder;
+    public MyLargeImageHolder imageViewHolder;
+
     public MyPagerViewHolder2(ViewGroup parent) {
         super(parent);
     }
 
-    public MyPagerViewHolder2 init(Map<String,File> caches){
-       // imageView.setCachedFileMap(caches);
+    public MyPagerViewHolder2 init(Map<String, File> caches) {
+        // imageView.setCachedFileMap(caches);
         return this;
     }
 
-    public void setData(String url){
+    public void setData(String url) {
         imageViewHolder.loadImage(url);
     }
-
 
 
 }

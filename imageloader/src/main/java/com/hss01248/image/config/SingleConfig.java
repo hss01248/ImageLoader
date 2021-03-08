@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class SingleConfig {
 
     public Context getContext() {
-        if(context==null){
+        if (context == null) {
             context = GlobalConfig.context;
         }
         return context;
@@ -43,9 +43,9 @@ public class SingleConfig {
 
     private String errorDes;
 
-    public long  loadStartTime;
+    public long loadStartTime;
 
-    public long  cost;
+    public long cost;
 
     public String urlForCacheKey;
 
@@ -57,16 +57,17 @@ public class SingleConfig {
         return borderWidth;
     }
 
-    public byte[] getBytes(){
+    public byte[] getBytes() {
         return bytes;
     }
 
     public int getHeight() {
         return height;
     }
+
     private boolean isUseARGB8888;
 
-    public boolean isUseARGB8888(){
+    public boolean isUseARGB8888() {
         return isUseARGB8888;
     }
 
@@ -103,7 +104,6 @@ public class SingleConfig {
     }
 
 
-
     public int getWidth() {
         return width;
     }
@@ -121,12 +121,11 @@ public class SingleConfig {
         return bitmapListener;
     }
 
-    private  boolean ignoreCertificateVerify ;
+    private boolean ignoreCertificateVerify;
 
     public void setUrl(String url) {
         this.sourceString = url;
     }
-
 
 
     public String getThumbnailUrl() {
@@ -142,7 +141,7 @@ public class SingleConfig {
         return interceptor;
     }
 
-    private  LoadInterceptor interceptor;
+    private LoadInterceptor interceptor;
 
     /**
      * byte[]类型的图片源
@@ -155,9 +154,8 @@ public class SingleConfig {
     private int width;
     private int height;
 
-    private boolean needBlur ;//是否需要模糊
+    private boolean needBlur;//是否需要模糊
     private int blurRadius;
-
 
 
     //UI:
@@ -190,6 +188,7 @@ public class SingleConfig {
     public boolean isReuseable() {
         return reuseable;
     }
+
     private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
     private int rectRoundRadius;//圆角矩形时圆角的半径
 
@@ -209,7 +208,7 @@ public class SingleConfig {
         return rightBottomRadius;
     }
 
-    private int leftTopRadius,  rightTopRadius, leftBottomRadius, rightBottomRadius;
+    private int leftTopRadius, rightTopRadius, leftBottomRadius, rightBottomRadius;
 
     private int roundOverlayColor;//圆角/圆外覆盖一层背景色
     private int scaleMode;//填充模式,默认centercrop,可选fitXY,centerInside...
@@ -252,8 +251,8 @@ public class SingleConfig {
     }
 
 
-    public String getSourceString(){
-        Log.d("source",sourceString+"  ->>>>");
+    public String getSourceString() {
+        Log.d("source", sourceString + "  ->>>>");
         return sourceString;
     }
 
@@ -265,7 +264,7 @@ public class SingleConfig {
         return useThirdPartyGifLoader;
     }
 
-    private  boolean useThirdPartyGifLoader;
+    private boolean useThirdPartyGifLoader;
 
     public ImageListener getImageListener() {
         return imageListener;
@@ -275,34 +274,34 @@ public class SingleConfig {
         return bigImageView;
     }*/
 
-   // private BigImageView bigImageView ;//可放大和缩放的大图
+    // private BigImageView bigImageView ;//可放大和缩放的大图
 
-    private void show(){
+    private void show() {
         try {
-            if(ConfigChecker.check(this)){
-                if(GlobalConfig.debug){
+            if (ConfigChecker.check(this)) {
+                if (GlobalConfig.debug) {
                     GlobalConfig.getLoader().debug(this);
                 }
-                if(interceptor != null && interceptor.intercept(this)){
+                if (interceptor != null && interceptor.intercept(this)) {
                     return;
                 }
 
-                if(isAsBitmap()){
+                if (isAsBitmap()) {
                     GlobalConfig.getLoader().requestAsBitmap(this);
-                }else if(target instanceof BigImageView){
+                } else if (target instanceof BigImageView) {
                     MyUtil.viewBigImage(this);
-                }else {
+                } else {
                     GlobalConfig.getLoader().requestForNormalDiaplay(this);
                 }
             }
-        }catch (Throwable e){
-            if(GlobalConfig.getExceptionHandler() != null){
+        } catch (Throwable e) {
+            if (GlobalConfig.getExceptionHandler() != null) {
                 try {
                     GlobalConfig.getExceptionHandler().onError(e);
-                }catch (Throwable e2){
+                } catch (Throwable e2) {
                     e2.printStackTrace();
                 }
-            }else {
+            } else {
                 e.printStackTrace();
             }
         }
@@ -362,7 +361,7 @@ public class SingleConfig {
         return loadingScaleType;
     }
 
-    public SingleConfig(ConfigBuilder builder){
+    public SingleConfig(ConfigBuilder builder) {
 
         this.thumbnailUrl = builder.thumbnailUrl;
         this.resId = builder.resId;
@@ -378,7 +377,7 @@ public class SingleConfig {
 
 
         this.shapeMode = builder.shapeMode;
-        if(shapeMode== ShapeMode.RECT_ROUND){
+        if (shapeMode == ShapeMode.RECT_ROUND) {
             this.rectRoundRadius = builder.rectRoundRadius;
         }
         this.scaleMode = builder.scaleMode;
@@ -386,7 +385,7 @@ public class SingleConfig {
         this.needBlur = builder.needBlur;
         this.placeHolderResId = builder.placeHolderResId;
         this.borderWidth = builder.borderWidth;
-        if(borderWidth>0){
+        if (borderWidth > 0) {
             this.borderColor = builder.borderColor;
         }
 
@@ -402,7 +401,7 @@ public class SingleConfig {
         this.errorResId = builder.errorResId;
 
         this.cropFace = builder.cropFace;
-       // this.bigImageView = builder.bigImageView;
+        // this.bigImageView = builder.bigImageView;
 
         this.errorScaleType = builder.errorScaleType;
         this.placeHolderScaleType = builder.placeHolderScaleType;
@@ -422,21 +421,20 @@ public class SingleConfig {
     }
 
 
-
-    public interface BitmapListener{
+    public interface BitmapListener {
         void onSuccess(Bitmap bitmap);
+
         void onFail(Throwable e);
     }
 
-    public static class ConfigBuilder{
+    public static class ConfigBuilder {
         private Context context;
 
 
-        private  boolean ignoreCertificateVerify = GlobalConfig.ignoreCertificateVerify;
+        private boolean ignoreCertificateVerify = GlobalConfig.ignoreCertificateVerify;
 
 
-
-        private boolean isGif=false;
+        private boolean isGif = false;
 
         private View target;
         private boolean asBitmap;//只获取bitmap
@@ -447,41 +445,45 @@ public class SingleConfig {
         private int height;
 
 
-        private int leftTopRadius,  rightTopRadius, leftBottomRadius, rightBottomRadius;
+        private int leftTopRadius, rightTopRadius, leftBottomRadius, rightBottomRadius;
+
         /**
          * 是否使用全局的默认图+centerinside
+         *
          * @param useDefaultPlaceHolder
          * @return
          */
         public ConfigBuilder defaultPlaceHolder(boolean useDefaultPlaceHolder) {
-            if(useDefaultPlaceHolder){
-                placeHolderResId= GlobalConfig.placeHolderResId;
-                placeHolderScaleType= GlobalConfig.placeHolderScaleType;
+            if (useDefaultPlaceHolder) {
+                placeHolderResId = GlobalConfig.placeHolderResId;
+                placeHolderScaleType = GlobalConfig.placeHolderScaleType;
             }
             return this;
         }
 
         /**
          * 是否使用全局的失败图+centerinside
+         *
          * @param useDefaultErrorRes
          * @return
          */
         public ConfigBuilder defaultErrorRes(boolean useDefaultErrorRes) {
-           if(useDefaultErrorRes){
-               errorScaleType= GlobalConfig.errorScaleType;
-               errorResId = GlobalConfig.errorResId;
-           }
+            if (useDefaultErrorRes) {
+                errorScaleType = GlobalConfig.errorScaleType;
+                errorResId = GlobalConfig.errorResId;
+            }
             return this;
         }
 
         /**
          * glide支持不好,基本上用不上.
          * fresco完美支持
+         *
          * @param useDefaultLoadingRes
          * @return
          */
         public ConfigBuilder defaultLoadingRes(boolean useDefaultLoadingRes) {
-            if(useDefaultLoadingRes){
+            if (useDefaultLoadingRes) {
                 loadingScaleType = GlobalConfig.loadingScaleType;
                 loadingResId = GlobalConfig.loadingResId;
             }
@@ -517,16 +519,17 @@ public class SingleConfig {
         private int placeHolderScaleType;
         private int errorScaleType;
 
-        private int loadingResId ;
-        private int errorResId ;
+        private int loadingResId;
+        private int errorResId;
         /**
          * 类型	SCHEME	示例
-         远程图片	http://, https://	HttpURLConnection 或者参考 使用其他网络加载方案
-         本地文件	file://	FileInputStream  或者/storage/
-         Content provider	content://	ContentResolver
-         asset目录下的资源	asset://	AssetManager
-         res目录下的资源	res://	Resources.openRawResource
-         Uri中指定图片数据	data:mime/type;base64,	数据类型必须符合 rfc2397规定 (仅支持 UTF-8)
+         * 远程图片	http://, https://	HttpURLConnection 或者参考 使用其他网络加载方案
+         * 本地文件	file://	FileInputStream  或者/storage/
+         * Content provider	content://	ContentResolver
+         * asset目录下的资源	asset://	AssetManager
+         * res目录下的资源	res://	Resources.openRawResource
+         * Uri中指定图片数据	data:mime/type;base64,	数据类型必须符合 rfc2397规定 (仅支持 UTF-8)
+         *
          * @param config
          * @return
          */
@@ -543,8 +546,7 @@ public class SingleConfig {
             return this;
         }
 
-        private  LoadInterceptor interceptor = GlobalConfig.interceptor;
-
+        private LoadInterceptor interceptor = GlobalConfig.interceptor;
 
 
         private int shapeMode;//默认矩形,可选直角矩形,圆形/椭圆
@@ -562,9 +564,9 @@ public class SingleConfig {
         private int borderColor;//边框颜色
         private boolean cropFace;
 
-        private  boolean useThirdPartyGifLoader = GlobalConfig.useThirdPartyGifLoader;
+        private boolean useThirdPartyGifLoader = GlobalConfig.useThirdPartyGifLoader;
 
-        public ConfigBuilder useThirdPartyGifLoader(boolean useThirdPartyGifLoader){
+        public ConfigBuilder useThirdPartyGifLoader(boolean useThirdPartyGifLoader) {
             this.useThirdPartyGifLoader = useThirdPartyGifLoader;
             return this;
         }
@@ -577,12 +579,10 @@ public class SingleConfig {
         }*/
 
 
-
-
-        public ConfigBuilder(Context context){
+        public ConfigBuilder(Context context) {
             this.context = context;
             Activity activity = ContextUtil.getActivityFromContext(context);
-            if(activity != null){
+            if (activity != null) {
                 this.context = activity;
             }
         }
@@ -591,99 +591,107 @@ public class SingleConfig {
 
         }*/
 
-        public ConfigBuilder ignoreCertificateVerify(boolean ignoreCertificateVerify){
+        public ConfigBuilder ignoreCertificateVerify(boolean ignoreCertificateVerify) {
             this.ignoreCertificateVerify = ignoreCertificateVerify;
             return this;
         }
 
 
-        public ConfigBuilder thumbnail(String thumbnailUrl){
+        public ConfigBuilder thumbnail(String thumbnailUrl) {
             this.thumbnailUrl = thumbnailUrl;
             return this;
         }
-        public ConfigBuilder loading(int  loadingResId){
+
+        public ConfigBuilder loading(int loadingResId) {
             this.loadingResId = loadingResId;
             return this;
         }
 
         /**
          * 使用默认的loading样式
+         *
          * @return
          */
-        public ConfigBuilder loadingDefault(){
+        public ConfigBuilder loadingDefault() {
             this.loadingResId = R.drawable.imageloader_loading_50;
             return this;
         }
-        public ConfigBuilder loading(int  loadingResId,int loadingScaleType){
+
+        public ConfigBuilder loading(int loadingResId, int loadingScaleType) {
             this.loadingResId = loadingResId;
             this.loadingScaleType = loadingScaleType;
             return this;
         }
-        public ConfigBuilder error(int  errorResId){
+
+        public ConfigBuilder error(int errorResId) {
             this.errorResId = errorResId;
             return this;
         }
-        public ConfigBuilder error(int  errorResId,int errorScaleType){
+
+        public ConfigBuilder error(int errorResId, int errorScaleType) {
             this.errorResId = errorResId;
             this.errorScaleType = errorScaleType;
             return this;
         }
-        public ConfigBuilder cropFace(){
+
+        public ConfigBuilder cropFace() {
             this.cropFace = true;
             return this;
         }
 
-        public ConfigBuilder load(String sourceString){
+        public ConfigBuilder load(String sourceString) {
             this.sourceString = sourceString;
-            if(!TextUtils.isEmpty(sourceString)){
-                if(sourceString.endsWith(".gif")){
+            if (!TextUtils.isEmpty(sourceString)) {
+                if (sourceString.endsWith(".gif")) {
                     isGif = true;
                 }
             }
             return this;
         }
+
         /**
          * 设置网络路径
+         *
          * @param url
          * @return
          */
         @Deprecated
-        public ConfigBuilder url(String url){
+        public ConfigBuilder url(String url) {
             load(url);
             return this;
         }
+
         @Deprecated
-        public ConfigBuilder file(String filePath){
+        public ConfigBuilder file(String filePath) {
             load(filePath);
             return this;
         }
+
         @Deprecated
-        public ConfigBuilder content(String contentProvider){
+        public ConfigBuilder content(String contentProvider) {
             load(contentProvider);
             return this;
         }
 
-        public ConfigBuilder res(int resId){
+        public ConfigBuilder res(int resId) {
             this.resId = resId;
             //也可以转成content://xxx
             return this;
         }
 
-        public ConfigBuilder bytes(byte[] bytes){
+        public ConfigBuilder bytes(byte[] bytes) {
             this.bytes = bytes;
             return this;
         }
 
 
-
-        public void into(View targetView){
+        public void into(View targetView) {
             this.target = targetView;
-             new SingleConfig(this).show();
+            new SingleConfig(this).show();
         }
 
 
-
-        public void asBitmap(BitmapListener bitmapListener){
+        public void asBitmap(BitmapListener bitmapListener) {
             this.bitmapListener = MyUtil.getProxy(bitmapListener);
             this.asBitmap = true;
             new SingleConfig(this).show();
@@ -695,33 +703,37 @@ public class SingleConfig {
 
         /**
          * dp单位
+         *
          * @param widthInDp
          * @param heightInDp
          * @return
          */
-        public ConfigBuilder widthHeight(int widthInDp,int heightInDp){
+        public ConfigBuilder widthHeight(int widthInDp, int heightInDp) {
             this.width = MyUtil.dip2px(widthInDp);
             this.height = MyUtil.dip2px(heightInDp);
             return this;
         }
-        public ConfigBuilder widthHeightByPx(int widthInPx,int heightInPx){
+
+        public ConfigBuilder widthHeightByPx(int widthInPx, int heightInPx) {
             this.width = widthInPx;
             this.height = heightInPx;
             return this;
         }
 
-        public ConfigBuilder placeHolder(int placeHolderResId,boolean reuseable,int placeHolderScaleType){
+        public ConfigBuilder placeHolder(int placeHolderResId, boolean reuseable, int placeHolderScaleType) {
             this.placeHolderResId = placeHolderResId;
             this.reuseable = reuseable;
             this.placeHolderScaleType = placeHolderScaleType;
             return this;
         }
-        public ConfigBuilder placeHolder(int placeHolderResId,boolean reuseable){
+
+        public ConfigBuilder placeHolder(int placeHolderResId, boolean reuseable) {
             this.placeHolderResId = placeHolderResId;
             this.reuseable = reuseable;
             return this;
         }
-        public ConfigBuilder placeHolder(int placeHolderResId){
+
+        public ConfigBuilder placeHolder(int placeHolderResId) {
             this.placeHolderResId = placeHolderResId;
             this.reuseable = true;
             return this;
@@ -730,9 +742,10 @@ public class SingleConfig {
 
         /**
          * 是否需要高斯模糊
+         *
          * @return
          */
-        public ConfigBuilder blur(int blurRadius){
+        public ConfigBuilder blur(int blurRadius) {
             this.needBlur = true;
             this.blurRadius = blurRadius;
             return this;
@@ -741,16 +754,17 @@ public class SingleConfig {
 
         /**
          * fresco 用
+         *
          * @param overlayColorWhenGif
          * @return
          */
-        public ConfigBuilder asCircle(int overlayColorWhenGif){
+        public ConfigBuilder asCircle(int overlayColorWhenGif) {
             this.shapeMode = ShapeMode.OVAL;
-            this.roundOverlayColor  = overlayColorWhenGif;
+            this.roundOverlayColor = overlayColorWhenGif;
             return this;
         }
 
-        public ConfigBuilder asCircle(){
+        public ConfigBuilder asCircle() {
             this.shapeMode = ShapeMode.OVAL;
             return this;
         }
@@ -758,18 +772,19 @@ public class SingleConfig {
 
         /**
          * 形状为圆角矩形时的圆角半径
+         *
          * @param rectRoundRadius
          * @return
          */
-        public ConfigBuilder rectRoundCorner(int rectRoundRadius,int overlayColorWhenGif){
+        public ConfigBuilder rectRoundCorner(int rectRoundRadius, int overlayColorWhenGif) {
             this.rectRoundRadius = MyUtil.dip2px(rectRoundRadius);
             this.shapeMode = ShapeMode.RECT_ROUND;
-            this.roundOverlayColor  = overlayColorWhenGif;
+            this.roundOverlayColor = overlayColorWhenGif;
 
             return this;
         }
 
-        public ConfigBuilder rectRoundCorner(int leftTopRadius, int rightTopRadius,int leftBottomRadius,int rightBottomRadius){
+        public ConfigBuilder rectRoundCorner(int leftTopRadius, int rightTopRadius, int leftBottomRadius, int rightBottomRadius) {
             this.leftTopRadius = MyUtil.dip2px(leftTopRadius);
             this.rightTopRadius = MyUtil.dip2px(rightTopRadius);
             this.leftBottomRadius = MyUtil.dip2px(leftBottomRadius);
@@ -780,21 +795,24 @@ public class SingleConfig {
 
         /**
          * 拉伸/裁剪模式
+         *
          * @param scaleMode 取值ScaleMode
          * @return
          */
-        public ConfigBuilder scale(int scaleMode){
+        public ConfigBuilder scale(int scaleMode) {
             this.scaleMode = scaleMode;
             return this;
         }
 
-        /** todo 尚未实现此功能
+        /**
+         * todo 尚未实现此功能
          * 设置边框
+         *
          * @param borderWidth
          * @param borderColor
          * @return
          */
-        public ConfigBuilder border(int borderWidth,int borderColor){
+        public ConfigBuilder border(int borderWidth, int borderColor) {
             this.borderWidth = MyUtil.dip2px(borderWidth);
             this.borderColor = borderColor;
             return this;
@@ -804,36 +822,36 @@ public class SingleConfig {
         @Override
         public String toString() {
             return "{" +
-                "context:" + context +
-                ", ignoreCertificateVerify:" + ignoreCertificateVerify +
-                ", source:'" + sourceString + '\'' +
-                ", thumbnailUrl:'" + thumbnailUrl + '\'' +
+                    "context:" + context +
+                    ", ignoreCertificateVerify:" + ignoreCertificateVerify +
+                    ", source:'" + sourceString + '\'' +
+                    ", thumbnailUrl:'" + thumbnailUrl + '\'' +
 
-                ", resId=" + resId +
+                    ", resId=" + resId +
 
-                ", isGif:" + isGif +
-                ", target:" + target +
-                ", asBitmap:" + asBitmap +
-                ", bitmapListener:" + bitmapListener +
-                ", width:" + width +
-                ", height:" + height +
-                ", needBlur:" + needBlur +
-                ", blurRadius:" + blurRadius +
-                ", loadingScaleType:" + loadingScaleType +
-                ", placeHolderResId:" + placeHolderResId +
-                ", reuseable:" + reuseable +
-                ", placeHolderScaleType:" + placeHolderScaleType +
-                ", errorScaleType:" + errorScaleType +
-                ", loadingResId:" + loadingResId +
-                ", errorResId:" + errorResId +
-                ", shapeMode:" + shapeMode +
-                ", rectRoundRadius:" + rectRoundRadius +
-                ", roundOverlayColor:" + roundOverlayColor +
-                ", scaleMode:" + scaleMode +
-                ", borderWidth:" + borderWidth +
-                ", borderColor:" + borderColor +
-                ", cropFace:" + cropFace +
-                '}';
+                    ", isGif:" + isGif +
+                    ", target:" + target +
+                    ", asBitmap:" + asBitmap +
+                    ", bitmapListener:" + bitmapListener +
+                    ", width:" + width +
+                    ", height:" + height +
+                    ", needBlur:" + needBlur +
+                    ", blurRadius:" + blurRadius +
+                    ", loadingScaleType:" + loadingScaleType +
+                    ", placeHolderResId:" + placeHolderResId +
+                    ", reuseable:" + reuseable +
+                    ", placeHolderScaleType:" + placeHolderScaleType +
+                    ", errorScaleType:" + errorScaleType +
+                    ", loadingResId:" + loadingResId +
+                    ", errorResId:" + errorResId +
+                    ", shapeMode:" + shapeMode +
+                    ", rectRoundRadius:" + rectRoundRadius +
+                    ", roundOverlayColor:" + roundOverlayColor +
+                    ", scaleMode:" + scaleMode +
+                    ", borderWidth:" + borderWidth +
+                    ", borderColor:" + borderColor +
+                    ", cropFace:" + cropFace +
+                    '}';
         }
     }
 

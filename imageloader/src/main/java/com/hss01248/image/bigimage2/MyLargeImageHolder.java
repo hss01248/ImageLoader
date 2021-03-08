@@ -30,41 +30,41 @@ public class MyLargeImageHolder {
     PageStateManager manager;
 
     public MyLargeImageHolder(Context context, ViewGroup viewParent) {
-        root = (FrameLayout) LayoutInflater.from(context).inflate( R.layout.holde_big_image,viewParent,false);
+        root = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.holde_big_image, viewParent, false);
         largeImageView = root.findViewById(R.id.my_big_image);
         gif = root.findViewById(R.id.gifview);
     }
 
-    public void loadImage(String source){
-        if(source.contains(".gif")){
+    public void loadImage(String source) {
+        if (source.contains(".gif")) {
             largeImageView.setVisibility(View.GONE);
             gif.setVisibility(View.VISIBLE);
 
-            if(source.startsWith("http")){
-                manager = PageStateManager.initWhenUse(largeImageView,null);
+            if (source.startsWith("http")) {
+                manager = PageStateManager.initWhenUse(largeImageView, null);
                 downloadAndShow(source);
-            }else if(source.startsWith("/storage/")){
+            } else if (source.startsWith("/storage/")) {
                 File file = new File(source);
                 gif.setImageURI(Uri.fromFile(file));
-            }else {//if(source.startsWith("content"))
+            } else {//if(source.startsWith("content"))
                 gif.setImageURI(Uri.parse(source));
             }
 
 
-        }else {
+        } else {
             largeImageView.setVisibility(View.VISIBLE);
             gif.setVisibility(View.GONE);
 
-            if(source.startsWith("http")){
-                manager = PageStateManager.initWhenUse(largeImageView,null);
+            if (source.startsWith("http")) {
+                manager = PageStateManager.initWhenUse(largeImageView, null);
                 downloadAndShow(source);
-            }else if(source.startsWith("/storage/")){
+            } else if (source.startsWith("/storage/")) {
                 File file = new File(source);
                 largeImageView.setImage(new FileBitmapDecoderFactory(file));
-            }else {//if(source.startsWith("content"))
+            } else {//if(source.startsWith("content"))
                 try {
                     largeImageView.setImage(new InputStreamBitmapDecoderFactory(
-                            new FileInputStream(root.getContext().getContentResolver().openFileDescriptor(Uri.parse(source),"r").getFileDescriptor())));
+                            new FileInputStream(root.getContext().getContentResolver().openFileDescriptor(Uri.parse(source), "r").getFileDescriptor())));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -79,12 +79,12 @@ public class MyLargeImageHolder {
             @Override
             public void onSuccess(File file, int width, int height) {
                 manager.showContent();
-                if(source.contains(".gif")){
+                if (source.contains(".gif")) {
                     gif.setImageURI(Uri.fromFile(file));
-                }else {
-                    if("gif".equals(MyUtil.getRealType(file))){
+                } else {
+                    if ("gif".equals(MyUtil.getRealType(file))) {
                         gif.setImageURI(Uri.fromFile(file));
-                    }else {
+                    } else {
                         largeImageView.setImage(new FileBitmapDecoderFactory(file));
                     }
 
@@ -98,7 +98,7 @@ public class MyLargeImageHolder {
 
             @Override
             public void onFail(Throwable e) {
-                manager.showError(e.getMessage()+"\n"+source);
+                manager.showError(e.getMessage() + "\n" + source);
             }
         });
 

@@ -2,6 +2,7 @@ package com.hss01248.image.config;
 
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.hss01248.image.utils.ContextUtil;
 
 import java.io.File;
@@ -15,8 +16,8 @@ public class ConfigChecker {
         if (!checkImageSource(config)) {
             return false;
         }
-        if(!isContextUsable(config)){
-            Log.w("imageloader","context is not usable:"+config.getContext());
+        if (!isContextUsable(config)) {
+            Log.w("imageloader", "context is not usable:" + config.getContext());
             return false;
         }
         adjustWidthAndHeight(config);
@@ -27,7 +28,6 @@ public class ConfigChecker {
         Object obj = config.getContext();
         return ContextUtil.isUseable(obj);
     }
-
 
 
     /*
@@ -46,7 +46,7 @@ public class ConfigChecker {
         if (config.getResId() != 0) {
             return true;
         }
-        if(config.getBytes() != null){
+        if (config.getBytes() != null) {
             return true;
         }
 

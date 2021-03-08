@@ -1,18 +1,18 @@
 package com.hss01248.media.bigimage;
 
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.List;
 
 public class BigImageViewer {
 
     /**
-     *   加载多张大图.支持动态更新urls
+     * 加载多张大图.支持动态更新urls
+     *
      * @param viewPager new出来的或者从xml中解析出来的
-     * @param urls 图片路径
+     * @param urls      图片路径
      */
-    public static void loadBigImages(ViewPager viewPager, List<String> urls){//,String thumbnail
+    public static void loadBigImages(ViewPager viewPager, List<String> urls) {//,String thumbnail
         viewPager.setOffscreenPageLimit(1);
         //强制让左右缓存一个
         // ViewPager viewPager = new ViewPager(context);

@@ -55,6 +55,7 @@ import okhttp3.OkHttpClient;
 
 public final class GlideBigLoader implements BigLoader {
     private final RequestManager mRequestManager;
+
     private GlideBigLoader(Context context, OkHttpClient okHttpClient) {
         mRequestManager = Glide.with(context);
     }
@@ -70,7 +71,7 @@ public final class GlideBigLoader implements BigLoader {
     @Override
     public void loadImage(final Uri uri) {
         String url = uri.toString();
-        Log.w("load big image:",url);
+        Log.w("load big image:", url);
 
             /*if (url.startsWith("file:///")) {
                 String path = url.substring(8);
@@ -81,9 +82,6 @@ public final class GlideBigLoader implements BigLoader {
             return;*/
 
 
-
-
-
         final String finalUrl = url;
         mRequestManager
                 .load(new ProgressableGlideUrl(url))
@@ -91,11 +89,11 @@ public final class GlideBigLoader implements BigLoader {
                 .downloadOnly(new SimpleTarget<File>() {
                     @Override
                     public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-                        if(resource.exists() && resource.isFile() && resource.length() > 100){
-                            Log.i("glide onResourceReady","onResourceReady  --"+ resource.getAbsolutePath());
+                        if (resource.exists() && resource.isFile() && resource.length() > 100) {
+                            Log.i("glide onResourceReady", "onResourceReady  --" + resource.getAbsolutePath());
                             EventBus.getDefault().post(new CacheHitEvent(resource, finalUrl));
-                        }else {
-                            Log.w(" glide onloadfailed","onLoadFailed  --"+ finalUrl);
+                        } else {
+                            Log.w(" glide onloadfailed", "onLoadFailed  --" + finalUrl);
                             EventBus.getDefault().post(new ErrorEvent(finalUrl));
                         }
 
@@ -109,9 +107,9 @@ public final class GlideBigLoader implements BigLoader {
                     @Override
                     public void onLoadFailed(Exception e, Drawable errorDrawable) {
                         super.onLoadFailed(e, errorDrawable);
-                        Log.e("glide onloadfailed","onLoadFailed  --"+ finalUrl);
-                        if(e!=null)
-                        e.printStackTrace();
+                        Log.e("glide onloadfailed", "onLoadFailed  --" + finalUrl);
+                        if (e != null)
+                            e.printStackTrace();
                         EventBus.getDefault().post(new ErrorEvent(finalUrl));
                     }
 
@@ -163,7 +161,7 @@ public final class GlideBigLoader implements BigLoader {
                 .downloadOnly(new SimpleTarget<File>() {
                     @Override
                     public void onResourceReady(File resource,
-                            GlideAnimation<? super File> glideAnimation) {
+                                                GlideAnimation<? super File> glideAnimation) {
                         // not interested in result
                     }
                 });

@@ -13,11 +13,11 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Xfermode;
 import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.support.v7.widget.AppCompatImageView;
+
+import androidx.annotation.ColorInt;
+import androidx.appcompat.widget.AppCompatImageView;
+
 import android.util.AttributeSet;
-
-
 
 
 /**
@@ -90,7 +90,7 @@ public class RoundImageView extends AppCompatImageView {
             }
         }
         ta.recycle();
-        
+
         borderRadii = new float[8];
         srcRadii = new float[8];
 

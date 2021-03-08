@@ -37,10 +37,14 @@ public class ShakeDetector implements SensorEventListener {
      */
     private int accelerationThreshold = DEFAULT_ACCELERATION_THRESHOLD;
 
-    /** Listens for shakes. */
+    /**
+     * Listens for shakes.
+     */
     public interface Listener {
 
-        /** Called on the main thread when the device is shaken. */
+        /**
+         * Called on the main thread when the device is shaken.
+         */
         void hearShake();
     }
 
@@ -103,7 +107,9 @@ public class ShakeDetector implements SensorEventListener {
         }
     }
 
-    /** Returns true if the device is currently accelerating. */
+    /**
+     * Returns true if the device is currently accelerating.
+     */
     private boolean isAccelerating(SensorEvent event) {
         float ax = event.values[0];
         float ay = event.values[1];
@@ -116,15 +122,21 @@ public class ShakeDetector implements SensorEventListener {
         return magnitudeSquared > accelerationThreshold * accelerationThreshold;
     }
 
-    /** Sets the acceleration threshold sensitivity. */
+    /**
+     * Sets the acceleration threshold sensitivity.
+     */
     public void setSensitivity(int accelerationThreshold) {
         this.accelerationThreshold = accelerationThreshold;
     }
 
-    /** Queue of samples. Keeps a running average. */
+    /**
+     * Queue of samples. Keeps a running average.
+     */
     static class SampleQueue {
 
-        /** Window size in ns. Used to compute the average. */
+        /**
+         * Window size in ns. Used to compute the average.
+         */
         private static final long MAX_WINDOW_SIZE = 500000000; // 0.5s
 
         private static final long MIN_WINDOW_SIZE = MAX_WINDOW_SIZE >> 1; // 0.25s
@@ -176,7 +188,9 @@ public class ShakeDetector implements SensorEventListener {
             }
         }
 
-        /** Removes all samples from this queue. */
+        /**
+         * Removes all samples from this queue.
+         */
         void clear() {
             while (oldest != null) {
                 Sample removed = oldest;
@@ -188,7 +202,9 @@ public class ShakeDetector implements SensorEventListener {
             acceleratingCount = 0;
         }
 
-        /** Purges samples with timestamps older than cutoff. */
+        /**
+         * Purges samples with timestamps older than cutoff.
+         */
         void purge(long cutoff) {
             while (sampleCount >= MIN_QUEUE_SIZE
                     && oldest != null && cutoff - oldest.timestamp > 0) {
@@ -207,7 +223,9 @@ public class ShakeDetector implements SensorEventListener {
             }
         }
 
-        /** Copies the samples into a list, with the oldest entry at index 0. */
+        /**
+         * Copies the samples into a list, with the oldest entry at index 0.
+         */
         List<Sample> asList() {
             List<Sample> list = new ArrayList<Sample>();
             Sample s = oldest;
@@ -230,25 +248,37 @@ public class ShakeDetector implements SensorEventListener {
         }
     }
 
-    /** An accelerometer sample. */
+    /**
+     * An accelerometer sample.
+     */
     static class Sample {
 
-        /** Time sample was taken. */
+        /**
+         * Time sample was taken.
+         */
         long timestamp;
 
-        /** If acceleration > {@link #accelerationThreshold}. */
+        /**
+         * If acceleration > {@link #accelerationThreshold}.
+         */
         boolean accelerating;
 
-        /** Next sample in the queue or pool. */
+        /**
+         * Next sample in the queue or pool.
+         */
         Sample next;
     }
 
-    /** Pools samples. Avoids garbage collection. */
+    /**
+     * Pools samples. Avoids garbage collection.
+     */
     static class SamplePool {
 
         private Sample head;
 
-        /** Acquires a sample from the pool. */
+        /**
+         * Acquires a sample from the pool.
+         */
         Sample acquire() {
             Sample acquired = head;
             if (acquired == null) {
@@ -260,7 +290,9 @@ public class ShakeDetector implements SensorEventListener {
             return acquired;
         }
 
-        /** Returns a sample to the pool. */
+        /**
+         * Returns a sample to the pool.
+         */
         void release(Sample sample) {
             sample.next = head;
             head = sample;

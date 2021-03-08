@@ -28,7 +28,9 @@ import android.os.Build;
 public class ForwardingDrawable extends Drawable
         implements Drawable.Callback, TransformCallback, TransformAwareDrawable, DrawableParent {
 
-    /** The current drawable to be drawn by this drawable when drawing is needed */
+    /**
+     * The current drawable to be drawn by this drawable when drawing is needed
+     */
     private Drawable mCurrentDelegate;
 
     private final DrawableProperties mDrawableProperties = new DrawableProperties();
@@ -43,6 +45,7 @@ public class ForwardingDrawable extends Drawable
 
     /**
      * Constructs a new forwarding drawable.
+     *
      * @param drawable drawable that this forwarding drawable will forward to
      */
     public ForwardingDrawable(Drawable drawable) {
@@ -54,6 +57,7 @@ public class ForwardingDrawable extends Drawable
      * Sets a new drawable to be the delegate, and returns the old one (or null).
      *
      * <p>This method will cause the drawable to be invalidated.
+     *
      * @param newDelegate
      * @return the previous delegate
      */
@@ -66,6 +70,7 @@ public class ForwardingDrawable extends Drawable
     /**
      * As {@code setCurrent}, but without invalidating a drawable. Subclasses are responsible to call
      * {@code invalidateSelf} on their own.
+     *
      * @param newDelegate
      * @return the previous delegate
      */
@@ -234,6 +239,7 @@ public class ForwardingDrawable extends Drawable
     /**
      * Gets the transformed bounds of this drawable.
      * Note: bounds are not cropped (otherwise they would likely be the same as drawable's bounds).
+     *
      * @param outBounds rect to fill with bounds
      */
     public void getTransformedBounds(RectF outBounds) {

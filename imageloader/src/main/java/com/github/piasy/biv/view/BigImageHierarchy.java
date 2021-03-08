@@ -9,21 +9,12 @@ import java.io.File;
 public interface BigImageHierarchy {
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     public void showContent(File image);
+
     public void showProgress(int progress);
+
     public void showError();
+
     public void showThumbnail();
 
     void onStart();

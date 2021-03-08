@@ -18,9 +18,10 @@ public class MyRecyclePagerAdapter2 extends RecyclePagerAdapter<MyPagerViewHolde
 
     //private int itemCount = 5;
     List<String> urls;
-    private Map<String,File> cachedFiles;
-    public MyRecyclePagerAdapter2(List<String> urls){
-        this.urls =urls;
+    private Map<String, File> cachedFiles;
+
+    public MyRecyclePagerAdapter2(List<String> urls) {
+        this.urls = urls;
         cachedFiles = new HashMap<>();
     }
 
@@ -33,8 +34,8 @@ public class MyRecyclePagerAdapter2 extends RecyclePagerAdapter<MyPagerViewHolde
     @Override
     public MyPagerViewHolder2 onCreateViewHolder(ViewGroup parent, int viewType) {
         //一般同viewType的Holder创建不会超过四个
-        MyLargeImageHolder holder = new MyLargeImageHolder(parent.getContext(),parent);
-        MyPagerViewHolder2 holder2 =  new MyPagerViewHolder2(holder.root);
+        MyLargeImageHolder holder = new MyLargeImageHolder(parent.getContext(), parent);
+        MyPagerViewHolder2 holder2 = new MyPagerViewHolder2(holder.root);
         holder2.imageViewHolder = holder;
         return holder2;
     }

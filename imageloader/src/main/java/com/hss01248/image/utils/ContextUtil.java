@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Build;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
+
 import android.view.View;
 
 import com.hss01248.image.ImageLoader;
@@ -15,24 +17,25 @@ import com.hss01248.image.ImageLoader;
 public class ContextUtil {
 
 
-
-    public static boolean isNotUsable(Object context){
+    public static boolean isNotUsable(Object context) {
         return !isUseable(context);
     }
+
     /**
      * 注意: 这里不要使用isDetached()来判断,因为Fragment被detach之后,它的isDetached()方法依然可能返回false
-     2.如果Fragment A是因为被replace而detach的,那么它的isDetached()将返回false
-     3.如果Fragment A对应的FragmentTransaction被加入到返回栈中,因为出栈而detach,那么它的isDetached()将返回true
+     * 2.如果Fragment A是因为被replace而detach的,那么它的isDetached()将返回false
+     * 3.如果Fragment A对应的FragmentTransaction被加入到返回栈中,因为出栈而detach,那么它的isDetached()将返回true
+     *
      * @param context
      * @return
      */
-    public static boolean isUseable(Object context){
-        if(context == null){
+    public static boolean isUseable(Object context) {
+        if (context == null) {
             return false;
         }
         if (context instanceof Fragment) {
             Fragment fragment = (Fragment) context;
-            if(fragment.getActivity() == null){
+            if (fragment.getActivity() == null) {
                 return false;
             }
             /*if(fragment.isRemoving()){
@@ -44,7 +47,7 @@ public class ContextUtil {
             return true;
         } else if (context instanceof android.app.Fragment) {
             android.app.Fragment fragment = (android.app.Fragment) context;
-            if(fragment.getActivity() == null){
+            if (fragment.getActivity() == null) {
                 return false;
             }
            /* if(fragment.isRemoving()){
@@ -56,15 +59,15 @@ public class ContextUtil {
             return true;
         } else if (context instanceof Activity) {
             Activity activity = (Activity) context;
-            if(activity.isFinishing()){
+            if (activity.isFinishing()) {
                 return false;
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 return !activity.isDestroyed();
-            }else {
-                if(ImageLoader.config != null && ImageLoader.config.getActivityStack() != null){
+            } else {
+                if (ImageLoader.config != null && ImageLoader.config.getActivityStack() != null) {
                     return ImageLoader.config.getActivityStack().contains(activity);
-                }else {
+                } else {
                     return true;
                 }
             }

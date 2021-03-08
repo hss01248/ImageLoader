@@ -1,9 +1,10 @@
 package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
@@ -37,8 +38,8 @@ public class ScaleTypeActy extends Activity {
     @BindView(R.id.btn_loadbig)
     Button btnLoadbig;
     SuperLvAdapter lvAdapter;
-    List<ScaleTypeInfo> datas ;
-    int resSmall ;
+    List<ScaleTypeInfo> datas;
+    int resSmall;
     int resBig;
 
     @Override
@@ -49,16 +50,15 @@ public class ScaleTypeActy extends Activity {
         datas = new ArrayList<>();
         resSmall = R.drawable.timg50;
         resBig = R.drawable.timg6;
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER_CROP,"center_crop",resSmall));
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_XY,"fit_xy",resSmall));
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER,"center",resSmall));
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER_INSIDE,"center_inside",resSmall));
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_CENTER,"fit_center",resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER_CROP, "center_crop", resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_XY, "fit_xy", resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER, "center", resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.CENTER_INSIDE, "center_inside", resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_CENTER, "fit_center", resSmall));
 
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_START,"fit_start",resSmall));
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_END,"fit_end",resSmall));
-        datas.add(new ScaleTypeInfo(ImageView.ScaleType.MATRIX,"matrix",resSmall));
-
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_START, "fit_start", resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.FIT_END, "fit_end", resSmall));
+        datas.add(new ScaleTypeInfo(ImageView.ScaleType.MATRIX, "matrix", resSmall));
 
 
         initGv();
@@ -70,9 +70,8 @@ public class ScaleTypeActy extends Activity {
         lvAdapter = new SuperLvAdapter(this) {
             @Override
             protected SuperLvHolder generateNewHolder(Activity activity, int i) {
-                 return new ScaleTypeHolder(ScaleTypeActy.this);
+                return new ScaleTypeHolder(ScaleTypeActy.this);
             }
-
 
 
         };
@@ -84,13 +83,13 @@ public class ScaleTypeActy extends Activity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_loadsmall:
-                for(ScaleTypeInfo info : datas){
+                for (ScaleTypeInfo info : datas) {
                     info.resId = resSmall;
                 }
                 lvAdapter.refresh(new ArrayList(datas));
                 break;
             case R.id.btn_loadbig:
-                for(ScaleTypeInfo info : datas){
+                for (ScaleTypeInfo info : datas) {
                     info.resId = resBig;
                 }
                 lvAdapter.refresh(new ArrayList(datas));

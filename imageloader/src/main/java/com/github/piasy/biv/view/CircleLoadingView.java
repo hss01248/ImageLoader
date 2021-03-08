@@ -123,7 +123,7 @@ public class CircleLoadingView extends View {
             rect.bottom = height - rect.top;
         }
 
-       int  circleThickness = (int) (width*circleThicknessRatio);
+        int circleThickness = (int) (width * circleThicknessRatio);
         paint.setStrokeWidth(circleThickness);
 
         rect.left = rect.left + circleThickness / 2;
@@ -134,7 +134,7 @@ public class CircleLoadingView extends View {
         //因为这个圆环是顺时针旋转的，所有endColor, startColor在shader上反过来写了
         shader = new SweepGradient(width / 2, height / 2, endColor, startColor);
         matrix = new Matrix();
-        matrix.setRotate(-90 + 20,width/2,height/2);//着色器初始位置，12点钟方法加20度，收尾留一点空隙
+        matrix.setRotate(-90 + 20, width / 2, height / 2);//着色器初始位置，12点钟方法加20度，收尾留一点空隙
         shader.setLocalMatrix(matrix);
         paint.setShader(shader);
     }

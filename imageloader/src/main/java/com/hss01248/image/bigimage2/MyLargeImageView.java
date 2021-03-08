@@ -10,6 +10,7 @@ import com.shizhefei.view.largeimage.LargeImageView;
 
 public class MyLargeImageView extends LargeImageView {
     PaintFlagsDrawFilter pfd;
+
     public MyLargeImageView(Context context) {
         this(context, null);
     }
@@ -20,7 +21,7 @@ public class MyLargeImageView extends LargeImageView {
 
     public MyLargeImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        pfd = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
+        pfd = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     }
 
     @Override

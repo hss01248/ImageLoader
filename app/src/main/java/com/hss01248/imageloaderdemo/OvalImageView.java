@@ -34,8 +34,6 @@ public class OvalImageView extends ImageView {
     }
 
 
-
-
     /**
      * 画图
      * by Hankkin at:2015-08-30 21:15:53
@@ -44,14 +42,14 @@ public class OvalImageView extends ImageView {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        if(path == null){
-             path = new Path();
+        if (path == null) {
+            path = new Path();
         }
 
         int w = this.getWidth();
         int h = this.getHeight();
         /*向路径中添加圆角矩形。radii数组定义圆角矩形的四个圆角的x,y半径。radii长度必须为8*/
-        if(rectF == null){
+        if (rectF == null) {
             rectF = new RectF(0, 0, w, h);
         }
         path.addRoundRect(rectF, rids, Path.Direction.CW);

@@ -2,11 +2,12 @@ package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,11 +30,11 @@ import java.util.List;
 public class RecycleViewActy extends Activity {
 
     RecyclerView recyclerView;
-    SuperRvAdapter adapter ;
-    List<String> datas ;
+    SuperRvAdapter adapter;
+    List<String> datas;
     int oldScrollState;
 
-    ImageView iv1,iv2,iv3,iv4;
+    ImageView iv1, iv2, iv3, iv4;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,13 +52,11 @@ public class RecycleViewActy extends Activity {
         ImageLoaderDebugTool.warnBigBitmapInCurrentViewTree(recyclerView);
 
 
-
-
         adapter = new SuperRvAdapter(this) {
             @Override
             protected SuperRvHolder generateCoustomViewHolder(ViewGroup viewGroup, int i) {
-              return   new RcvHolder(
-                        View.inflate(RecycleViewActy.this,R.layout.item_iv,null));//.setColumnNum(3);
+                return new RcvHolder(
+                        View.inflate(RecycleViewActy.this, R.layout.item_iv, null));//.setColumnNum(3);
             }
         };
         adapter.refresh(datas);
@@ -65,7 +64,7 @@ public class RecycleViewActy extends Activity {
        /* StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3, OrientationHelper.VERTICAL);
         layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         recyclerView.setLayoutManager(layoutManager);*/
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
        /* recyclerView.addItemDecoration(new DividerItemDecoration(
             this, DividerItemDecoration.HORIZONTAL));*/
         recyclerView.setAdapter(adapter);
@@ -74,10 +73,10 @@ public class RecycleViewActy extends Activity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                   // ImageLoader.getActualLoader().resume();
-                }else {
-                   // ImageLoader.getActualLoader().pause();
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    // ImageLoader.getActualLoader().resume();
+                } else {
+                    // ImageLoader.getActualLoader().pause();
                 }
             }
         });
@@ -152,10 +151,6 @@ public class RecycleViewActy extends Activity {
         datas.add("https://i2.wp.com/chunyingtravel.com/wp-content/uploads/2015/06/Day-2-Toilet-near-the-Ger-Camp.jpg");
         datas.add("http://image.juntu.com/uploadfile/2017/0818/20170818095821327.jpg");
         datas.add("https://b1-q.mafengwo.net/s6/M00/D2/55/wKgB4lOSj5-ATEDcAAHO0z7f3v887.jpeg?imageView2%2F2%2Fw%2F600%2Fq%2F90");
-
-
-
-
 
 
         //adapter.refresh(datas);

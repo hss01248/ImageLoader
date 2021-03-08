@@ -6,7 +6,6 @@ public interface LoadInterceptor {
 
 
     /**
-     *
      * @param config
      * @return 是否继续下去
      */

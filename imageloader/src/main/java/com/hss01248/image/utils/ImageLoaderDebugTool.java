@@ -27,16 +27,7 @@ import java.util.List;
 public class ImageLoaderDebugTool {
 
 
-
-
-
-
-
-
-
-
-
-    public static void warnBigBitmapInCurrentViewTree(final View rootView){
+    public static void warnBigBitmapInCurrentViewTree(final View rootView) {
 
 
         // 获取屏幕像素
@@ -47,7 +38,7 @@ public class ImageLoaderDebugTool {
             public void onGlobalLayout() {
                 //rootView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 List<ImageViewInfo> list = new ArrayList<>();
-                findImageViewInViewTree(rootView,list);
+                findImageViewInViewTree(rootView, list);
 
                 for (ImageViewInfo imageViewInfo : list) {
                     Log.e("haha", "ImageView bitmap size：" + imageViewInfo.imageSize / 1024f + "KB," + "height:" + imageViewInfo.imageHeight + ",width:" +
@@ -57,12 +48,7 @@ public class ImageLoaderDebugTool {
         });
 
 
-
     }
-
-
-
-
 
 
     private static class ImageViewInfo {
@@ -73,15 +59,15 @@ public class ImageLoaderDebugTool {
         String imgViewInfo;
     }
 
-    private static void findImageViewInViewTree(View curNode,List<ImageViewInfo> imageList) {
+    private static void findImageViewInViewTree(View curNode, List<ImageViewInfo> imageList) {
 
         if (curNode.getVisibility() != View.VISIBLE) {
-            return ;
+            return;
         }
         if (curNode instanceof ViewGroup) {
             ViewGroup curNodeGroup = (ViewGroup) curNode;
             for (int i = 0; i < curNodeGroup.getChildCount(); i++) {
-                findImageViewInViewTree(curNodeGroup.getChildAt(i),imageList);
+                findImageViewInViewTree(curNodeGroup.getChildAt(i), imageList);
             }
         } else {
             if (curNode instanceof ImageView) {
@@ -100,15 +86,15 @@ public class ImageLoaderDebugTool {
                         imageViewInfo.imageSize = bitmap.getRowBytes() * bitmap.getHeight();
                     }
 
-                    if(bitmap.getHeight() * bitmap.getWidth() > curImage.getMeasuredHeight() * curImage.getMeasuredWidth()){
+                    if (bitmap.getHeight() * bitmap.getWidth() > curImage.getMeasuredHeight() * curImage.getMeasuredWidth()) {
                         imageViewInfo.imgViewInfo = MyUtil.printImageView(curImage);
                         imageList.add(imageViewInfo);
                     }
 
-                }else {
+                } else {
                     imageViewInfo.imageHeight = drawable.getIntrinsicHeight();
                     imageViewInfo.imageWidth = drawable.getIntrinsicWidth();
-                    if(imageViewInfo.imageHeight * imageViewInfo.imageWidth > curImage.getMeasuredHeight() * curImage.getMeasuredWidth()){
+                    if (imageViewInfo.imageHeight * imageViewInfo.imageWidth > curImage.getMeasuredHeight() * curImage.getMeasuredWidth()) {
                         imageViewInfo.imgViewInfo = MyUtil.printImageView(curImage);
                         imageList.add(imageViewInfo);
                     }
@@ -116,6 +102,6 @@ public class ImageLoaderDebugTool {
 
             }
         }
-        return ;
+        return;
     }
 }

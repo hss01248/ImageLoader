@@ -23,7 +23,7 @@ public class GlobalConfig {
     public static boolean useThirdPartyGifLoader = false;
 
     public static Handler getMainHandler() {
-        if(mainHandler==null){
+        if (mainHandler == null) {
             mainHandler = new Handler(Looper.getMainLooper());
         }
         return mainHandler;
@@ -33,19 +33,19 @@ public class GlobalConfig {
     public static boolean debug;
 
     public static int getWinHeight() {
-        if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
-            return winHeight<winWidth? winHeight : winWidth;
-        }else if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT){
-           return winHeight>winWidth? winHeight : winWidth;
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return winHeight < winWidth ? winHeight : winWidth;
+        } else if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            return winHeight > winWidth ? winHeight : winWidth;
         }
         return winHeight;
     }
 
     public static int getWinWidth() {
-        if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
-            return winHeight>winWidth? winHeight : winWidth;
-        }else if(context.getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT){
-            return winHeight<winWidth? winHeight : winWidth;
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return winHeight > winWidth ? winHeight : winWidth;
+        } else if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            return winHeight < winWidth ? winHeight : winWidth;
         }
         return winWidth;
     }
@@ -65,7 +65,7 @@ public class GlobalConfig {
     private static ImageLoaderExceptionHandler exceptionHandler;
     //private static int oritation;
 
-    public static void init(Context context,int cacheSizeInM,ILoader imageLoader){
+    public static void init(Context context, int cacheSizeInM, ILoader imageLoader) {
 
         GlobalConfig.context = context;
         GlobalConfig.cacheMaxSize = cacheSizeInM;
@@ -77,16 +77,15 @@ public class GlobalConfig {
         GlobalConfig.loader = imageLoader;
         //oritation = context.getResources().getConfiguration().orientation;
         //GlobalConfig.userFresco = userFresco;
-        imageLoader.init(context,cacheSizeInM);
-
-
+        imageLoader.init(context, cacheSizeInM);
 
 
     }
+
     /**
      * lrucache 最大值
      */
-    public static int cacheMaxSize= 150;
+    public static int cacheMaxSize = 150;
 
     /**
      * 缓存文件夹
@@ -126,34 +125,31 @@ public class GlobalConfig {
     public static int placeHolderResId = R.drawable.im_item_list_opt;
     public static int placeHolderScaleType = ScaleMode.FIT_CENTER;
     public static int errorResId = R.drawable.im_item_list_opt_error;
-    public static int errorScaleType  = ScaleMode.FIT_CENTER;
+    public static int errorScaleType = ScaleMode.FIT_CENTER;
     public static int loadingResId = R.drawable.iv_loading_trans;
     public static int loadingScaleType = ScaleMode.FIT_CENTER;
 
-    public static int scaleType  = ScaleMode.FIT_CENTER;
+    public static int scaleType = ScaleMode.FIT_CENTER;
 
-    public static void setDefaultPlaceHolder(int placeHolderResId){
+    public static void setDefaultPlaceHolder(int placeHolderResId) {
         GlobalConfig.placeHolderResId = placeHolderResId;
     }
-    public static void setDefaultPlaceHolderScaleType(int placeHolderScaleType){
+
+    public static void setDefaultPlaceHolderScaleType(int placeHolderScaleType) {
         GlobalConfig.placeHolderScaleType = placeHolderScaleType;
     }
 
-    public static void setDefaultErrorHolder(int errorResId){
+    public static void setDefaultErrorHolder(int errorResId) {
         GlobalConfig.errorResId = errorResId;
     }
 
-    public static void setDefaultErrorHolderScaleType(int errorScaleType){
+    public static void setDefaultErrorHolderScaleType(int errorScaleType) {
         GlobalConfig.errorScaleType = errorScaleType;
     }
 
-    public static void setDefaultLoadingHolder(int loadingResId){
-        GlobalConfig.loadingResId =loadingResId;
+    public static void setDefaultLoadingHolder(int loadingResId) {
+        GlobalConfig.loadingResId = loadingResId;
     }
-
-
-
-
 
 
 }

@@ -16,17 +16,17 @@ import android.graphics.RectF;
  */
 public interface TransformCallback {
 
-  /**
-   * Called when the drawable needs to get all matrices applied to it.
-   *
-   * @param transform Matrix that is applied to the drawable by the parent drawables.
-   */
-  void getTransform(Matrix transform);
+    /**
+     * Called when the drawable needs to get all matrices applied to it.
+     *
+     * @param transform Matrix that is applied to the drawable by the parent drawables.
+     */
+    void getTransform(Matrix transform);
 
-  /**
-   * Called when the drawable needs to get its root bounds.
-   *
-   * @param bounds The root bounds of the drawable.
-   */
-  void getRootBounds(RectF bounds);
+    /**
+     * Called when the drawable needs to get its root bounds.
+     *
+     * @param bounds The root bounds of the drawable.
+     */
+    void getRootBounds(RectF bounds);
 }

@@ -8,7 +8,9 @@ import android.graphics.drawable.Animatable;
 import android.media.FaceDetector;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
+
 import android.util.Log;
 import android.widget.Toast;
 
@@ -83,19 +85,11 @@ public class FrescoFaceCropActivity extends Activity {
             //.cropFace()
             .url(url4)
             .into(iv4);*/
-       check(iv1,url1);
-       check(iv2,url2);
-       check(iv3,url3);
-       check(iv4,url4);
+        check(iv1, url1);
+        check(iv2, url2);
+        check(iv3, url3);
+        check(iv4, url4);
     }
-
-
-
-
-
-
-
-
 
 
     /**
@@ -108,14 +102,14 @@ public class FrescoFaceCropActivity extends Activity {
      */
     private static DraweeController getController(SimpleDraweeView sdv, String url, ControllerListener controllerListener) {
         ImageRequest request = ImageRequestBuilder
-            .newBuilderWithSource(Uri.parse(url))
-            .setProgressiveRenderingEnabled(true)
-            .build();
+                .newBuilderWithSource(Uri.parse(url))
+                .setProgressiveRenderingEnabled(true)
+                .build();
         DraweeController controller = Fresco.newDraweeControllerBuilder()
-            .setImageRequest(request)
-            .setControllerListener(controllerListener)
-            .setOldController(sdv.getController())
-            .build();
+                .setImageRequest(request)
+                .setControllerListener(controllerListener)
+                .setOldController(sdv.getController())
+                .build();
         return controller;
     }
 
@@ -179,7 +173,7 @@ public class FrescoFaceCropActivity extends Activity {
                 PointF pointF1 = new PointF(pointF.x / (float) sdv_picture.getWidth(), pointF.y / (float) sdv_picture.getHeight());
                 //设置聚焦点
                 sdv_picture.getHierarchy()
-                    .setActualImageFocusPoint(pointF1);
+                        .setActualImageFocusPoint(pointF1);
                 /**在调用getDrawingCache()方法从ImageView对象获取图像之后，一定要调用setDrawingCacheEnabled(false)方法：
                  imageview.setDrawingCacheEnabled(false);
                  以清空画图缓冲区，否则，下一次从ImageView对象iv_photo中获取的图像，还是原来的图像。**/

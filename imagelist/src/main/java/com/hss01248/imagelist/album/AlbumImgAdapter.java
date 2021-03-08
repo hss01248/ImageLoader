@@ -1,17 +1,13 @@
 package com.hss01248.imagelist.album;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
-import com.hss01248.image.interfaces.FileGetter;
-import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.imagelist.R;
 
 import java.io.File;
@@ -37,21 +33,21 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
 
     @Override
     protected void convert(@NonNull final BaseViewHolder helper, final Image item) {
-        helper.getView(R.id.item_iv).setTag(R.id.item_iv,item);
+        helper.getView(R.id.item_iv).setTag(R.id.item_iv, item);
         helper.addOnClickListener(R.id.item_iv);
         ImageLoader.with(helper.itemView.getContext())
                 .url(item.path)
                 .loading(R.drawable.iv_loading_trans)
                 .error(R.drawable.im_item_list_opt_error)
                 .into(helper.getView(R.id.item_iv));
-        if(item.width != 0){
-            helper.setText(R.id.tv_info,item.width+"x"+item.height+","+ MyUtil.formatFileSize(item.fileSize));
-        }else {
+        if (item.width != 0) {
+            helper.setText(R.id.tv_info, item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize));
+        } else {
             int[] wh = MyUtil.getImageWidthHeight(item.path);
             item.width = wh[0];
             item.height = wh[1];
             item.fileSize = new File(item.path).length();
-            helper.setText(R.id.tv_info,item.width+"x"+item.height+","+ MyUtil.formatFileSize(item.fileSize));
+            helper.setText(R.id.tv_info, item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize));
         }
 
     }
@@ -59,6 +55,6 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
 
     @Override
     public String getSectionTitle(int position) {
-        return position+"";
+        return position + "";
     }
 }

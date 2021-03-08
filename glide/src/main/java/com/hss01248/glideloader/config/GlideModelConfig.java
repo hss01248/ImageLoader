@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp3.OkHttpGlideModule;
@@ -33,20 +34,20 @@ import java.util.concurrent.TimeUnit;
 public class GlideModelConfig extends OkHttpGlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
-        }else {
+        } else {
             builder.setDecodeFormat(DecodeFormat.PREFER_RGB_565);
         }//解决rgb565部分手机上出现绿色问题
         //比较耗时,所以反向设置
-        if(GlobalConfig.cacheMaxSize != 250 && !DiskLruCacheFactory.DEFAULT_DISK_CACHE_DIR.equals(GlobalConfig.cacheFolderName)){
+        if (GlobalConfig.cacheMaxSize != 250 && !DiskLruCacheFactory.DEFAULT_DISK_CACHE_DIR.equals(GlobalConfig.cacheFolderName)) {
             builder.setDiskCache(new DiskLruCacheFactory(new File(context.getCacheDir(),
-                    TextUtils.isEmpty(GlobalConfig.cacheFolderName) ? DiskLruCacheFactory.DEFAULT_DISK_CACHE_DIR: GlobalConfig.cacheFolderName)
+                    TextUtils.isEmpty(GlobalConfig.cacheFolderName) ? DiskLruCacheFactory.DEFAULT_DISK_CACHE_DIR : GlobalConfig.cacheFolderName)
                     .getAbsolutePath(),
-                    GlobalConfig.cacheMaxSize*1024*1024));
+                    GlobalConfig.cacheMaxSize * 1024 * 1024));
         }
 
-        Log.i("glide","applyOptions---");
+        Log.i("glide", "applyOptions---");
 
        /* builder.setResizeService(new FifoPriorityThreadPoolExecutor(4))
                 .setDiskCacheService(new FifoPriorityThreadPoolExecutor(4));*/
@@ -61,7 +62,7 @@ public class GlideModelConfig extends OkHttpGlideModule {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         setIgnoreAll(builder);
-        OkHttpClient client=builder
+        OkHttpClient client = builder
                 .addNetworkInterceptor(new ProgressInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -69,12 +70,12 @@ public class GlideModelConfig extends OkHttpGlideModule {
                 .build();
 
         glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
-        Log.i("glide","registerComponents---");
+        Log.i("glide", "registerComponents---");
 
     }
 
 
-    private static void setIgnoreAll(OkHttpClient.Builder builder){
+    private static void setIgnoreAll(OkHttpClient.Builder builder) {
         X509TrustManager xtm = new X509TrustManager() {
             @Override
             public void checkClientTrusted(X509Certificate[] chain, String authType) {

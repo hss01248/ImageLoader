@@ -21,7 +21,7 @@ import butterknife.BindView;
  * Created by Administrator on 2017/11/5.
  */
 
-public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo,Activity> {
+public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo, Activity> {
 
     //@BindView(R.id.iv)
     ImageView iv;
@@ -49,7 +49,6 @@ public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo,Activity> {
     }
 
 
-
     @Override
     public void assingDatasAndEvents(Activity activity, ScaleTypeInfo scaleTypeInfo) {
 
@@ -61,7 +60,7 @@ public class ScaleTypeHolder extends SuperLvHolder<ScaleTypeInfo,Activity> {
         /* iv.setScaleType(scaleTypeInfo.scaleType);
         iv.setImageResource(scaleTypeInfo.resId);*/
         ImageLoader.with(activity)
-                .scale(position+1)
+                .scale(position + 1)
                 .res(scaleTypeInfo.resId)
                 .into(iv);
 

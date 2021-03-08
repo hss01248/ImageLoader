@@ -25,6 +25,7 @@
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/btn_dir"
             android:text="浏览特定文件夹"
@@ -43,17 +44,20 @@
             android:text="加载轮播大图"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
         <Button
-                android:id="@+id/btn_recycle"
-                android:text="recyvleview加载大量图片"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            android:id="@+id/btn_recycle"
+            android:text="recyvleview加载大量图片"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
-                android:id="@+id/btn_fresco"
-                android:text="全部自由配置项"
-                android:textAllCaps="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            android:id="@+id/btn_fresco"
+            android:text="全部自由配置项"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/btn_scale"
             android:text="查看大图小图的scale type效果"
@@ -62,28 +66,30 @@
             android:layout_height="wrap_content" />
 
 
+        <ImageView
+            android:id="@+id/iv_url"
+            android:layout_width="50dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/shape_main_list_bg"
+            android:layout_height="50dp" />
 
-    <ImageView
-        android:id="@+id/iv_url"
-        android:layout_width="50dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/shape_main_list_bg"
-        android:layout_height="50dp" />
-    <ImageView
-        android:id="@+id/iv_file"
-        android:layout_width="250dp"
-        android:layout_marginBottom="20dp"
-        android:layout_height="150dp" />
-    <ImageView
-        android:id="@+id/iv_res"
-        android:layout_width="250dp"
-        android:layout_marginBottom="20dp"
-        android:layout_height="150dp" />
-    <ImageView
-        android:id="@+id/iv_url_blur"
-        android:layout_width="250dp"
-        android:layout_marginBottom="20dp"
-        android:layout_height="150dp" />
+        <ImageView
+            android:id="@+id/iv_file"
+            android:layout_width="250dp"
+            android:layout_marginBottom="20dp"
+            android:layout_height="150dp" />
+
+        <ImageView
+            android:id="@+id/iv_res"
+            android:layout_width="250dp"
+            android:layout_marginBottom="20dp"
+            android:layout_height="150dp" />
+
+        <ImageView
+            android:id="@+id/iv_url_blur"
+            android:layout_width="250dp"
+            android:layout_marginBottom="20dp"
+            android:layout_height="150dp" />
     </LinearLayout>
 
 </ScrollView>

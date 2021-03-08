@@ -12,6 +12,7 @@ import android.graphics.Shader;
  */
 
 public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
+
     public enum CornerType {
         ALL,
         TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
@@ -25,13 +26,12 @@ public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
     private int mMargin;
     private CornerType mCornerType = CornerType.ALL;
 
-    public RoundedCornersTransformation2( int radius, int margin) {
+    public RoundedCornersTransformation2(int radius, int margin) {
         this(radius, margin, CornerType.ALL);
     }
 
 
-
-    public RoundedCornersTransformation2( int radius, int margin,
+    public RoundedCornersTransformation2(int radius, int margin,
                                          CornerType cornerType) {
 
         mRadius = radius;
@@ -47,7 +47,7 @@ public class RoundedCornersTransformation2 {//implements Transformation<Bitmap>
         int width = source.getWidth();
         int height = source.getHeight();
 
-        Bitmap bitmap =  Bitmap.createBitmap(width, height, source.getConfig());
+        Bitmap bitmap = Bitmap.createBitmap(width, height, source.getConfig());
 
 
         Canvas canvas = new Canvas(bitmap);

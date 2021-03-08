@@ -3,7 +3,9 @@ package com.hss01248.picasso;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,7 +50,7 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
 
 /**
  * Created by Administrator on 2017/5/3 0003.
- *
+ * <p>
  * 内存优化: http://blog.csdn.net/ashqal/article/details/48005833
  */
 
@@ -59,14 +61,13 @@ public class PicassoLoader implements ILoader {
     private Picasso picasso;
     private OkHttpClient client;
     private static volatile int count;
-    private static ConcurrentHashMap<String,File> fileCache = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, File> fileCache = new ConcurrentHashMap<>();
 
 
-
-    private Picasso getPicasso(){
-        if(picasso ==null){
+    private Picasso getPicasso() {
+        if (picasso == null) {
             client = MyUtil.getClient(GlobalConfig.ignoreCertificateVerify);
-            picasso =  new Picasso.Builder(GlobalConfig.context)
+            picasso = new Picasso.Builder(GlobalConfig.context)
                     .downloader(new OkHttp3Downloader(client))
                     .build();
         }
@@ -75,7 +76,7 @@ public class PicassoLoader implements ILoader {
 
     @Override
     public void init(Context context, int cacheSizeInM) {//Picasso默认最大容量250MB的文件缓存
-       // Picasso.get(context).setMemoryCategory(MemoryCategory.NORMAL);
+        // Picasso.get(context).setMemoryCategory(MemoryCategory.NORMAL);
         //BigImageViewer.initialize(PicassoImageLoader.with(context,MyUtil.getClient(GlobalConfig.ignoreCertificateVerify)));
         getPicasso();
         BigImageViewer.initialize(new PicassoBigLoader(client));
@@ -86,128 +87,122 @@ public class PicassoLoader implements ILoader {
     public void request(final SingleConfig config) {
 
 
-            if(config.getTarget() instanceof BigImageView){
-                MyUtil.viewBigImage(config);
-                return;
-            }
+        if (config.getTarget() instanceof BigImageView) {
+            MyUtil.viewBigImage(config);
+            return;
+        }
 
 
+        final RequestCreator request = getDrawableTypeRequest(config);
+        request.tag(TAG_PICASSO).config(Bitmap.Config.RGB_565);
 
-            final RequestCreator request = getDrawableTypeRequest(config);
-            request.tag(TAG_PICASSO).config(Bitmap.Config.RGB_565);
+        if (request == null) {
+            return;
+        }
+        if (MyUtil.shouldSetPlaceHolder(config)) {
+            request.placeholder(config.getPlaceHolderResId());
+        }
+        if (config.getErrorResId() > 0) {
+            request.error(config.getErrorResId());
+        }
 
-            if(request ==null){
-                return;
-            }
-            if(MyUtil.shouldSetPlaceHolder(config)){
-                request.placeholder(config.getPlaceHolderResId());
-            }
-            if(config.getErrorResId() >0){
-                request.error(config.getErrorResId());
-            }
-
-            boolean canFit = true;
+        boolean canFit = true;
         boolean canCenterCrop = false;
-        if(config.getWidth() >0 && config.getHeight() >0){
-            request.resize(config.getWidth(),config.getHeight());
+        if (config.getWidth() > 0 && config.getHeight() > 0) {
+            request.resize(config.getWidth(), config.getHeight());
             canFit = false;
             canCenterCrop = true;
         }
 
-            if(!config.isAsBitmap()){
-                int scaleMode = config.getScaleMode();
-                switch (scaleMode){
-                    case ScaleMode.CENTER_CROP:
-                        if(canCenterCrop){
-                            request.centerCrop();
-                        }
+        if (!config.isAsBitmap()) {
+            int scaleMode = config.getScaleMode();
+            switch (scaleMode) {
+                case ScaleMode.CENTER_CROP:
+                    if (canCenterCrop) {
+                        request.centerCrop();
+                    }
 
-                        break;
-                    case ScaleMode.CENTER_INSIDE:
-                        request.centerInside();
-                        break;
-                    case ScaleMode.FIT_CENTER:
-                        request.centerCrop();
-                        break;
-                    case ScaleMode.FIT_XY:
-                        if(canFit){
-                            request.fit();
-                        }
-                        break;
-                    case ScaleMode.FIT_END:
-                        if(canFit){
-                            request.fit();
-                        }
-                        break;
-                    case ScaleMode.FOCUS_CROP:
-                        request.centerCrop();
-                        break;
-                    case ScaleMode.CENTER:
-                        request.centerCrop();
-                        break;
-                    case ScaleMode.FIT_START:
-                        request.centerCrop();
-                        break;
+                    break;
+                case ScaleMode.CENTER_INSIDE:
+                    request.centerInside();
+                    break;
+                case ScaleMode.FIT_CENTER:
+                    request.centerCrop();
+                    break;
+                case ScaleMode.FIT_XY:
+                    if (canFit) {
+                        request.fit();
+                    }
+                    break;
+                case ScaleMode.FIT_END:
+                    if (canFit) {
+                        request.fit();
+                    }
+                    break;
+                case ScaleMode.FOCUS_CROP:
+                    request.centerCrop();
+                    break;
+                case ScaleMode.CENTER:
+                    request.centerCrop();
+                    break;
+                case ScaleMode.FIT_START:
+                    request.centerCrop();
+                    break;
 
-                    default:
-                        request.centerCrop();
-                        break;
-                }
+                default:
+                    request.centerCrop();
+                    break;
             }
+        }
 
 
-
-
-        if(config.getWidth() >1000 || config.getHeight() >1000){
+        if (config.getWidth() > 1000 || config.getHeight() > 1000) {
             request.memoryPolicy(NO_CACHE, NO_STORE);
         }
 
-            setShapeModeAndBlur(config, request);
+        setShapeModeAndBlur(config, request);
 
-            if(config.isAsBitmap()){
-                request.fetch(new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    final Bitmap bitmap = request.get();
-                                    MyUtil.runOnUIThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            config.getBitmapListener().onSuccess(bitmap);
-                                        }
-                                    });
+        if (config.isAsBitmap()) {
+            request.fetch(new Callback() {
+                @Override
+                public void onSuccess() {
+                    ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                final Bitmap bitmap = request.get();
+                                MyUtil.runOnUIThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        config.getBitmapListener().onSuccess(bitmap);
+                                    }
+                                });
 
 
-                                } catch (final IOException e) {
-                                    e.printStackTrace();
-                                    MyUtil.runOnUIThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            config.getBitmapListener().onFail(e);
-                                        }
-                                    });
+                            } catch (final IOException e) {
+                                e.printStackTrace();
+                                MyUtil.runOnUIThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        config.getBitmapListener().onFail(e);
+                                    }
+                                });
 
-                                }
                             }
-                        });
-                    }
+                        }
+                    });
+                }
 
-                    @Override
-                    public void onError() {
-                        config.getBitmapListener().onFail(new Throwable("fetch fail:"));
+                @Override
+                public void onError() {
+                    config.getBitmapListener().onFail(new Throwable("fetch fail:"));
 
-                    }
-                });
-                return;
-            }else if(config.getTarget() instanceof ImageView){
-                request.into((ImageView) config.getTarget());
-            }
-
-
-
+                }
+            });
+            return;
+        } else if (config.getTarget() instanceof ImageView) {
+            request.into((ImageView) config.getTarget());
+        }
 
 
     }
@@ -217,18 +212,18 @@ public class PicassoLoader implements ILoader {
 
         RequestCreator request = null;
         Picasso picasso = getPicasso();
-        if(!TextUtils.isEmpty(config.getUrl())){
-            request= picasso.load(MyUtil.appendUrl(config.getUrl()));
+        if (!TextUtils.isEmpty(config.getUrl())) {
+            request = picasso.load(MyUtil.appendUrl(config.getUrl()));
             paths.add(config.getUrl());
-        }else if(!TextUtils.isEmpty(config.getFilePath())){
-            request= picasso.load(new File(config.getFilePath()));
+        } else if (!TextUtils.isEmpty(config.getFilePath())) {
+            request = picasso.load(new File(config.getFilePath()));
             paths.add(config.getFilePath());
-        }else if(!TextUtils.isEmpty(config.getContentProvider())){
-            request= picasso.load(Uri.parse(config.getContentProvider()));
+        } else if (!TextUtils.isEmpty(config.getContentProvider())) {
+            request = picasso.load(Uri.parse(config.getContentProvider()));
             paths.add(config.getContentProvider());
-        }else if(config.getResId()>0){
-            request= picasso.load(config.getResId());
-            paths.add(config.getResId()+"");
+        } else if (config.getResId() > 0) {
+            request = picasso.load(config.getResId());
+            paths.add(config.getResId() + "");
         }
         return request;
     }
@@ -237,43 +232,43 @@ public class PicassoLoader implements ILoader {
         int shapeMode = config.getShapeMode();
         List<Transformation> transformations = new ArrayList<>();
 
-        if(config.isCropFace()){
-             //transformations.add(new FaceCenterCrop(config.getWidth(), config.getHeight()));//脸部识别
+        if (config.isCropFace()) {
+            //transformations.add(new FaceCenterCrop(config.getWidth(), config.getHeight()));//脸部识别
         }
 
-        if(config.isNeedBlur()){
-            transformations.add(new BlurTransformation(GlobalConfig.context,config.getBlurRadius()));
+        if (config.isNeedBlur()) {
+            transformations.add(new BlurTransformation(GlobalConfig.context, config.getBlurRadius()));
         }
 
 
-        switch (shapeMode){
+        switch (shapeMode) {
             case ShapeMode.RECT:
 
-                if(config.getBorderWidth()>0){
+                if (config.getBorderWidth() > 0) {
 
                 }
                 break;
             case ShapeMode.RECT_ROUND:
-                transformations.add(new RoundedCornersTransformation( config.getRectRoundRadius(), 0, RoundedCornersTransformation.CornerType.ALL));
+                transformations.add(new RoundedCornersTransformation(config.getRectRoundRadius(), 0, RoundedCornersTransformation.CornerType.ALL));
 
-                if(config.getBorderWidth()>0){
+                if (config.getBorderWidth() > 0) {
 
                 }
-                if(config.isGif() && config.getRoundOverlayColor()>0){
+                if (config.isGif() && config.getRoundOverlayColor() > 0) {
 
                 }
                 break;
             case ShapeMode.OVAL:
                 transformations.add(new CropCircleTransformation());
-                if(config.getBorderWidth()>0){
+                if (config.getBorderWidth() > 0) {
 
                 }
-                if(config.isGif() && config.getRoundOverlayColor()>0){
+                if (config.isGif() && config.getRoundOverlayColor() > 0) {
 
                 }
                 break;
         }
-        if(transformations.size()>0){
+        if (transformations.size() > 0) {
             request.transform(transformations);
         }
 
@@ -300,15 +295,15 @@ public class PicassoLoader implements ILoader {
 
 
         File dir = new File(GlobalConfig.context.getCacheDir(), "picasso-cache");
-        if(dir!=null && dir.exists()){
-            MyUtil.deleteFolderFile(dir.getAbsolutePath(),false);
+        if (dir != null && dir.exists()) {
+            MyUtil.deleteFolderFile(dir.getAbsolutePath(), false);
         }
-       PicassoBigLoader.clearCache();
+        PicassoBigLoader.clearCache();
     }
 
     @Override
     public void clearMomoryCache() {
-        for(String path : paths){
+        for (String path : paths) {
             Picasso.with(GlobalConfig.context).invalidate(path);
         }
 
@@ -317,9 +312,9 @@ public class PicassoLoader implements ILoader {
     @Override
     public long getCacheSize() {
         File dir = new File(ImageLoader.context.getCacheDir(), "picasso-cache");
-        if(dir!=null && dir.exists()){
+        if (dir != null && dir.exists()) {
             return MyUtil.getFolderSize(dir);
-        }else {
+        } else {
             return 0;
         }
 
@@ -341,10 +336,10 @@ public class PicassoLoader implements ILoader {
     }
 
     /**
-     *
      * http://blog.csdn.net/u014592587/article/details/47070075
-     *
+     * <p>
      * https://github.com/square/picasso/issues/1025
+     *
      * @param url
      * @return
      */
@@ -369,7 +364,7 @@ public class PicassoLoader implements ILoader {
 
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
-        if(!url.startsWith("http")){
+        if (!url.startsWith("http")) {
             return;
         }
         ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
@@ -391,7 +386,7 @@ public class PicassoLoader implements ILoader {
 
                     @Override
                     public void onResponse(final Call call, final Response response) throws IOException {
-                        if(!response.isSuccessful()){
+                        if (!response.isSuccessful()) {
                             MyUtil.runOnUIThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -401,11 +396,11 @@ public class PicassoLoader implements ILoader {
 
                             return;
                         }
-                        File dir = new File(GlobalConfig.context.getCacheDir(),"picassobig");
-                        if(!dir.exists()){
+                        File dir = new File(GlobalConfig.context.getCacheDir(), "picassobig");
+                        if (!dir.exists()) {
                             dir.mkdirs();
                         }
-                        final File file = new File(dir, count%30+"-tmp.jpg");
+                        final File file = new File(dir, count % 30 + "-tmp.jpg");
                         BufferedSource source = response.body().source();
                         Sink sink = Okio.sink(file);
                         source.readAll(sink);
@@ -417,7 +412,7 @@ public class PicassoLoader implements ILoader {
                             @Override
                             public void run() {
                                 int[] wh = MyUtil.getImageWidthHeight(file.getAbsolutePath());
-                                getter.onSuccess(file,wh[0],wh[1]);
+                                getter.onSuccess(file, wh[0], wh[1]);
                             }
                         });
                     }
@@ -430,6 +425,7 @@ public class PicassoLoader implements ILoader {
     /**
      * 无法同步判断
      * 参见:https://github.com/bumptech/Picasso/issues/639
+     *
      * @param url
      * @return
      */
@@ -451,7 +447,7 @@ public class PicassoLoader implements ILoader {
 
     @Override
     public void download(String url, FileGetter getter) {
-        getFileFromDiskCache(url,getter);
+        getFileFromDiskCache(url, getter);
     }
 
 

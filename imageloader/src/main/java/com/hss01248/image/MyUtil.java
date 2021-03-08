@@ -82,17 +82,17 @@ public class MyUtil {
 
     }
 
-    public static void handleException(Throwable e){
-        if(e == null){
+    public static void handleException(Throwable e) {
+        if (e == null) {
             return;
         }
-        if(GlobalConfig.getExceptionHandler() != null){
+        if (GlobalConfig.getExceptionHandler() != null) {
             try {
                 GlobalConfig.getExceptionHandler().onError(e);
-            }catch (Throwable e2){
+            } catch (Throwable e2) {
                 e2.printStackTrace();
             }
-        }else {
+        } else {
             e.printStackTrace();
         }
     }
@@ -125,8 +125,8 @@ public class MyUtil {
         if (config.getPlaceHolderResId() <= 0) {
             return false;
         }
-        if(!TextUtils.isEmpty(config.getSourceString())){
-            if(config.getSourceString().startsWith("http")){
+        if (!TextUtils.isEmpty(config.getSourceString())) {
+            if (config.getSourceString().startsWith("http")) {
                 //只有在图片源为网络图片,并且图片没有缓存到本地时,才给显示placeholder
                 return true;
             }
@@ -177,10 +177,10 @@ public class MyUtil {
 
 
     public static String getRealType(File file) {
-        if(!file.exists()){
+        if (!file.exists()) {
             return "";
         }
-        if(file.getName().endsWith(".gif")){
+        if (file.getName().endsWith(".gif")) {
             return "gif";
         }
         FileInputStream is = null;
@@ -211,7 +211,7 @@ public class MyUtil {
             return "";
         } finally {
             try {
-                if(is != null){
+                if (is != null) {
                     is.close();
                 }
             } catch (IOException e) {
@@ -253,15 +253,15 @@ public class MyUtil {
      */
     public static Uri buildUriByType(SingleConfig config) {
 
-       // Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
-         //       .getContentProvider());
+        // Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
+        //       .getContentProvider());
 
         if (!TextUtils.isEmpty(config.getSourceString())) {
             //String url = MyUtil.appendUrl(config.getUrl());
-            if(config.getSourceString().startsWith("/storage/")){
+            if (config.getSourceString().startsWith("/storage/")) {
                 File file = new File(config.getSourceString());
                 return Uri.fromFile(file);
-            }else if(config.getSourceString().startsWith("data:mime/type;base64")){
+            } else if (config.getSourceString().startsWith("data:mime/type;base64")) {
                 return Uri.parse(config.getSourceString());
             }
             return Uri.parse(config.getSourceString());
@@ -271,16 +271,16 @@ public class MyUtil {
             return Uri.parse("res://imageloader/" + config.getResId());
         }
 
-        if(config.getBytes() != null){
+        if (config.getBytes() != null) {
             //?
         }
 
         return null;
     }
 
-    public static String getUsablePath(SingleConfig config){
-       // Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
-            //    .getContentProvider());
+    public static String getUsablePath(SingleConfig config) {
+        // Log.i("builduri:", "url: " + config.getUrl() + " ---filepath:" + config.getFilePath() + "--content:" + config
+        //    .getContentProvider());
 
         if (!TextUtils.isEmpty(config.getSourceString())) {
             //String url = MyUtil.appendUrl(config.getUrl());
@@ -492,11 +492,11 @@ public class MyUtil {
         return bitmap;
     }
 
-    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode, boolean isContent){
-        return getScaleTypeForImageView(scaleMode,isContent,false);
+    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode, boolean isContent) {
+        return getScaleTypeForImageView(scaleMode, isContent, false);
     }
 
-    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode, boolean isContent,boolean isGlide) {
+    public static ImageView.ScaleType getScaleTypeForImageView(int scaleMode, boolean isContent, boolean isGlide) {
         switch (scaleMode) {
             case 0:
                 if (isContent) {
@@ -506,7 +506,7 @@ public class MyUtil {
                 }
 
             case ScaleMode.CENTER_CROP:
-                if(isContent && isGlide){
+                if (isContent && isGlide) {
                     return ImageView.ScaleType.FIT_CENTER;
                 }
                 return ImageView.ScaleType.CENTER_CROP;
@@ -549,8 +549,6 @@ public class MyUtil {
          */
         return new int[]{options.outWidth, options.outHeight};
     }
-
-
 
 
     public static Activity getActivityFromContext(Context context) {
@@ -605,8 +603,8 @@ public class MyUtil {
         }
     }
 
-    public static String printBitmap(Bitmap bitmap){
-        if(bitmap == null){
+    public static String printBitmap(Bitmap bitmap) {
+        if (bitmap == null) {
             return "null";
         }
         StringBuilder stringBuilder = new StringBuilder("bitmap:\n");
@@ -636,8 +634,8 @@ public class MyUtil {
         return stringBuilder.toString();
     }
 
-    public static String printImageView(ImageView imageView){
-        if(imageView == null){
+    public static String printImageView(ImageView imageView) {
+        if (imageView == null) {
             return "null";
         }
 
@@ -660,7 +658,7 @@ public class MyUtil {
             stringBuilder.append("\nAdjustViewBounds:").append(imageView.getAdjustViewBounds());
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            if(imageView.getClipBounds() != null){
+            if (imageView.getClipBounds() != null) {
                 stringBuilder.append("\nClipBounds:").append(imageView.getClipBounds().toString());
             }
             stringBuilder.append("\nImageAlpha:").append(imageView.getImageAlpha());
@@ -671,7 +669,7 @@ public class MyUtil {
         }
         stringBuilder.append("\nforground:");
         stringBuilder.append(imageView.getDrawable());
-        if(imageView.getDrawable() != null){
+        if (imageView.getDrawable() != null) {
             stringBuilder.append(",").append(imageView.getDrawable().getIntrinsicWidth())
                     .append("x").append(imageView.getDrawable().getIntrinsicHeight());
         }
@@ -682,57 +680,57 @@ public class MyUtil {
     }
 
     private static String getIdName(View view) {
-        if(view == null){
+        if (view == null) {
             return "";
         }
         try {
-          return   view.getResources().getResourceEntryName(view.getId());
-        }catch (Throwable e){
+            return view.getResources().getResourceEntryName(view.getId());
+        } catch (Throwable e) {
             e.printStackTrace();
-            return view.getId()+"";
+            return view.getId() + "";
         }
 
     }
 
-    public static String logWH(int wh){
-        if(wh >0){
-            return wh+"";
+    public static String logWH(int wh) {
+        if (wh > 0) {
+            return wh + "";
         }
-        if(wh == ViewGroup.LayoutParams.MATCH_PARENT){
+        if (wh == ViewGroup.LayoutParams.MATCH_PARENT) {
             return " MATCH_PARENT ";
-        }else if(wh == ViewGroup.LayoutParams.WRAP_CONTENT){
+        } else if (wh == ViewGroup.LayoutParams.WRAP_CONTENT) {
             return " WRAP_CONTENT ";
-        }else {
-            return wh+"";
+        } else {
+            return wh + "";
         }
     }
 
-    public static String printException(Throwable e){
-        if(e == null){
+    public static String printException(Throwable e) {
+        if (e == null) {
             return "exception is null";
         }
-        return "exception:\n"+e.getClass().getName()+":"+e.getMessage();
+        return "exception:\n" + e.getClass().getName() + ":" + e.getMessage();
     }
 
-    public static boolean isBitmapTooLarge(float bw,float bh,ImageView imageView){
+    public static boolean isBitmapTooLarge(float bw, float bh, ImageView imageView) {
 
-        float bitmapArea =  bw * bh;
+        float bitmapArea = bw * bh;
         float ivArea = imageView.getMeasuredWidth() * imageView.getMeasuredHeight();
-        if(ivArea ==0){
+        if (ivArea == 0) {
             return false;
         }
         return (bitmapArea / ivArea) > 1.25f;
     }
 
-    public static int calculateScaleRatio(int width,int height, int reqWidth, int reqHeight,int multiplRatio) {
+    public static int calculateScaleRatio(int width, int height, int reqWidth, int reqHeight, int multiplRatio) {
 
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
             //计算图片高度和我们需要高度的最接近比例值
-            final int heightRatio = Math.round(((float) height / (float) reqHeight)*multiplRatio);
+            final int heightRatio = Math.round(((float) height / (float) reqHeight) * multiplRatio);
             //宽度比例值
-            final int widthRatio = Math.round(((float) width / (float) reqWidth)*multiplRatio);
+            final int widthRatio = Math.round(((float) width / (float) reqWidth) * multiplRatio);
             //取比例值中的较大值作为inSampleSize
             inSampleSize = heightRatio > widthRatio ? heightRatio : widthRatio;
         }
@@ -742,10 +740,11 @@ public class MyUtil {
 
     /**
      * https://www.exif.org/Exif2-2.PDF
+     *
      * @param filePath
      * @return
      */
-    public static String printExif(String filePath){
+    public static String printExif(String filePath) {
         return ExifUtil.readExif(filePath);
     }
 

@@ -48,7 +48,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresPermission;
+
+import androidx.annotation.RequiresPermission;
+
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -65,7 +67,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -170,7 +171,7 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         mTempImages = new HashMap<>();
 
 
-        if(!EventBus.getDefault().isRegistered(this)){
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
     }
@@ -314,14 +315,11 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
         }*/
 
         this.url = uri;
-        if(url.startsWith("http")){
-            if(!url.contains(OkHttpProgressResponseBody.KEY_PREGRESS)){
+        if (url.startsWith("http")) {
+            if (!url.contains(OkHttpProgressResponseBody.KEY_PREGRESS)) {
                 url += OkHttpProgressResponseBody.KEY_PREGRESS;
             }
         }
-
-
-
 
 
         mThumbnail = thumbnail;
@@ -331,7 +329,7 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
             return;
         }
 
-        if(new File(url).exists()){
+        if (new File(url).exists()) {
             showContent(new File(url));
             return;
         }
@@ -404,10 +402,9 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         //EventBus.getDefault().unregister(this);
-        if(!EventBus.getDefault().isRegistered(this)){
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-
 
 
     }
@@ -416,7 +413,7 @@ public class BigImageView extends FrameLayout implements BigImageHierarchy {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // EventBus.getDefault().removeAllStickyEvents();
-        if(EventBus.getDefault().isRegistered(this)){
+        if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
 

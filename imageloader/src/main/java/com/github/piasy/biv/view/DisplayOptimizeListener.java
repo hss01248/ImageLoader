@@ -25,6 +25,7 @@
 package com.github.piasy.biv.view;
 
 import android.graphics.PointF;
+
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 /**

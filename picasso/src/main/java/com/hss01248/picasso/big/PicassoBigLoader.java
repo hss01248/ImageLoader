@@ -35,34 +35,36 @@ import okio.Sink;
 public class PicassoBigLoader implements BigLoader {
     Picasso picasso;
     OkHttpClient client;
-    static volatile int count ;
+    static volatile int count;
+
     public PicassoBigLoader(OkHttpClient client) {
-       OkHttpClient client1 =  client.newBuilder().addNetworkInterceptor(new ProgressInterceptor()).build();
+        OkHttpClient client1 = client.newBuilder().addNetworkInterceptor(new ProgressInterceptor()).build();
         this.client = client1;
-        picasso =  new Picasso.Builder(GlobalConfig.context)
+        picasso = new Picasso.Builder(GlobalConfig.context)
                 .downloader(new OkHttp3Downloader(client1))
                 .build();
     }
-    public static void clearCache(){
+
+    public static void clearCache() {
         File dir2 = new File(GlobalConfig.context.getCacheDir(), "picassobig");
-        if(dir2!=null && dir2.exists()){
-            MyUtil.deleteFolderFile(dir2.getAbsolutePath(),false);
+        if (dir2 != null && dir2.exists()) {
+            MyUtil.deleteFolderFile(dir2.getAbsolutePath(), false);
         }
     }
 
     @Override
     public void loadImage(final Uri uri) {
-        if(!uri.toString().startsWith("http")){
-                if(uri.toString().startsWith("file")){
-                    File file = new File(uri.getPath());
-                    if(file!=null && file.exists()){
-                        EventBus.getDefault().post(new CacheHitEvent(file,uri.toString()));
-                    }else {
-                        EventBus.getDefault().post(new ErrorEvent(uri.toString()));
-                    }
-                }else {
-                    EventBus.getDefault().post(new CacheHitEvent2(uri,uri.toString()));
+        if (!uri.toString().startsWith("http")) {
+            if (uri.toString().startsWith("file")) {
+                File file = new File(uri.getPath());
+                if (file != null && file.exists()) {
+                    EventBus.getDefault().post(new CacheHitEvent(file, uri.toString()));
+                } else {
+                    EventBus.getDefault().post(new ErrorEvent(uri.toString()));
                 }
+            } else {
+                EventBus.getDefault().post(new CacheHitEvent2(uri, uri.toString()));
+            }
 
             return;
         }
@@ -81,24 +83,24 @@ public class PicassoBigLoader implements BigLoader {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
 
-                        if(!response.isSuccessful()) {
+                        if (!response.isSuccessful()) {
                             EventBus.getDefault().post(new ErrorEvent(uri.toString()));
                             return;
                         }
-                        File dir = new File(GlobalConfig.context.getCacheDir(),"picassobig");
-                        if(!dir.exists()){
+                        File dir = new File(GlobalConfig.context.getCacheDir(), "picassobig");
+                        if (!dir.exists()) {
                             dir.mkdirs();
                         }
-                        final File file = new File(dir, count%100+"-tmp.jpg");
+                        final File file = new File(dir, count % 100 + "-tmp.jpg");
                         BufferedSource source = response.body().source();
                         Sink sink = Okio.sink(file);
                         source.readAll(sink);
                         source.close();
                         sink.close();
-                        if(file.exists() && file.length()>80){
+                        if (file.exists() && file.length() > 80) {
                             count++;
-                            EventBus.getDefault().post(new CacheHitEvent(file,uri.toString()));
-                        }else {
+                            EventBus.getDefault().post(new CacheHitEvent(file, uri.toString()));
+                        } else {
                             EventBus.getDefault().post(new ErrorEvent(uri.toString()));
                         }
 

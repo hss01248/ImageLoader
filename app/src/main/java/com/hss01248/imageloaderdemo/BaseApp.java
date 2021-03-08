@@ -33,7 +33,7 @@ public class BaseApp extends Application {
     public void onCreate() {
         super.onCreate();
         SpiderMan.init(this);
-        ImageLoader.init(getApplicationContext(), 500,new GlideLoader());
+        ImageLoader.init(getApplicationContext(), 500, new GlideLoader());
         GlobalConfig.debug = true;
         ImageMemoryHookManager.hook(this);
         GlobalConfig.interceptor = new LoadInterceptor() {
@@ -41,26 +41,26 @@ public class BaseApp extends Application {
             public boolean intercept(SingleConfig config) {
 
                 XLog.w(config.toString());
-                if(config.getWidth()> 0 || config.getHeight() >0){
-                    if(!TextUtils.isEmpty(config.getUrl())){
-                        if(config.getUrl().contains("w=") ||config.getUrl().contains("h=")){
+                if (config.getWidth() > 0 || config.getHeight() > 0) {
+                    if (!TextUtils.isEmpty(config.getUrl())) {
+                        if (config.getUrl().contains("w=") || config.getUrl().contains("h=")) {
                             return false;
                         }
                         String line = "";
-                        if(config.getWidth() >0){
-                            line += "w="+config.getWidth();
-                            if(config.getHeight() >0){
+                        if (config.getWidth() > 0) {
+                            line += "w=" + config.getWidth();
+                            if (config.getHeight() > 0) {
                                 line += "&";
                             }
                         }
-                        if(config.getHeight() >0){
-                            line += "h="+config.getHeight();
+                        if (config.getHeight() > 0) {
+                            line += "h=" + config.getHeight();
                         }
 
-                        if(config.getUrl().contains("?")){
-                            config.setUrl(config.getUrl()+"&"+line);
-                        }else{
-                            config.setUrl(config.getUrl()+"?"+line);
+                        if (config.getUrl().contains("?")) {
+                            config.setUrl(config.getUrl() + "&" + line);
+                        } else {
+                            config.setUrl(config.getUrl() + "?" + line);
                         }
                     }
                 }
@@ -68,14 +68,14 @@ public class BaseApp extends Application {
                 return false;
             }
         };
-       // GlobalConfig.placeHolderResId = R.drawable.im_item_list_opt;
-       // GlobalConfig.errorResId = R.drawable.im_item_list_opt_error;
+        // GlobalConfig.placeHolderResId = R.drawable.im_item_list_opt;
+        // GlobalConfig.errorResId = R.drawable.im_item_list_opt_error;
         //BigImageViewer.initialize(GlideBigLoader.with(this));
         //GlobalConfig.setBigImageDark(false);
         LeakCanary.install(this);
-        MyToast.init(this,true,true);
+        MyToast.init(this, true, true);
 
-       // PhotoUtil.init(getApplicationContext(),new GlideIniter());//第二个参数根据具体依赖库而定
+        // PhotoUtil.init(getApplicationContext(),new GlideIniter());//第二个参数根据具体依赖库而定
         StyledDialog.init(this);
         //Logger.initialize(new Settings());
         XLog.init();

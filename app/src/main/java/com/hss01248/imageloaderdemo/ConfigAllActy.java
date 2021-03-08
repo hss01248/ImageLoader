@@ -3,8 +3,11 @@ package com.hss01248.imageloaderdemo;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
+
+import androidx.annotation.Nullable;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -102,8 +105,8 @@ public class ConfigAllActy extends Activity {
     @BindView(R.id.btn_scale)
     Button btn_scale;
 
-    ArrayList<String> urls ;
-    List<String> ress ;
+    ArrayList<String> urls;
+    List<String> ress;
     ArrayList<String> files;
     String selectedPath;
     int selectedRes;
@@ -117,8 +120,6 @@ public class ConfigAllActy extends Activity {
 
     List<String> placeHolderDes;
     List<String> scaleModeStrs;
-
-
 
 
     @Override
@@ -146,7 +147,7 @@ public class ConfigAllActy extends Activity {
         sbWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                builder.widthHeightByPx(progress*1080/100,sbHeight.getProgress()*1920/100);
+                builder.widthHeightByPx(progress * 1080 / 100, sbHeight.getProgress() * 1920 / 100);
                 loadImage();
             }
 
@@ -164,7 +165,7 @@ public class ConfigAllActy extends Activity {
         sbHeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                builder.widthHeightByPx(sbWidth.getProgress()*1080/100,progress*1920/100);
+                builder.widthHeightByPx(sbWidth.getProgress() * 1080 / 100, progress * 1920 / 100);
                 loadImage();
             }
 
@@ -183,9 +184,9 @@ public class ConfigAllActy extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                int shapeId =   rgShape.getCheckedRadioButtonId();
-               if(shapeId == R.id.et_roundcorner){
-                   loadImage();
+                int shapeId = rgShape.getCheckedRadioButtonId();
+                if (shapeId == R.id.et_roundcorner) {
+                    loadImage();
                 }
 
             }
@@ -235,17 +236,17 @@ public class ConfigAllActy extends Activity {
         sbBorderWidth.setMax(30);
         sbRoundcornerRadis.setMax(50);
 
-         placeHolderRes = new int[]{R.drawable.placeholder1_36dp, R.drawable.placeholder2_48dp,
-             R.drawable.placeholder3_24dp, R.drawable.placeholder4_18dp};
+        placeHolderRes = new int[]{R.drawable.placeholder1_36dp, R.drawable.placeholder2_48dp,
+                R.drawable.placeholder3_24dp, R.drawable.placeholder4_18dp};
         errorRes = new int[]{R.drawable.error1_48dp, R.drawable.error2_24dp,
-            R.drawable.error3_18dp, R.drawable.error4_36dp};
+                R.drawable.error3_18dp, R.drawable.error4_36dp};
         loadingRes = new int[]{R.drawable.loading1_48dp, R.drawable.loading2_18dp,
-            R.drawable.imageloader_loading_81, R.drawable.imageloader_loading_50};
-        ress = Arrays.asList(R.drawable.image+"",R.drawable.thegif+"",R.drawable.img2+"");
+                R.drawable.imageloader_loading_81, R.drawable.imageloader_loading_50};
+        ress = Arrays.asList(R.drawable.image + "", R.drawable.thegif + "", R.drawable.img2 + "");
         builder = ImageLoader.with(this);
         config = new SingleConfig(builder);
-        placeHolderDes = Arrays.asList("0","1","2","3");
-        scaleModeStrs = Arrays.asList("CENTER_CROP","FIT_XY","CENTER","FOCUS_CROP","FIT_CENTER","FIT_START","FIT_END","CENTER_INSIDE","FACE_CROP");
+        placeHolderDes = Arrays.asList("0", "1", "2", "3");
+        scaleModeStrs = Arrays.asList("CENTER_CROP", "FIT_XY", "CENTER", "FOCUS_CROP", "FIT_CENTER", "FIT_START", "FIT_END", "CENTER_INSIDE", "FACE_CROP");
 
 
         sbWidth.setProgress(30);
@@ -262,11 +263,11 @@ public class ConfigAllActy extends Activity {
 
 
     @OnClick({R.id.iv_targetView, R.id.rb_fresco, R.id.rb_glide, R.id.rb_picasso, R.id.rg_loader,
-        R.id.rb_fromfile, R.id.rb_from_url, R.id.rb_from_res, R.id.rg_from, R.id.sb_width, R.id.sb_height,
-        R.id.et_placeholder_res, R.id.et_placeholder_scale, R.id.et_loading_res, R.id.et_loading_scale,
-        R.id.et_error_res, R.id.et_error_scale, R.id.et_as_cirle, R.id.et_roundcorner, R.id.rg_shape,
-        R.id.sb_roundcorner_radis, R.id.sb_border_width, R.id.et_border_color, R.id.sb_blur_rate,
-        R.id.et_as_imageview, R.id.et_as_bitmap, R.id.rg_target, R.id.btn_show,R.id.btn_scale})
+            R.id.rb_fromfile, R.id.rb_from_url, R.id.rb_from_res, R.id.rg_from, R.id.sb_width, R.id.sb_height,
+            R.id.et_placeholder_res, R.id.et_placeholder_scale, R.id.et_loading_res, R.id.et_loading_scale,
+            R.id.et_error_res, R.id.et_error_scale, R.id.et_as_cirle, R.id.et_roundcorner, R.id.rg_shape,
+            R.id.sb_roundcorner_radis, R.id.sb_border_width, R.id.et_border_color, R.id.sb_blur_rate,
+            R.id.et_as_imageview, R.id.et_as_bitmap, R.id.rg_target, R.id.btn_show, R.id.btn_scale})
     public void onViewClicked(View view) {
         try {
             switch (view.getId()) {
@@ -274,7 +275,7 @@ public class ConfigAllActy extends Activity {
                     StyledDialog.buildIosSingleChoose(scaleModeStrs, new MyItemDialogListener() {
                         @Override
                         public void onItemClick(CharSequence charSequence, int i) {
-                            builder.scale(i+1);
+                            builder.scale(i + 1);
                             btn_scale.setText(charSequence);
                             loadImage();
 
@@ -312,7 +313,7 @@ public class ConfigAllActy extends Activity {
                         public void onItemClick(CharSequence charSequence, int i) {
                             builder.url("");
                             builder.file("");
-                            builder.res( Integer.parseInt(charSequence.toString()));
+                            builder.res(Integer.parseInt(charSequence.toString()));
 
                         }
                     }).show();
@@ -321,8 +322,8 @@ public class ConfigAllActy extends Activity {
                     StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
                         @Override
                         public void onItemClick(CharSequence charSequence, int i) {
-                            XLog.e("place holder:%s,positon:%d,resid:%d",charSequence,i,placeHolderRes[i]);
-                            builder.placeHolder(placeHolderRes[i],true,selectedPlaceHolderScale);
+                            XLog.e("place holder:%s,positon:%d,resid:%d", charSequence, i, placeHolderRes[i]);
+                            builder.placeHolder(placeHolderRes[i], true, selectedPlaceHolderScale);
                             etPlaceholderRes.setText(charSequence);
 
 
@@ -334,11 +335,11 @@ public class ConfigAllActy extends Activity {
                         @Override
                         public void onItemClick(CharSequence charSequence, int i) {
                             etPlaceholderScale.setText(charSequence);
-                            selectedPlaceHolderScale = i+1;
+                            selectedPlaceHolderScale = i + 1;
                             String text = (String) etPlaceholderRes.getText();
-                            if(!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)){
+                            if (!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)) {
                                 int idx = Integer.parseInt(text);
-                                builder.placeHolder(placeHolderRes[idx],true,i+1);
+                                builder.placeHolder(placeHolderRes[idx], true, i + 1);
                             }
 
 
@@ -349,7 +350,7 @@ public class ConfigAllActy extends Activity {
                     StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
                         @Override
                         public void onItemClick(CharSequence charSequence, int i) {
-                            builder.loading(loadingRes[i],selectedLoadingScale);
+                            builder.loading(loadingRes[i], selectedLoadingScale);
                             etLoadingRes.setText(charSequence);
 
                         }
@@ -360,11 +361,11 @@ public class ConfigAllActy extends Activity {
                         @Override
                         public void onItemClick(CharSequence charSequence, int i) {
                             etLoadingScale.setText(charSequence);
-                            selectedLoadingScale = i+1;
+                            selectedLoadingScale = i + 1;
                             String text = (String) etLoadingRes.getText();
-                            if(!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)){
+                            if (!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)) {
                                 int idx = Integer.parseInt(text);
-                                builder.loading(placeHolderRes[idx],i+1);
+                                builder.loading(placeHolderRes[idx], i + 1);
                             }
 
                         }
@@ -374,7 +375,7 @@ public class ConfigAllActy extends Activity {
                     StyledDialog.buildIosSingleChoose(placeHolderDes, new MyItemDialogListener() {
                         @Override
                         public void onItemClick(CharSequence charSequence, int i) {
-                            builder.error(errorRes[i],selectedErrorScale);
+                            builder.error(errorRes[i], selectedErrorScale);
                             etErrorRes.setText(charSequence);
 
                         }
@@ -385,11 +386,11 @@ public class ConfigAllActy extends Activity {
                         @Override
                         public void onItemClick(CharSequence charSequence, int i) {
                             etErrorScale.setText(charSequence);
-                            selectedErrorScale = i+1;
+                            selectedErrorScale = i + 1;
                             String text = (String) etErrorRes.getText();
-                            if(!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)){
+                            if (!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)) {
                                 int idx = Integer.parseInt(text);
-                                builder.error(errorRes[idx],i+1);
+                                builder.error(errorRes[idx], i + 1);
                             }
                         }
                     }).show();
@@ -417,9 +418,10 @@ public class ConfigAllActy extends Activity {
                 case R.id.btn_show:
                     loadImage();
                     break;
-                default:break;
+                default:
+                    break;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -428,36 +430,37 @@ public class ConfigAllActy extends Activity {
     boolean hasFrescoInited = true;
     boolean hasGlideInited = false;
     boolean hasPicassoInited = false;
+
     private void loadImage() {
 
         try {
             //loader:
-            int loaderId =   rgLoader.getCheckedRadioButtonId();
+            int loaderId = rgLoader.getCheckedRadioButtonId();
             boolean isFresco = false;
-            if(loaderId == R.id.rb_fresco){
+            if (loaderId == R.id.rb_fresco) {
                 isFresco = true;
-                if(hasFrescoInited){
+                if (hasFrescoInited) {
                     GlobalConfig.setLoader(new FrescoLoader());
-                }else {
-                    ImageLoader.init(getApplicationContext(),60,new FrescoLoader());
+                } else {
+                    ImageLoader.init(getApplicationContext(), 60, new FrescoLoader());
                     hasFrescoInited = true;
                 }
 
-            }else if(loaderId == R.id.rb_glide){
-                if(hasGlideInited){
+            } else if (loaderId == R.id.rb_glide) {
+                if (hasGlideInited) {
                     GlobalConfig.setLoader(new GlideLoader());
-                }else {
-                    ImageLoader.init(getApplicationContext(),60,new GlideLoader());
+                } else {
+                    ImageLoader.init(getApplicationContext(), 60, new GlideLoader());
                     hasGlideInited = true;
                 }
-            }else if(loaderId == R.id.rb_picasso){
-                if(hasPicassoInited){
-                   // GlobalConfig.setLoader(new PicassoLoader());
-                }else {
+            } else if (loaderId == R.id.rb_picasso) {
+                if (hasPicassoInited) {
+                    // GlobalConfig.setLoader(new PicassoLoader());
+                } else {
                     //ImageLoader.init(getApplicationContext(),60,new PicassoLoader());
                     hasPicassoInited = true;
                 }
-            }else {
+            } else {
                 MyToast.error("loader not choosed");
                 return;
             }
@@ -482,51 +485,49 @@ public class ConfigAllActy extends Activity {
         }*/
 
             //宽高
-        int width = sbWidth.getProgress()*1080/100;
-        int height = sbHeight.getProgress()*1920/100;
-        XLog.e("width:"+width+ "  height:"+height);
-        builder.widthHeightByPx(width,height);
+            int width = sbWidth.getProgress() * 1080 / 100;
+            int height = sbHeight.getProgress() * 1920 / 100;
+            XLog.e("width:" + width + "  height:" + height);
+            builder.widthHeightByPx(width, height);
 
             //todo 获取res的值
 
 
-
-
-            int shapeId =   rgShape.getCheckedRadioButtonId();
+            int shapeId = rgShape.getCheckedRadioButtonId();
             int border = sbBorderWidth.getProgress();
-            if(shapeId == R.id.et_as_cirle){
+            if (shapeId == R.id.et_as_cirle) {
                 builder.asCircle(R.color.colorAccent);
 
-            }else if(shapeId == R.id.et_roundcorner){
+            } else if (shapeId == R.id.et_roundcorner) {
 
-                builder.rectRoundCorner(sbRoundcornerRadis.getProgress(),R.color.colorAccent);
+                builder.rectRoundCorner(sbRoundcornerRadis.getProgress(), R.color.colorAccent);
             }
-            builder.border(border,R.color.colorAccent);
+            builder.border(border, R.color.colorAccent);
             //高斯模糊
             int blurRate = sbBlurRate.getProgress();
-            if(blurRate>0){
+            if (blurRate > 0) {
                 builder.blur(blurRate);
             }
             //加载到view或者bitmap
-            int targetId =   rgTarget.getCheckedRadioButtonId();
+            int targetId = rgTarget.getCheckedRadioButtonId();
             XLog.e(builder);
-            if(targetId == R.id.et_as_imageview){
-                if(isFresco){
+            if (targetId == R.id.et_as_imageview) {
+                if (isFresco) {
                     imageView.setVisibility(View.GONE);
                     ivTargetView.setVisibility(View.VISIBLE);
                     builder.into(ivTargetView);
-                }else {
+                } else {
                     imageView.setVisibility(View.VISIBLE);
                     ivTargetView.setVisibility(View.GONE);
                     builder.into(imageView);
 
                 }
 
-            }else if(targetId == R.id.et_as_bitmap){
+            } else if (targetId == R.id.et_as_bitmap) {
                 builder.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
-                        XLog.e("bitmap :%s,width:%d,height:%d",bitmap.toString(),bitmap.getWidth(),bitmap.getHeight());
+                        XLog.e("bitmap :%s,width:%d,height:%d", bitmap.toString(), bitmap.getWidth(), bitmap.getHeight());
                         imageView.setVisibility(View.VISIBLE);
                         ivTargetView.setVisibility(View.GONE);
                         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -545,13 +546,13 @@ public class ConfigAllActy extends Activity {
 
                     }
                 });
-            }else {
+            } else {
                 MyToast.error("no target selected!");
             }
 
 
             config = new SingleConfig(builder);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

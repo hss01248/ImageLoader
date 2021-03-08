@@ -48,7 +48,7 @@ public class ProgressPieIndicatorNew implements ProgressIndicator {
     @Override
     public View getView(BigImageView parent) {
         root = (RelativeLayout) View.inflate(parent.getContext(),
-                parent.isDarkTheme() ? R.layout.ui_progress_pie_indicator_new_dark : R.layout.ui_progress_pie_indicator_new,null);
+                parent.isDarkTheme() ? R.layout.ui_progress_pie_indicator_new_dark : R.layout.ui_progress_pie_indicator_new, null);
 
         tvProgress = root.findViewById(R.id.tv_progress);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);

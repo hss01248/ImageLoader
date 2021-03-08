@@ -1,7 +1,9 @@
 package com.hss01248.frescoloader;
 
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
+
 import android.util.Log;
 
 import com.facebook.common.references.CloseableReference;
@@ -21,7 +23,9 @@ import java.io.File;
 
 public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<CloseableReference<CloseableImage>> {
 
-    String finalUrl; int width; int height;
+    String finalUrl;
+    int width;
+    int height;
 
     public MyBaseBitmapDataSubscriber(String finalUrl, int width, int height) {
         this.finalUrl = finalUrl;
@@ -40,16 +44,16 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
             onNewResultImpl(dataSource);
         } finally {
             if (shouldClose) {
-               dataSource.close();
+                dataSource.close();
             }
         }
     }
 
     @Override
     protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-        if(dataSource.getFailureCause()!=null){
+        if (dataSource.getFailureCause() != null) {
             onFail(dataSource.getFailureCause());
-        }else {
+        } else {
             onFail(new Throwable("unknown cause"));
         }
 
@@ -75,36 +79,36 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
         }
 
 
-        if(bitmap!=null ){
-            if(bitmap.isRecycled()){
+        if (bitmap != null) {
+            if (bitmap.isRecycled()) {
                 onFail(new Throwable("bitmap.isRecycled"));
-            }else {
-                onNewResultImpl(bitmap,dataSource);
+            } else {
+                onNewResultImpl(bitmap, dataSource);
             }
             return;
         }
 
         //如果bitmap为空
-        Log.e("onNewResultImpl","finalUrl :"+finalUrl);
-        File cacheFile  = ImageLoader.getActualLoader().getFileFromDiskCache(finalUrl);
-        if(cacheFile ==null){
-            onFail(new Throwable("file cache is null:"+finalUrl));
+        Log.e("onNewResultImpl", "finalUrl :" + finalUrl);
+        File cacheFile = ImageLoader.getActualLoader().getFileFromDiskCache(finalUrl);
+        if (cacheFile == null) {
+            onFail(new Throwable("file cache is null:" + finalUrl));
             return;
         }
         //还要判断文件是不是gif格式的
-        if (!"gif".equalsIgnoreCase(MyUtil.getRealType(cacheFile))){
-            onFail(new Throwable("file cache is not gif:"+finalUrl));
+        if (!"gif".equalsIgnoreCase(MyUtil.getRealType(cacheFile))) {
+            onFail(new Throwable("file cache is not gif:" + finalUrl));
             return;
         }
         Bitmap bitmapGif = GifUtils.getBitmapFromGifFile(cacheFile);//拿到gif第一帧的bitmap
-        if(width>0 && height >0) {
+        if (width > 0 && height > 0) {
             bitmapGif = MyUtil.compressBitmap(bitmapGif, false, width, height);//将bitmap压缩到指定宽高。
         }
 
         if (bitmapGif != null) {
-            onNewResultImpl(bitmapGif,dataSource);
+            onNewResultImpl(bitmapGif, dataSource);
         } else {
-            onFail(new Throwable("can not create bitmap from gif file:"+cacheFile.getAbsolutePath()));
+            onFail(new Throwable("can not create bitmap from gif file:" + cacheFile.getAbsolutePath()));
         }
 
 
@@ -122,10 +126,10 @@ public abstract class MyBaseBitmapDataSubscriber extends BaseDataSubscriber<Clos
      * method.
      *
      * <p>The framework will free the bitmap's memory after this method has completed.
+     *
      * @param bitmap
-
      */
-    protected abstract void onNewResultImpl(@Nullable Bitmap bitmap,DataSource<CloseableReference<CloseableImage>> dataSource);
+    protected abstract void onNewResultImpl(@Nullable Bitmap bitmap, DataSource<CloseableReference<CloseableImage>> dataSource);
 
     protected abstract void onFail(Throwable e);
 }

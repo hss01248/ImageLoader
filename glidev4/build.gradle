@@ -4,7 +4,6 @@ android {
     compileSdkVersion 28
 
 
-
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
@@ -33,15 +32,15 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-   // testImplementation 'junit:junit:4.12'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    // testImplementation 'junit:junit:4.12'
     //androidTestImplementation 'com.android.support.test:runner:1.0.2'
     //androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    api ("com.github.bumptech.glide:glide:4.9.0") {
+    api("com.github.bumptech.glide:glide:4.11.0") {
         exclude group: "com.android.support"
     }
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    implementation group: 'com.github.bumptech.glide', name: 'okhttp3-integration', version: '4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation group: 'com.github.bumptech.glide', name: 'okhttp3-integration', version: '4.11.0'
 
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     // If you want to use the GPU Filters

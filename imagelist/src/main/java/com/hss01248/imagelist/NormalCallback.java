@@ -7,7 +7,7 @@ package com.hss01248.imagelist;
  */
 public interface NormalCallback<T> {
 
-    void onSuccess(T t,Object extra);
+    void onSuccess(T t, Object extra);
 
     void onFail(Throwable e);
 

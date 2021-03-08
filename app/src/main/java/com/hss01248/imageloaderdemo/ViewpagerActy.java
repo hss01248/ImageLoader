@@ -2,8 +2,10 @@ package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
+
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
+
 import android.widget.TextView;
 
 import com.hss01248.image.ImageLoader;
@@ -66,7 +68,6 @@ public class ViewpagerActy extends Activity {
         urls.add("http://up.deskcity.org/pic_source/79/5d/b2/795db2bfd4edbfe8b6796f706aca2b60.jpg");
 
 
-
         // PagerAdapterForBigImage adapter = new PagerAdapterForBigImage(urls);
         // viewPager.setAdapter(adapter);
         ImageLoader.loadBigImages(viewPager, urls);
@@ -80,7 +81,7 @@ public class ViewpagerActy extends Activity {
 
             @Override
             public void onPageSelected(int i) {
-                tvIndex.setText("index:"+i);
+                tvIndex.setText("index:" + i);
             }
 
             @Override

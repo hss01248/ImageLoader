@@ -33,13 +33,14 @@ import java.util.List;
  * Created by huangshuisheng on 2017/9/28.
  */
 
-public class RcvHolder extends SuperRvHolder<String,Activity> {
+public class RcvHolder extends SuperRvHolder<String, Activity> {
     //public ImageView imageView;
     private int imageSize;
     private int columnNumber;
     //private RoundedImageView roundedImageView2;
-   // private ImageLoaderRoundImageView roundImageView;
+    // private ImageLoaderRoundImageView roundImageView;
     private ImageView roundImageView3;
+
     public RcvHolder(View itemView) {
         super(itemView);
         this.rootView = itemView;
@@ -55,7 +56,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
 
     }
 
-    public RcvHolder setColumnNum(int columnNumber){
+    public RcvHolder setColumnNum(int columnNumber) {
         this.columnNumber = columnNumber;
         WindowManager wm = (WindowManager) itemView.getContext().getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics metrics = new DisplayMetrics();
@@ -63,9 +64,9 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         int widthPixels = metrics.widthPixels;
         imageSize = widthPixels / columnNumber;
         ViewGroup.LayoutParams params = itemView.getLayoutParams();
-        if(params==null){
-            params = new ViewGroup.LayoutParams(imageSize,imageSize);
-        }else {
+        if (params == null) {
+            params = new ViewGroup.LayoutParams(imageSize, imageSize);
+        } else {
             params.height = imageSize;
             params.width = imageSize;
         }
@@ -83,7 +84,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
         //roundImageView.setCornerRadius(20,20,0,0);
         //roundImageView.setBorderWidth(2);
         //roundImageView.setBorderColor(Color.BLUE);
-        if(position == 3){
+        if (position == 3) {
             //Debug.startMethodTracing("imageloaderfresco2");
         }
         ImageLoader.with(context)
@@ -94,8 +95,8 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 .blur(10)
                 //.asCircle()
                 //.border(5,R.color.colorPrimary)
-                .placeHolder(R.drawable.imageloader_placeholder_125,true,ScaleMode.CENTER_INSIDE)
-                .error(R.drawable.imageloader_failure_image_104,ScaleMode.CENTER_INSIDE)
+                .placeHolder(R.drawable.imageloader_placeholder_125, true, ScaleMode.CENTER_INSIDE)
+                .error(R.drawable.imageloader_failure_image_104, ScaleMode.CENTER_INSIDE)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
@@ -110,7 +111,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 });*/
                 //.loading(R.drawable.iv_loading_trans)
                 .into(roundImageView3);
-        if(position == 3){
+        if (position == 3) {
             //Debug.stopMethodTracing();
         }
        /* ImageLoader.with(context)
@@ -145,7 +146,6 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
                 });*/
 
 
-
     }
 
     @Override
@@ -155,7 +155,7 @@ public class RcvHolder extends SuperRvHolder<String,Activity> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, BigImageActy.class);
-                intent.putExtra("url",data);
+                intent.putExtra("url", data);
                 context.startActivity(intent);
             }
         });

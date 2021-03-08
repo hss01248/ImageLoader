@@ -59,6 +59,7 @@ import okhttp3.OkHttpClient;
 public final class GlideBigLoader implements BigLoader {
     private final RequestManager mRequestManager;
     private final ExecutorService executor;
+
     private GlideBigLoader(Context context, OkHttpClient okHttpClient) {
         mRequestManager = Glide.with(context);
         executor = Executors.newCachedThreadPool();
@@ -75,25 +76,25 @@ public final class GlideBigLoader implements BigLoader {
     @Override
     public void loadImage(final Uri uri) {
         final String url = uri.toString();
-        Log.w("load big image:",url);
+        Log.w("load big image:", url);
         final String finalUrl = url;
 
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                 File resource =    mRequestManager
+                    File resource = mRequestManager
                             .asFile()
                             .load(new ProgressableGlideUrl(finalUrl))
                             .submit().get();
-                    if(resource.exists() && resource.isFile() && resource.length() > 100){
-                        Log.i("glide onResourceReady","onResourceReady  --"+ resource.getAbsolutePath());
+                    if (resource.exists() && resource.isFile() && resource.length() > 100) {
+                        Log.i("glide onResourceReady", "onResourceReady  --" + resource.getAbsolutePath());
                         EventBus.getDefault().post(new CacheHitEvent(resource, finalUrl));
-                    }else {
-                        Log.w(" glide onloadfailed","onLoadFailed  --"+ finalUrl);
+                    } else {
+                        Log.w(" glide onloadfailed", "onLoadFailed  --" + finalUrl);
                         EventBus.getDefault().post(new ErrorEvent(finalUrl));
                     }
-                }catch (Throwable throwable){
+                } catch (Throwable throwable) {
                     throwable.printStackTrace();
                     EventBus.getDefault().post(new ErrorEvent(finalUrl));
 
@@ -125,6 +126,6 @@ public final class GlideBigLoader implements BigLoader {
     public void prefetch(Uri uri) {
         mRequestManager
                 .load(uri)
-               .preload();
+                .preload();
     }
 }

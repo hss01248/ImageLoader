@@ -23,5 +23,4 @@ public interface ShapeMode {
     int OVAL = 2;
 
 
-
 }

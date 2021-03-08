@@ -73,7 +73,7 @@ public class BorderRoundTransformation2 implements Transformation<Bitmap> {
 
         drawRoundRect(canvas, paint, width, height, borderPaint);*/
 
-        bitmap = getRoundBitmapByShader(bitmap,bitmap.getWidth(),bitmap.getHeight(),mRadius,mBorderColor);
+        bitmap = getRoundBitmapByShader(bitmap, bitmap.getWidth(), bitmap.getHeight(), mRadius, mBorderColor);
 
 
         return BitmapResource.obtain(bitmap, mBitmapPool);
@@ -82,6 +82,7 @@ public class BorderRoundTransformation2 implements Transformation<Bitmap> {
 
     /**
      * 通过BitmapShader 圆角边框
+     *
      * @param bitmap
      * @param outWidth
      * @param outHeight
@@ -125,9 +126,6 @@ public class BorderRoundTransformation2 implements Transformation<Bitmap> {
         }
         return desBitmap;
     }
-
-
-
 
 
     private void drawRoundRect(Canvas canvas, Paint paint, float width, float height, Paint borderPaint) {

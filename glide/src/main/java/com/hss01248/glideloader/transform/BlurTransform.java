@@ -31,19 +31,18 @@ public class BlurTransform implements Transformation<Bitmap> {
 
     private int mRadius;
     private int subsamplingRatio = 1;
-    public BlurTransform(Context context, int radius,int subsamplingRatio) {
+
+    public BlurTransform(Context context, int radius, int subsamplingRatio) {
         mContext = context.getApplicationContext();
         mBitmapPool = Glide.get(mContext).getBitmapPool();
         mRadius = radius;
         this.subsamplingRatio = subsamplingRatio;
-        if(subsamplingRatio <=0){
+        if (subsamplingRatio <= 0) {
             subsamplingRatio = 1;
-        }else if(subsamplingRatio > 2){
+        } else if (subsamplingRatio > 2) {
             subsamplingRatio = 2;
         }
     }
-
-
 
 
     @Override
@@ -53,8 +52,7 @@ public class BlurTransform implements Transformation<Bitmap> {
         int width = source.getWidth();
         int height = source.getHeight();
 
-        int samplesize = MyUtil.calculateScaleRatio(width,height,outWidth,outHeight,subsamplingRatio);
-
+        int samplesize = MyUtil.calculateScaleRatio(width, height, outWidth, outHeight, subsamplingRatio);
 
 
         int scaledWidth = width / samplesize;
@@ -86,9 +84,8 @@ public class BlurTransform implements Transformation<Bitmap> {
 
     @Override
     public String getId() {
-         return "BlurTransform(radius=" + mRadius + ", sampling=" + 5 + ")";
+        return "BlurTransform(radius=" + mRadius + ", sampling=" + 5 + ")";
     }
-
 
 
 }

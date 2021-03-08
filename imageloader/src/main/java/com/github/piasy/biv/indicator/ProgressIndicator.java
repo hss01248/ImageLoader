@@ -25,6 +25,7 @@
 package com.github.piasy.biv.indicator;
 
 import android.view.View;
+
 import com.github.piasy.biv.view.BigImageView;
 
 /**
@@ -34,7 +35,7 @@ import com.github.piasy.biv.view.BigImageView;
 public interface ProgressIndicator {
     /**
      * DO NOT add indicator view into parent! Only called once per load.
-     * */
+     */
     View getView(BigImageView parent);
 
     void onStart();

@@ -1,7 +1,8 @@
 package com.hss01248.image;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * time:2020/1/14

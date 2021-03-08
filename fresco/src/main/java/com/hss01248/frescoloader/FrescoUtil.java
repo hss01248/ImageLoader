@@ -20,9 +20,9 @@ import com.hss01248.image.config.ScaleMode;
  */
 
 public class FrescoUtil {
-    
-    public static ScalingUtils.ScaleType getActualScaleType(int scaleMode){
-        switch (scaleMode){
+
+    public static ScalingUtils.ScaleType getActualScaleType(int scaleMode) {
+        switch (scaleMode) {
             case ScaleMode.CENTER_CROP:
                 return ScalingUtils.ScaleType.CENTER_CROP;
 
@@ -53,7 +53,7 @@ public class FrescoUtil {
         }
     }
 
-    public static void putIntoPool(Bitmap bitmap,String uriString) {
+    public static void putIntoPool(Bitmap bitmap, String uriString) {
         final ImageRequest requestBmp = ImageRequest.fromUri(uriString); // 赋值
 
 // 获得 Key
@@ -61,9 +61,9 @@ public class FrescoUtil {
 
 // 获得 closeableReference
         CloseableReference<CloseableImage> closeableReference = CloseableReference.<CloseableImage>of(
-            new CloseableStaticBitmap(bitmap,
-                SimpleBitmapReleaser.getInstance(),
-                ImmutableQualityInfo.FULL_QUALITY, 0));
+                new CloseableStaticBitmap(bitmap,
+                        SimpleBitmapReleaser.getInstance(),
+                        ImmutableQualityInfo.FULL_QUALITY, 0));
 // 存入 Fresco
         Fresco.getImagePipelineFactory().getBitmapMemoryCache().cache(cacheKey, closeableReference);
     }

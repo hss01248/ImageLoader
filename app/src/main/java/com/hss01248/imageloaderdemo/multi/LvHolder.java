@@ -15,7 +15,7 @@ import butterknife.BindView;
  * Created by huangshuisheng on 2017/9/28.
  */
 
-public class LvHolder extends SuperLvHolder<String,Activity> {
+public class LvHolder extends SuperLvHolder<String, Activity> {
     //@BindView(R.id.item_iv)
     ImageView itemIv;
 
@@ -36,10 +36,10 @@ public class LvHolder extends SuperLvHolder<String,Activity> {
     @Override
     public void assingDatasAndEvents(Activity activity, String s) {
         ImageLoader.with(activity)
-            .widthHeight(333, 333)
-           /* .placeHolder(R.drawable.default_placeholder_300x300,false)
-            .error(R.drawable.warning)
-            .loading2(R.drawable.loading2)*/
-            .into(itemIv);
+                .widthHeight(333, 333)
+                /* .placeHolder(R.drawable.default_placeholder_300x300,false)
+                 .error(R.drawable.warning)
+                 .loading2(R.drawable.loading2)*/
+                .into(itemIv);
     }
 }

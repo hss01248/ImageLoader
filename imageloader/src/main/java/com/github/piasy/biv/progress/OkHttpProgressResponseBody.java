@@ -1,6 +1,7 @@
 package com.github.piasy.biv.progress;
 
-import android.support.v4.util.LogWriter;
+import androidx.core.util.LogWriter;
+
 import android.util.Log;
 
 import com.github.piasy.biv.event.ProgressEvent;
@@ -21,7 +22,7 @@ import okio.Source;
  * Created by Administrator on 2017/5/3.
  */
 
-public class OkHttpProgressResponseBody extends ResponseBody{
+public class OkHttpProgressResponseBody extends ResponseBody {
     private final String mUrl;
     private final ResponseBody mResponseBody;
 
@@ -29,10 +30,10 @@ public class OkHttpProgressResponseBody extends ResponseBody{
 
     public static final String KEY_PREGRESS = "#showprogress";
 
-    public  OkHttpProgressResponseBody(String url, ResponseBody responseBody) {
+    public OkHttpProgressResponseBody(String url, ResponseBody responseBody) {
         this.mUrl = url;
         this.mResponseBody = responseBody;
-        Log.w("ProgressResponseBody",url);
+        Log.w("ProgressResponseBody", url);
     }
 
     @Override
@@ -52,7 +53,8 @@ public class OkHttpProgressResponseBody extends ResponseBody{
         }
         return mBufferedSource;
     }
-    private long lastUpadate ;
+
+    private long lastUpadate;
 
     private Source source(Source source) {
         return new ForwardingSource(source) {
@@ -62,25 +64,25 @@ public class OkHttpProgressResponseBody extends ResponseBody{
             @Override
             public long read(Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
-                if(!mUrl.contains(KEY_PREGRESS)){
+                if (!mUrl.contains(KEY_PREGRESS)) {
                     return bytesRead;
                 }
 
                 long fullLength = mResponseBody.contentLength();
-                if(mTotalBytesRead ==0){
+                if (mTotalBytesRead == 0) {
                 }
                 if (bytesRead == -1) { // this source is exhausted
                     mTotalBytesRead = fullLength;
                 } else {
                     mTotalBytesRead += bytesRead;
                 }
-                if(lastUpadate == 0){
+                if (lastUpadate == 0) {
                     lastUpadate = System.currentTimeMillis();
-                }else {
-                    if(System.currentTimeMillis() - lastUpadate > 300){
+                } else {
+                    if (System.currentTimeMillis() - lastUpadate > 300) {
                         lastUpadate = System.currentTimeMillis();
-                        Log.w("progress","event progress"+mTotalBytesRead+","+mUrl);
-                        EventBus.getDefault().post(new ProgressEvent((int) (mTotalBytesRead*100/fullLength),mTotalBytesRead== fullLength,mUrl));
+                        Log.w("progress", "event progress" + mTotalBytesRead + "," + mUrl);
+                        EventBus.getDefault().post(new ProgressEvent((int) (mTotalBytesRead * 100 / fullLength), mTotalBytesRead == fullLength, mUrl));
                     }
                 }
                 return bytesRead;

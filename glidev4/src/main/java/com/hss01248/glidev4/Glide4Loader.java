@@ -12,9 +12,11 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -89,45 +91,45 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
  * Created by Administrator on 2017/3/27 0027.
  * 参考:
  * https://mrfu.me/2016/02/28/Glide_Series_Roundup/
- *
+ * <p>
  * 填坑指南:
  * https://www.cnblogs.com/bylijian/p/6908813.html
- *
+ * <p>
  * glide 使用roundcorner+ center crop
  */
 
 public class Glide4Loader extends ILoader {
 
-    private  ExecutorService executor;
+    private ExecutorService executor;
+
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
 
         /*Glide.get(context)
                 .setMemoryCategory(MemoryCategory.NORMAL);*/
-        BigImageViewer.initialize(GlideBigLoader.with(context,null));
+        BigImageViewer.initialize(GlideBigLoader.with(context, null));
         GlobalConfig.cacheFolderName = DiskCache.Factory.DEFAULT_DISK_CACHE_DIR;
-        GlobalConfig.cacheMaxSize =  DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE/1024/1024;
+        GlobalConfig.cacheMaxSize = DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE / 1024 / 1024;
 
     }
 
 
-
     @Override
     public void requestAsBitmap(final SingleConfig config) {
-        RequestManager requestManager =  Glide.with(config.getContext());
+        RequestManager requestManager = Glide.with(config.getContext());
         int width = config.getWidth();
         int height = config.getHeight();
-        if(width <=0){
+        if (width <= 0) {
             width = Target.SIZE_ORIGINAL;
         }
-        if(height <=0){
+        if (height <= 0) {
             height = Target.SIZE_ORIGINAL;
         }
 
-        RequestBuilder<Bitmap> builder =  requestManager.asBitmap().addListener(new RequestListener<Bitmap>() {
+        RequestBuilder<Bitmap> builder = requestManager.asBitmap().addListener(new RequestListener<Bitmap>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                if(e !=null){
+                if (e != null) {
                     e.printStackTrace();
                 }
                 config.getBitmapListener().onFail(e);
@@ -140,36 +142,35 @@ public class Glide4Loader extends ILoader {
                 return false;
             }
         });
-        RequestOptions options =  buildOptions(config);
-        getDrawableTypeRequest(config,  builder)
+        RequestOptions options = buildOptions(config);
+        getDrawableTypeRequest(config, builder)
                 .apply(options)
-                .into(width,height);
+                .into(width, height);
     }
-
 
 
     @Override
     public void requestForNormalDiaplay(final SingleConfig config) {
 
-        final RequestBuilder builder = getDrawableTypeRequest(config,null);
+        final RequestBuilder builder = getDrawableTypeRequest(config, null);
 
-        if(builder ==null){
+        if (builder == null) {
             return;
         }
         RequestOptions requestOptions = buildOptions(config);
 
-        if(config.getLoadingResId() != 0){
+        if (config.getLoadingResId() != 0) {
             Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
             requestOptions.placeholder(drawable);
-            if(config.getTarget() instanceof ImageView){
+            if (config.getTarget() instanceof ImageView) {
                 ImageView imageView = (ImageView) config.getTarget();
-                imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(),false));
+                imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(), false));
             }
-        }else if(MyUtil.shouldSetPlaceHolder(config)){
+        } else if (MyUtil.shouldSetPlaceHolder(config)) {
             requestOptions.placeholder(config.getPlaceHolderResId());
-            if(config.getTarget() instanceof ImageView){
+            if (config.getTarget() instanceof ImageView) {
                 ImageView imageView = (ImageView) config.getTarget();
-                imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(),false));
+                imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(), false));
             }
         }
 
@@ -178,29 +179,27 @@ public class Glide4Loader extends ILoader {
             requestOptions.override(config.getWidth(),config.getHeight());
         }*/
 
-        if(config.getErrorResId() >0){
+        if (config.getErrorResId() > 0) {
             requestOptions.error(config.getErrorResId());
         }
 
 
-
-        if(config.getTarget() instanceof ImageView){
+        if (config.getTarget() instanceof ImageView) {
             final ImageView imageView = (ImageView) config.getTarget();
-            imageView.setTag(R.drawable.im_item_list_opt,config);
+            imageView.setTag(R.drawable.im_item_list_opt, config);
             requestOptions.dontAnimate();
             builder.apply(requestOptions);
 
 
-
             //gif
 
-            if(config.getUrl() != null && config.getUrl().contains(".gif") && config.isUseThirdPartyGifLoader()){
-                if(imageView.getDrawable() == null){
+            if (config.getUrl() != null && config.getUrl().contains(".gif") && config.isUseThirdPartyGifLoader()) {
+                if (imageView.getDrawable() == null) {
                     // 解决每次刷新显示PlaceHolder/LoadingResId,快速多次刷新,会一闪一闪
-                    if(config.getLoadingResId() != 0){
+                    if (config.getLoadingResId() != 0) {
                         Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
                         imageView.setImageDrawable(drawable);
-                    }else if(MyUtil.shouldSetPlaceHolder(config)){
+                    } else if (MyUtil.shouldSetPlaceHolder(config)) {
                         imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getPlaceHolderResId()));
                     }
                 }
@@ -209,42 +208,42 @@ public class Glide4Loader extends ILoader {
                         .downloadOnly(new SimpleTarget<File>() {
                             @Override
                             public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                                if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                if (!config.equals(imageView.getTag(R.drawable.im_item_list_opt))) {
                                     return;
                                 }
                                 pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
                                 try {
                                     gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(resource);
-                                    imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),false));
+                                    imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(), false));
                                     imageView.setImageDrawable(gifDrawable2);
-                                    if(config.getImageListener() != null){
-                                        config.getImageListener().onSuccess(gifDrawable2,null,
-                                                gifDrawable2.getIntrinsicWidth(),gifDrawable2.getIntrinsicHeight());
+                                    if (config.getImageListener() != null) {
+                                        config.getImageListener().onSuccess(gifDrawable2, null,
+                                                gifDrawable2.getIntrinsicWidth(), gifDrawable2.getIntrinsicHeight());
                                     }
                                 } catch (Throwable e) {
                                     e.printStackTrace();
-                                    if(config.getErrorResId() >0){
-                                        imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
+                                    if (config.getErrorResId() > 0) {
+                                        imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(), false));
                                         imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
                                     }
-                                    if(config.getImageListener() != null){
+                                    if (config.getImageListener() != null) {
                                         config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                                     }
 
                                 }
-                                warn(imageView,gifDrawable2);
+                                warn(imageView, gifDrawable2);
                             }
 
                             @Override
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
                                 super.onLoadFailed(errorDrawable);
-                                if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                if (!config.equals(imageView.getTag(R.drawable.im_item_list_opt))) {
                                     return;
                                 }
-                                if(config.getErrorResId() >0){
+                                if (config.getErrorResId() > 0) {
                                     imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
                                 }
-                                warn(imageView,errorDrawable);
+                                warn(imageView, errorDrawable);
                             }
                         });
                 return;
@@ -254,29 +253,29 @@ public class Glide4Loader extends ILoader {
             builder.listener(new RequestListener() {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
-                    if(GlobalConfig.debug){
-                        Log.d("onException","thread :"+Thread.currentThread().getName() +",onException");
-                        Log.d("onException","model :"+model);
-                        Log.d("onException","Target :"+target);
-                        Log.d("onException","isFirstResource :"+isFirstResource);
-                        if(config.equals(imageView.getTag(R.drawable.im_item_list_opt)) ){
-                            if(!model.toString().startsWith("http")){
-                                Log.w("onException",config.toString());
+                    if (GlobalConfig.debug) {
+                        Log.d("onException", "thread :" + Thread.currentThread().getName() + ",onException");
+                        Log.d("onException", "model :" + model);
+                        Log.d("onException", "Target :" + target);
+                        Log.d("onException", "isFirstResource :" + isFirstResource);
+                        if (config.equals(imageView.getTag(R.drawable.im_item_list_opt))) {
+                            if (!model.toString().startsWith("http")) {
+                                Log.w("onException", config.toString());
                             }
                             config.setErrorDes(MyUtil.printException(e));
-                            config.cost  = System.currentTimeMillis() - config.loadStartTime;
+                            config.cost = System.currentTimeMillis() - config.loadStartTime;
                         }
-                        if(e != null){
+                        if (e != null) {
                             e.printStackTrace();
                         }
                     }
-                    if(target instanceof ImageViewTarget){
+                    if (target instanceof ImageViewTarget) {
                         ImageViewTarget view = (ImageViewTarget) target;
                         ImageView imageView1 = (ImageView) view.getView();
-                        imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(),false));
+                        imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(), false));
                     }
 
-                    if(config.getImageListener() != null){
+                    if (config.getImageListener() != null) {
                         config.getImageListener().onFail(e == null ? new Throwable("unexpected error") : e);
                     }
                     return false;
@@ -284,69 +283,71 @@ public class Glide4Loader extends ILoader {
 
                 @Override
                 public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
-                    if(target instanceof ImageViewTarget){
+                    if (target instanceof ImageViewTarget) {
                         ImageViewTarget view = (ImageViewTarget) target;
                         ImageView imageView1 = (ImageView) view.getView();
-                        imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(),true,true));
+                        imageView1.setScaleType(MyUtil.getScaleTypeForImageView(config.getScaleMode(), true, true));
                     }
 
 
-                    if(GlobalConfig.debug){
-                        Log.d("onResourceReady","thread :"+Thread.currentThread().getName() +",onResourceReady");
-                        Log.d("onResourceReady","resource :"+resource);
+                    if (GlobalConfig.debug) {
+                        Log.d("onResourceReady", "thread :" + Thread.currentThread().getName() + ",onResourceReady");
+                        Log.d("onResourceReady", "resource :" + resource);
 
-                        if(config.equals(imageView.getTag(R.drawable.im_item_list_opt)) ){
-                            config.cost  = System.currentTimeMillis() - config.loadStartTime;
+                        if (config.equals(imageView.getTag(R.drawable.im_item_list_opt))) {
+                            config.cost = System.currentTimeMillis() - config.loadStartTime;
                         }
                     }
-                    warn(imageView,resource);
+                    warn(imageView, resource);
                     /*if(resource instanceof Bitmapdr){
                         GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
                         Bitmap bitmap = drawable.getBitmap();
                         if(GlobalConfig.debug){
                             Log.d("onResourceReady",MyUtil.printBitmap(bitmap));
                         }
-                    }else */if(resource instanceof GifDrawable){
+                    }else */
+                    if (resource instanceof GifDrawable) {
                         GifDrawable gifDrawable = (GifDrawable) resource;
                         //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
-                        Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
-                    }else{
-                        if(GlobalConfig.debug){
-                            Log.e("onResourceReady",resource+"");
+                        Log.w("onResourceReady", "gif :" + gifDrawable.getIntrinsicWidth() + "x" + gifDrawable.getIntrinsicHeight() + "x" + gifDrawable.getFrameCount());
+                    } else {
+                        if (GlobalConfig.debug) {
+                            Log.e("onResourceReady", resource + "");
                         }
 
                     }
-                    if(GlobalConfig.debug){
-                        Log.d("onResourceReady","model :"+model);
-                        Log.d("onResourceReady","Target :"+target);
-                        Log.d("onResourceReady","isFromMemoryCache :");
-                        Log.d("onResourceReady","isFirstResource :"+isFirstResource);
+                    if (GlobalConfig.debug) {
+                        Log.d("onResourceReady", "model :" + model);
+                        Log.d("onResourceReady", "Target :" + target);
+                        Log.d("onResourceReady", "isFromMemoryCache :");
+                        Log.d("onResourceReady", "isFirstResource :" + isFirstResource);
                     }
 
-                    if(config.getImageListener() != null ) {
+                    if (config.getImageListener() != null) {
                         /*if(resource instanceof GlideBitmapDrawable){
                             GlideBitmapDrawable drawable = (GlideBitmapDrawable) resource;
                             Bitmap bitmap = drawable.getBitmap();
                             config.getImageListener().onSuccess(drawable,bitmap,bitmap.getWidth(),bitmap.getHeight());
-                        }else */if(resource instanceof GifDrawable){
+                        }else */
+                        if (resource instanceof GifDrawable) {
                             final GifDrawable gifDrawable = (GifDrawable) resource;
-                            config.getImageListener().onSuccess(gifDrawable,gifDrawable.getFirstFrame(),gifDrawable.getFirstFrame().getWidth(),gifDrawable.getFirstFrame().getHeight());
-                            if(gifDrawable.getFrameCount()> 8){
-                                if(GlobalConfig.debug){
-                                    Log.e("onResourceReady gif","gif frame count too many:"+gifDrawable.getFrameCount());
+                            config.getImageListener().onSuccess(gifDrawable, gifDrawable.getFirstFrame(), gifDrawable.getFirstFrame().getWidth(), gifDrawable.getFirstFrame().getHeight());
+                            if (gifDrawable.getFrameCount() > 8) {
+                                if (GlobalConfig.debug) {
+                                    Log.e("onResourceReady gif", "gif frame count too many:" + gifDrawable.getFrameCount());
                                 }
 
                             }
                             //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
-                            if(GlobalConfig.debug){
-                                Log.w("onResourceReady","gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount());
+                            if (GlobalConfig.debug) {
+                                Log.w("onResourceReady", "gif :" + gifDrawable.getIntrinsicWidth() + "x" + gifDrawable.getIntrinsicHeight() + "x" + gifDrawable.getFrameCount());
                             }
 
-                            if(config.isUseThirdPartyGifLoader()){
+                            if (config.isUseThirdPartyGifLoader()) {
                                 ImageLoader.getActualLoader().getFileFromDiskCache((String) model, new FileGetter() {
                                     @Override
                                     public void onSuccess(File file, int width, int height) {
-                                        if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                        if (!config.equals(imageView.getTag(R.drawable.im_item_list_opt))) {
                                             return;
                                         }
                                         pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
@@ -355,40 +356,40 @@ public class Glide4Loader extends ILoader {
                                             imageView.setImageDrawable(gifDrawable2);
                                             gifDrawable.stop();
                                         } catch (Throwable e) {
-                                            if(GlobalConfig.debug){
+                                            if (GlobalConfig.debug) {
                                                 e.printStackTrace();
                                             }
                                             imageView.setImageDrawable(gifDrawable);
                                         }
-                                        warn(imageView,gifDrawable2);
+                                        warn(imageView, gifDrawable2);
                                     }
 
                                     @Override
                                     public void onFail(Throwable e) {
-                                        if(!config.equals(imageView.getTag(R.drawable.im_item_list_opt))){
+                                        if (!config.equals(imageView.getTag(R.drawable.im_item_list_opt))) {
                                             return;
                                         }
-                                        if(GlobalConfig.debug){
+                                        if (GlobalConfig.debug) {
                                             e.printStackTrace();
                                         }
 
                                         imageView.setImageDrawable(gifDrawable);
-                                        warn(imageView,gifDrawable);
+                                        warn(imageView, gifDrawable);
                                     }
                                 });
                                 return true;
                             }
-                        }else {
-                            if(GlobalConfig.debug){
-                                Log.e("onResourceReady",resource+"");
+                        } else {
+                            if (GlobalConfig.debug) {
+                                Log.e("onResourceReady", resource + "");
                             }
 
-                            if(resource instanceof Drawable){
-                                config.getImageListener().onSuccess((Drawable)resource,null,0,0);
-                            }else{
-                                config.getImageListener().onSuccess(null,null,0,0);
-                                if(GlobalConfig.debug){
-                                    Log.e("onResourceReady!!!",resource+", not instance of drawable");
+                            if (resource instanceof Drawable) {
+                                config.getImageListener().onSuccess((Drawable) resource, null, 0, 0);
+                            } else {
+                                config.getImageListener().onSuccess(null, null, 0, 0);
+                                if (GlobalConfig.debug) {
+                                    Log.e("onResourceReady!!!", resource + ", not instance of drawable");
                                 }
 
                             }
@@ -403,17 +404,17 @@ public class Glide4Loader extends ILoader {
     }
 
     private void warn(ImageView imageView, Object resource) {
-        if(resource == null || imageView == null){
+        if (resource == null || imageView == null) {
             return;
         }
-        if(!GlobalConfig.debug){
+        if (!GlobalConfig.debug) {
             return;
         }
-        if(resource instanceof BitmapDrawable){
+        if (resource instanceof BitmapDrawable) {
 
-        }else if(resource instanceof GifDrawable){
+        } else if (resource instanceof GifDrawable) {
 
-        }else if(resource instanceof pl.droidsonroids.gif.GifDrawable){
+        } else if (resource instanceof pl.droidsonroids.gif.GifDrawable) {
 
         }
 
@@ -448,25 +449,25 @@ public class Glide4Loader extends ILoader {
 
     @Override
     public void debug(final SingleConfig config) {
-        if(config.getTarget() instanceof ImageView) {
-             ImageView imageView = (ImageView) config.getTarget();
+        if (config.getTarget() instanceof ImageView) {
+            ImageView imageView = (ImageView) config.getTarget();
             imageView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if(event.getAction() != MotionEvent.ACTION_DOWN){
+                    if (event.getAction() != MotionEvent.ACTION_DOWN) {
                         return false;
                     }
 
                     Object o = v.getTag(R.drawable.im_item_list_opt);
-                    if(!(o instanceof SingleConfig)){
+                    if (!(o instanceof SingleConfig)) {
                         return false;
                     }
-                    if(event.getX() > MyUtil.dip2px(20) || event.getY() > MyUtil.dip2px(20)){
+                    if (event.getX() > MyUtil.dip2px(20) || event.getY() > MyUtil.dip2px(20)) {
                         return false;
                     }
 
                     SingleConfig singleConfig = (SingleConfig) o;
-                    showPop((ImageView)v,singleConfig);
+                    showPop((ImageView) v, singleConfig);
                     return false;
                 }
             });
@@ -483,11 +484,11 @@ public class Glide4Loader extends ILoader {
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         final TextView textView = new TextView(v.getContext());
-        String desc = config.getUrl()+"\n\n";
-        desc += "load cost :"+config.cost+"ms\n\n";
+        String desc = config.getUrl() + "\n\n";
+        desc += "load cost :" + config.cost + "ms\n\n";
 
-        if(!"null".equals(config.getErrorDes()) && !TextUtils.isEmpty(config.getErrorDes())){
-            desc += config.getErrorDes()+"\n\n";
+        if (!"null".equals(config.getErrorDes()) && !TextUtils.isEmpty(config.getErrorDes())) {
+            desc += config.getErrorDes() + "\n\n";
         }
 
         Drawable drawable = v.getDrawable();
@@ -498,34 +499,35 @@ public class Glide4Loader extends ILoader {
             if (MyUtil.isBitmapTooLarge(bitmap.getWidth(),bitmap.getHeight(), v)) {
                 textView.setTextColor(Color.RED);
             }
-        }else */if(drawable instanceof BitmapDrawable){
+        }else */
+        if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             Bitmap bitmap = bitmapDrawable.getBitmap();
-            desc += MyUtil.printBitmap(bitmap)+"\n";
-            if (MyUtil.isBitmapTooLarge(bitmap.getWidth(),bitmap.getHeight(), v)) {
+            desc += MyUtil.printBitmap(bitmap) + "\n";
+            if (MyUtil.isBitmapTooLarge(bitmap.getWidth(), bitmap.getHeight(), v)) {
                 textView.setTextColor(Color.RED);
             }
-        }else /*if (drawable instanceof SquaringDrawable){
+        } else /*if (drawable instanceof SquaringDrawable){
             SquaringDrawable bitmap = (SquaringDrawable) drawable;
             desc += "\nSquaringDrawable, w:"+bitmap.getIntrinsicWidth() +",h:"+bitmap.getIntrinsicHeight()+"\n";
             if (MyUtil.isBitmapTooLarge(bitmap.getIntrinsicWidth(),bitmap.getIntrinsicHeight(), v)) {
                 textView.setTextColor(Color.RED);
             }
-        }else*/ if(drawable instanceof GifDrawable){
+        }else*/ if (drawable instanceof GifDrawable) {
             GifDrawable gifDrawable = (GifDrawable) drawable;
             //Grow heap (frag case) to 74.284MB for 8294412-byte allocation
-            desc +="gif :"+gifDrawable.getIntrinsicWidth()+"x"+gifDrawable.getIntrinsicHeight()+"x"+gifDrawable.getFrameCount();
+            desc += "gif :" + gifDrawable.getIntrinsicWidth() + "x" + gifDrawable.getIntrinsicHeight() + "x" + gifDrawable.getFrameCount();
 
-            if (MyUtil.isBitmapTooLarge(gifDrawable.getIntrinsicWidth(),gifDrawable.getIntrinsicHeight(), v)) {
+            if (MyUtil.isBitmapTooLarge(gifDrawable.getIntrinsicWidth(), gifDrawable.getIntrinsicHeight(), v)) {
                 textView.setTextColor(Color.RED);
             }
-            if(gifDrawable.getFrameCount() > 10){
+            if (gifDrawable.getFrameCount() > 10) {
                 desc += "\nframeCount is too many!!!!!!!!\n";
                 textView.setTextColor(Color.parseColor("#8F0005"));
             }
 
-        }else {
-            desc += "drawable:"+drawable;
+        } else {
+            desc += "drawable:" + drawable;
         }
 
         desc += "\n" + MyUtil.printImageView(v);
@@ -543,9 +545,9 @@ public class Glide4Loader extends ILoader {
             @Override
             public void onFail(Throwable e) {
                 String text = textView.getText().toString();
-                text += "\n\n get cache file failed :\n" ;
-                if(e != null){
-                    text +=  e.getClass().getName()+" "+e.getMessage();
+                text += "\n\n get cache file failed :\n";
+                if (e != null) {
+                    text += e.getClass().getName() + " " + e.getMessage();
                 }
 
                 textView.setText(text);
@@ -553,17 +555,13 @@ public class Glide4Loader extends ILoader {
         });
 
 
+        textView.setPadding(20, 20, 20, 20);
 
-
-
-        textView.setPadding(20,20,20,20);
-
-        ImageView imageView =  new ImageView(v.getContext());
+        ImageView imageView = new ImageView(v.getContext());
         imageView.setImageDrawable(drawable);
         linearLayout.addView(imageView);
         linearLayout.addView(textView);
-        linearLayout.setPadding(10,30,10,20);
-
+        linearLayout.setPadding(10, 30, 10, 20);
 
 
         dialog.setView(scrollView);
@@ -571,7 +569,7 @@ public class Glide4Loader extends ILoader {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 MyUtil.copyText(config.getUrl());
-                Toast.makeText(textView.getContext(),"已拷贝链接",Toast.LENGTH_SHORT).show();
+                Toast.makeText(textView.getContext(), "已拷贝链接", Toast.LENGTH_SHORT).show();
             }
         });
         dialog.setNegativeButton("拷贝，并在浏览器中打开此链接", new DialogInterface.OnClickListener() {
@@ -579,13 +577,13 @@ public class Glide4Loader extends ILoader {
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     MyUtil.copyText(config.getUrl());
-                    Toast.makeText(textView.getContext(),"已拷贝链接",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(textView.getContext(), "已拷贝链接", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);
                     Uri content_url = Uri.parse(config.getUrl());
                     intent.setData(content_url);
                     textView.getContext().startActivity(intent);
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
 
@@ -596,7 +594,7 @@ public class Glide4Loader extends ILoader {
     }
 
     private int getUseableResId(SingleConfig config) {
-        if(config.getPlaceHolderResId() != 0){
+        if (config.getPlaceHolderResId() != 0) {
             config.setScaleMode(config.getPlaceHolderScaleType());
             return config.getPlaceHolderResId();
         }/*else if(config.getErrorResId() != 0){
@@ -605,64 +603,66 @@ public class Glide4Loader extends ILoader {
         }*/
         return 0;
     }
+
     @NonNull
     private GlideUrl getGlideUrl(final SingleConfig config) {
-        return new GlideUrl(config.getUrl()){
+        return new GlideUrl(config.getUrl()) {
             @Override
             public String getCacheKey() {
-                if(!TextUtils.isEmpty(config.urlForCacheKey)){
+                if (!TextUtils.isEmpty(config.urlForCacheKey)) {
                     return config.urlForCacheKey;
                 }
                 return super.getCacheKey();
             }
         };
     }
+
     @Nullable
     private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
         RequestBuilder request = null;
-        if(requestManager  != null){
-            if(!TextUtils.isEmpty(config.getUrl())){
-                if(config.getUrl().startsWith("http")){
-                    request= requestManager.load(getGlideUrl(config));
-                }else {
-                    request= requestManager.load(config.getUrl());
+        if (requestManager != null) {
+            if (!TextUtils.isEmpty(config.getUrl())) {
+                if (config.getUrl().startsWith("http")) {
+                    request = requestManager.load(getGlideUrl(config));
+                } else {
+                    request = requestManager.load(config.getUrl());
                 }
-            } else if(!TextUtils.isEmpty(config.getFilePath())){
-                request= requestManager.load(config.getFilePath());
-            }else if(!TextUtils.isEmpty(config.getContentProvider())){
-                request= requestManager.load(Uri.parse(config.getContentProvider()));
-            }else if(config.getResId() != 0){
-                request= requestManager.load(config.getResId());
-            }else if(config.getBytes() != null){
+            } else if (!TextUtils.isEmpty(config.getFilePath())) {
+                request = requestManager.load(config.getFilePath());
+            } else if (!TextUtils.isEmpty(config.getContentProvider())) {
+                request = requestManager.load(Uri.parse(config.getContentProvider()));
+            } else if (config.getResId() != 0) {
+                request = requestManager.load(config.getResId());
+            } else if (config.getBytes() != null) {
                 request = requestManager.load(config.getBytes());
             } else {
                 //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
                 int resId = getUseableResId(config);
-                if(resId != 0){
+                if (resId != 0) {
                     request = requestManager.load(resId);
-                }else {
-                    request= requestManager.load("");
+                } else {
+                    request = requestManager.load("");
                 }
             }
-        }else {
+        } else {
             RequestManager requestManager1 = Glide.with(config.getContext());
-            if(!TextUtils.isEmpty(config.getUrl())){
-                request= requestManager1.load(MyUtil.appendUrl(config.getUrl()));
-            }else if(!TextUtils.isEmpty(config.getFilePath())){
-                request= requestManager1.load(config.getFilePath());
-            }else if(!TextUtils.isEmpty(config.getContentProvider())){
-                request= requestManager1.load(Uri.parse(config.getContentProvider()));
-            }else if(config.getResId() != 0){
-                request= requestManager1.load(config.getResId());
-            }else if(config.getBytes() != null){
+            if (!TextUtils.isEmpty(config.getUrl())) {
+                request = requestManager1.load(MyUtil.appendUrl(config.getUrl()));
+            } else if (!TextUtils.isEmpty(config.getFilePath())) {
+                request = requestManager1.load(config.getFilePath());
+            } else if (!TextUtils.isEmpty(config.getContentProvider())) {
+                request = requestManager1.load(Uri.parse(config.getContentProvider()));
+            } else if (config.getResId() != 0) {
+                request = requestManager1.load(config.getResId());
+            } else if (config.getBytes() != null) {
                 request = requestManager1.load(config.getBytes());
             } else {
                 //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
                 int resId = getUseableResId(config);
-                if(resId != 0){
+                if (resId != 0) {
                     request = requestManager1.load(resId);
-                }else {
-                    request= requestManager1.load("");
+                } else {
+                    request = requestManager1.load("");
                 }
             }
         }
@@ -676,25 +676,25 @@ public class Glide4Loader extends ILoader {
         int shapeMode = config.getShapeMode();
         List<Transformation> transformations = new ArrayList<>();
 
-        if(config.isCropFace()){
+        if (config.isCropFace()) {
             // transformations.add(new FaceCenterCrop());//脸部识别
         }
 
-        if(config.getScaleMode() == ScaleMode.CENTER_CROP){
+        if (config.getScaleMode() == ScaleMode.CENTER_CROP) {
             transformations.add(new CenterCrop());
-        }else{
+        } else {
             transformations.add(new FitCenter());
         }
 
 
-        if(config.isNeedBlur()){
-            transformations.add(new BlurTransformation( config.getBlurRadius()));
+        if (config.isNeedBlur()) {
+            transformations.add(new BlurTransformation(config.getBlurRadius()));
         }
 
-        switch (shapeMode){
+        switch (shapeMode) {
             case ShapeMode.RECT:
 
-                if(config.getBorderWidth()>0){
+                if (config.getBorderWidth() > 0) {
 
                 }
                 break;
@@ -702,7 +702,7 @@ public class Glide4Loader extends ILoader {
             case ShapeMode.RECT_ROUND_ONLY_TOP:
 
                 RoundedCornersTransformation.CornerType cornerType = RoundedCornersTransformation.CornerType.ALL;
-                if(shapeMode == ShapeMode.RECT_ROUND_ONLY_TOP){
+                if (shapeMode == ShapeMode.RECT_ROUND_ONLY_TOP) {
                     cornerType = RoundedCornersTransformation.CornerType.TOP;
                 }
                 /*transformations.add(new BorderRoundTransformation2(config.getContext(),
@@ -714,30 +714,31 @@ public class Glide4Loader extends ILoader {
                             config.getRectRoundRadius(), 0,config.getBorderWidth(),
                             config.getContext().getResources().getColor(config.getBorderColor()),0x0b1100));
                 }else {*/
-                    transformations.add(new RoundedCornersTransformation(
-                            config.getRectRoundRadius(),config.getBorderWidth(), cornerType));
-               // }
+                transformations.add(new RoundedCornersTransformation(
+                        config.getRectRoundRadius(), config.getBorderWidth(), cornerType));
+                // }
 
                 break;
             case ShapeMode.OVAL:
-                if(config.getBorderWidth() > 0 && config.getBorderColor() != 0){
-                    transformations.add( new CropCircleWithBorderTransformation(
-                            config.getBorderWidth(),config.getContext().getResources().getColor(config.getBorderColor())));
-                }else {
-                    transformations.add( new CropCircleTransformation());
+                if (config.getBorderWidth() > 0 && config.getBorderColor() != 0) {
+                    transformations.add(new CropCircleWithBorderTransformation(
+                            config.getBorderWidth(), config.getContext().getResources().getColor(config.getBorderColor())));
+                } else {
+                    transformations.add(new CropCircleTransformation());
                 }
 
 
                 break;
-            default:break;
+            default:
+                break;
         }
 
-        if(!transformations.isEmpty()){
-             forms = new Transformation[transformations.size()];
+        if (!transformations.isEmpty()) {
+            forms = new Transformation[transformations.size()];
             for (int i = 0; i < transformations.size(); i++) {
                 forms[i] = transformations.get(i);
             }
-           return forms;
+            return forms;
         }
         return forms;
 
@@ -798,6 +799,7 @@ public class Glide4Loader extends ILoader {
 
     /**
      * glide中只能异步,可以用CacheHitEvent+ url去接收
+     *
      * @param url
      * @return
      */
@@ -809,12 +811,12 @@ public class Glide4Loader extends ILoader {
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
         File file = new File(url);
-        if(file.exists() && file.isFile()){
+        if (file.exists() && file.isFile()) {
             int[] wh = MyUtil.getImageWidthHeight(url);
-            getter.onSuccess(file,wh[0],wh[1]);
+            getter.onSuccess(file, wh[0], wh[1]);
             return;
         }
-        if(executor == null){
+        if (executor == null) {
             executor = Executors.newCachedThreadPool();
         }
 
@@ -822,23 +824,23 @@ public class Glide4Loader extends ILoader {
             @Override
             public void run() {
                 try {
-                    final File resource =    Glide.with(GlobalConfig.context)
+                    final File resource = Glide.with(GlobalConfig.context)
                             .asFile()
                             .load(new ProgressableGlideUrl(url))
                             .submit().get();
-                    if(resource.exists() && resource.isFile() && resource.length() > 50){
-                        Log.i("glide onResourceReady","onResourceReady  --"+ resource.getAbsolutePath());
+                    if (resource.exists() && resource.isFile() && resource.length() > 50) {
+                        Log.i("glide onResourceReady", "onResourceReady  --" + resource.getAbsolutePath());
                         final int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
-                                getter.onSuccess(resource,wh[0],wh[1]);
+                                getter.onSuccess(resource, wh[0], wh[1]);
                             }
                         });
 
 
-                    }else {
-                        Log.w(" glide onloadfailed","onLoadFailed  --"+ url);
+                    } else {
+                        Log.w(" glide onloadfailed", "onLoadFailed  --" + url);
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override
                             public void run() {
@@ -846,7 +848,7 @@ public class Glide4Loader extends ILoader {
                             }
                         });
                     }
-                }catch (final Throwable throwable){
+                } catch (final Throwable throwable) {
                     throwable.printStackTrace();
                     MyUtil.runOnUIThread(new Runnable() {
                         @Override
@@ -864,15 +866,15 @@ public class Glide4Loader extends ILoader {
     /**
      * 无法同步判断
      * 参见:https://github.com/bumptech/glide/issues/639
-     *
+     * <p>
      * 4.0以上可用：
      * val file: File? = try {
-             Glide.with(view.context).downloadOnly().load(url).apply(RequestOptions().onlyRetrieveFromCache(true)).submit().get()
-             } catch (e: Exception) {
-             e.printStackTrace()
-             null
-             }
-     *https://github.com/bumptech/glide/issues/2972
+     * Glide.with(view.context).downloadOnly().load(url).apply(RequestOptions().onlyRetrieveFromCache(true)).submit().get()
+     * } catch (e: Exception) {
+     * e.printStackTrace()
+     * null
+     * }
+     * https://github.com/bumptech/glide/issues/2972
      *
      * @param url
      * @return
@@ -881,25 +883,25 @@ public class Glide4Loader extends ILoader {
     public boolean isCached(String url) {
 
 
-           OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
-           SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
-           String safeKey = safeKeyGenerator.getSafeKey(originalKey);
-           try {
-               DiskLruCache diskLruCache = DiskLruCache.open(new File(GlobalConfig.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
-               DiskLruCache.Value value = diskLruCache.get(safeKey);
-               if (value != null && value.getFile(0).exists() && value.getFile(0).length() > 30) {
-                   return true;
-               }
-           } catch (Exception e) {
-               e.printStackTrace();
-           }
-           return false;
+        OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
+        SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
+        String safeKey = safeKeyGenerator.getSafeKey(originalKey);
+        try {
+            DiskLruCache diskLruCache = DiskLruCache.open(new File(GlobalConfig.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
+            DiskLruCache.Value value = diskLruCache.get(safeKey);
+            if (value != null && value.getFile(0).exists() && value.getFile(0).length() > 30) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
 
     }
 
     @Override
     public void trimMemory(int level) {
-        Glide.get(GlobalConfig.context).onTrimMemory(level );
+        Glide.get(GlobalConfig.context).onTrimMemory(level);
     }
 
     @Override
@@ -909,23 +911,23 @@ public class Glide4Loader extends ILoader {
 
     @Override
     public void download(String url, FileGetter getter) {
-        getFileFromDiskCache(url,getter);
+        getFileFromDiskCache(url, getter);
     }
 
 
-    public static Bitmap blur(Bitmap source,int mRadius,boolean recycleOriginal){
+    public static Bitmap blur(Bitmap source, int mRadius, boolean recycleOriginal) {
         int mSampling = 1;
         int width = source.getWidth();
         int height = source.getHeight();
         int scaledWidth = width / mSampling;
         int scaledHeight = height / mSampling;
         Bitmap bitmap
-         = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            canvas.scale(1 / (float) mSampling, 1 / (float) mSampling);
-            Paint paint = new Paint();
-            paint.setFlags(Paint.FILTER_BITMAP_FLAG);
-            canvas.drawBitmap(source, 0, 0, paint);
+                = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.scale(1 / (float) mSampling, 1 / (float) mSampling);
+        Paint paint = new Paint();
+        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+        canvas.drawBitmap(source, 0, 0, paint);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             try {
                 bitmap = RSBlur.blur(ImageLoader.context, bitmap, mRadius);
@@ -935,7 +937,7 @@ public class Glide4Loader extends ILoader {
         } else {
             bitmap = FastBlur.blur(bitmap, mRadius, true);
         }
-        if(recycleOriginal){
+        if (recycleOriginal) {
             source.recycle();
         }
 
@@ -1015,7 +1017,6 @@ public class Glide4Loader extends ILoader {
             return safeKey;
         }
     }
-
 
 
 }

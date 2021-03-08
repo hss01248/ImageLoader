@@ -5,25 +5,20 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Shader;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.bumptech.glide.load.resource.bitmap.TransformationUtils;
-import com.hss01248.image.MyUtil;
-
-import java.security.MessageDigest;
 
 /**
  * time:2019/11/7
  * author:hss
  * desription:
  * https://github.com/jeasonlzy/ViewCore/blob/master/view-core/src/main/java/com/lzy/widget/CircleImageView.java
- *
+ * <p>
  * https://www.jianshu.com/p/bf578f230cfc
  */
 public class CropCircleWithBorderTransformation extends BitmapTransformation {
@@ -84,11 +79,6 @@ public class CropCircleWithBorderTransformation extends BitmapTransformation {
     }
 
 
-
-
-
-
-
     @Override
     public boolean equals(Object o) {
         return o instanceof CropCircleWithBorderTransformation &&
@@ -103,6 +93,6 @@ public class CropCircleWithBorderTransformation extends BitmapTransformation {
 
     @Override
     public String getId() {
-        return ID + mBorderWidth * 100 + borderColor ;
+        return ID + mBorderWidth * 100 + borderColor;
     }
 }

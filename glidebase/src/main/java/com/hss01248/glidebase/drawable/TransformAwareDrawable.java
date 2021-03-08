@@ -12,10 +12,10 @@ package com.hss01248.glidebase.drawable;
  */
 public interface TransformAwareDrawable {
 
-  /**
-   * Sets a transform callback.
-   *
-   * @param transformCallback the transform callback to be set
-   */
-  void setTransformCallback(TransformCallback transformCallback);
+    /**
+     * Sets a transform callback.
+     *
+     * @param transformCallback the transform callback to be set
+     */
+    void setTransformCallback(TransformCallback transformCallback);
 }

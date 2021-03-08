@@ -14,17 +14,19 @@ import android.graphics.drawable.Drawable;
  */
 public interface DrawableParent {
 
-  /**
-   * Sets the new child drawable.
-   * @param newDrawable a new child drawable to set
-   * @return the old child drawable
-   */
-  Drawable setDrawable(Drawable newDrawable);
+    /**
+     * Sets the new child drawable.
+     *
+     * @param newDrawable a new child drawable to set
+     * @return the old child drawable
+     */
+    Drawable setDrawable(Drawable newDrawable);
 
-  /**
-   * Gets the child drawable.
-   * @return the current child drawable
-   */
-  Drawable getDrawable();
+    /**
+     * Gets the child drawable.
+     *
+     * @return the current child drawable
+     */
+    Drawable getDrawable();
 
 }

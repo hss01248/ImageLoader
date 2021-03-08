@@ -3,12 +3,12 @@ package com.hss01248.image.memory;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 
 /**
@@ -29,6 +28,7 @@ public class ImgMemoryActivity extends Activity {
     RecyclerView listView;
     Timer timer;
     TextView textView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,15 +45,15 @@ public class ImgMemoryActivity extends Activity {
             return;
         }*/
 
-        if (bitmaps == null){
+        if (bitmaps == null) {
             bitmaps = new ArrayList<>();
         }
-        final BaseQuickAdapter adapter = new ImgItem(R.layout.img_item_show,bitmaps);
-        listView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        final BaseQuickAdapter adapter = new ImgItem(R.layout.img_item_show, bitmaps);
+        listView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-         timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -68,13 +68,13 @@ public class ImgMemoryActivity extends Activity {
 
 
             }
-        },3000,3000);
+        }, 3000, 3000);
 
 
     }
 
     private void setImgsInfo(List<Bitmap> bitmaps) {
-        if(bitmaps == null || bitmaps.isEmpty()){
+        if (bitmaps == null || bitmaps.isEmpty()) {
             textView.setText("ImageMemoryHookManager.getList().isEmpty");
             return;
         }
@@ -83,14 +83,14 @@ public class ImgMemoryActivity extends Activity {
                 bitmaps) {
             size += ImageMemoryHookManager.getSize(bi);
         }
-        textView.setText("bitmap count:"+bitmaps.size()+",占用内存共:"+ImageMemoryHookManager.formatFileSize(size));
+        textView.setText("bitmap count:" + bitmaps.size() + ",占用内存共:" + ImageMemoryHookManager.formatFileSize(size));
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(timer != null){
+        if (timer != null) {
             timer.cancel();
         }
 

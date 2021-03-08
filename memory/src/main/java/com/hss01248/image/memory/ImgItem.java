@@ -1,11 +1,9 @@
 package com.hss01248.image.memory;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -36,7 +34,7 @@ public class ImgItem extends BaseQuickAdapter<Bitmap, BaseViewHolder> {
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, Bitmap item) {
-        helper.setImageBitmap(R.id.iv,item);
-        helper.setText(R.id.tv,ImageMemoryHookManager.getInfo(item));
+        helper.setImageBitmap(R.id.iv, item);
+        helper.setText(R.id.tv, ImageMemoryHookManager.getInfo(item));
     }
 }

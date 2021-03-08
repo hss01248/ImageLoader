@@ -10,7 +10,7 @@ public class Album {
     public int count;
     public long fileSize;
 
-    public Album(String name, String cover,long id) {
+    public Album(String name, String cover, long id) {
         this.name = name;
         this.cover = cover;
         this.count = count;

@@ -5,11 +5,11 @@ package com.github.piasy.biv.event;
  */
 
 public class ProgressEvent {
-   public int progress;
+    public int progress;
     public boolean hasFinish;
     public String url;
 
-    public ProgressEvent(int progress, boolean hasFinish,String url) {
+    public ProgressEvent(int progress, boolean hasFinish, String url) {
         this.progress = progress;
         this.hasFinish = hasFinish;
         this.url = url;

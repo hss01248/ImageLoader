@@ -17,9 +17,10 @@ public class MyRecyclePagerAdapter extends RecyclePagerAdapter<MyPagerViewHolder
 
     //private int itemCount = 5;
     List<String> urls;
-    private Map<String,File> cachedFiles;
-    public MyRecyclePagerAdapter(List<String> urls){
-        this.urls =urls;
+    private Map<String, File> cachedFiles;
+
+    public MyRecyclePagerAdapter(List<String> urls) {
+        this.urls = urls;
         cachedFiles = new HashMap<>();
     }
 

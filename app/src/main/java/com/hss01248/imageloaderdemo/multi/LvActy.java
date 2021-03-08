@@ -2,7 +2,8 @@ package com.hss01248.imageloaderdemo.multi;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by huangshuisheng on 2017/9/28.

@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
     }
     buildTypes {
@@ -23,7 +23,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
@@ -45,7 +45,7 @@ dependencies {
     //compile 'com.github.aryarohit07:fresco-facedetection-processor:0.1.1'
     //https://github.com/aryarohit07/FrescoFaceDetectionProcessor,需要依赖com.google.android.gms:play-services-vision:9.4.0
     compile project(':imageloader')
-    provided 'com.android.support:appcompat-v7:28.0.0'
-    provided 'com.android.support:recyclerview-v7:28.0.0'
+    provided 'androidx.appcompat:appcompat:1.0.0'
+    provided 'androidx.recyclerview:recyclerview:1.0.0'
 
 }

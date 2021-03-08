@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,16 +25,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.elvishew.xlog.XLog;
 import com.hss01248.image.ImageLoader;
-import com.hss01248.image.memory.ImageMemoryHookManager;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -71,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-       // GlideFaceDetector.initialize(this);
+        // GlideFaceDetector.initialize(this);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -80,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Debug.startMethodTracing("sp-read");
                 SharedPreferences sharedPreferences = getSharedPreferences("ky", Context.MODE_PRIVATE);
-                sharedPreferences.getString("shss","ddddd");
+                sharedPreferences.getString("shss", "ddddd");
                 Debug.stopMethodTracing();
             }
         }, 5000);
@@ -92,15 +90,13 @@ public class MainActivity extends AppCompatActivity {
         Debug.stopMethodTracing();*/
 
 
-
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         //GlideFaceDetector.releaseDetector();
-        if(timer != null){
+        if (timer != null) {
             timer.cancel();
         }
     }
@@ -113,10 +109,10 @@ public class MainActivity extends AppCompatActivity {
                 .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
                 // .res(R.drawable.thegif)
-                .placeHolder(R.mipmap.ic_launcher,false)
+                .placeHolder(R.mipmap.ic_launcher, false)
                 .widthHeight(250, 150)
                 .asCircle(R.color.colorAccent);
-               //.blur(40)
+        //.blur(40)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
@@ -133,16 +129,16 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });*/
-               // .into(ivUrl);
+        // .into(ivUrl);
 
 
         ImageLoader.with(this)
-                .placeHolder(R.mipmap.ic_launcher,false)
+                .placeHolder(R.mipmap.ic_launcher, false)
                 .res(R.drawable.thegif)
                 //.url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 .widthHeight(100, 80)
                 .rectRoundCorner(5, R.color.colorPrimary);
-               // .blur(5)
+        // .blur(5)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
@@ -161,18 +157,18 @@ public class MainActivity extends AppCompatActivity {
         //.into(ivRes);
 
         ImageLoader.with(this)
-            .widthHeight(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-            .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
-            .rectRoundCorner(5,R.color.bg_white);
-            //.into(ivFile);
+                .widthHeight(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
+                .rectRoundCorner(5, R.color.bg_white);
+        //.into(ivFile);
 
         ImageLoader.with(this)
                 .cropFace()
-                .widthHeight(100,100)
+                .widthHeight(100, 100)
                 .asCircle(R.color.colorAccent)
                 .blur(10)
                 .url("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg");
-                //.into(ivUrlBlur);
+        //.into(ivUrlBlur);
 
 
         /*Glide.with(MainActivity.this)
@@ -183,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                // .bitmapTransform(new CenterCrop(this),new RoundedCornersTransformation(this,30,0))
                 //.diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .skipMemoryCache(true);*/
-                //.into(ivUrl);
+        //.into(ivUrl);
                /* .listener(new RequestListener<String, Bitmap>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
@@ -244,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 })*/
-               // .into(ivUrl);
+        // .into(ivUrl);
 
         /*Glide.with(this).load("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif")
                 .downloadOnly(new SimpleTarget<File>() {
@@ -265,22 +261,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager,R.id.btn_recycle,R.id.btn_fresco,R.id.btn_scale
-    ,R.id.btn_album,R.id.btn_dir})
+    @OnClick({R.id.btn_bigpic, R.id.btn_bigpic_viewpager, R.id.btn_recycle, R.id.btn_fresco, R.id.btn_scale
+            , R.id.btn_album, R.id.btn_dir})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_bigpic:{
+            case R.id.btn_bigpic: {
                 /*Intent intent = new Intent(this,BigImageActy.class);
                 startActivity(intent);*/
                 FrescoFaceCropActivity.launch(this);
             }
 
-                break;
-            case R.id.btn_album:{
+            break;
+            case R.id.btn_album: {
                 /*oid.providers.media.MediaProvider uri content://media/external/images/media from
                 pid=31500, uid=10576 requires android.permission.READ_EXTERNAL_STORAGE, or grantUriPermission()*/
 
-                PermissionUtils.requestPermissions(this,9, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                PermissionUtils.requestPermissions(this, 9, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         new PermissionUtils.OnPermissionListener() {
                             @Override
                             public void onPermissionGranted() {
@@ -299,48 +295,51 @@ public class MainActivity extends AppCompatActivity {
             }
 
             break;
-            case R.id.btn_dir:{
+            case R.id.btn_dir: {
                 ImageListView view1 = new ImageListView(this);
                 ImageMediaCenterUtil.showViewAsDialog(view1);
-                view1.showImagesInDir(new File(Environment.getExternalStorageDirectory(),"36021").getAbsolutePath());
+                view1.showImagesInDir(new File(Environment.getExternalStorageDirectory(), "36021").getAbsolutePath());
             }
 
             break;
-            case R.id.btn_bigpic_viewpager:{
-                Intent intent = new Intent(this,ViewpagerActy.class);
+            case R.id.btn_bigpic_viewpager: {
+                Intent intent = new Intent(this, ViewpagerActy.class);
                 startActivity(intent);
             }
-                break;
-            case R.id.btn_recycle:{
-                Intent intent = new Intent(this,RecycleViewActy.class);
+            break;
+            case R.id.btn_recycle: {
+                Intent intent = new Intent(this, RecycleViewActy.class);
                 startActivity(intent);
             }
             break;
             case R.id.btn_fresco:
-                Intent intent = new Intent(this,ConfigAllActy.class);
+                Intent intent = new Intent(this, ConfigAllActy.class);
                 startActivity(intent);
                 break;
             case R.id.btn_scale:
-                Intent intent6 = new Intent(this,ScaleTypeActy.class);
+                Intent intent6 = new Intent(this, ScaleTypeActy.class);
                 startActivity(intent6);
 
                 break;
-            default:break;
+            default:
+                break;
         }
     }
+
     Timer timer;
+
     @Override
     protected void onResume() {
         super.onResume();
         //ImageMemoryHookManager.show(this);
         List<Bitmap> bitmaps = getBitmapsFromGlidePool();
-         timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 getBitmapsFromGlidePool();
             }
-        },3000,3000);
+        }, 3000, 3000);
 
 
     }
@@ -356,14 +355,14 @@ public class MainActivity extends AppCompatActivity {
             Field field = clz.getDeclaredField("strategy");
             field.setAccessible(true);
 
-            Object strategy =  field.get(lruBitmapPool);
+            Object strategy = field.get(lruBitmapPool);
             XLog.d(strategy);
 
             Class clz2 = strategy.getClass();
             Field field2 = clz2.getDeclaredField("groupedMap");
             field2.setAccessible(true);
 
-            Object groupedMap =  field2.get(strategy);
+            Object groupedMap = field2.get(strategy);
             XLog.d(groupedMap);
 
             Class clz3 = groupedMap.getClass();
@@ -373,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
             Map map = (Map) field3.get(groupedMap);
             XLog.d(map);
 
-            for(Object key: map.keySet()){
+            for (Object key : map.keySet()) {
                 Object linkedEntry = map.get(key);//LinkedEntry.
                 Class clz4 = linkedEntry.getClass();
                 Field field4 = clz4.getDeclaredField("values");
@@ -382,12 +381,12 @@ public class MainActivity extends AppCompatActivity {
 
                 List<Bitmap> values = (List<Bitmap>) field4.get(linkedEntry);
                 XLog.d(values);
-                if(values != null){
+                if (values != null) {
                     bitmaps.addAll(values);
                 }
 
             }
-            XLog.d("bitmaps.size():"+bitmaps.size());
+            XLog.d("bitmaps.size():" + bitmaps.size());
 
             //GroupedLinkedMap<Object, Bitmap> groupedMap =
 
@@ -398,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
             Constructor constructor = clz.getConstructor();
             Object object = constructor.newInstance();
             method.invoke(object, 4);*/
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
 
         }

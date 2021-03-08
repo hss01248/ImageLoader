@@ -1,7 +1,8 @@
 package com.hss01248.image.bigimage2;
 
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,7 +30,7 @@ public class MyViewPagerAdapter3 extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        MyLargeImageHolder holder = new MyLargeImageHolder(container.getContext(),container);
+        MyLargeImageHolder holder = new MyLargeImageHolder(container.getContext(), container);
         container.addView(holder.root);
         holder.loadImage(sources.get(position));
         return holder.root;

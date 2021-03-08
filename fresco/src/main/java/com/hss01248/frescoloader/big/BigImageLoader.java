@@ -97,26 +97,26 @@ public final class BigImageLoader implements BigLoader {
         ImageRequest request = ImageRequest.fromUri(uri);
 
         final File localCache = getCacheFile(request);
-        if (localCache!=null && localCache.exists()) {
-            Log.e("onResourceReady","cache onResourceReady  --"+ localCache.getAbsolutePath());
+        if (localCache != null && localCache.exists()) {
+            Log.e("onResourceReady", "cache onResourceReady  --" + localCache.getAbsolutePath());
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if(localCache.length() >100){
+                    if (localCache.length() > 100) {
 
-                        EventBus.getDefault().postSticky(new CacheHitEvent(localCache,uri.toString()));
-                    }else {
+                        EventBus.getDefault().postSticky(new CacheHitEvent(localCache, uri.toString()));
+                    } else {
                         EventBus.getDefault().postSticky(new ErrorEvent(uri.toString()));
                     }
                 }
-            },300);
+            }, 300);
 
 
         } else {
             //EventBus.getDefault().post(new StartEvent(uri.toString()));
             //EventBus.getDefault().post(new ProgressEvent(0,false,uri.toString()));
-           // callback.onStart(); // ensure `onStart` is called before `onProgress` and `onFinish`
-           // callback.onProgress(0); // show 0 progress immediately
+            // callback.onStart(); // ensure `onStart` is called before `onProgress` and `onFinish`
+            // callback.onProgress(0); // show 0 progress immediately
 
             ImagePipeline pipeline = Fresco.getImagePipeline();
             DataSource<CloseableReference<PooledByteBuffer>> source
@@ -125,16 +125,16 @@ public final class BigImageLoader implements BigLoader {
                 @Override
                 protected void onProgress(int progress) {
                     //callback.onProgress(progress);
-                    EventBus.getDefault().post(new ProgressEvent(progress,progress==100,uri.toString()));
+                    EventBus.getDefault().post(new ProgressEvent(progress, progress == 100, uri.toString()));
                 }
 
                 @Override
                 protected void onSuccess(File image) {
                     //EventBus.getDefault().post(new ProgressEvent(100,true,uri.toString()));
-                    Log.e("onResourceReady","download onResourceReady  --"+ image.getAbsolutePath());
-                    if(image.length() >100){
-                        EventBus.getDefault().postSticky(new CacheHitEvent(image,uri.toString()));
-                    }else {
+                    Log.e("onResourceReady", "download onResourceReady  --" + image.getAbsolutePath());
+                    if (image.length() > 100) {
+                        EventBus.getDefault().postSticky(new CacheHitEvent(image, uri.toString()));
+                    } else {
                         EventBus.getDefault().postSticky(new ErrorEvent(uri.toString()));
                     }
                     //callback.onFinish();
