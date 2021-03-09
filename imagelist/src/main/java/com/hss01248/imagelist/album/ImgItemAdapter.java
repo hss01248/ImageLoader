@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -16,6 +17,7 @@ import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.imagelist.R;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -41,7 +43,7 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
         helper.getView(R.id.item_iv).setTag(R.id.item_iv, item);
         helper.addOnClickListener(R.id.item_iv);
         ImageLoader.with(helper.itemView.getContext())
-                .url(item)
+                .load(item)
                 .defaultPlaceHolder(true)
                 //.loading(R.drawable.iv_loading_trans)
                 .error(R.drawable.im_item_list_opt_error)
@@ -52,7 +54,23 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
                             @Override
                             public void onSuccess(File file, int width, int height) {
                                 if (item.equals(helper.getView(R.id.item_iv).getTag(R.id.item_iv))) {
-                                    helper.setText(R.id.tv_info, width + "x" + height + "," + MyUtil.formatFileSize(file.length()));
+                                    String text = width + "x" + height + "," + MyUtil.formatFileSize(file.length())
+                                            +"\n"+item.substring(item.lastIndexOf("/")+1)+"\n";
+                                    //helper.setText(R.id.tv_info, text);
+                                    try {
+                                        ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
+                                      int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
+                                      if(attr == ExifInterface.ORIENTATION_ROTATE_90){
+                                          text = text + " 90c";
+                                      }else   if(attr == ExifInterface.ORIENTATION_ROTATE_270){
+                                          text = text + " 270c";
+                                      }else   if(attr == ExifInterface.ORIENTATION_ROTATE_180){
+                                          text = text + " 180c";
+                                      }
+                                       // helper.setText(R.id.tv_info, text);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                             }
