@@ -43,11 +43,12 @@ dependencies {
     //compile 'com.github.lsjwzh.RecyclerViewPager:lib:v1.1.2'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
-    compile project(':fresco')
-    compile project(':glide')
-    compile project(':memory')
+   // compile project(':fresco')
+  //  compile project(':glide')
+    //compile project(':memory')
     compile project(':imagelist')
     //compile project(':picasso')
+    compile project(':glidev4')
 
     compile 'com.elvishew:xlog:1.4.0'
     compile 'com.github.hss01248:SuperAdapter:2.0.2'
@@ -56,7 +57,7 @@ dependencies {
     compile('com.github.hss01248:Toasty:2.0.4') {
         exclude group: 'com.android.support'
     }
-
+    compile 'com.facebook.fresco:fresco:1.10.0'
     /* compile'com.github.hss01248:PhotoOut:1.0.3'
      compile'com.github.hss01248.PhotoPicker:glide:1.0.8'
      compile'com.github.hss01248.PhotoPicker:fresco:1.0.8'
