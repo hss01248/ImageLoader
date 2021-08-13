@@ -66,7 +66,7 @@ dependencies {
         exclude group: 'com.android.support'
     }
     api 'com.shizhefei:LargeImageView:1.1.0'
-    api 'com.github.hss01248:PageStateManager:3.0.2-support'
+    api 'com.github.hss01248:PageStateManager:3.0.3'
     /* compile 'com.github.piasy:BigImageViewer:1.2.7'
      compile 'com.github.piasy:ProgressPieIndicator:1.2.7'
 
