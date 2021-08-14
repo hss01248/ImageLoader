@@ -620,52 +620,32 @@ public class Glide4Loader extends ILoader {
     @Nullable
     private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
         RequestBuilder request = null;
-        if (requestManager != null) {
-            if (!TextUtils.isEmpty(config.getUrl())) {
-                if (config.getUrl().startsWith("http")) {
-                    request = requestManager.load(getGlideUrl(config));
-                } else {
-                    request = requestManager.load(config.getUrl());
-                }
-            } else if (!TextUtils.isEmpty(config.getFilePath())) {
-                request = requestManager.load(config.getFilePath());
-            } else if (!TextUtils.isEmpty(config.getContentProvider())) {
-                request = requestManager.load(Uri.parse(config.getContentProvider()));
-            } else if (config.getResId() != 0) {
-                request = requestManager.load(config.getResId());
-            } else if (config.getBytes() != null) {
-                request = requestManager.load(config.getBytes());
+        if (!TextUtils.isEmpty(config.getSourceString())) {
+            if (config.getSourceString().startsWith("http")) {
+                request = requestManager.load(getGlideUrl(config));
             } else {
-                //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
-                int resId = getUseableResId(config);
-                if (resId != 0) {
-                    request = requestManager.load(resId);
-                } else {
-                    request = requestManager.load("");
-                }
+                request = requestManager.load(config.getSourceString());
             }
+        } else if (config.getResId() != 0) {
+            request = requestManager.load(config.getResId());
+        } else if (config.getBytes() != null) {
+            request = requestManager.load(config.getBytes());
         } else {
-            RequestManager requestManager1 = Glide.with(config.getContext());
-            if (!TextUtils.isEmpty(config.getUrl())) {
-                request = requestManager1.load(MyUtil.appendUrl(config.getUrl()));
-            } else if (!TextUtils.isEmpty(config.getFilePath())) {
-                request = requestManager1.load(config.getFilePath());
-            } else if (!TextUtils.isEmpty(config.getContentProvider())) {
-                request = requestManager1.load(Uri.parse(config.getContentProvider()));
-            } else if (config.getResId() != 0) {
-                request = requestManager1.load(config.getResId());
-            } else if (config.getBytes() != null) {
-                request = requestManager1.load(config.getBytes());
+            //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
+            int resId = getUseableResId(config);
+            if (resId != 0) {
+                request = requestManager.load(resId);
             } else {
-                //request= requestManager.load("http://www.baidu.com/1.jpg");//故意失败
-                int resId = getUseableResId(config);
-                if (resId != 0) {
-                    request = requestManager1.load(resId);
-                } else {
-                    request = requestManager1.load("");
-                }
+                request = requestManager.load("");
             }
         }
+       /* if(!TextUtils.isEmpty(config.getUrl()) && config.getUrl().contains(".gif")){
+            request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存result
+        }else{
+            request.diskCacheStrategy(DiskCacheStrategy.SOURCE);//只缓存原图
+        }*/
+
+        request.diskCacheStrategy(DiskCacheStrategy.ALL);//只缓存原图
 
         return request;
     }

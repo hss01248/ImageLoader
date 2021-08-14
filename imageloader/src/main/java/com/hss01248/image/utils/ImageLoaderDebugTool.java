@@ -92,12 +92,15 @@ public class ImageLoaderDebugTool {
                     }
 
                 } else {
-                    imageViewInfo.imageHeight = drawable.getIntrinsicHeight();
-                    imageViewInfo.imageWidth = drawable.getIntrinsicWidth();
-                    if (imageViewInfo.imageHeight * imageViewInfo.imageWidth > curImage.getMeasuredHeight() * curImage.getMeasuredWidth()) {
-                        imageViewInfo.imgViewInfo = MyUtil.printImageView(curImage);
-                        imageList.add(imageViewInfo);
+                    if(drawable != null){
+                        imageViewInfo.imageHeight = drawable.getIntrinsicHeight();
+                        imageViewInfo.imageWidth = drawable.getIntrinsicWidth();
+                        if (imageViewInfo.imageHeight * imageViewInfo.imageWidth > curImage.getMeasuredHeight() * curImage.getMeasuredWidth()) {
+                            imageViewInfo.imgViewInfo = MyUtil.printImageView(curImage);
+                            imageList.add(imageViewInfo);
+                        }
                     }
+
                 }
 
             }

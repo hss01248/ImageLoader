@@ -11,6 +11,7 @@ import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 
+import com.hss01248.glidev4.Glide4Loader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
@@ -31,7 +32,7 @@ public class BaseApp extends Application {
     public void onCreate() {
         super.onCreate();
         SpiderMan.init(this);
-        ImageLoader.init(getApplicationContext(), 500, new Glide());
+        ImageLoader.init(getApplicationContext(), 500, new Glide4Loader());
         GlobalConfig.debug = true;
        // ImageMemoryHookManager.hook(this);
         GlobalConfig.interceptor = new LoadInterceptor() {
