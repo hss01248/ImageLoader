@@ -55,7 +55,7 @@ public class MyLargeJpgView extends LargeImageView {
      int layoutHeight = getMeasuredHeight();
 
      public interface OnScaleChangeListener{
-         void onScaleChanged(float percent,float scale);
+         void onScaleChanged(int percent,float scale);
      }
 
     public void setOnScaleChangeListener(OnScaleChangeListener onScaleChangeListener) {

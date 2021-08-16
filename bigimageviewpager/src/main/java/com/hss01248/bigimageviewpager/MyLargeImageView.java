@@ -95,14 +95,14 @@ public class MyLargeImageView extends FrameLayout {
 
         jpgView.setOnScaleChangeListener(new MyLargeJpgView.OnScaleChangeListener() {
             @Override
-            public void onScaleChanged(float percent, float scale) {
+            public void onScaleChanged(int percent, float scale) {
                 tvScale.setText(percent+"%");
             }
         });
 
         gifView.setOnScaleChangeListener(new MyLargeJpgView.OnScaleChangeListener() {
             @Override
-            public void onScaleChanged(float percent, float scale) {
+            public void onScaleChanged(int percent, float scale) {
                 tvScale.setText(percent+"%");
             }
         });

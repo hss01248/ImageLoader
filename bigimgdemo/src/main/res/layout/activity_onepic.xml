@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <com.hss01248.bigimageviewpager.MyLargeImageView
+        android:layout_width="match_parent"
+        android:id="@+id/iv_large"
+        android:layout_height="match_parent"/>
+    <Button
+        android:id="@+id/gif2"
+        android:onClick="gif"
+        android:text="gif"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:layout_toLeftOf="@id/gif2"
+        android:onClick="jpg"
+        android:text="jpg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
