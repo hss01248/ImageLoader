@@ -178,7 +178,7 @@ public class ImageListView extends FrameLayout {
             Log.w(TAG, dirPath + " is not exist or not a directory!");
             return;
         }
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(files.length > 100 ? 3 : 2, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
 
         final List<Image> images = new ArrayList<>();
         for (String name : files) {
@@ -224,7 +224,7 @@ public class ImageListView extends FrameLayout {
         ImageMediaCenterUtil.listImagesByAlbumName(getContext(), album.id, new NormalCallback<List<Image>>() {
             @Override
             public void onSuccess(final List<Image> images, Object extra) {
-                recyclerView.setLayoutManager(new StaggeredGridLayoutManager(images.size() > 100 ? 3 : 2, StaggeredGridLayoutManager.VERTICAL));
+                recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
                 final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, images);
                 adapter = imgItemAdapter;
                 recyclerView.setAdapter(imgItemAdapter);
@@ -261,7 +261,7 @@ public class ImageListView extends FrameLayout {
         ImageMediaCenterUtil.getAlbums(getContext(), new NormalCallback<List<Album>>() {
             @Override
             public void onSuccess(final List<Album> albums, Object extra) {
-                recyclerView.setLayoutManager(new StaggeredGridLayoutManager(albums.size() > 100 ? 3 : 2, StaggeredGridLayoutManager.VERTICAL));
+                recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
                 AlbumAdapter imgItemAdapter = new AlbumAdapter(R.layout.imglist_item_iv, albums);
                 recyclerView.setAdapter(imgItemAdapter);
                 imgItemAdapter.notifyDataSetChanged();
