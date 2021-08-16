@@ -19,12 +19,7 @@
 * 适配wrap_centent
 * 适配focus_face
 
-```
-com.github.hss01248.ImageLoader:imagelist:3.0.0
-com.github.hss01248.ImageLoader:glidebase:3.0.0
-com.github.hss01248.ImageLoader:imageloader:3.0.0
-com.github.hss01248.ImageLoader:glidev4:3.0.0
-```
+
 
 > 一条龙地支持fresco和glide
 
@@ -45,6 +40,8 @@ com.github.hss01248.ImageLoader:glidev4:3.0.0
 
 
 ![config_glide](pics/config_glide.jpg)
+
+
 
 
 
