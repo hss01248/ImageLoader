@@ -44,6 +44,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
 
 import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.load.resource.gif.GifOptions;
 import com.bumptech.glide.request.RequestListener;
 
 import com.bumptech.glide.request.RequestOptions;
@@ -331,7 +332,14 @@ public class Glide4Loader extends ILoader {
                         }else */
                         if (resource instanceof GifDrawable) {
                             final GifDrawable gifDrawable = (GifDrawable) resource;
-                            config.getImageListener().onSuccess(gifDrawable, gifDrawable.getFirstFrame(), gifDrawable.getFirstFrame().getWidth(), gifDrawable.getFirstFrame().getHeight());
+                            Bitmap firstFrame = gifDrawable.getFirstFrame();
+                            int width = 0;
+                            int height = 0;
+                            if (firstFrame != null) {
+                                width = firstFrame.getWidth();
+                                height = firstFrame.getHeight();
+                            }
+                            config.getImageListener().onSuccess(gifDrawable, firstFrame, width, height);
                             if (gifDrawable.getFrameCount() > 8) {
                                 if (GlobalConfig.debug) {
                                     Log.e("onResourceReady gif", "gif frame count too many:" + gifDrawable.getFrameCount());
@@ -424,6 +432,7 @@ public class Glide4Loader extends ILoader {
     private RequestOptions buildOptions(SingleConfig config) {
         RequestOptions options = new RequestOptions()
                 .format(DecodeFormat.PREFER_RGB_565)
+                .set(GifOptions.DECODE_FORMAT,DecodeFormat.DEFAULT)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .skipMemoryCache(GlobalConfig.debug)
                 .transform(getBitmapTransFormations(config));
@@ -619,7 +628,12 @@ public class Glide4Loader extends ILoader {
 
     @Nullable
     private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
+        if(requestManager == null){
+            requestManager = Glide.with(config.getContext()).asDrawable();
+        }
+
         RequestBuilder request = null;
+
         if (!TextUtils.isEmpty(config.getSourceString())) {
             if (config.getSourceString().startsWith("http")) {
                 request = requestManager.load(getGlideUrl(config));

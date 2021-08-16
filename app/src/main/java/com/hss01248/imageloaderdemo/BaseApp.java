@@ -5,6 +5,8 @@ import android.app.Application;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import androidx.multidex.MultiDexApplication;
+
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
@@ -26,7 +28,7 @@ import es.dmoral.toasty.MyToast;
  * Created by Administrator on 2017/3/15 0015.
  */
 
-public class BaseApp extends Application {
+public class BaseApp extends MultiDexApplication {
 
     @Override
     public void onCreate() {

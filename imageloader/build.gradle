@@ -54,7 +54,7 @@ dependencies {
     compile('am.util:viewpager:25.3.0') {
         exclude group: 'com.android.support'
     }
-    implementation 'com.blankj:utilcode:1.9.6'
+    api 'com.blankj:utilcodex:1.30.6'
 
     api('it.sephiroth.android.exif:library:+') {
         exclude group: 'commons-io'

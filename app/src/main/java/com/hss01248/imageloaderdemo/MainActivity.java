@@ -10,6 +10,7 @@ import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -25,8 +26,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.elvishew.xlog.XLog;
 import com.hss01248.image.ImageLoader;
+import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+
+import org.devio.takephoto.wrap.TakeOnePhotoListener;
+import org.devio.takephoto.wrap.TakePhotoUtil;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -110,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
                 // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
                 // .res(R.drawable.thegif)
                 .placeHolder(R.mipmap.ic_launcher, false)
-                .widthHeight(250, 150)
-                .asCircle(R.color.colorAccent);
+                .widthHeight(250, 150);
+                //.asCircle(R.color.colorAccent).into(ivUrl);
         //.blur(40)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
                     @Override
@@ -276,20 +281,15 @@ public class MainActivity extends AppCompatActivity {
                 /*oid.providers.media.MediaProvider uri content://media/external/images/media from
                 pid=31500, uid=10576 requires android.permission.READ_EXTERNAL_STORAGE, or grantUriPermission()*/
 
-                PermissionUtils.requestPermissions(this, 9, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        new PermissionUtils.OnPermissionListener() {
-                            @Override
-                            public void onPermissionGranted() {
-                                ImageListView view1 = new ImageListView(MainActivity.this);
-                                ImageMediaCenterUtil.showViewAsDialog(view1);
-                                view1.showAllAlbums();
-                            }
 
-                            @Override
-                            public void onPermissionDenied(String[] deniedPermissions) {
-
-                            }
-                        });
+                PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE).callback(new PermissionUtils.SingleCallback() {
+                    @Override
+                    public void callback(boolean isAllGranted, @NonNull List<String> granted, @NonNull List<String> deniedForever, @NonNull List<String> denied) {
+                        ImageListView view1 = new ImageListView(MainActivity.this);
+                        ImageMediaCenterUtil.showViewAsDialog(view1);
+                        view1.showAllAlbums();
+                    }
+                }).request();
 
 
             }
@@ -402,6 +402,44 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return bitmaps;
+    }
+
+    public void loadUrl(View view) {
+        ImageLoader.with(this)
+                .load("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
+                // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
+                // .res(R.drawable.thegif)
+                //.placeHolder(R.mipmap.ic_launcher, false)
+                .loadingDefault()
+                //.widthHeight(250, 150)
+                //.asCircle(R.color.colorAccent)
+                .into(ivUrl);
+    }
+
+    public void loadFile(View view) {
+        ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
+            @Override
+            public void onSuccess(String path) {
+                ImageLoader.with(MainActivity.this)
+                        .load(path)
+                        // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
+                        // .res(R.drawable.thegif)
+                       // .placeHolder(R.mipmap.ic_launcher, false)
+                        //.widthHeight(250, 150)
+                        //.asCircle(R.color.colorAccent)
+                        .into(ivFile);
+            }
+
+            @Override
+            public void onFail(String path, String msg) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
     }
 
     /*Intent intent = new Intent(this,BigImageActy.class);

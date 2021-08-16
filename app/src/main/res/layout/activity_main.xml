@@ -19,8 +19,21 @@
         android:layout_height="match_parent">
 
         <Button
+            android:text="加载url"
+            android:onClick="loadUrl"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:text="加载file"
+            android:onClick="loadFile"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:id="@+id/btn_album"
-            android:layout_marginBottom="30dp"
+            android:layout_margin="10dp"
             android:text="浏览系统相册"
             android:textAllCaps="false"
             android:layout_width="match_parent"
@@ -68,16 +81,17 @@
 
         <ImageView
             android:id="@+id/iv_url"
-            android:layout_width="50dp"
+            android:layout_width="150dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/shape_main_list_bg"
-            android:layout_height="50dp" />
+            android:layout_height="150dp" />
 
         <ImageView
+            android:background="@drawable/shape_main_list_bg"
             android:id="@+id/iv_file"
-            android:layout_width="250dp"
+            android:layout_width="match_parent"
             android:layout_marginBottom="20dp"
-            android:layout_height="150dp" />
+            android:layout_height="wrap_content" />
 
         <ImageView
             android:id="@+id/iv_res"
