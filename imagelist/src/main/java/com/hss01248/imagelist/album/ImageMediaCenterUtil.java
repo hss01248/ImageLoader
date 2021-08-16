@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.hss01248.bigimageviewpager.LargeImageViewer;
+import com.hss01248.bigimageviewpager.MyViewPager;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.interfaces.FileGetter;
@@ -259,10 +261,12 @@ public class ImageMediaCenterUtil {
 
     private static View buildBigIamgeView(final Context context, final List<String> urls, int position) {
         View view = View.inflate(context, R.layout.activity_img_big, null);
-        final ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        final MyViewPager viewPager = (MyViewPager) view.findViewById(R.id.viewpager);
         Button fab = view.findViewById(R.id.fbtn);
         final TextView textView = view.findViewById(R.id.tv_indicator);
-        ImageLoader.loadBigImages(viewPager, urls);
+        //ImageLoader.loadBigImages(viewPager, urls);
+        LargeImageViewer.showBig(context,viewPager,urls,position);
+
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

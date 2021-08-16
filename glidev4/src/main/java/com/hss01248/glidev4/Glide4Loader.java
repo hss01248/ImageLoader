@@ -881,12 +881,13 @@ public class Glide4Loader extends ILoader {
         SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
         String safeKey = safeKeyGenerator.getSafeKey(originalKey);
         try {
-            DiskLruCache diskLruCache = DiskLruCache.open(new File(GlobalConfig.context.getCacheDir(), DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
+            DiskLruCache diskLruCache = DiskLruCache.open(new File(GlobalConfig.context.getCacheDir(),
+                    DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
             DiskLruCache.Value value = diskLruCache.get(safeKey);
             if (value != null && value.getFile(0).exists() && value.getFile(0).length() > 30) {
                 return true;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return false;
