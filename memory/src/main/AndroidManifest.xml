@@ -1,8 +1,0 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hss01248.image.memory">
-
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <application>
-        <activity android:name="com.hss01248.image.memory.ImgMemoryActivity" />
-    </application>
-</manifest>
