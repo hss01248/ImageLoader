@@ -23,15 +23,13 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.fondesa.recyclerviewdivider.BaseDividerItemDecoration;
 import com.fondesa.recyclerviewdivider.DividerDecoration;
-import com.fondesa.recyclerviewdivider.StaggeredDividerDecoration;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
-import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
+
 
 import org.apache.commons.io.FileUtils;
 

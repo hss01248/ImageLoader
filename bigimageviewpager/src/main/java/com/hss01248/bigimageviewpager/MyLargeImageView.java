@@ -44,7 +44,7 @@ public class MyLargeImageView extends FrameLayout {
     ItemLargeImgBinding largeImgBinding;
 
     StatefulFrameLayout stateManager;
-
+    LargeImageInfo info = new LargeImageInfo();
 
     public float getMaxScaleRatio() {
         return maxScaleRatio;
@@ -58,6 +58,13 @@ public class MyLargeImageView extends FrameLayout {
 
     public static float defaultMaxScaleRatio = 8f;
     float maxScaleRatio = defaultMaxScaleRatio;
+
+    public void setShowScale(boolean showScale) {
+        this.showScale = showScale;
+    }
+
+    boolean showScale = true;
+
 
     public MyLargeImageView(@NonNull Context context) {
         super(context);
@@ -96,6 +103,7 @@ public class MyLargeImageView extends FrameLayout {
         jpgView.setOnScaleChangeListener(new MyLargeJpgView.OnScaleChangeListener() {
             @Override
             public void onScaleChanged(int percent, float scale) {
+                if(showScale)
                 tvScale.setText(percent+"%");
             }
         });
@@ -103,6 +111,7 @@ public class MyLargeImageView extends FrameLayout {
         gifView.setOnScaleChangeListener(new MyLargeJpgView.OnScaleChangeListener() {
             @Override
             public void onScaleChanged(int percent, float scale) {
+                if(showScale)
                 tvScale.setText(percent+"%");
             }
         });
@@ -128,14 +137,14 @@ public class MyLargeImageView extends FrameLayout {
     }
 
     private void reload() {
-        loadUri(tmlUrl);
+        loadUri(info.uri);
 
     }
 
-    String tmlUrl;
 
-    public void loadUrl(String url) {
-        tmlUrl = url;
+
+    private void loadUrl(String url) {
+
         stateManager.showLoading();
         UrlLoader.download(getContext(), ivHelper, url, new UrlLoader.LoadListener() {
             @Override
@@ -151,13 +160,15 @@ public class MyLargeImageView extends FrameLayout {
 
             @Override
             public void onFail(Throwable throwable) {
-                tmlUrl = url;
+
                 if (throwable != null) {
+                    info.throwable = throwable;
                     throwable.printStackTrace();
                     //toastMsg(throwable.getMessage());
                     stateManager.showError(throwable.getMessage());
                 } else {
                     //toastMsg("fail download");
+                    info.throwable = new Throwable("fail download");
                     stateManager.showError("fail download");
 
                 }
@@ -169,11 +180,11 @@ public class MyLargeImageView extends FrameLayout {
 
     }
 
-    public void loadFile(String filePath) {
+    private void loadFile(String filePath) {
         loadFile(filePath, false);
     }
 
-    public void loadFile(String filePath, boolean isGif) {
+    private void loadFile(String filePath, boolean isGif) {
         loadLocal(filePath, isGif);
     }
 
@@ -182,6 +193,7 @@ public class MyLargeImageView extends FrameLayout {
     }
 
     public void loadUri(String uri) {
+        info.uri = uri;
         //if(uri.startsWith("file://") || uri.startsWith("/storage/"))
         if (uri.startsWith("http")) {
             loadUrl(uri);
@@ -199,11 +211,14 @@ public class MyLargeImageView extends FrameLayout {
             loadLocal(uri, false);
             return;
         }
+    }
 
-
+    public String getInfo(){
+        return info.getInfo();
     }
 
     private void loadLocal(String uri, boolean isGif) {
+        info.localPathOrUri = uri;
         if (uri.contains(".gif") || isGif) {
             gifView.setVisibility(VISIBLE);
             jpgView.setVisibility(GONE);
@@ -241,7 +256,7 @@ public class MyLargeImageView extends FrameLayout {
                         public void accept(Throwable throwable) throws Exception {
                             throwable.printStackTrace();
                             //toastMsg(throwable.getMessage());
-                            tmlUrl = uri;
+                           info.throwable = throwable;
                             stateManager.showError(throwable.getMessage());
                         }
                     })

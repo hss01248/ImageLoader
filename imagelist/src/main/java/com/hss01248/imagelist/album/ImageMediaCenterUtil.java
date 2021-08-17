@@ -17,9 +17,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
+import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.bigimageviewpager.MyViewPager;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
@@ -267,6 +271,15 @@ public class ImageMediaCenterUtil {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
         dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, view.getResources().getDisplayMetrics().heightPixels);//宽高最大
         dialog.show();
+        ImageView ivClose = view.findViewById(R.id.iv_back);
+        if(ivClose != null){
+            ivClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+        }
     }
 
 
@@ -274,6 +287,8 @@ public class ImageMediaCenterUtil {
         View view = View.inflate(context, R.layout.activity_img_big, null);
         final MyViewPager viewPager = (MyViewPager) view.findViewById(R.id.viewpager);
         Button fab = view.findViewById(R.id.fbtn);
+        TextView tvTitle = view.findViewById(R.id.tv_title);
+
         final TextView textView = view.findViewById(R.id.tv_indicator);
         //ImageLoader.loadBigImages(viewPager, urls);
         LargeImageViewer.showBig(context,viewPager,urls,position);
@@ -289,6 +304,8 @@ public class ImageMediaCenterUtil {
             public void onPageSelected(int position) {
                 String text = (position + 1) + " / " + urls.size() + "\n";
                 textView.setText(text);
+                String uri = urls.get(position);
+                tvTitle.setText(uri.substring(uri.lastIndexOf("/")+1));
             }
 
             @Override
@@ -300,10 +317,33 @@ public class ImageMediaCenterUtil {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFileInfo(viewPager, urls, context);
+                //showFileInfo(viewPager, urls, context);
+                int position = viewPager.getCurrentItem();
+                View childAt = viewPager.getChildAt(1);
+                LogUtils.w("child at is "+childAt+", "+position);
+                if(childAt instanceof MyLargeImageView){
+                    MyLargeImageView largeImageView = (MyLargeImageView) childAt;
+                    String text = largeImageView.getInfo();
+
+                    View view = View.inflate(context, R.layout.html, null);
+                    TextView textView = view.findViewById(R.id.tv_html);
+                    textView.setText(text);
+                    new AlertDialog.Builder(context)
+                            .setView(view)
+                            .create().show();
+                }else {
+                    ToastUtils.showShort("child not MyLargeImageView");
+                }
+
+
+
             }
         });
         viewPager.setCurrentItem(position);
+        String text = (position + 1) + " / " + urls.size() + "\n";
+        textView.setText(text);
+        String uri = urls.get(position);
+        tvTitle.setText(uri.substring(uri.lastIndexOf("/")+1));
         return view;
     }
 

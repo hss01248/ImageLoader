@@ -27,6 +27,27 @@
         android:textColor="#00ffff"
         android:id="@+id/tv_indicator"
         android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
         android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:textColor="#ffffff"
+            android:background="#99999999"
+            android:gravity="center"
+            android:paddingLeft="60dp"
+            android:paddingRight="20dp"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
+        <ImageView
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:id="@+id/iv_back"
+            android:scaleType="centerInside"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+    </RelativeLayout>
 </RelativeLayout>
