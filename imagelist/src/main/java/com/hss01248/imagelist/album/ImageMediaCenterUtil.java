@@ -171,6 +171,7 @@ public class ImageMediaCenterUtil {
             FETCH_COMPLETED message, countSelected is assigned value of tempCountSelected.
              */
 
+                int count = 0;
                 final ArrayList<Image> images = new ArrayList<>(cursor.getCount());
                 if (cursor.moveToLast()) {
                     do {
@@ -199,6 +200,16 @@ public class ImageMediaCenterUtil {
 
 
                             ));
+                        }
+                        count++;
+                        //加速
+                        if(count == 50 && cursor.getCount() > 500){
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFirst50Success(images,null);
+                                }
+                            });
                         }
 
                     } while (cursor.moveToPrevious());

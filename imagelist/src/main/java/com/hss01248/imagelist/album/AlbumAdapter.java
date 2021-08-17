@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.blankj.utilcode.util.ScreenUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
@@ -40,7 +41,7 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         ImageView imageView = helper.getView(R.id.item_iv);
         imageView.setAdjustViewBounds(false);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-        params.height = imageView.getContext().getResources().getDisplayMetrics().widthPixels / 2;
+        params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.COUNT;
         imageView.setLayoutParams(params);
 
         ImageLoader.with(helper.itemView.getContext())

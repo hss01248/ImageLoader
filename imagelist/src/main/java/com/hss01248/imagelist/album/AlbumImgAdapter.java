@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.exifinterface.media.ExifInterface;
 
+import com.blankj.utilcode.util.ScreenUtils;
+import com.blankj.utilcode.util.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
@@ -48,7 +50,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
         ImageView imageView = helper.getView(R.id.item_iv);
         imageView.setAdjustViewBounds(false);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-        params.height = imageView.getContext().getResources().getDisplayMetrics().widthPixels / 3;
+        params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.COUNT;
         imageView.setLayoutParams(params);
         ImageLoader.with(helper.itemView.getContext())
                 .load(item.path)
@@ -58,19 +60,19 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
                 .error(R.drawable.im_item_list_opt_error)
                 .into(helper.getView(R.id.item_iv));
         if (item.width != 0) {
-            String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize)+"\n";
+            String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize);
             if(item.oritation ==0){
                 try {
                     ExifInterface exifInterface = new ExifInterface(item.path);
                     int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
                     if(attr == ExifInterface.ORIENTATION_ROTATE_90){
-                        text = text + " 90c";
+                        text = text + "\n90c";
                         item.oritation = 90;
                     }else   if(attr == ExifInterface.ORIENTATION_ROTATE_270){
-                        text = text + " 270c";
+                        text = text + "\n270c";
                         item.oritation = 270;
                     }else   if(attr == ExifInterface.ORIENTATION_ROTATE_180){
-                        text = text + " 180c";
+                        text = text + "\n180c";
                         item.oritation = 180;
                     }
                 } catch (IOException e) {
@@ -86,19 +88,19 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
             item.fileSize = new File(item.path).length();
 
             String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize)
-                    +"\n"+item.path.substring(item.path.lastIndexOf("/")+1)+"\n";
+                    +"\n"+item.path.substring(item.path.lastIndexOf("/")+1);
             helper.setText(R.id.tv_info, text);
             try {
                 ExifInterface exifInterface = new ExifInterface(item.path);
                 int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
                 if(attr == ExifInterface.ORIENTATION_ROTATE_90){
-                    text = text + " 90c";
+                    text = text + "\n90c";
                     item.oritation = 90;
                 }else   if(attr == ExifInterface.ORIENTATION_ROTATE_270){
-                    text = text + " 270c";
+                    text = text + "\n270c";
                     item.oritation = 270;
                 }else   if(attr == ExifInterface.ORIENTATION_ROTATE_180){
-                    text = text + " 180c";
+                    text = text + "\n180c";
                     item.oritation = 180;
                 }
                  helper.setText(R.id.tv_info, text);

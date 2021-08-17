@@ -2,13 +2,14 @@ package com.hss01248.imagelist.album;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Build;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -19,12 +20,18 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SizeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.fondesa.recyclerviewdivider.BaseDividerItemDecoration;
+import com.fondesa.recyclerviewdivider.DividerDecoration;
+import com.fondesa.recyclerviewdivider.StaggeredDividerDecoration;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.apache.commons.io.FileUtils;
 
@@ -50,10 +57,13 @@ public class ImageListView extends FrameLayout {
     String dir;
     boolean isAll;
     FastScroller fastScroller;
-    RecyclerView.Adapter adapter;
+    BaseQuickAdapter adapter;
     RelativeLayout titleBar;
     TextView title;
     TextView tvRIght;
+
+    public static int dividerSize = SizeUtils.dp2px(2);
+    public static final int COUNT = 3;
 
 
     public ImageListView(Context context) {
@@ -146,10 +156,12 @@ public class ImageListView extends FrameLayout {
     public void showUrls(String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir) {
         downloadAndSave(pageTitle, urls, downloadDir, hideDir);
 
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
         ImgItemAdapter adapter = new ImgItemAdapter(R.layout.imglist_item_iv, urls);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        setDivider(recyclerView);
         fastScroller.setRecyclerView(recyclerView);
         fastScroller.setVisibility(VISIBLE);
 
@@ -178,7 +190,8 @@ public class ImageListView extends FrameLayout {
             Log.w(TAG, dirPath + " is not exist or not a directory!");
             return;
         }
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
 
         final List<Image> images = new ArrayList<>();
         for (String name : files) {
@@ -190,6 +203,7 @@ public class ImageListView extends FrameLayout {
         final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, images);
         adapter = imgItemAdapter;
         recyclerView.setAdapter(imgItemAdapter);
+        setDivider(recyclerView);
         imgItemAdapter.notifyDataSetChanged();
         fastScroller.setRecyclerView(recyclerView);
         fastScroller.setVisibility(VISIBLE);
@@ -219,30 +233,39 @@ public class ImageListView extends FrameLayout {
 
     }
 
+    private void setDivider(RecyclerView recyclerView) {
+
+        recyclerView.addItemDecoration(DividerDecoration.builder(getContext()).color(Color.WHITE).size(dividerSize).build());
+        //recyclerView.addItemDecoration(StaggeredDividerDecoration.builder(getContext()).color(Color.WHITE).size(10).build());
+
+    }
+
     public void showImagesInAlbum(Album album) {
         titleBar.setVisibility(VISIBLE);
+        List<Image> cachedImages = new ArrayList<>();
         ImageMediaCenterUtil.listImagesByAlbumName(getContext(), album.id, new NormalCallback<List<Image>>() {
             @Override
             public void onSuccess(final List<Image> images, Object extra) {
-                recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
-                final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, images);
-                adapter = imgItemAdapter;
-                recyclerView.setAdapter(imgItemAdapter);
-                imgItemAdapter.notifyDataSetChanged();
-                fastScroller.setRecyclerView(recyclerView);
-                fastScroller.setVisibility(VISIBLE);
+                LogUtils.d("onsuccess:"+images.size());
+                if(recyclerView.getAdapter() == null){
+                    initRecyclerviewByLocalImages(images);
+                }else {
+                    adapter.getData().clear();
+                    adapter.getData().addAll(images);
+                    adapter.notifyDataSetChanged();
+                }
+            }
 
-                imgItemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-                    @Override
-                    public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                        final List<String> paths = new ArrayList<>();
-                        List<Image> images2 = imgItemAdapter.getData();
-                        for (Image image : images2) {
-                            paths.add(image.path);
-                        }
-                        ImageMediaCenterUtil.showBigImag(getContext(), paths, position);
-                    }
-                });
+            @Override
+            public void onFirst50Success(List<Image> images, Object extra) {
+                LogUtils.d("onFirst50Success:"+images.size());
+                cachedImages.clear();
+                cachedImages.addAll(images);
+                if(recyclerView.getAdapter() == null){
+                    initRecyclerviewByLocalImages(cachedImages);
+                }
+
+
             }
 
             @Override
@@ -257,13 +280,39 @@ public class ImageListView extends FrameLayout {
         });
     }
 
+    private void initRecyclerviewByLocalImages(List<Image> cachedImages) {
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
+        //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, cachedImages);
+        adapter = imgItemAdapter;
+        recyclerView.setAdapter(imgItemAdapter);
+        setDivider(recyclerView);
+        imgItemAdapter.notifyDataSetChanged();
+        fastScroller.setRecyclerView(recyclerView);
+        fastScroller.setVisibility(VISIBLE);
+
+        imgItemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                final List<String> paths = new ArrayList<>();
+                List<Image> images2 = imgItemAdapter.getData();
+                for (Image image : images2) {
+                    paths.add(image.path);
+                }
+                ImageMediaCenterUtil.showBigImag(getContext(), paths, position);
+            }
+        });
+    }
+
     public void showAllAlbums() {
         ImageMediaCenterUtil.getAlbums(getContext(), new NormalCallback<List<Album>>() {
             @Override
             public void onSuccess(final List<Album> albums, Object extra) {
-                recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
                 AlbumAdapter imgItemAdapter = new AlbumAdapter(R.layout.imglist_item_iv, albums);
                 recyclerView.setAdapter(imgItemAdapter);
+                setDivider(recyclerView);
                 imgItemAdapter.notifyDataSetChanged();
                 fastScroller.setRecyclerView(recyclerView);
                 fastScroller.setVisibility(VISIBLE);
