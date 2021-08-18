@@ -59,7 +59,41 @@ public class UrlLoader {
         if(service == null){
             service = Executors.newCachedThreadPool();
         }
-        service.execute(new Runnable() {
+
+        ProgressManager.getInstance().addResponseListener(url, new ProgressListener() {
+            @Override
+            public void onProgress(ProgressInfo progressInfo) {
+                try {
+                    listener.onProgress(progressInfo.getPercent());
+                    //tvProgress.setText(progressInfo.getPercent()+"% , speed: "+(progressInfo.getSpeed()/1024/8)+"KB/s");
+                }catch (Throwable throwable){
+                    throwable.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(long id, Exception e) {
+                if(e != null){
+                    e.printStackTrace();
+                }
+            }
+        });
+        loadGlideByView(context,url,listener,ivHelper);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       /* service.execute(new Runnable() {
             @Override
             public void run() {
                 boolean cached = isCached(context, url);
@@ -97,7 +131,7 @@ public class UrlLoader {
                     });
                 }
             }
-        });
+        });*/
     }
 
     /**

@@ -40,7 +40,7 @@ dependencies {
         exclude group: "com.android.support"
     }
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    implementation group: 'com.github.bumptech.glide', name: 'okhttp3-integration', version: '4.11.0'
+    api group: 'com.github.bumptech.glide', name: 'okhttp3-integration', version: '4.11.0'
 
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     // If you want to use the GPU Filters

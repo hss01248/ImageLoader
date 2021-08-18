@@ -323,7 +323,7 @@ public class ImageMediaCenterUtil {
                 LogUtils.w("child at is "+childAt+", "+position);
                 if(childAt instanceof MyLargeImageView){
                     MyLargeImageView largeImageView = (MyLargeImageView) childAt;
-                    String text = largeImageView.getInfo();
+                    String text = largeImageView.getInfoStr();
 
                     View view = View.inflate(context, R.layout.html, null);
                     TextView textView = view.findViewById(R.id.tv_html);
