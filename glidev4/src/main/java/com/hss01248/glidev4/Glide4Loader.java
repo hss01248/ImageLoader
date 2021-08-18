@@ -153,7 +153,7 @@ public class Glide4Loader extends ILoader {
     @Override
     public void requestForNormalDiaplay(final SingleConfig config) {
 
-        final RequestBuilder builder = getDrawableTypeRequest(config, null);
+         RequestBuilder builder = getDrawableTypeRequest(config, null);
 
         if (builder == null) {
             return;
@@ -162,13 +162,13 @@ public class Glide4Loader extends ILoader {
 
         if (config.getLoadingResId() != 0) {
             Drawable drawable = new AutoRotateDrawable(config.getContext().getResources().getDrawable(config.getLoadingResId()), 1500);
-            requestOptions.placeholder(drawable);
+            requestOptions =   requestOptions.placeholder(drawable);
             if (config.getTarget() instanceof ImageView) {
                 ImageView imageView = (ImageView) config.getTarget();
                 imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getLoadingScaleType(), false));
             }
         } else if (MyUtil.shouldSetPlaceHolder(config)) {
-            requestOptions.placeholder(config.getPlaceHolderResId());
+            requestOptions =    requestOptions.placeholder(config.getPlaceHolderResId());
             if (config.getTarget() instanceof ImageView) {
                 ImageView imageView = (ImageView) config.getTarget();
                 imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getPlaceHolderScaleType(), false));
@@ -181,15 +181,15 @@ public class Glide4Loader extends ILoader {
         }*/
 
         if (config.getErrorResId() > 0) {
-            requestOptions.error(config.getErrorResId());
+            requestOptions =     requestOptions.error(config.getErrorResId());
         }
 
 
         if (config.getTarget() instanceof ImageView) {
             final ImageView imageView = (ImageView) config.getTarget();
             imageView.setTag(R.drawable.im_item_list_opt, config);
-            requestOptions.dontAnimate();
-            builder.apply(requestOptions);
+            //requestOptions.dontAnimate();
+            builder =  builder.apply(requestOptions);
 
 
             //gif
