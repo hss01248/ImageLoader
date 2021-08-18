@@ -90,6 +90,11 @@ public class MyLargeImageView extends FrameLayout {
             public boolean isFirstStateLoading() {
                 return false;
             }
+
+            @Override
+            public boolean darkMode() {
+                return true;
+            }
         });
         ivHelper = largeImgBinding.ivGlideHelper;
         tvScale = largeImgBinding.tvScale;
@@ -213,7 +218,11 @@ public class MyLargeImageView extends FrameLayout {
         }
     }
 
-    public String getInfo(){
+    public LargeImageInfo getInfo(){
+        return info;
+    }
+
+    public String getInfoStr(){
         return info.getInfo();
     }
 
