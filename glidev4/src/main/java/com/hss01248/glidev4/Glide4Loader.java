@@ -629,7 +629,12 @@ public class Glide4Loader extends ILoader {
     @Nullable
     private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
         if(requestManager == null){
-            requestManager = Glide.with(config.getContext()).asDrawable();
+            if(config.getSourceString().contains(".gif")){
+                requestManager = Glide.with(config.getContext()).asGif();
+            }else {
+                requestManager = Glide.with(config.getContext()).asDrawable();
+            }
+
         }
 
         RequestBuilder request = null;
