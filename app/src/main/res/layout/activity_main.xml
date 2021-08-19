@@ -40,6 +40,14 @@
             android:layout_height="wrap_content" />
 
         <Button
+            android:onClick="goWebSpider"
+            android:layout_margin="10dp"
+            android:text="webview爬取urls并加载"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:id="@+id/btn_dir"
             android:text="浏览特定文件夹"
             android:textAllCaps="false"

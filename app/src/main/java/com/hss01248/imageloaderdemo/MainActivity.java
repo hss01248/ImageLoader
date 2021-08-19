@@ -29,6 +29,7 @@ import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.webviewspider.SpiderWebviewActivity;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
 import org.devio.takephoto.wrap.TakePhotoUtil;
@@ -440,6 +441,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void goWebSpider(View view) {
+        SpiderWebviewActivity.start(this,"https://www.pexels.com/search/landscape/");
     }
 
     /*Intent intent = new Intent(this,BigImageActy.class);
