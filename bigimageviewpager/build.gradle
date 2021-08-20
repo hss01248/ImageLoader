@@ -49,6 +49,7 @@ dependencies {
     api 'com.github.hss01248:PageStateManager:3.0.5'
 
     api 'me.jessyan:progressmanager:1.5.0'
+    //https://github.com/JessYanCoding/ProgressManager
     api 'com.github.bumptech.glide:okhttp3-integration:4.11.0' // 新增
 
     api 'androidx.viewpager:viewpager:1.0.0'

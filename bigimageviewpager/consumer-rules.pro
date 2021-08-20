@@ -38,3 +38,5 @@
    void set*(***);
    *** get*();
 }
+-keep class me.jessyan.progressmanager.** { *; }
+ -keep interface me.jessyan.progressmanager.** { *; }
