@@ -3,6 +3,6 @@
     package="com.hss01248.webviewspider">
 
     <application>
-        <activity android:name=".SpiderWebviewActivity" />
+        <activity android:name=".SpiderWebviewActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 </manifest>

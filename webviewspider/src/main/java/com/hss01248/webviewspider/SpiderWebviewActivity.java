@@ -19,7 +19,8 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     }
 
     String url  = "";
-    AgentWeb mAgentWeb;
+    BaseQuickWebview quickWebview;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,28 +30,17 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     }
 
     private void initWebView() {
-        mAgentWeb = AgentWeb.with(this)
-                .setAgentWebParent((LinearLayout) findViewById(R.id.root_ll), new LinearLayout.LayoutParams(-1, -1))
-                .useDefaultIndicator()
-                .setMainFrameErrorView(R.layout.pager_error,R.id.error_btn_retry)
-                //.addJavascriptInterface()
-                .createAgentWeb()
-                .ready()
-                .go(url);
+        quickWebview = findViewById(R.id.root_ll);
+        quickWebview.addLifecycle(this);
+        quickWebview.loadUrl(url);
 
     }
 
     @Override
     public void onBackPressed() {
-        if(!mAgentWeb.back()){
+        if(quickWebview == null || !quickWebview.onBackPressed()){
             super.onBackPressed();
         }
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mAgentWeb.destroy();
     }
 }
