@@ -4,16 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.ValueCallback;
 
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -25,6 +24,9 @@ import androidx.lifecycle.LifecycleOwner;
 import com.hss01248.webviewspider.basewebview.WebConfigger;
 import com.hss01248.webviewspider.basewebview.WebDebugger;
 import com.just.agentweb.AgentWeb;
+import com.just.agentweb.WebViewClient;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 
 public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleObserver {
@@ -37,6 +39,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     AgentWeb.PreAgentWeb preAgentWeb;
     WebView webView;
     WebDebugger debugger;
+    String source;
 
     public BaseQuickWebview(Context context) {
         super(context);
@@ -70,7 +73,21 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                 onBackPressed();
             }
         });
+        Activity activity = WebDebugger.getActivityFromContext(context);
+        if(activity instanceof LifecycleOwner){
+            LifecycleOwner owner = (LifecycleOwner) activity;
+            addLifecycle(owner);
+        }
         initWebView();
+    }
+
+    public void getSource(ValueCallback<String> valueCallback){
+        if(!TextUtils.isEmpty(source)){
+            valueCallback.onReceiveValue(source);
+            return;
+        }
+        loadSource(valueCallback);
+
     }
 
 
@@ -79,14 +96,38 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
             Log.w("loadSource","webview is null");
             return;
         }
+//        if(TextUtils.isEmpty(source)){
+//            valueCallback.onReceiveValue(source);
+//            return;
+//        }
         String script = "javascript:document.getElementsByTagName('html')[0].innerHTML";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            webView.evaluateJavascript(script, valueCallback);
+            //在主线程执行,耗时好几s
+            webView.evaluateJavascript(script, new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
+                    source = StringEscapeUtils.unescapeJava(value);
+                    if(source.startsWith("\"")){
+                        source = source.substring(1);
+                    }
+                    if(source.endsWith("\"")){
+                        source = source.substring(0,source.length()-1);
+                    }
+                    source = "<html>"+source +"</html>";
+                    Log.w("source",Thread.currentThread().getName() +source);
+                    valueCallback.onReceiveValue(source);
+                }
+            });
         }
     }
 
-    public void addLifecycle(LifecycleOwner lifecycleOwner){
+    boolean hasAdd;
+    private void addLifecycle(LifecycleOwner lifecycleOwner){
+        if(hasAdd){
+            return;
+        }
         lifecycleOwner.getLifecycle().addObserver(this);
+        hasAdd = true;
     }
 
     public void loadUrl(String url){
@@ -96,18 +137,25 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     private void initWebView() {
         preAgentWeb = AgentWeb.with((Activity) getContext())//传入Activity or Fragment
                 .setAgentWebParent(this,
-                        new LinearLayout.LayoutParams(-1, -1))//传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams ,第一个参数和第二个参数应该对应。
+                        new LayoutParams(-1, -1))
+                //传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams ,第一个参数和第二个参数应该对应。
                 .useDefaultIndicator()// 使用默认进度条
-                .setWebViewClient(new com.just.agentweb.WebViewClient(){
+                .setWebViewClient(new WebViewClient(){
                     @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
                         super.onPageStarted(view, url, favicon);
+                        source = "";
                         currentUrl = url;
                     }
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
+                        loadSource(new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {
+                            }
+                        });
                     }
                 })
                 .setWebChromeClient(new com.just.agentweb.WebChromeClient(){

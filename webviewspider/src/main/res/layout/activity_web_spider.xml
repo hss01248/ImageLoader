@@ -8,4 +8,10 @@
         android:id="@+id/root_ll"
         android:layout_height="match_parent">
     </com.hss01248.webviewspider.BaseQuickWebview>
+    <Button
+        android:layout_width="wrap_content"
+        android:id="@+id/btn_float"
+        android:text="menu"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>

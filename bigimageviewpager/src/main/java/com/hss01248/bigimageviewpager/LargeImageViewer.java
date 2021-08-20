@@ -1,6 +1,7 @@
 package com.hss01248.bigimageviewpager;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -37,7 +38,9 @@ public class LargeImageViewer {
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
                 MyLargeImageView imageView = new MyLargeImageView(context);
-                imageView.loadUri(uris.get(position));
+                String url = uris.get(position);
+                url = getBigImageUrl(url);
+                imageView.loadUri(url);
                 container.addView(imageView);
                 return imageView;
             }
@@ -77,5 +80,19 @@ public class LargeImageViewer {
         });*/
         viewPager.setCurrentItem(position);
         return viewPager;
+    }
+
+    private static String getBigImageUrl(String url) {
+        if(TextUtils.isEmpty(url)){
+            return "";
+        }
+        if(!url.contains("?")){
+            return url;
+        }
+        String param = url.substring(url.indexOf("?")+1);
+        if(param.contains("&w=") || param.contains("width=") || param.contains("&h=") || param.contains("height=")){
+            return url.substring(0,url.indexOf("?"));
+        }
+        return url;
     }
 }

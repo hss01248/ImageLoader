@@ -333,12 +333,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //ImageMemoryHookManager.show(this);
-        List<Bitmap> bitmaps = getBitmapsFromGlidePool();
+       // List<Bitmap> bitmaps = getBitmapsFromGlidePool();
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                getBitmapsFromGlidePool();
+               // getBitmapsFromGlidePool();
             }
         }, 3000, 3000);
 

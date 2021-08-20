@@ -105,6 +105,7 @@ public class WebDebugger {
                      }
                  };
                 debugWebViewClient.setLoggingEnabled(true);
+                //debugWebViewClient.setJsDebugPannelEnable(true);
                 webview.setWebViewClient(debugWebViewClient);
             }
         }
