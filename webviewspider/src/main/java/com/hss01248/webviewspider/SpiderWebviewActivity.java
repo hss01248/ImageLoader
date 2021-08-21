@@ -14,9 +14,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.hss01248.imagelist.album.ImageListView;
-import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.spider.IHtmlParser;
 import com.hss01248.webviewspider.spider.PexelImageParser;
@@ -29,6 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 public class SpiderWebviewActivity extends AppCompatActivity {
+
+    public static void setShowUrls(IShowUrls iShowUrls) {
+        SpiderWebviewActivity.iShowUrls = iShowUrls;
+    }
+
+    static IShowUrls iShowUrls;
 
     public static void start(Activity activity,String url){
         Intent intent = new Intent(activity,SpiderWebviewActivity.class);
@@ -94,9 +97,10 @@ public class SpiderWebviewActivity extends AppCompatActivity {
             public void onReceiveValue(String value) {
                 List<String> list = parser.parseTargetImagesInHtml(value);
                 if(list != null && !list.isEmpty()){
-                    ImageListView listView = new ImageListView(SpiderWebviewActivity.this);
-                    listView.showUrls(parser.getClass().getSimpleName(),list, getExternalFilesDir(parser.getClass().getSimpleName()).getAbsolutePath(),false);
-                    ImageMediaCenterUtil.showViewAsDialog(listView);
+                    if(iShowUrls != null){
+                        iShowUrls.showUrls(SpiderWebviewActivity.this,parser.getClass().getSimpleName(),list, getExternalFilesDir(parser.getClass().getSimpleName()).getAbsolutePath(),false);
+                    }
+
                 }
             }
         });

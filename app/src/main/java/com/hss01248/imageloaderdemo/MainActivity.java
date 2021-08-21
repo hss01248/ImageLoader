@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -29,6 +30,7 @@ import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
@@ -444,6 +446,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goWebSpider(View view) {
+        SpiderWebviewActivity.setShowUrls(new IShowUrls() {
+            @Override
+            public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+                ImageListView listView = new ImageListView(context);
+                    listView.showUrls(pageTitle,urls, getExternalFilesDir(pageTitle).getAbsolutePath(),false);
+                   ImageMediaCenterUtil.showViewAsDialog(listView);
+            }
+        });
         SpiderWebviewActivity.start(this,"https://www.pexels.com/search/landscape/");
     }
 

@@ -1,7 +1,9 @@
 package com.hss01248.webviewspider;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.text.TextUtils;
@@ -34,6 +36,11 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 
 
     String currentUrl = "";
+
+    public AgentWeb getAgentWeb() {
+        return mAgentWeb;
+    }
+
     AgentWeb mAgentWeb;
     TitleBar titleBar;
     AgentWeb.PreAgentWeb preAgentWeb;
@@ -87,7 +94,32 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
             return;
         }
         loadSource(valueCallback);
+    }
 
+    public static BaseQuickWebview loadHtml(Context context,String url,ValueCallback<String> sourceLoadListener){
+        BaseQuickWebview quickWebview = new BaseQuickWebview(context);
+        quickWebview.setSourceLoadListener(sourceLoadListener);
+        quickWebview.needBlockImageLoad = true;
+        quickWebview.loadUrl(url);
+        Dialog dialog = new Dialog(context);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(quickWebview);
+        dialog.show();
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if(quickWebview.getAgentWeb() != null){
+                    quickWebview.getAgentWeb().destroy();
+                }
+            }
+        });
+        return quickWebview;
+
+    }
+    ValueCallback<String> sourceLoadListener;
+    boolean needBlockImageLoad;
+    public void setSourceLoadListener(ValueCallback<String> sourceLoadListener){
+       this.sourceLoadListener = sourceLoadListener;
     }
 
 
@@ -146,6 +178,9 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         super.onPageStarted(view, url, favicon);
                         source = "";
                         currentUrl = url;
+                        if(needBlockImageLoad){
+                            view.getSettings().setBlockNetworkImage(needBlockImageLoad);
+                        }
                     }
 
                     @Override
@@ -154,6 +189,9 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         loadSource(new ValueCallback<String>() {
                             @Override
                             public void onReceiveValue(String value) {
+                                if(sourceLoadListener != null){
+                                    sourceLoadListener.onReceiveValue(source);
+                                }
                             }
                         });
                     }
