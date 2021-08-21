@@ -13,6 +13,7 @@ import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.LibraryGlideModule;
 import com.github.piasy.biv.progress.ProgressInterceptor;
+import com.hss01248.image.config.GlobalConfig;
 
 import java.io.InputStream;
 import java.security.KeyManagementException;
@@ -27,6 +28,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import me.jessyan.progressmanager.ProgressManager;
 import okhttp3.OkHttpClient;
 
 /**
@@ -57,14 +59,17 @@ public class GlideModelConfig extends LibraryGlideModule {
          */
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        setIgnoreAll(builder);
-        OkHttpClient client = builder
-                .addNetworkInterceptor(new ProgressInterceptor())
+        if(GlobalConfig.debug){
+            setIgnoreAll(builder);
+        }
+
+        builder
+                //.addNetworkInterceptor(new ProgressInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
-        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+                .writeTimeout(30, TimeUnit.SECONDS);
+        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getInstance()
+                .with(builder).build()));
         Log.i("glide", "registerComponents---");
 
     }

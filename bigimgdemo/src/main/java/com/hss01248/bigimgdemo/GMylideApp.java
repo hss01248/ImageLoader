@@ -22,7 +22,7 @@ public class GMylideApp extends AppGlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
         //设置缓存到外部存储器
-        builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context));
+       // builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context));
     }
 
     @Override

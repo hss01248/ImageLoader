@@ -16,8 +16,10 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.disklrucache.DiskLruCache;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Key;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.engine.cache.DiskCache;
+import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper;
 import com.bumptech.glide.load.engine.cache.SafeKeyGenerator;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -142,7 +144,9 @@ public class UrlLoader {
      * @param ivHelper
      */
     private static void loadGlideByView(Context context, String url, LoadListener listener, ImageView ivHelper) {
-        Glide.with(context)
+
+        getFromCache(context,url,null,listener);
+        /*Glide.with(context)
                 .load(url)
                 .priority(Priority.IMMEDIATE)
                 .listener(new RequestListener< Drawable>() {
@@ -162,7 +166,7 @@ public class UrlLoader {
                         return false;
                     }
                 })
-                .into(ivHelper);
+                .into(ivHelper);*/
     }
 
     private static void getFromCache(Context context, String url,Throwable throwable, LoadListener listener) {
@@ -170,24 +174,32 @@ public class UrlLoader {
             @Override
             public void run() {
                 Glide.with(context)
-                        .load(url)
-                        // .priority(Priority.HIGH)
-                        .downloadOnly(new SimpleTarget<File>() {
+                        .download(url)
+                        .priority(Priority.HIGH)
+                        .addListener(new RequestListener<File>() {
                             @Override
-                            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                                listener.onLoad(resource.getAbsolutePath());
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
+                                if (e != null) {
+                                    listener.onFail(e);
+                                } else {
+                                    listener.onFail(new Throwable("get cache file from glide failed"));
+                                }
+                                return false;
                             }
 
                             @Override
-                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                                super.onLoadFailed(errorDrawable);
-                                if(throwable != null){
-                                    listener.onFail(throwable);
-                                }else {
-                                    listener.onFail(new Throwable("get cache file from glide failed"));
-                                }
+                            public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
+                                Log.w("isCached", "cache by glide:" + url + "\nfile:" + resource);
+                                listener.onLoad(resource.getAbsolutePath());
+                                isCached(context, url);
+                                return false;
                             }
-                        });
+                        }).into(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+
+                    }
+                });
             }
         });
 
@@ -196,14 +208,19 @@ public class UrlLoader {
     public static boolean isCached(Context context,String url) {
         OriginalKey originalKey = new OriginalKey(url, EmptySignature.obtain());
         SafeKeyGenerator safeKeyGenerator = new SafeKeyGenerator();
-        String safeKey = safeKeyGenerator.getSafeKey(originalKey);
+        String safeKey = safeKeyGenerator.getSafeKey(originalKey)+".0";
         try {
-            DiskLruCache diskLruCache = DiskLruCache.open(new File(context.getCacheDir(),
-                    DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
-            DiskLruCache.Value value = diskLruCache.get(safeKey);
-            if (value != null && value.getFile(0).exists() && value.getFile(0).length() > 30) {
+
+            DiskCache diskCache = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(context), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);
+            //Glide.get(context).
+           /* DiskLruCache diskLruCache = DiskLruCache.open(new File(context.getCacheDir(),
+                    DiskCache.Factory.DEFAULT_DISK_CACHE_DIR), 1, 1, DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE);*/
+           // DiskLruCache.Value value = diskCache.get(originalKey);
+            Log.w("isCached","key:"+safeKey+",DiskLruCache.Value:"+diskCache.get(originalKey));
+            Log.w("isCached","file :"+new File(context.getCacheDir(),"image_manager_disk_cache/"+safeKey).exists());
+            //if (value != null && value.getFile(0).exists() && value.getFile(0).length() > 30) {
                 return true;
-            }
+           // }
         } catch (Throwable e) {
             e.printStackTrace();
         }

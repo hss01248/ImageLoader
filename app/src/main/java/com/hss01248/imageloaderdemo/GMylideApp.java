@@ -22,7 +22,7 @@ public class GMylideApp extends AppGlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
         //设置缓存到外部存储器
-        builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context));
+        //builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context));
     }
 
     @Override
@@ -30,10 +30,5 @@ public class GMylideApp extends AppGlideModule {
         //registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory());
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getInstance()
                 .with(new OkHttpClient.Builder()).build()));
-    }
-
-    @Override
-    public boolean isManifestParsingEnabled() {
-        return false;
     }
 }

@@ -48,7 +48,7 @@ dependencies {
 
     api project(':imageloader')
     api project(':glidebase')
-
+    api 'me.jessyan:progressmanager:1.5.0'
     //https://github.com/wasabeef/glide-transformations
 //    https://github.com/open-android/Glide-transformations
 
