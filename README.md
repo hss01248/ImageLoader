@@ -19,11 +19,15 @@
 * 适配wrap_centent
 * 适配focus_face
 
+[![](https://jitpack.io/v/hss01248/ImageLoader.svg)](https://jitpack.io/#hss01248/ImageLoader)
+
 ```
-com.github.hss01248.ImageLoader:imagelist:3.0.0
-com.github.hss01248.ImageLoader:glidebase:3.0.0
-com.github.hss01248.ImageLoader:imageloader:3.0.0
-com.github.hss01248.ImageLoader:glidev4:3.0.0
+com.github.hss01248.ImageLoader:imagelist:3.1.0
+com.github.hss01248.ImageLoader:glidev4:3.1.0
+com.github.hss01248.ImageLoader:imageloader:3.1.0
+com.github.hss01248.ImageLoader:glidebase:3.1.0
+com.github.hss01248.ImageLoader:webviewspider:3.1.0
+com.github.hss01248.ImageLoader:bigimageviewpager:3.1.0
 ```
 
 > 一条龙地支持fresco和glide
