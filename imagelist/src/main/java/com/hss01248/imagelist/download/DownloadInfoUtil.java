@@ -3,6 +3,8 @@ package com.hss01248.imagelist.download;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.hss01248.imagelist.download.db.DaoMaster;
 import com.hss01248.imagelist.download.db.DaoSession;
 import com.hss01248.imagelist.download.db.DownloadInfoDao;
@@ -19,7 +21,11 @@ public class DownloadInfoUtil {
     }
 
     static void init(Context context) {
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "imgdownload.db");
+        Context context2 = context;
+        if(  XXPermissions.isGranted(context,Permission.MANAGE_EXTERNAL_STORAGE)){
+            context2 = new MyDBContext(context);
+        }
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context2, "imgdownload.db");
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();

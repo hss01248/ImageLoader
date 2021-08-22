@@ -36,11 +36,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
+    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
     //compile 'com.simplecityapps:recyclerview-fastscroll:1.0.20'
-    implementation 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
+    api 'com.futuremind.recyclerfastscroll:fastscroll:0.2.5'
 
-    implementation 'com.github.fondesa:recycler-view-divider:3.5.0'
+    api 'com.github.fondesa:recycler-view-divider:3.5.0'
     //implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
      api 'com.github.hss01248.metadata:metadata:1.1.2'
     api 'com.github.hss01248:UI:0.0.1'
@@ -49,7 +49,7 @@ dependencies {
     api 'com.github.princekin-f:EasyFloat:2.0.3'
     //implementation 'com.wuhenzhizao:titlebar:1.1.4'
 
-
+    api 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
 
     api 'org.greenrobot:greendao:3.3.0' // add library
     apply plugin: 'org.greenrobot.greendao'
