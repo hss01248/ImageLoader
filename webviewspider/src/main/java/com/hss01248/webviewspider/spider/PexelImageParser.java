@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,5 +52,28 @@ public class PexelImageParser implements IHtmlParser{
             e.printStackTrace();
         }
         return urls;
+    }
+
+    @Override
+    public String folderName() {
+        return "pexels";
+    }
+
+    @Override
+    public String subfolderName(String title, String url) {
+       if(url.contains("/search/")){
+           String type = url.substring(url.indexOf("/search/") +"/search/".length());
+           if(type.endsWith("/")){
+               type = type.substring(0,type.length()-1);
+           }
+           return URLDecoder.decode(type);
+       }else {
+           return "default";
+       }
+    }
+
+    @Override
+    public boolean interceptImage(String url) {
+        return false;
     }
 }

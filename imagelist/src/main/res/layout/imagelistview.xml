@@ -19,9 +19,9 @@
 
     <RelativeLayout
         android:id="@+id/titlebar"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
-        android:layout_height="44dp">
+        android:layout_height="50dp">
 
         <TextView
             android:id="@+id/tv_title"

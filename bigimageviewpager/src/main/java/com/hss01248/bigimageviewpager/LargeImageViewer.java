@@ -82,7 +82,7 @@ public class LargeImageViewer {
         return viewPager;
     }
 
-    private static String getBigImageUrl(String url) {
+    public static String getBigImageUrl(String url) {
         if(TextUtils.isEmpty(url)){
             return "";
         }

@@ -1,27 +1,36 @@
 package com.hss01248.webviewspider;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.webkit.ValueCallback;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import com.hss01248.ui.pop.list.PopList;
-import com.hss01248.webviewspider.spider.IHtmlParser;
-import com.hss01248.webviewspider.spider.PexelImageParser;
-import com.just.agentweb.AgentWeb;
 
-import java.io.UnsupportedEncodingException;
+import com.blankj.utilcode.util.LogUtils;
+import com.hss01248.ui.pop.list.PopList;
+import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
+import com.hss01248.webviewspider.spider.IHtmlParser;
+import com.hss01248.webviewspider.spider.ListToDetailImgsInfo;
+import com.hss01248.webviewspider.spider.PexelImageParser;
+
+import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,11 +52,25 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     BaseQuickWebview quickWebview;
     Button button;
 
+
+    public static List<String> getSpiders(){
+        List<String> strings = new ArrayList<>();
+        Iterator<Map.Entry<String, IHtmlParser>> iterator = parsers.entrySet().iterator();
+        while (iterator.hasNext()){
+            strings.add(iterator.next().getValue().entranceUrl());
+        }
+        return strings;
+    }
+
     static Map<String,IHtmlParser> parsers = new HashMap<>();
     static {
         parsers.put(new PexelImageParser().entranceUrl(),new PexelImageParser());
     }
     IHtmlParser parser;
+
+    public static void addParser(IHtmlParser parser){
+        parsers.put(parser.entranceUrl(),parser);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +84,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
 
     private void initWebView() {
         quickWebview = findViewById(R.id.root_ll);
+        quickWebview.setNeedBlockImageLoad( parser.interceptImage(url));
         //quickWebview.addLifecycle(this);
         quickWebview.loadUrl(url);
 
@@ -77,6 +101,8 @@ public class SpiderWebviewActivity extends AppCompatActivity {
         List<String> menus = new ArrayList<>();
         menus.add("显示html源码");
         menus.add("展示当前页面所有图片");
+        menus.add("当前list,爬取list内所有页面的图片");
+        menus.add("显示图片文件夹");
         PopList.showPop(this, -1, button, menus, new PopList.OnItemClickListener() {
             @Override
             public void onClick(int position, String str) {
@@ -84,11 +110,125 @@ public class SpiderWebviewActivity extends AppCompatActivity {
                     showSource();
                 }else if(position == 1){
                     parseUrlsAndShow();
+                }else if(position == 2){
+                    parseListUrlsAndShow();
+                }else if(position == 3){
+                    if(iShowUrls != null){
+                        iShowUrls.showFolder(SpiderWebviewActivity.this, new File(Environment.getExternalStorageDirectory(),"0spider").getAbsolutePath());
+                    }
                 }
 
             }
         });
 
+    }
+
+    private void parseListUrlsAndShow() {
+        if(quickWebview == null){
+            return;
+        }
+        String url = quickWebview.getCurrentUrl();
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setCanceledOnTouchOutside(false);
+        //dialog.setCancelable(false);
+        dialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                quickWebview.getSource(new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                parser.parseListAndDetail(SpiderWebviewActivity.this,quickWebview.getInfo(), new ValueCallback<ListToDetailImgsInfo>() {
+                                    @Override
+                                    public void onReceiveValue(ListToDetailImgsInfo info) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dialog.dismiss();
+                                                if (info.imagUrls.isEmpty()) {
+                                                    quickWebview.loadSource(new ValueCallback<String>() {
+                                                        @Override
+                                                        public void onReceiveValue(String value) {
+
+                                                        }
+                                                    });
+                                                } else {
+                                                    if (iShowUrls != null) {
+                                                        info.saveDirPath = getSaveDir(parser.folderName(),parser.subfolderName(quickWebview.getCurrentTitle(),quickWebview.getCurrentUrl()));
+                                                       Log.v("caol","parseListUrlsAndShow path:"+info.saveDirPath);
+                                                        info.hiddenFolder = parser.hiddenFolder();
+                                                        iShowUrls.showUrls(SpiderWebviewActivity.this,info.listTitle,info.titlesToImags,info.imagUrls,info.saveDirPath,info.hiddenFolder);
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }, new ValueCallback<String>() {
+                                    @Override
+                                    public void onReceiveValue(String value) {
+                                        dialog.setMessage(value);
+                                    }
+                                });
+                            }
+                        });
+
+                    }
+                });
+            }
+        }).start();
+
+
+    }
+
+    private String getSaveDir(String folderName, String subFolderName) {
+
+         //new File(System.getenv("EXTERNAL_STORAGE"));
+        File dir0 = new File(Environment.getExternalStorageDirectory(),"0spider");
+        dir0.mkdirs();
+        File dir = new File(dir0,folderName);
+        dir.mkdirs();
+        if(!TextUtils.isEmpty(subFolderName)){
+            dir = new File(dir,subFolderName);
+            dir.mkdirs();
+        }
+        dir = findNextSub(dir,0);
+        //dir.listFiles();
+        return dir.getAbsolutePath();
+    }
+
+    private File findNextSub(File dir,int idx) {
+        File[] files = dir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        });
+        if(files == null || files.length ==0){
+            File dir2 = new File(dir,dir.getName()+idx);
+            dir2.mkdirs();
+            Log.v("dirs","0 new dir :"+dir2);
+            return dir2;
+        }else {
+            List<File> dirs = new ArrayList<>(Arrays.asList(files));
+            Collections.sort(dirs, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return o2.getName().compareTo(o1.getName());
+                }
+            });
+            Log.v("dirs",Arrays.toString(dirs.toArray()));
+            String[] list = dirs.get(0).list();
+            if(list == null ||list.length < 3000){
+                return dirs.get(0);
+            }
+            File dir2 = new File(dir,dir.getName()+dirs.size());
+            dir2.mkdirs();
+            Log.v("dirs","1 new dir :"+dir2);
+            return dir2;
+        }
     }
 
     private void parseUrlsAndShow() {
@@ -98,7 +238,11 @@ public class SpiderWebviewActivity extends AppCompatActivity {
                 List<String> list = parser.parseTargetImagesInHtml(value);
                 if(list != null && !list.isEmpty()){
                     if(iShowUrls != null){
-                        iShowUrls.showUrls(SpiderWebviewActivity.this,parser.getClass().getSimpleName(),list, getExternalFilesDir(parser.getClass().getSimpleName()).getAbsolutePath(),false);
+                        String path =  getSaveDir(parser.folderName(), parser.subfolderName(quickWebview.getCurrentTitle(),quickWebview.getCurrentUrl()));
+                        Log.v("caol","parseUrlsAndShow path:"+path);
+                        iShowUrls.showUrls(SpiderWebviewActivity.this,
+                                parser.resetDetailTitle(quickWebview.getCurrentTitle()),list,path
+                               ,parser.hiddenFolder());
                     }
 
                 }

@@ -21,8 +21,6 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.hss01248.webviewspider.TitleBar;
-
 import java.net.URLDecoder;
 
 import uk.co.alt236.webviewdebug.DebugWebChromeClient;

@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.blankj.utilcode.util.UriUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
@@ -74,6 +76,7 @@ import com.hss01248.image.utils.ThreadPoolFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -101,7 +104,7 @@ import jp.wasabeef.glide.transformations.internal.RSBlur;
 
 public class Glide4Loader extends ILoader {
 
-    private ExecutorService executor;
+
 
     @Override
     public void init(Context context, int cacheSizeInM) {//glide默认最大容量250MB的文件缓存
@@ -629,7 +632,12 @@ public class Glide4Loader extends ILoader {
     @Nullable
     private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
         if(requestManager == null){
-            if(config.getSourceString().contains(".gif")){
+            String url  = config.getSourceString();
+            if(url.contains("?")){
+                url  = url.substring(0,url.indexOf("?"));
+            }
+            if(url.endsWith(".gif")){
+                // https://s5.gifyu.com
                 requestManager = Glide.with(config.getContext()).asGif();
             }else {
                 requestManager = Glide.with(config.getContext()).asDrawable();
@@ -815,11 +823,8 @@ public class Glide4Loader extends ILoader {
             getter.onSuccess(file, wh[0], wh[1]);
             return;
         }
-        if (executor == null) {
-            executor = Executors.newCachedThreadPool();
-        }
 
-        executor.execute(new Runnable() {
+        ThreadPoolFactory.getDownLoadPool().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -849,6 +854,7 @@ public class Glide4Loader extends ILoader {
                     }
                 } catch (final Throwable throwable) {
                     throwable.printStackTrace();
+                    // call GlideException#logRootCauses(String) for more detail
                     MyUtil.runOnUIThread(new Runnable() {
                         @Override
                         public void run() {

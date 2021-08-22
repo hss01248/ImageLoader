@@ -1,6 +1,8 @@
 package com.hss01248.image.utils;
 
 
+import java.util.concurrent.Executors;
+
 /**
  * @author Administrator
  * @version $Rev: 14 $
@@ -35,7 +37,7 @@ public class ThreadPoolFactory {
         if (mDownLoadPool == null) {
             synchronized (ThreadPoolProxy.class) {
                 if (mDownLoadPool == null) {
-                    mDownLoadPool = new ThreadPoolProxy(3, 6, 6000);
+                    mDownLoadPool = new ThreadPoolProxy(3, 24, 6000);
                 }
             }
         }

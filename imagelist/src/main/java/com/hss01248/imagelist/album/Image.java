@@ -19,6 +19,7 @@ public class Image implements Parcelable {
     public long height;
     public int oritation;
     public String mimeType;
+    public boolean isDir;
 
     public Image(long id, String name, String path, long fileSize, long addDate,
                  long modifiedTime, long width, long height, String mimeType) {

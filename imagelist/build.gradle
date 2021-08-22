@@ -43,5 +43,20 @@ dependencies {
     implementation 'com.github.fondesa:recycler-view-divider:3.5.0'
     //implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
      api 'com.github.hss01248.metadata:metadata:1.1.2'
+    api 'com.github.hss01248:UI:0.0.1'
+
+    compile 'com.github.hss01248:NotifyUtil:1.0.1'
+    api 'com.github.princekin-f:EasyFloat:2.0.3'
     //implementation 'com.wuhenzhizao:titlebar:1.1.4'
+
+
+
+    api 'org.greenrobot:greendao:3.3.0' // add library
+    apply plugin: 'org.greenrobot.greendao'
+
+    greendao {
+        schemaVersion 1  //我们的数据库的版本号  当数据库升级的时候可以在这里改版本
+        daoPackage 'com.hss01248.imagelist.download.db'  //自动生成的DaoMaster、DaoSession、Dao的包名  根据自己想放的位置改变即可
+        targetGenDir 'src/main/java'  //自动生成的DaoMaster、DaoSession、Dao的路径
+    }
 }

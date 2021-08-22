@@ -66,7 +66,7 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
                                 if (item.equals(helper.getView(R.id.item_iv).getTag(R.id.item_iv))) {
                                     String text = width + "x" + height + "," + MyUtil.formatFileSize(file.length());//+item.substring(item.lastIndexOf("/")+1)+"\n"
                                     helper.setText(R.id.tv_info, text);
-                                    try {
+                                   /* try {
                                         ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
                                       int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
                                       if(attr == ExifInterface.ORIENTATION_ROTATE_90){
@@ -79,7 +79,7 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
                                        helper.setText(R.id.tv_info, text);
                                     } catch (IOException e) {
                                         e.printStackTrace();
-                                    }
+                                    }*/
                                 }
 
                             }

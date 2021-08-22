@@ -2,14 +2,18 @@ package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
 
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
+import com.hjq.permissions.XXPermissions;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 
@@ -19,8 +23,17 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.LoadInterceptor;
 
+import com.hss01248.imagelist.album.ImageListView;
+import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.notifyutil.NotifyUtil;
+import com.hss01248.webviewspider.IShowUrls;
+import com.hss01248.webviewspider.SpiderWebviewActivity;
 import com.simple.spiderman.SpiderMan;
 import com.squareup.leakcanary.LeakCanary;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.MyToast;
 
@@ -36,6 +49,32 @@ public class BaseApp extends MultiDexApplication {
         SpiderMan.init(this);
         ImageLoader.init(getApplicationContext(), 500, new Glide4Loader());
         GlobalConfig.debug = true;
+        XXPermissions.setScopedStorage(true);
+
+        NotifyUtil.init(this);
+        SpiderWebviewActivity.setShowUrls(new IShowUrls() {
+            @Override
+            public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+                ImageListView listView = new ImageListView(context);
+                listView.showUrls(pageTitle,urls, downloadDir,false);
+                ImageMediaCenterUtil.showViewAsDialog(listView);
+            }
+
+            @Override
+            public void showUrls(Context context, String pageTitle, Map<String, List<String>> titlesToImags, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+                ImageListView listView = new ImageListView(context);
+                listView.showUrlsFromMap(pageTitle,titlesToImags,urls, downloadDir,false);
+                ImageMediaCenterUtil.showViewAsDialog(listView);
+            }
+
+            @Override
+            public void showFolder(Context context, String absolutePath) {
+                ImageListView listView = new ImageListView(context);
+                listView.showImagesInDir(absolutePath);
+                ImageMediaCenterUtil.showViewAsDialog(listView);
+            }
+        });
+
        // ImageMemoryHookManager.hook(this);
         GlobalConfig.interceptor = new LoadInterceptor() {
             @Override

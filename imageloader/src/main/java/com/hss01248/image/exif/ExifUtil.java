@@ -131,11 +131,13 @@ public class ExifUtil {
             sb.append("\njpeg quality guess:").append(quality);
             sb.append("\norientation degree:").append(degree);
             for (String tag : tags) {
-                String attr = exifInterface.getAttribute(tag);
-                if (!TextUtils.isEmpty(attr)) {
-                    sb.append("\n").append(tag)
-                            .append(":")
-                            .append(attr);
+                if(!TextUtils.isEmpty(tag)){
+                    String attr = exifInterface.getAttribute(tag);
+                    if (!TextUtils.isEmpty(attr)) {
+                        sb.append("\n").append(tag)
+                                .append(":")
+                                .append(attr);
+                    }
                 }
             }
             return sb.toString();

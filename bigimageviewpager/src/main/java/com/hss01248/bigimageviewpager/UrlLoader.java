@@ -55,12 +55,10 @@ public class UrlLoader {
     }
 
     static Handler handler = new Handler(Looper.getMainLooper());
-    static ExecutorService service;
+
 
     public static void download(Context context, ImageView ivHelper,String url,LoadListener listener){
-        if(service == null){
-            service = Executors.newCachedThreadPool();
-        }
+
 
         ProgressManager.getInstance().addResponseListener(url, new ProgressListener() {
             @Override

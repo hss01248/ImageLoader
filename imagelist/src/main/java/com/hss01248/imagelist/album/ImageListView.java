@@ -1,5 +1,6 @@
 package com.hss01248.imagelist.album;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -22,13 +24,17 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SizeUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.fondesa.recyclerviewdivider.DividerDecoration;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
+import com.google.gson.internal.$Gson$Preconditions;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
+import com.hss01248.imagelist.download.ImgDownloader;
+import com.hss01248.ui.pop.list.PopList;
 
 
 import org.apache.commons.io.FileUtils;
@@ -39,7 +45,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -83,7 +91,7 @@ public class ImageListView extends FrameLayout {
         recyclerView = findViewById(R.id.list);
         fastScroller = (FastScroller) findViewById(R.id.fastscroll);
         titleBar = findViewById(R.id.titlebar);
-        title = findViewById(R.id.title);
+        title = findViewById(R.id.tv_title);
         tvRIght = findViewById(R.id.tv_right);
         initTitlebar();
 
@@ -152,7 +160,62 @@ public class ImageListView extends FrameLayout {
      * @param hideDir     是否要隐藏文件夹
      */
     public void showUrls(String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir) {
-        downloadAndSave(pageTitle, urls, downloadDir, hideDir);
+        //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
+        ImgItemAdapter adapter = new ImgItemAdapter(R.layout.imglist_item_iv, urls);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        setDivider(recyclerView);
+        fastScroller.setRecyclerView(recyclerView);
+        fastScroller.setVisibility(VISIBLE);
+        titleBar.setVisibility(VISIBLE);
+        title.setText(pageTitle);
+
+        tvRIght.setVisibility(VISIBLE);
+
+        tvRIght.setText("menu");
+        tvRIght.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<String> menu = new ArrayList<>();
+                menu.add("下载所有");
+                menu.add("查看本地文件夹");
+                PopList.showPop(getContext(), ViewGroup.LayoutParams.MATCH_PARENT, tvRIght, menu, new PopList.OnItemClickListener() {
+                    @Override
+                    public void onClick(int position, String str) {
+                        if(position == 0){
+                            downloadAndSave(pageTitle, urls, downloadDir, hideDir,null);
+                        }else if(position == 1){
+                           showImagesInDir(downloadDir);
+                        }
+
+                    }
+                });
+            }
+        });
+
+
+        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                ImageMediaCenterUtil.showBigImag(getContext(), urls, position);
+            }
+        });
+    }
+
+    public void showUrlsFromMap(String pageTitle, Map<String,List<String>> titlesToImags, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+        if(urls == null || urls.isEmpty()){
+            urls = new ArrayList<>();
+        }else {
+
+        }
+        Map<String,String> urlTitleMap = new HashMap<>();
+        for (Map.Entry<String, List<String>> stringListEntry : titlesToImags.entrySet()) {
+            //urls.addAll(stringListEntry.getValue());
+            for (String s : stringListEntry.getValue()) {
+                urlTitleMap.put(s,stringListEntry.getKey());
+            }
+        }
 
         //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
@@ -162,11 +225,45 @@ public class ImageListView extends FrameLayout {
         setDivider(recyclerView);
         fastScroller.setRecyclerView(recyclerView);
         fastScroller.setVisibility(VISIBLE);
+        titleBar.setVisibility(VISIBLE);
+        title.setText(pageTitle);
 
+        tvRIght.setVisibility(VISIBLE);
+
+        tvRIght.setText("menu");
+        List<String> finalUrls1 = urls;
+        tvRIght.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<String> menu = new ArrayList<>();
+                menu.add("下载所有");
+                menu.add("查看本地文件夹");
+                PopList.showPop(getContext(), ViewGroup.LayoutParams.MATCH_PARENT, tvRIght, menu, new PopList.OnItemClickListener() {
+                    @Override
+                    public void onClick(int position, String str) {
+                        if(position == 0){
+                            downloadAndSave(pageTitle, finalUrls1, downloadDir, hideDir, new ImgDownloader.IFileNamePrefix() {
+                                @Override
+                                public String getFileNamePreffix(String url) {
+                                    return urlTitleMap.get(url);
+                                }
+                            });
+
+                        }else if(position == 1){
+                            showImagesInDir(downloadDir);
+                        }
+
+                    }
+                });
+            }
+        });
+
+
+        List<String> finalUrls = urls;
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                ImageMediaCenterUtil.showBigImag(getContext(), urls, position);
+                ImageMediaCenterUtil.showBigImag(getContext(), finalUrls, position);
             }
         });
     }
@@ -178,13 +275,19 @@ public class ImageListView extends FrameLayout {
             Log.w(TAG, dirPath + " is not exist or not a directory!");
             return;
         }
-        String[] files = dir.list(new FilenameFilter() {
+        ProgressDialog dialog = new ProgressDialog(getContext());
+        dialog.setMessage("展示文件夹");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        File[] files = dir.listFiles(new FilenameFilter() {
             @Override
-            public boolean accept(File dir, String name) {
-                return !name.startsWith(".");
+            public boolean accept(File file, String s) {
+                return !file.getName().startsWith(".");
             }
         });
         if (files == null || files.length == 0) {
+            dialog.dismiss();
+            ToastUtils.showShort("folder is empty");
             Log.w(TAG, dirPath + " is not exist or not a directory!");
             return;
         }
@@ -192,11 +295,23 @@ public class ImageListView extends FrameLayout {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
 
         final List<Image> images = new ArrayList<>();
-        for (String name : files) {
-
-            Image image = new Image(0, name, dirPath + "/" + name, false);
+        for (File file : files) {
+            Image image = new Image(0, file.getName(), dirPath + "/" + file.getName(), false);
+            image.isDir = file.isDirectory();
             images.add(image);
         }
+        Collections.sort(images, new Comparator<Image>() {
+            @Override
+            public int compare(Image image, Image t1) {
+                if(image.isDir && !t1.isDir){
+                    return -1;
+                }
+                if(!image.isDir && t1.isDir){
+                    return 1;
+                }
+                return image.name.compareTo(t1.name);
+            }
+        });
 
         final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, images);
         adapter = imgItemAdapter;
@@ -210,14 +325,23 @@ public class ImageListView extends FrameLayout {
         imgItemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                final List<String> paths = new ArrayList<>();
-                List<Image> images2 = imgItemAdapter.getData();
-                for (Image image : images2) {
-                    paths.add(image.path);
+                if(images.get(position).isDir){
+                    ImageListView listView = new ImageListView(getContext());
+                    listView.showImagesInDir(images.get(position).path);
+                    ImageMediaCenterUtil.showViewAsDialog(listView);
+
+                }else {
+                    final List<String> paths = new ArrayList<>();
+                    List<Image> images2 = imgItemAdapter.getData();
+                    for (Image image : images2) {
+                        paths.add(image.path);
+                    }
+                    ImageMediaCenterUtil.showBigImag(getContext(), paths, position);
                 }
-                ImageMediaCenterUtil.showBigImag(getContext(), paths, position);
+
             }
         });
+        dialog.dismiss();
 
         new Thread(new Runnable() {
             @Override
@@ -332,7 +456,7 @@ public class ImageListView extends FrameLayout {
     }
 
 
-    private void downloadAndSave(final String title, List<String> urls, String downloadDir, boolean hideDir) {
+    private void downloadAndSave(final String title, List<String> urls, String downloadDir, boolean hideDir, ImgDownloader.IFileNamePrefix fileNamePrefix) {
         if (TextUtils.isEmpty(downloadDir)) {
             return;
         }
@@ -342,12 +466,12 @@ public class ImageListView extends FrameLayout {
             boolean succes = dir.mkdirs();
             if (!succes) {
                 Log.w("Imagelistview", "mkdir failed:" + downloadDir);
-                return;
+                //return;
             }
         } else {
             if (!dir.isDirectory()) {
                 Log.w("Imagelistview", "not a directory:" + downloadDir);
-                return;
+               // return;
             }
         }
 
@@ -367,7 +491,8 @@ public class ImageListView extends FrameLayout {
             }
         }
 
-        for (final String url : urls) {
+        new ImgDownloader().download(getContext(),urls,dir,hideDir,title,fileNamePrefix);
+       /* for (final String url : urls) {
             ImageLoader.getActualLoader().download(url, new FileGetter() {
                 @Override
                 public void onSuccess(File file, int width, int height) {
@@ -382,7 +507,7 @@ public class ImageListView extends FrameLayout {
 
                 }
             });
-        }
+        }*/
 
     }
 

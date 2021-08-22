@@ -4,7 +4,10 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
+import com.hss01248.webviewspider.spider.ListToDetailImgsInfo;
+
 import java.util.List;
+import java.util.Map;
 
 public interface IShowUrls {
 
@@ -20,4 +23,8 @@ public interface IShowUrls {
      * @param hideDir
      */
     void showUrls(Context context,String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir);
+
+    void showUrls(Context context, String pageTitle, Map<String,List<String>> titlesToImags, final List<String> urls, @Nullable String downloadDir, boolean hideDir);
+
+    void showFolder(Context context,String absolutePath);
 }

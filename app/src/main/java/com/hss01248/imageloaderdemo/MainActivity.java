@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.PermissionUtils;
 
@@ -26,10 +27,14 @@ import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.elvishew.xlog.XLog;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
@@ -39,6 +44,7 @@ import org.devio.takephoto.wrap.TakePhotoUtil;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -97,7 +103,14 @@ public class MainActivity extends AppCompatActivity {
         //sharedPreferences.getString("shss","ddddd");
         Debug.stopMethodTracing();*/
 
-
+        XXPermissions.with(this)
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        Toast.makeText(MainActivity.this, all+"-These permissions are : "+ Arrays.toString(permissions.toArray()), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     @Override
@@ -446,15 +459,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goWebSpider(View view) {
-        SpiderWebviewActivity.setShowUrls(new IShowUrls() {
+        List<String> menus = SpiderWebviewActivity.getSpiders();
+
+        PopList.showPop(this, -1, view, menus, new PopList.OnItemClickListener() {
             @Override
-            public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
-                ImageListView listView = new ImageListView(context);
-                    listView.showUrls(pageTitle,urls, getExternalFilesDir(pageTitle).getAbsolutePath(),false);
-                   ImageMediaCenterUtil.showViewAsDialog(listView);
+            public void onClick(int position, String str) {
+                SpiderWebviewActivity.start(MainActivity.this,str);
             }
         });
-        SpiderWebviewActivity.start(this,"https://www.pexels.com/search/landscape/");
+
+
     }
 
     /*Intent intent = new Intent(this,BigImageActy.class);

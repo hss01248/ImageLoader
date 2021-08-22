@@ -52,6 +52,25 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
         params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.COUNT;
         imageView.setLayoutParams(params);
+
+        if(item.isDir){
+            helper.setText(R.id.tv_info, "文件夹:"+item.path.substring(item.path.lastIndexOf("/")+1));
+            imageView.setImageResource(R.drawable.icon_folder_imgs);
+           /* ImageLoader.with(helper.itemView.getContext())
+                    .res(R.drawable.ic_empty_page_2)
+                    //.loading(R.drawable.iv_loading_trans)
+                    .defaultPlaceHolder(true)
+                    .scale(ScaleMode.CENTER_CROP)
+                    .error(R.drawable.im_item_list_opt_error)
+                    .into(helper.getView(R.id.item_iv));*/
+            return;
+
+        }
+
+
+
+
+
         ImageLoader.with(helper.itemView.getContext())
                 .load(item.path)
                 //.loading(R.drawable.iv_loading_trans)
@@ -61,7 +80,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
                 .into(helper.getView(R.id.item_iv));
         if (item.width != 0) {
             String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize);
-            if(item.oritation ==0){
+           /* if(item.oritation ==0){
                 try {
                     ExifInterface exifInterface = new ExifInterface(item.path);
                     int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
@@ -79,7 +98,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
                     e.printStackTrace();
                 }
 
-            }
+            }*/
             helper.setText(R.id.tv_info, text);
         } else {
             int[] wh = MyUtil.getImageWidthHeight(item.path);
@@ -90,7 +109,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
             String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize)
                     +"\n"+item.path.substring(item.path.lastIndexOf("/")+1);
             helper.setText(R.id.tv_info, text);
-            try {
+           /* try {
                 ExifInterface exifInterface = new ExifInterface(item.path);
                 int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
                 if(attr == ExifInterface.ORIENTATION_ROTATE_90){
@@ -106,12 +125,13 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
                  helper.setText(R.id.tv_info, text);
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
 
 
 
             helper.setText(R.id.tv_info, item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize));
         }
+
 
 
 
