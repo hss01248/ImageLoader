@@ -20,7 +20,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
@@ -269,7 +271,7 @@ public class ImageMediaCenterUtil {
         Dialog dialog = new Dialog(view.getContext());
         dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
-        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, view.getResources().getDisplayMetrics().heightPixels);//宽高最大
+        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, ScreenUtils.getAppScreenHeight()- BarUtils.getStatusBarHeight());//宽高最大
         dialog.show();
         ImageView ivClose = view.findViewById(R.id.iv_back);
         if(ivClose != null){
