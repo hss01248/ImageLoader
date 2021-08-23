@@ -32,6 +32,17 @@
         <activity android:name=".ConfigAllActy" />
         <activity android:name=".ScaleTypeActy" />
         <activity android:name=".FrescoFaceCropActivity" />
+
+        <!--<provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="remove">
+            <meta-data
+                android:name="com.glance.guolindev.initializer.GlanceInitializer"
+                tools:node="remove"
+                android:value="androidx.startup" />
+        </provider>-->
     </application>
 
 

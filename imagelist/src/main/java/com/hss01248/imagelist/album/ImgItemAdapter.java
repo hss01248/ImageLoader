@@ -51,6 +51,7 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
         params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.COUNT;
         imageView.setLayoutParams(params);
+        helper.setText(R.id.tv_info, "");
         ImageLoader.with(helper.itemView.getContext())
                 .load(item)
                 .loadingDefault()

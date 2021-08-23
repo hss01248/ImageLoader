@@ -474,14 +474,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void copyDB(View view) {
-       File db =  getDatabasePath("imgdownload.db");
-       File file2 = new File(Environment.getExternalStorageDirectory(),"/.yuv/databases/imgdownload_copy.db");
+       /*File db =  getDatabasePath("imgdownload.db");
+       File file2 = new File(Environment.getExternalStorageDirectory(),"/.yuv/databases/imgdownload.db");
         FileUtils.copy(db,file2);
+        File db2 =  getDatabasePath("imgdownload.db-journal");
+        File file3 = new File(Environment.getExternalStorageDirectory(),"/.yuv/databases/imgdownload.db-journal");
+        FileUtils.copy(db2,file3);
+
+
+
         if(file2.exists() && file2.length() > 10){
             ToastUtils.showShort("copy db success!!");
         }else {
             ToastUtils.showShort("copy db fail!!");
-        }
+        }*/
     }
 
     /*Intent intent = new Intent(this,BigImageActy.class);

@@ -66,7 +66,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
             return;
 
         }
-
+        helper.setText(R.id.tv_info, "");
 
 
 

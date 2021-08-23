@@ -13,6 +13,7 @@ import androidx.multidex.MultiDexApplication;
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
+import com.glance.guolindev.Glance;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
@@ -25,6 +26,7 @@ import com.hss01248.image.interfaces.LoadInterceptor;
 
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.imagelist.download.MyDBContext;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
@@ -50,6 +52,7 @@ public class BaseApp extends MultiDexApplication {
         ImageLoader.init(getApplicationContext(), 500, new Glide4Loader());
         GlobalConfig.debug = true;
         XXPermissions.setScopedStorage(true);
+        //Glance.INSTANCE.initialize(new MyDBContext(this));
 
         NotifyUtil.init(this);
         SpiderWebviewActivity.setShowUrls(new IShowUrls() {

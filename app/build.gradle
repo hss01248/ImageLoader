@@ -80,6 +80,7 @@ dependencies {
     implementation project(path: ':webviewspider')
     //implementation project(path: ':spiders')
     implementation 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
+    debugImplementation 'com.glance.guolindev:glance:1.0.0'
     configurations.all {
         resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.12.0'
         resolutionStrategy.force 'com.squareup.okio:okio:1.15.0'
