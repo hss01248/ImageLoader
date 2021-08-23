@@ -48,6 +48,14 @@
             android:layout_height="wrap_content" />
 
         <Button
+            android:onClick="copyDB"
+            android:layout_margin="10dp"
+            android:text="拷贝数据库到sd卡"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:id="@+id/btn_dir"
             android:text="浏览特定文件夹"
             android:textAllCaps="false"

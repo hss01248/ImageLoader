@@ -21,8 +21,10 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
@@ -469,6 +471,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void copyDB(View view) {
+       File db =  getDatabasePath("imgdownload.db");
+       File file2 = new File(Environment.getExternalStorageDirectory(),"/.yuv/databases/imgdownload_copy.db");
+        FileUtils.copy(db,file2);
+        if(file2.exists() && file2.length() > 10){
+            ToastUtils.showShort("copy db success!!");
+        }else {
+            ToastUtils.showShort("copy db fail!!");
+        }
     }
 
     /*Intent intent = new Intent(this,BigImageActy.class);
