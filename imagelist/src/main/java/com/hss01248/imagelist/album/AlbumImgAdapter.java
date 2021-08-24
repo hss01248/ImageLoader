@@ -52,9 +52,10 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
         params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.COUNT;
         imageView.setLayoutParams(params);
+        String name = item.path.substring(item.path.lastIndexOf("/")+1);
 
         if(item.isDir){
-            helper.setText(R.id.tv_info, "文件夹:"+item.path.substring(item.path.lastIndexOf("/")+1));
+            helper.setText(R.id.tv_info, "文件夹:"+name);
             imageView.setImageResource(R.drawable.icon_folder_imgs);
            /* ImageLoader.with(helper.itemView.getContext())
                     .res(R.drawable.ic_empty_page_2)
@@ -66,7 +67,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
             return;
 
         }
-        helper.setText(R.id.tv_info, "");
+        helper.setText(R.id.tv_info, name);
 
 
 
@@ -99,7 +100,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
                 }
 
             }*/
-            helper.setText(R.id.tv_info, text);
+            helper.setText(R.id.tv_info, text+"\n"+name);
         } else {
             int[] wh = MyUtil.getImageWidthHeight(item.path);
             item.width = wh[0];
@@ -108,7 +109,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
 
             String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize)
                     +"\n"+item.path.substring(item.path.lastIndexOf("/")+1);
-            helper.setText(R.id.tv_info, text);
+            helper.setText(R.id.tv_info, text+"\n"+name);
            /* try {
                 ExifInterface exifInterface = new ExifInterface(item.path);
                 int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);

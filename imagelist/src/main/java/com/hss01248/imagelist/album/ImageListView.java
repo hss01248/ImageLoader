@@ -275,18 +275,13 @@ public class ImageListView extends FrameLayout {
             Log.w(TAG, dirPath + " is not exist or not a directory!");
             return;
         }
-        ProgressDialog dialog = new ProgressDialog(getContext());
+        /*ProgressDialog dialog = new ProgressDialog(getContext());
         dialog.setMessage("展示文件夹");
         dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-        File[] files = dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                return !file.getName().startsWith(".");
-            }
-        });
+        dialog.show();*/
+        File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
-            dialog.dismiss();
+            //dialog.dismiss();
             ToastUtils.showShort("folder is empty");
             Log.w(TAG, dirPath + " is not exist or not a directory!");
             return;
@@ -321,6 +316,7 @@ public class ImageListView extends FrameLayout {
         fastScroller.setRecyclerView(recyclerView);
         fastScroller.setVisibility(VISIBLE);
         titleBar.setVisibility(VISIBLE);
+        title.setText(dirPath);
 
         imgItemAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -341,7 +337,7 @@ public class ImageListView extends FrameLayout {
 
             }
         });
-        dialog.dismiss();
+       // dialog.dismiss();
 
         new Thread(new Runnable() {
             @Override

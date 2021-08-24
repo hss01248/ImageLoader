@@ -61,12 +61,13 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
                 .setImageListener(new ImageListener() {
                     @Override
                     public void onSuccess(@NonNull Drawable drawable, @Nullable Bitmap bitmap, int bWidth, int bHeight) {
-                        ImageLoader.getActualLoader().getFileFromDiskCache(item, new FileGetter() {
-                            @Override
-                            public void onSuccess(File file, int width, int height) {
-                                if (item.equals(helper.getView(R.id.item_iv).getTag(R.id.item_iv))) {
-                                    String text = width + "x" + height + "," + MyUtil.formatFileSize(file.length());//+item.substring(item.lastIndexOf("/")+1)+"\n"
-                                    helper.setText(R.id.tv_info, text);
+                        if (item.equals(helper.getView(R.id.item_iv).getTag(R.id.item_iv))) {
+                            ImageLoader.getActualLoader().getFileFromDiskCache(item, new FileGetter() {
+                                @Override
+                                public void onSuccess(File file, int width, int height) {
+                                    if (item.equals(helper.getView(R.id.item_iv).getTag(R.id.item_iv))) {
+                                        String text = width + "x" + height + "," + MyUtil.formatFileSize(file.length());//+item.substring(item.lastIndexOf("/")+1)+"\n"
+                                        helper.setText(R.id.tv_info, text);
                                    /* try {
                                         ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
                                       int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
@@ -81,15 +82,17 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }*/
+                                    }
+
                                 }
 
-                            }
+                                @Override
+                                public void onFail(Throwable e) {
 
-                            @Override
-                            public void onFail(Throwable e) {
+                                }
+                            });
+                        }
 
-                            }
-                        });
                     }
 
                     @Override

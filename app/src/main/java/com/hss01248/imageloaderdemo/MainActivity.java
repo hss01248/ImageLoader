@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_dir: {
                 ImageListView view1 = new ImageListView(this);
                 ImageMediaCenterUtil.showViewAsDialog(view1);
-                view1.showImagesInDir(new File(Environment.getExternalStorageDirectory(), "36021").getAbsolutePath());
+                view1.showImagesInDir(Environment.getExternalStorageDirectory().getAbsolutePath());
             }
 
             break;

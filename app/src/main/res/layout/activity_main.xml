@@ -57,7 +57,7 @@
 
         <Button
             android:id="@+id/btn_dir"
-            android:text="浏览特定文件夹"
+            android:text="文件浏览器"
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
