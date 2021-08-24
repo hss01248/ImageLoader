@@ -101,7 +101,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
         List<String> menus = new ArrayList<>();
         menus.add("显示html源码");
         menus.add("展示当前页面所有图片");
-        menus.add("当前list,爬取list内所有页面的图片");
+        menus.add("当前为分页list,爬取list内所有页面的图片并直接下载");
         menus.add("显示图片文件夹");
         PopList.showPop(this, -1, button, menus, new PopList.OnItemClickListener() {
             @Override
@@ -132,53 +132,48 @@ public class SpiderWebviewActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
         //dialog.setCancelable(false);
         dialog.show();
-        new Thread(new Runnable() {
+        quickWebview.getSource(new ValueCallback<String>() {
             @Override
-            public void run() {
-                quickWebview.getSource(new ValueCallback<String>() {
+            public void onReceiveValue(String value) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onReceiveValue(String value) {
-                        runOnUiThread(new Runnable() {
+                    public void run() {
+                        parser.parseListAndDetail(SpiderWebviewActivity.this,quickWebview.getInfo(), new ValueCallback<ListToDetailImgsInfo>() {
                             @Override
-                            public void run() {
-                                parser.parseListAndDetail(SpiderWebviewActivity.this,quickWebview.getInfo(), new ValueCallback<ListToDetailImgsInfo>() {
+                            public void onReceiveValue(ListToDetailImgsInfo info) {
+                                runOnUiThread(new Runnable() {
                                     @Override
-                                    public void onReceiveValue(ListToDetailImgsInfo info) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                dialog.dismiss();
-                                                if (info.imagUrls.isEmpty()) {
-                                                    quickWebview.loadSource(new ValueCallback<String>() {
-                                                        @Override
-                                                        public void onReceiveValue(String value) {
+                                    public void run() {
+                                        dialog.dismiss();
+                                        if (info.imagUrls.isEmpty()) {
+                                            quickWebview.loadSource(new ValueCallback<String>() {
+                                                @Override
+                                                public void onReceiveValue(String value) {
 
-                                                        }
-                                                    });
-                                                } else {
-                                                    if (iShowUrls != null) {
-                                                        info.saveDirPath = getSaveDir(parser.folderName(),parser.subfolderName(quickWebview.getCurrentTitle(),quickWebview.getCurrentUrl()));
-                                                       Log.v("caol","parseListUrlsAndShow path:"+info.saveDirPath);
-                                                        info.hiddenFolder = parser.hiddenFolder();
-                                                        iShowUrls.showUrls(SpiderWebviewActivity.this,info.listTitle,info.titlesToImags,info.imagUrls,info.saveDirPath,info.hiddenFolder);
-                                                    }
                                                 }
+                                            });
+                                        } else {
+                                            if (iShowUrls != null) {
+                                                info.saveDirPath = getSaveDir(parser.folderName(),parser.subfolderName(quickWebview.getCurrentTitle(),quickWebview.getCurrentUrl()));
+                                                Log.v("caol","parseListUrlsAndShow path:"+info.saveDirPath);
+                                                info.hiddenFolder = parser.hiddenFolder();
+                                                iShowUrls.showUrls(SpiderWebviewActivity.this,info.listTitle,info.titlesToImags,info.imagUrls,info.saveDirPath,info.hiddenFolder,true);
                                             }
-                                        });
-                                    }
-                                }, new ValueCallback<String>() {
-                                    @Override
-                                    public void onReceiveValue(String value) {
-                                        dialog.setMessage(value);
+                                        }
                                     }
                                 });
                             }
+                        }, new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {
+                                dialog.setMessage(value);
+                            }
                         });
-
                     }
                 });
+
             }
-        }).start();
+        });
 
 
     }
@@ -242,7 +237,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
                         Log.v("caol","parseUrlsAndShow path:"+path);
                         iShowUrls.showUrls(SpiderWebviewActivity.this,
                                 parser.resetDetailTitle(quickWebview.getCurrentTitle()),list,path
-                               ,parser.hiddenFolder());
+                               ,parser.hiddenFolder(),false);
                     }
 
                 }

@@ -159,7 +159,7 @@ public class ImageListView extends FrameLayout {
      * @param downloadDir 图片转存一份到某个文件夹,可以为空.为空代表不转存
      * @param hideDir     是否要隐藏文件夹
      */
-    public void showUrls(String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+    public void showUrls(String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
         //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),COUNT));
         ImgItemAdapter adapter = new ImgItemAdapter(R.layout.imglist_item_iv, urls);
@@ -193,6 +193,9 @@ public class ImageListView extends FrameLayout {
                 });
             }
         });
+        if(downloadImmediately){
+            downloadAndSave(pageTitle, urls, downloadDir, hideDir,null);
+        }
 
 
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
@@ -203,7 +206,7 @@ public class ImageListView extends FrameLayout {
         });
     }
 
-    public void showUrlsFromMap(String pageTitle, Map<String,List<String>> titlesToImags, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+    public void showUrlsFromMap(String pageTitle, Map<String,List<String>> titlesToImags, List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
         if(urls == null || urls.isEmpty()){
             urls = new ArrayList<>();
         }else {
@@ -257,6 +260,15 @@ public class ImageListView extends FrameLayout {
                 });
             }
         });
+
+        if(downloadImmediately){
+            downloadAndSave(pageTitle, finalUrls1, downloadDir, hideDir, new ImgDownloader.IFileNamePrefix() {
+                @Override
+                public String getFileNamePreffix(String url) {
+                    return urlTitleMap.get(url);
+                }
+            });
+        }
 
 
         List<String> finalUrls = urls;

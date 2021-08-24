@@ -22,9 +22,9 @@ public interface IShowUrls {
      * @param downloadDir
      * @param hideDir
      */
-    void showUrls(Context context,String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir);
+    void showUrls(Context context,String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately);
 
-    void showUrls(Context context, String pageTitle, Map<String,List<String>> titlesToImags, final List<String> urls, @Nullable String downloadDir, boolean hideDir);
+    void showUrls(Context context, String pageTitle, Map<String,List<String>> titlesToImags, final List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately);
 
     void showFolder(Context context,String absolutePath);
 }

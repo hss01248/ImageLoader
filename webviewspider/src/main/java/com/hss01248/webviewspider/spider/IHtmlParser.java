@@ -33,7 +33,7 @@ public interface IHtmlParser {
 
 
     default void parseListAndDetail(Context context, WebPageInfo listWebPageInfo, ValueCallback<ListToDetailImgsInfo> infoCallback, ValueCallback<String> progressCallback){
-
+        infoCallback.onReceiveValue(new ListToDetailImgsInfo());
     }
 
 

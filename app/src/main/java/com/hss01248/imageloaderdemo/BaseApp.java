@@ -57,16 +57,16 @@ public class BaseApp extends MultiDexApplication {
         NotifyUtil.init(this);
         SpiderWebviewActivity.setShowUrls(new IShowUrls() {
             @Override
-            public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+            public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
                 ImageListView listView = new ImageListView(context);
-                listView.showUrls(pageTitle,urls, downloadDir,false);
+                listView.showUrls(pageTitle,urls, downloadDir,false,downloadImmediately);
                 ImageMediaCenterUtil.showViewAsDialog(listView);
             }
 
             @Override
-            public void showUrls(Context context, String pageTitle, Map<String, List<String>> titlesToImags, List<String> urls, @Nullable String downloadDir, boolean hideDir) {
+            public void showUrls(Context context, String pageTitle, Map<String, List<String>> titlesToImags, List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
                 ImageListView listView = new ImageListView(context);
-                listView.showUrlsFromMap(pageTitle,titlesToImags,urls, downloadDir,false);
+                listView.showUrlsFromMap(pageTitle,titlesToImags,urls, downloadDir,false,downloadImmediately);
                 ImageMediaCenterUtil.showViewAsDialog(listView);
             }
 
