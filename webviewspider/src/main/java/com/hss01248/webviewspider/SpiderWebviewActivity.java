@@ -132,7 +132,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(false);
         //dialog.setCancelable(false);
         dialog.show();
-        quickWebview.getSource(new ValueCallback<String>() {
+        quickWebview.loadSource(new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
                 runOnUiThread(new Runnable() {
