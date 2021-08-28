@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -11,17 +13,21 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.ValueCallback;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
 import com.hss01248.webviewspider.spider.IHtmlParser;
 import com.hss01248.webviewspider.spider.ListToDetailImgsInfo;
 import com.hss01248.webviewspider.spider.PexelImageParser;
+import com.lzf.easyfloat.EasyFloat;
+import com.lzf.easyfloat.enums.ShowPattern;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -120,31 +126,43 @@ public class SpiderWebviewActivity extends AppCompatActivity {
 
             }
         });
-
     }
+
+    boolean isParsingList;
 
     private void parseListUrlsAndShow() {
         if(quickWebview == null){
             return;
         }
         String url = quickWebview.getCurrentUrl();
-        ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setCanceledOnTouchOutside(false);
-        //dialog.setCancelable(false);
-        dialog.show();
+        TextView textView = new TextView(this);
+        textView.setTextColor(Color.WHITE);
+        textView.setPadding(20,20,20,20);
+        textView.setBackground(new ColorDrawable(Color.parseColor("#66333333")));
+        textView.setText("爬取urllist start");
+        EasyFloat.with(this)
+                .setTag(url)
+                .setLayout(textView)
+                // .setGravity(Gravity.BOTTOM)
+                .setDragEnable(true)
+                .setShowPattern(ShowPattern.FOREGROUND)
+                .show();
+
         quickWebview.loadSource(new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        isParsingList = true;
                         parser.parseListAndDetail(SpiderWebviewActivity.this,quickWebview.getInfo(), new ValueCallback<ListToDetailImgsInfo>() {
                             @Override
                             public void onReceiveValue(ListToDetailImgsInfo info) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        dialog.dismiss();
+                                        isParsingList = false;
+                                        EasyFloat.dismiss(url);
                                         if (info.imagUrls.isEmpty()) {
                                             quickWebview.loadSource(new ValueCallback<String>() {
                                                 @Override
@@ -166,7 +184,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
                         }, new ValueCallback<String>() {
                             @Override
                             public void onReceiveValue(String value) {
-                                dialog.setMessage(value);
+                                textView.setText("爬取urllist: "+value);
                             }
                         });
                     }
@@ -174,9 +192,8 @@ public class SpiderWebviewActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
+
 
     private String getSaveDir(String folderName, String subFolderName) {
 
@@ -264,6 +281,10 @@ public class SpiderWebviewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if(isParsingList){
+            ToastUtils.showShort("正在爬取list,不可退出当前页面");
+            return;
+        }
         if(quickWebview == null || !quickWebview.onBackPressed()){
             super.onBackPressed();
         }

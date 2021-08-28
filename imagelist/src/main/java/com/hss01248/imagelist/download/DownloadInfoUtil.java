@@ -3,6 +3,7 @@ package com.hss01248.imagelist.download;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.blankj.utilcode.util.Utils;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.imagelist.download.db.DaoMaster;
@@ -37,6 +38,9 @@ public class DownloadInfoUtil {
         if (daoSession == null) {
             synchronized (DownloadInfoUtil.class) {
                 if (daoSession == null) {
+                    if(context ==  null){
+                        context = Utils.getApp();
+                    }
                     init(context);
                 }
             }
