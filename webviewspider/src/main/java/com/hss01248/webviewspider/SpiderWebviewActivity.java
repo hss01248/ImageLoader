@@ -162,7 +162,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         isParsingList = false;
-                                        EasyFloat.dismiss(url);
+                                        EasyFloat.dismiss(info.listUrl);
                                         if (info.imagUrls.isEmpty()) {
                                             quickWebview.loadSource(new ValueCallback<String>() {
                                                 @Override
