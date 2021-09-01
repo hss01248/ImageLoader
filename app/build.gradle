@@ -54,7 +54,7 @@ dependencies {
     compile 'com.elvishew:xlog:1.4.0'
     compile 'com.github.hss01248:SuperAdapter:2.0.2'
 
-    implementation 'com.blankj:utilcodex:1.30.6'
+    implementation 'com.blankj:utilcodex:1.30.0'
     compile('com.github.hss01248:Toasty:2.0.4') {
         exclude group: 'com.android.support'
     }

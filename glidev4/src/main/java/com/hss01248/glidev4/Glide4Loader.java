@@ -72,6 +72,9 @@ import com.hss01248.glidebase.drawable.AutoRotateDrawable;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
 import com.hss01248.image.utils.ThreadPoolFactory;
+import com.hss01248.imagedebugger.IImageSource;
+import com.hss01248.imagedebugger.IImgLocalPathGetter;
+import com.hss01248.imagedebugger.ImageViewDebugger;
 
 import java.io.File;
 import java.io.IOException;
@@ -462,7 +465,41 @@ public class Glide4Loader extends ILoader {
     @Override
     public void debug(final SingleConfig config) {
         if (config.getTarget() instanceof ImageView) {
-            ImageView imageView = (ImageView) config.getTarget();
+            final ImageView imageView = (ImageView) config.getTarget();
+            ImageViewDebugger.enableDebug(imageView, new IImageSource() {
+                @Override
+                public String getUri() {
+                    Object o = imageView.getTag(R.drawable.im_item_list_opt);
+                    SingleConfig singleConfig = (SingleConfig) o;
+                    return singleConfig.getSourceString();
+                }
+
+                @Override
+                public String getErrorDes() {
+                    Object o = imageView.getTag(R.drawable.im_item_list_opt);
+                    SingleConfig singleConfig = (SingleConfig) o;
+                    return singleConfig.getErrorDes();
+                }
+
+                @Override
+                public void getLocalFilePath(final IImgLocalPathGetter getter) {
+                    getFileFromDiskCache(getUri(), new FileGetter() {
+                        @Override
+                        public void onSuccess(File file, int width, int height) {
+                            getter.onGet(file);
+                        }
+
+                        @Override
+                        public void onFail(Throwable e) {
+                            getter.onError(e);
+
+                        }
+                    });
+
+                }
+            });
+/*
+
             imageView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -479,10 +516,16 @@ public class Glide4Loader extends ILoader {
                     }
 
                     SingleConfig singleConfig = (SingleConfig) o;
+
+
+
+
+
+
                     showPop((ImageView) v, singleConfig);
                     return false;
                 }
-            });
+            });*/
 
         }
     }

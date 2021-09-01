@@ -1,4 +1,4 @@
-
+include ':imageDebugger'
 include ':webviewspider'
 include ':bigimgdemo'
 include ':bigimageviewpager'//include ':bigimage'
