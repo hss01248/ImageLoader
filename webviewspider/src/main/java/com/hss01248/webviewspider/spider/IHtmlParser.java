@@ -36,6 +36,10 @@ public interface IHtmlParser {
         infoCallback.onReceiveValue(new ListToDetailImgsInfo());
     }
 
+    default void parList(Context context, WebPageInfo listWebPageInfo, ValueCallback<ListToDetailImgsInfo> infoCallback){
+        infoCallback.onReceiveValue(new ListToDetailImgsInfo());
+    }
+
 
     boolean interceptImage(String url);
 }

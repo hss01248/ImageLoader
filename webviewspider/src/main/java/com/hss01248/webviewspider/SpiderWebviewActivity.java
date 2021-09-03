@@ -24,6 +24,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
 import com.hss01248.webviewspider.spider.IHtmlParser;
+import com.hss01248.webviewspider.spider.ListParser;
 import com.hss01248.webviewspider.spider.ListToDetailImgsInfo;
 import com.hss01248.webviewspider.spider.PexelImageParser;
 import com.lzf.easyfloat.EasyFloat;
@@ -155,7 +156,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         isParsingList = true;
-                        parser.parseListAndDetail(SpiderWebviewActivity.this,quickWebview.getInfo(), new ValueCallback<ListToDetailImgsInfo>() {
+                        ListParser.parseListAndDetail(SpiderWebviewActivity.this,quickWebview.getInfo(), parser,new ValueCallback<ListToDetailImgsInfo>() {
                             @Override
                             public void onReceiveValue(ListToDetailImgsInfo info) {
                                 runOnUiThread(new Runnable() {
