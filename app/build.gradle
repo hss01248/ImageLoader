@@ -78,7 +78,7 @@ dependencies {
     implementation "com.simple:spiderman:1.1.3"
     implementation('com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9')
     implementation project(path: ':webviewspider')
-    //implementation project(path: ':spiders')
+    implementation project(path: ':spiders')
     implementation 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
     debugImplementation 'com.glance.guolindev:glance:1.0.0'
     configurations.all {

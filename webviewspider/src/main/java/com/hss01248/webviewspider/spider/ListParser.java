@@ -23,33 +23,39 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javax.xml.transform.sax.TemplatesHandler;
+
 public class ListParser {
 
    public static void parseListAndDetail(Context context, WebPageInfo listWebPageInfo,IHtmlParser htmlParser, ValueCallback<ListToDetailImgsInfo> callback, ValueCallback<String> progressCallback){
        ListToDetailImgsInfo listToDetailImgsInfo = new ListToDetailImgsInfo();
        listToDetailImgsInfo.listUrl = listWebPageInfo.url;
 
-       String url  = listWebPageInfo.url;
-       if(url.endsWith("/")){
-           url = url.substring(0,url.length()-1);
-       }
-       listToDetailImgsInfo.listTitle = url.substring(url.lastIndexOf("/")+1);
 
-       listToDetailImgsInfo.saveFolderName = listToDetailImgsInfo.listTitle;
 
        try {
 
-           htmlParser.parList(context,listWebPageInfo,callback);
+           htmlParser.parList(context,listWebPageInfo,listToDetailImgsInfo,callback);
 
            Iterator<String> iterator = listToDetailImgsInfo.detailUrls.iterator();
-           int i = -1;
+           Iterator<String> titleIterrator = listToDetailImgsInfo.detailTitles.iterator();
            while (iterator.hasNext()){
-               i++;
                String path = iterator.next();
+               try {
+                   titleIterrator.next();
+               }catch (Throwable e){
+                   e.printStackTrace();
+               }
+
                DownloadInfo load = DownloadInfoUtil.getDao().load(path);
                if(load != null){
                    iterator.remove();
-                   listToDetailImgsInfo.detailTitles.remove(i);
+                   try {
+                       titleIterrator.remove();
+                   }catch (Throwable throwable){
+                       throwable.printStackTrace();
+                   }
+
                }
            }
            final int[] count = {listToDetailImgsInfo.detailUrls.size()};

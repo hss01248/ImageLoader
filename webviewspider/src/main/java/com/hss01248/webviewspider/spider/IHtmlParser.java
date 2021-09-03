@@ -32,11 +32,12 @@ public interface IHtmlParser {
 
 
 
+    @Deprecated
     default void parseListAndDetail(Context context, WebPageInfo listWebPageInfo, ValueCallback<ListToDetailImgsInfo> infoCallback, ValueCallback<String> progressCallback){
         infoCallback.onReceiveValue(new ListToDetailImgsInfo());
     }
 
-    default void parList(Context context, WebPageInfo listWebPageInfo, ValueCallback<ListToDetailImgsInfo> infoCallback){
+    default void parList(Context context, WebPageInfo listWebPageInfo,ListToDetailImgsInfo listToDetailImgsInfo, ValueCallback<ListToDetailImgsInfo> infoCallback){
         infoCallback.onReceiveValue(new ListToDetailImgsInfo());
     }
 

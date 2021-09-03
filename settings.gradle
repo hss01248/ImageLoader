@@ -1,4 +1,4 @@
-
+include ':spiders'
 include ':webviewspider'
 include ':bigimgdemo'
 include ':bigimageviewpager'//include ':bigimage'
