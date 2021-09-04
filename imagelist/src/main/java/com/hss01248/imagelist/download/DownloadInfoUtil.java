@@ -9,10 +9,12 @@ import com.hjq.permissions.XXPermissions;
 import com.hss01248.imagelist.download.db.DaoMaster;
 import com.hss01248.imagelist.download.db.DaoSession;
 import com.hss01248.imagelist.download.db.DownloadInfoDao;
+import com.hss01248.imagelist.download.db.SubFolderCountDao;
 
 public class DownloadInfoUtil {
 
     static DownloadInfoDao dao;
+    static SubFolderCountDao folderCountDao;
     static Context context;
     public static DownloadInfoDao getDao(){
         if(dao == null){
@@ -21,12 +23,19 @@ public class DownloadInfoUtil {
         return dao;
     }
 
+    public static SubFolderCountDao getFolderCountDao(){
+        if(folderCountDao == null){
+            folderCountDao = getDaoSession().getSubFolderCountDao();
+        }
+        return folderCountDao;
+    }
+
     static void init(Context context) {
         Context context2 = context;
         if(  XXPermissions.isGranted(context,Permission.MANAGE_EXTERNAL_STORAGE)){
             context2 = new MyDBContext(context);
         }
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context2, "imgdownload.db");
+        DaoMaster.OpenHelper helper = new MySQLiteOpenHelper(context2, "imgdownload.db");
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();

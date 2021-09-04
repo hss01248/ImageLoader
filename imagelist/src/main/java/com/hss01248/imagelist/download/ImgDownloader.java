@@ -28,6 +28,7 @@ import com.lzf.easyfloat.utils.DisplayUtils;
 
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -51,31 +52,38 @@ public class ImgDownloader {
         String getFileNamePreffix(String url);
     }
     IFileNamePrefix namePrefix;
-    public void download(Context context, final List<String> urls, final File dir, boolean hideFolder, final String title,IFileNamePrefix fileNamePrefix){
+    public void download(Context context, final List<String> urls,  File dir, boolean hideFolder, final String title,IFileNamePrefix fileNamePrefix){
 
         DownloadInfoUtil.context = context.getApplicationContext();
         this.title = title;
         namePrefix = fileNamePrefix;
         ToastUtils.showShort("开始下载"+urls.size()+"张图片");
         handler = new Handler(Looper.getMainLooper());
+
+       //dir =  dealFolderCount(dir,hideFolder);
         if(!dir.exists()){
             dir.mkdirs();
         }
-        if(hideFolder){
-            File hidden = new File(dir,".nomedia");
-            if(!hidden.exists()){
+        if (hideFolder) {
+            File hidden = new File(dir, ".nomedia");
+            if (!hidden.exists()) {
                 try {
                     hidden.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        } else {
+            File hidden = new File(dir, ".nomedia");
+            if (hidden.exists()) {
+                hidden.delete();
+            }
         }
 
 
         final Map<String,Long> map =  new HashMap();
         showProgress(context,0,urls.size());
-
+        File finalDir = dir;
         for ( String url0 : urls) {
             final String url = LargeImageViewer.getBigImageUrl(url0);
             map.put(url,System.currentTimeMillis());
@@ -90,6 +98,7 @@ public class ImgDownloader {
             }
 
 
+
             ImageLoader.getActualLoader().download(url, new FileGetter() {
                 @Override
                 public void onSuccess(final File file, int width, int height) {
@@ -102,8 +111,8 @@ public class ImgDownloader {
                                 name = name.replaceAll(File.pathSeparator,"");
                             }
 
-                            File file2 = new File(dir, "tmp-"+name);
-                            File file3 = new File(dir, name);
+                            File file2 = new File(finalDir, "tmp-"+name);
+                            File file3 = new File(finalDir, name);
                             FileUtils.copy(file, file3, new FileUtils.OnReplaceListener() {
                                 @Override
                                 public boolean onReplace(File srcFile, File destFile) {
@@ -161,6 +170,55 @@ public class ImgDownloader {
                 }
             });
         }
+    }
+
+    public static File dealFolderCount(File dir, boolean hideFolder) {
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        SubFolderCount load = DownloadInfoUtil.getFolderCountDao().load(dir.getAbsolutePath());
+        if(load == null){
+            load = new SubFolderCount();
+            load.dirPath = dir.getAbsolutePath();
+            load.count = 1;
+           File subDir =  createSubDir(dir,1,hideFolder);
+           DownloadInfoUtil.getFolderCountDao().insert(load);
+           return subDir;
+        }
+
+      File  subDir = createSubDir(dir,load.count,hideFolder);
+        File[] list = subDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return !file.isDirectory();
+            }
+        });
+        if(list != null && list.length > 3000){
+            load.count = load.count +1;
+            File  subDir2 = createSubDir(dir,load.count,hideFolder);
+            DownloadInfoUtil.getFolderCountDao().update(load);
+            return subDir2;
+        }else {
+            return subDir;
+        }
+    }
+
+    private static File createSubDir(File dir, int count, boolean hideFolder) {
+        dir = new File(dir,dir.getName()+count);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        if(hideFolder){
+            File hidden = new File(dir,".nomedia");
+            if(!hidden.exists()){
+                try {
+                    hidden.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return dir;
     }
 
     private void onOneFinished(Context context, List<String> urls, IFileNamePrefix fileNamePrefix) {

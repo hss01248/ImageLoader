@@ -174,19 +174,21 @@ public class ImageListView extends FrameLayout {
         tvRIght.setVisibility(VISIBLE);
 
         tvRIght.setText("menu");
+        downloadDir = ImgDownloader.dealFolderCount(new File(downloadDir),hideDir).getAbsolutePath();
+        String finalDownloadDir = downloadDir;
         tvRIght.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 List<String> menu = new ArrayList<>();
                 menu.add("下载所有");
-                menu.add("查看本地文件夹");
+                menu.add("查看当前下载的文件夹");
                 PopList.showPop(getContext(), ViewGroup.LayoutParams.MATCH_PARENT, tvRIght, menu, new PopList.OnItemClickListener() {
                     @Override
                     public void onClick(int position, String str) {
                         if(position == 0){
-                            downloadAndSave(pageTitle, urls, downloadDir, hideDir,null);
+                            downloadAndSave(pageTitle, urls, finalDownloadDir, hideDir,null);
                         }else if(position == 1){
-                           showImagesInDir(downloadDir);
+                           showImagesInDir(finalDownloadDir);
                         }
 
                     }
@@ -235,6 +237,8 @@ public class ImageListView extends FrameLayout {
 
         tvRIght.setText("menu");
         List<String> finalUrls1 = urls;
+        downloadDir = ImgDownloader.dealFolderCount(new File(downloadDir),hideDir).getAbsolutePath();
+        String finalDownloadDir = downloadDir;
         tvRIght.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -245,7 +249,7 @@ public class ImageListView extends FrameLayout {
                     @Override
                     public void onClick(int position, String str) {
                         if(position == 0){
-                            downloadAndSave(pageTitle, finalUrls1, downloadDir, hideDir, new ImgDownloader.IFileNamePrefix() {
+                            downloadAndSave(pageTitle, finalUrls1, finalDownloadDir, hideDir, new ImgDownloader.IFileNamePrefix() {
                                 @Override
                                 public String getFileNamePreffix(String url) {
                                     return urlTitleMap.get(url);
@@ -253,7 +257,7 @@ public class ImageListView extends FrameLayout {
                             });
 
                         }else if(position == 1){
-                            showImagesInDir(downloadDir);
+                            showImagesInDir(finalDownloadDir);
                         }
 
                     }
@@ -465,41 +469,8 @@ public class ImageListView extends FrameLayout {
 
 
     private void downloadAndSave(final String title, List<String> urls, String downloadDir, boolean hideDir, ImgDownloader.IFileNamePrefix fileNamePrefix) {
-        if (TextUtils.isEmpty(downloadDir)) {
-            return;
-        }
-        final File dir = new File(downloadDir);
 
-        if (!dir.exists()) {
-            boolean succes = dir.mkdirs();
-            if (!succes) {
-                Log.w("Imagelistview", "mkdir failed:" + downloadDir);
-                //return;
-            }
-        } else {
-            if (!dir.isDirectory()) {
-                Log.w("Imagelistview", "not a directory:" + downloadDir);
-               // return;
-            }
-        }
-
-        if (hideDir) {
-            File hidden = new File(dir, ".nomedia");
-            if (!hidden.exists()) {
-                try {
-                    hidden.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            File hidden = new File(dir, ".nomedia");
-            if (hidden.exists()) {
-                hidden.delete();
-            }
-        }
-
-        new ImgDownloader().download(getContext(),urls,dir,hideDir,title,fileNamePrefix);
+        new ImgDownloader().download(getContext(),urls,new File(downloadDir),hideDir,title,fileNamePrefix);
        /* for (final String url : urls) {
             ImageLoader.getActualLoader().download(url, new FileGetter() {
                 @Override
