@@ -39,6 +39,7 @@ dependencies {
     api("com.github.bumptech.glide:glide:4.11.0") {
         exclude group: "com.android.support"
     }
+    implementation project(path: ':imageDebugger')
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     api group: 'com.github.bumptech.glide', name: 'okhttp3-integration', version: '4.11.0'
 

@@ -68,7 +68,7 @@ public class ImageListView extends FrameLayout {
     TextView title;
     TextView tvRIght;
 
-    public static int dividerSize = SizeUtils.dp2px(2);
+    public static int dividerSize = SizeUtils.dp2px(1);
     public static final int COUNT = 3;
 
 
@@ -369,7 +369,7 @@ public class ImageListView extends FrameLayout {
 
     private void setDivider(RecyclerView recyclerView) {
 
-        recyclerView.addItemDecoration(DividerDecoration.builder(getContext()).color(Color.WHITE).size(dividerSize).build());
+        recyclerView.addItemDecoration(DividerDecoration.builder(getContext()).color(Color.BLACK).size(dividerSize).build());
         //recyclerView.addItemDecoration(StaggeredDividerDecoration.builder(getContext()).color(Color.WHITE).size(10).build());
 
     }

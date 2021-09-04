@@ -38,7 +38,6 @@
             android:gravity="center_vertical"
             android:textStyle="bold"
             android:textColor="#fa6d00"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
 
