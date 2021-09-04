@@ -3,27 +3,18 @@ package com.hss01248.webviewspider.spider;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.ValueCallback;
 
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.imagelist.download.DownloadInfo;
 import com.hss01248.imagelist.download.DownloadInfoUtil;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
 import com.hss01248.webviewspider.basewebview.WebPageInfo;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
-import javax.xml.transform.sax.TemplatesHandler;
 
 public class ListParser {
 
@@ -90,7 +81,7 @@ public class ListParser {
                         @Override
                         public void onReceiveValue(WebPageInfo info) {
                             count[0]--;
-                            List<String> strings = htmlParser.parseTargetImagesInHtml(info.htmlSource);
+                            List<String> strings = htmlParser.parseDetailPage(info.htmlSource);
                             Log.v("caol",titles.get(idx)+"-imagesize "+strings.size()+",position:"+ idx +",dao:"+count[0]);
                             listToDetailImgsInfo.titlesToImags.put(titles.get(idx),strings);
                             urls.addAll(strings);

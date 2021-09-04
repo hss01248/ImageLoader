@@ -18,7 +18,7 @@ public interface IHtmlParser {
     String entranceUrl();
 
 
-    List<String> parseTargetImagesInHtml(String html);
+    List<String> parseDetailPage(String html);
 
     String folderName();
 

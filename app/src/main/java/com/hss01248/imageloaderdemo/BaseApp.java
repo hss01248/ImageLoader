@@ -29,6 +29,7 @@ import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.imagelist.download.MyDBContext;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.spiders.XiaoCaoWebSite;
+import com.hss01248.spiders.XxHubWebSite;
 import com.hss01248.spiders.XxPicsWebSite;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
@@ -57,6 +58,7 @@ public class BaseApp extends MultiDexApplication {
         //Glance.INSTANCE.initialize(new MyDBContext(this));
 
         NotifyUtil.init(this);
+        SpiderWebviewActivity.addParser(new XxHubWebSite());
         SpiderWebviewActivity.addParser(new XxPicsWebSite());
         SpiderWebviewActivity.addParser(new XiaoCaoWebSite());
         SpiderWebviewActivity.setShowUrls(new IShowUrls() {

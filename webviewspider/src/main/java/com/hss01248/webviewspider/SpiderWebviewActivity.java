@@ -1,7 +1,6 @@
 package com.hss01248.webviewspider;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
@@ -248,7 +246,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
         quickWebview.getSource(new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
-                List<String> list = parser.parseTargetImagesInHtml(value);
+                List<String> list = parser.parseDetailPage(value);
                 if(list != null && !list.isEmpty()){
                     if(iShowUrls != null){
                         String path =  getSaveDir(parser.folderName(), parser.subfolderName(quickWebview.getCurrentTitle(),quickWebview.getCurrentUrl()));

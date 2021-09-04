@@ -20,7 +20,7 @@ public class PexelImageParser implements IHtmlParser{
     }
 
     @Override
-    public List<String> parseTargetImagesInHtml(String html) {
+    public List<String> parseDetailPage(String html) {
         final ArrayList<String> urls = new ArrayList<>();
         try {
             Element element0 = Jsoup.parse(html).body();
