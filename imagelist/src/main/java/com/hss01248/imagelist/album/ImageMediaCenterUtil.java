@@ -1,5 +1,6 @@
 package com.hss01248.imagelist.album;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ValueCallback;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,11 +34,20 @@ import com.hss01248.image.MyUtil;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
+import com.hss01248.transactivity.TransActivity;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import io.reactivex.functions.Consumer;
 
 /**
  * time:2019/11/30
@@ -262,9 +273,44 @@ public class ImageMediaCenterUtil {
     public static void showBigImag(Context context, List<String> urlsOrPaths, int position) {
 
         View view = buildBigIamgeView(context, urlsOrPaths, position);
-
-
         showViewAsDialog(view);
+
+
+       /* showViewAsActivity(context, new IViewInit() {
+            @Override
+            public View init(Activity activity) {
+                return buildBigIamgeView(activity, urlsOrPaths, position);
+            }
+        });*/
+    }
+
+    public static void showViewAsActivity(Context context, IViewInit init){
+        TransActivity.start(MyUtil.getActivityFromContext(context), new TransActivity.ITransActivityConfig() {
+            @Override
+            public float forceHeight() {
+                return 1.0f;
+            }
+
+            @Override
+            public View initView(Activity activity) {
+                try {
+                    View view =  init.init(activity);
+                    View ivClose = view.findViewById(R.id.iv_back);
+                    if(ivClose != null){
+                        ivClose.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                activity.finish();
+                            }
+                        });
+                    }
+                    return view;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        });
     }
 
     public static void showViewAsDialog(View view) {
@@ -282,6 +328,8 @@ public class ImageMediaCenterUtil {
                 }
             });
         }
+
+
     }
 
 
