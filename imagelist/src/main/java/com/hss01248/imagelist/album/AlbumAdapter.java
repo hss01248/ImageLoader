@@ -3,6 +3,7 @@ package com.hss01248.imagelist.album;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -55,9 +56,15 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         helper.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageListView listView = new ImageListView(v.getContext());
-                ImageMediaCenterUtil.showViewAsDialog(listView);
-                listView.showImagesInAlbum(item);
+                ImageMediaCenterUtil.showViewAsActivity(v.getContext(), new IViewInit() {
+                    @Override
+                    public View init(Activity activity) {
+                        ImageListView listView = new ImageListView(activity);
+                        //ImageMediaCenterUtil.showViewAsDialog(listView);
+                        listView.showImagesInAlbum(item);
+                        return listView;
+                    }
+                });
             }
         });
 

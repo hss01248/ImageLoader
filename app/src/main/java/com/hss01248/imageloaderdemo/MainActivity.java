@@ -1,6 +1,7 @@
 package com.hss01248.imageloaderdemo;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +35,7 @@ import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
+import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.ui.pop.list.PopList;
@@ -303,9 +305,16 @@ public class MainActivity extends AppCompatActivity {
                 PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE).callback(new PermissionUtils.SingleCallback() {
                     @Override
                     public void callback(boolean isAllGranted, @NonNull List<String> granted, @NonNull List<String> deniedForever, @NonNull List<String> denied) {
-                        ImageListView view1 = new ImageListView(MainActivity.this);
-                        ImageMediaCenterUtil.showViewAsDialog(view1);
-                        view1.showAllAlbums();
+
+                        ImageMediaCenterUtil.showViewAsActivity(MainActivity.this, new IViewInit() {
+                            @Override
+                            public View init(Activity activity) {
+                                ImageListView view1 = new ImageListView(activity);
+                                view1.showAllAlbums();
+                                return view1;
+                            }
+                        });
+
                     }
                 }).request();
 
@@ -314,9 +323,17 @@ public class MainActivity extends AppCompatActivity {
 
             break;
             case R.id.btn_dir: {
-                ImageListView view1 = new ImageListView(this);
-                ImageMediaCenterUtil.showViewAsDialog(view1);
-                view1.showImagesInDir(Environment.getExternalStorageDirectory().getAbsolutePath());
+
+
+                ImageMediaCenterUtil.showViewAsActivity(view.getContext(), new IViewInit() {
+                    @Override
+                    public View init(Activity activity) {
+                        ImageListView view1 = new ImageListView(activity);
+                       // ImageMediaCenterUtil.showViewAsDialog(view1);
+                        view1.showImagesInDir(Environment.getExternalStorageDirectory().getAbsolutePath());
+                        return view1;
+                    }
+                });
             }
 
             break;

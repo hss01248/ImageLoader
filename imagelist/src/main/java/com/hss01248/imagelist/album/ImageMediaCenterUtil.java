@@ -6,11 +6,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.provider.MediaStore;
 
+import com.hss01248.activityresult.StartActivityUtil;
+import com.hss01248.activityresult.TheActivityListener;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AlertDialog;
 
@@ -272,46 +278,47 @@ public class ImageMediaCenterUtil {
 
     public static void showBigImag(Context context, List<String> urlsOrPaths, int position) {
 
-        View view = buildBigIamgeView(context, urlsOrPaths, position);
-        showViewAsDialog(view);
+       // View view = buildBigIamgeView(context, urlsOrPaths, position);
+       // showViewAsDialog(view);
 
 
-       /* showViewAsActivity(context, new IViewInit() {
+        showViewAsActivity(context, new IViewInit() {
             @Override
             public View init(Activity activity) {
                 return buildBigIamgeView(activity, urlsOrPaths, position);
             }
-        });*/
+        });
     }
 
     public static void showViewAsActivity(Context context, IViewInit init){
-        TransActivity.start(MyUtil.getActivityFromContext(context), new TransActivity.ITransActivityConfig() {
-            @Override
-            public float forceHeight() {
-                return 1.0f;
-            }
 
-            @Override
-            public View initView(Activity activity) {
-                try {
-                    View view =  init.init(activity);
-                    View ivClose = view.findViewById(R.id.iv_back);
-                    if(ivClose != null){
-                        ivClose.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                activity.finish();
+        StartActivityUtil.startActivity(MyUtil.getActivityFromContext(context),EmptyActivity.class,null,false,
+                new TheActivityListener<EmptyActivity>(){
+                    @Override
+                    protected void onActivityCreated(@NonNull EmptyActivity activity, @Nullable Bundle savedInstanceState) {
+                        super.onActivityCreated(activity, savedInstanceState);
+                        try {
+                            View view =  init.init(activity);
+                            View ivClose = view.findViewById(R.id.iv_back);
+                            if(ivClose != null){
+                                ivClose.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        activity.finish();
+                                    }
+                                });
                             }
-                        });
+                            activity.setContentView(view);
+                        }catch (Throwable throwable){
+                            throwable.printStackTrace();
+                            activity.finish();
+                        }
+
                     }
-                    return view;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        });
+                });
     }
+
+
 
     public static void showViewAsDialog(View view) {
         Dialog dialog = new Dialog(view.getContext());
@@ -328,6 +335,22 @@ public class ImageMediaCenterUtil {
                 }
             });
         }
+        //context不对会导致glide识别生命周期错误,从而不加载
+       /* StartActivityUtil.startActivity(MyUtil.getActivityFromContext(view.getContext()),EmptyActivity.class,null,false,
+                new TheActivityListener<EmptyActivity>(){
+                    @Override
+                    protected void onActivityCreated(@NonNull EmptyActivity activity, @Nullable Bundle savedInstanceState) {
+                        super.onActivityCreated(activity, savedInstanceState);
+                        try {
+                            activity.setContentView(view);
+                        }catch (Throwable throwable){
+                            throwable.printStackTrace();
+                            activity.finish();
+                        }
+
+                    }
+                });*/
+
 
 
     }

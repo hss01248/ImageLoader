@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
@@ -24,6 +25,7 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.LoadInterceptor;
 
+import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.notifyutil.NotifyUtil;
@@ -71,9 +73,15 @@ public class BaseApp extends MultiDexApplication {
 
             @Override
             public void showFolder(Context context, String absolutePath) {
-                ImageListView listView = new ImageListView(context);
-                listView.showImagesInDir(absolutePath);
-                ImageMediaCenterUtil.showViewAsDialog(listView);
+
+                ImageMediaCenterUtil.showViewAsActivity(context, new IViewInit() {
+                    @Override
+                    public View init(Activity activity) {
+                        ImageListView listView = new ImageListView(context);
+                        listView.showImagesInDir(absolutePath);
+                        return listView;
+                    }
+                });
             }
         });
 

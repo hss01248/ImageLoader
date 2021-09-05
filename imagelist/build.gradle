@@ -56,6 +56,7 @@ dependencies {
     api 'io.github.yuweiguocn:GreenDaoUpgradeHelper:v2.2.1'
 
     api 'com.github.hss01248.StartActivityResult:transactivity:1.1.2'
+    api 'com.github.hss01248.StartActivityResult:activityresult:1.1.2'
 
     greendao {
         schemaVersion 2  //我们的数据库的版本号  当数据库升级的时候可以在这里改版本

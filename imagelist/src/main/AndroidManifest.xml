@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hss01248.imagelist" >
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <application>
+        <activity android:name=".album.EmptyActivity" android:theme="@style/thetransAppTheme3"/>
+    </application>
 </manifest>

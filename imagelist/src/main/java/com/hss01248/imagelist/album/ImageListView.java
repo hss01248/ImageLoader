@@ -1,5 +1,6 @@
 package com.hss01248.imagelist.album;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -338,9 +339,16 @@ public class ImageListView extends FrameLayout {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if(images.get(position).isDir){
-                    ImageListView listView = new ImageListView(getContext());
-                    listView.showImagesInDir(images.get(position).path);
-                    ImageMediaCenterUtil.showViewAsDialog(listView);
+
+                   // ImageMediaCenterUtil.showViewAsDialog(listView);
+                    ImageMediaCenterUtil.showViewAsActivity(view.getContext(), new IViewInit() {
+                        @Override
+                        public View init(Activity activity) {
+                            ImageListView listView = new ImageListView(activity);
+                            listView.showImagesInDir(images.get(position).path);
+                            return listView;
+                        }
+                    });
 
                 }else {
                     final List<String> paths = new ArrayList<>();
@@ -349,6 +357,7 @@ public class ImageListView extends FrameLayout {
                         paths.add(image.path);
                     }
                     ImageMediaCenterUtil.showBigImag(getContext(), paths, position);
+
                 }
 
             }
