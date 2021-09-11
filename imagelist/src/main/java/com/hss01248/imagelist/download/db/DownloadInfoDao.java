@@ -26,6 +26,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
     public static class Properties {
         public final static Property Url = new Property(0, String.class, "url", true, "URL");
         public final static Property FilePath = new Property(1, String.class, "filePath", false, "FILE_PATH");
+        public final static Property Status = new Property(2, int.class, "status", false, "STATUS");
     }
 
 
@@ -42,7 +43,8 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"DOWNLOAD_INFO\" (" + //
                 "\"URL\" TEXT PRIMARY KEY NOT NULL ," + // 0: url
-                "\"FILE_PATH\" TEXT);"); // 1: filePath
+                "\"FILE_PATH\" TEXT," + // 1: filePath
+                "\"STATUS\" INTEGER NOT NULL );"); // 2: status
     }
 
     /** Drops the underlying database table. */
@@ -64,6 +66,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         if (filePath != null) {
             stmt.bindString(2, filePath);
         }
+        stmt.bindLong(3, entity.getStatus());
     }
 
     @Override
@@ -79,6 +82,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         if (filePath != null) {
             stmt.bindString(2, filePath);
         }
+        stmt.bindLong(3, entity.getStatus());
     }
 
     @Override
@@ -90,7 +94,8 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
     public DownloadInfo readEntity(Cursor cursor, int offset) {
         DownloadInfo entity = new DownloadInfo( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // url
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // filePath
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // filePath
+            cursor.getInt(offset + 2) // status
         );
         return entity;
     }
@@ -99,6 +104,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
     public void readEntity(Cursor cursor, DownloadInfo entity, int offset) {
         entity.setUrl(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setFilePath(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setStatus(cursor.getInt(offset + 2));
      }
     
     @Override

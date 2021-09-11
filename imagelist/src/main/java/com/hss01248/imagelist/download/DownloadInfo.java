@@ -13,10 +13,15 @@ public class DownloadInfo {
     @Id
     public String url;
     public String filePath;
-    @Generated(hash = 501294909)
-    public DownloadInfo(String url, String filePath) {
+    /**
+     * 成功: 1 下载中 0 下载失败 -1
+     */
+    public int status;
+    @Generated(hash = 970613150)
+    public DownloadInfo(String url, String filePath, int status) {
         this.url = url;
         this.filePath = filePath;
+        this.status = status;
     }
     @Generated(hash = 327086747)
     public DownloadInfo() {
@@ -34,11 +39,18 @@ public class DownloadInfo {
         this.filePath = filePath;
     }
 
+
     @Override
     public String toString() {
         return "DownloadInfo{" +
                 "url='" + url + '\'' +
                 ", filePath='" + filePath + '\'' +
                 '}';
+    }
+    public int getStatus() {
+        return this.status;
+    }
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

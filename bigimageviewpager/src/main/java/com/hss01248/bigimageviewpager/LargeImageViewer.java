@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LargeImageViewer {
@@ -18,10 +19,12 @@ public class LargeImageViewer {
 
 
 
-    public static ViewPager showBig(final Context context,MyViewPager viewPager, final List<String> uris, int position) {
+    public static ViewPager showBig(final Context context,MyViewPager viewPager, final List<String> uris0, int position) {
         if(viewPager == null){
             viewPager = new MyViewPager(context);
         }
+        List<String> uris = new ArrayList<>(uris0.size());
+        uris.addAll(uris0);
         // ImageLoader.loadBigImages(viewPager, urls);
         PagerAdapter pagerAdapter = new PagerAdapter() {
             @Override

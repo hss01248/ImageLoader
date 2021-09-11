@@ -38,6 +38,7 @@ import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.imagelist.download.ImgDownloader;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
@@ -479,11 +480,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void goWebSpider(View view) {
         List<String> menus = SpiderWebviewActivity.getSpiders();
+        menus.add("继续下载未完成的图片");
 
         PopList.showPop(this, -1, view, menus, new PopList.OnItemClickListener() {
             @Override
             public void onClick(int position, String str) {
-                SpiderWebviewActivity.start(MainActivity.this,str);
+                if(position == menus.size()-1){
+                    ImgDownloader.downladUrlsInDB(MainActivity.this,new File(SpiderWebviewActivity.getSaveDir("继续下载","")));
+                }else {
+                    SpiderWebviewActivity.start(MainActivity.this,str);
+                }
+
             }
         });
 

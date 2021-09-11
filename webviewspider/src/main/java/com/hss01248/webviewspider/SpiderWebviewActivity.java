@@ -194,7 +194,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     }
 
 
-    private String getSaveDir(String folderName, String subFolderName) {
+    public static String getSaveDir(String folderName, String subFolderName) {
 
          //new File(System.getenv("EXTERNAL_STORAGE"));
         File dir0 = new File(Environment.getExternalStorageDirectory(),"0spider");

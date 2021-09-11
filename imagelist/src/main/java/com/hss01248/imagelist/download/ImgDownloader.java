@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.webkit.URLUtil;
@@ -19,6 +20,7 @@ import com.hss01248.image.MyUtil;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.utils.ThreadPoolFactory;
 import com.hss01248.imagelist.R;
+import com.hss01248.imagelist.download.db.DownloadInfoDao;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.notifyutil.builder.ProgressBuilder;
 import com.lzf.easyfloat.EasyFloat;
@@ -30,6 +32,7 @@ import com.lzf.easyfloat.utils.DisplayUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +55,20 @@ public class ImgDownloader {
         String getFileNamePreffix(String url);
     }
     IFileNamePrefix namePrefix;
+
+    public static void downladUrlsInDB(Context context,File dir){
+        List<DownloadInfo> list = DownloadInfoUtil.getDao().queryBuilder().where(DownloadInfoDao.Properties.Status.eq(1)).list();
+        if(list ==null || list.isEmpty()){
+            ToastUtils.showShort("no results");
+            return;
+        }
+        List<String> urls = new ArrayList<>(list.size());
+        for (DownloadInfo info : list) {
+            urls.add(info.url);
+        }
+        new ImgDownloader().download(context, urls, dir, true, "downloading",null);
+
+    }
     public void download(Context context, final List<String> urls,  File dir, boolean hideFolder, final String title,IFileNamePrefix fileNamePrefix){
 
         DownloadInfoUtil.context = context.getApplicationContext();
@@ -86,16 +103,33 @@ public class ImgDownloader {
         File finalDir = dir;
         for ( String url0 : urls) {
             final String url = LargeImageViewer.getBigImageUrl(url0);
+            if(TextUtils.isEmpty(url)){
+                continue;
+            }
             map.put(url,System.currentTimeMillis());
 
             //根据数据库记录,判断是否需要下载:
             DownloadInfo load = DownloadInfoUtil.getDao().load(url);
             Log.v("download","down info from db: "+load);
-            if(load != null ){//todo 加上判断文件是否存在
+            if(load != null && load.getStatus() >1){
                 preDownloadedCount.getAndIncrement();
                 onOneFinished(context, urls, fileNamePrefix);
                 continue;
             }
+            try {
+                if(load == null){
+                    load = new DownloadInfo();
+                    load.setStatus(1);
+                    load.setUrl(url);
+                    DownloadInfoUtil.getDao().insert(load);
+                }else {
+                    load.setStatus(1);
+                    DownloadInfoUtil.getDao().update(load);
+                }
+            }catch (Throwable throwable){
+                throwable.printStackTrace();
+            }
+
 
 
 
@@ -137,6 +171,7 @@ public class ImgDownloader {
                             }
                             DownloadInfo info = new DownloadInfo();
                             info.url = url;
+                            info.setStatus(2);
                             info.filePath = file3.getAbsolutePath();
                             try {
                                 DownloadInfoUtil.getDao().insert(info);
@@ -163,6 +198,14 @@ public class ImgDownloader {
                 public void onFail(Throwable e) {
                     if(e != null){
                         e.printStackTrace();
+                    }
+                    DownloadInfo info = new DownloadInfo();
+                    info.url = url;
+                    info.setStatus(-1);
+                    try {
+                        DownloadInfoUtil.getDao().update(info);
+                    }catch (Throwable throwable){
+                        throwable.printStackTrace();
                     }
                     failCount++;
                     onOneFinished(context, urls, fileNamePrefix);
