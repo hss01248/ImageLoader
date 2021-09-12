@@ -57,7 +57,8 @@ public class ImgDownloader {
     IFileNamePrefix namePrefix;
 
     public static void downladUrlsInDB(Context context,File dir){
-        List<DownloadInfo> list = DownloadInfoUtil.getDao().queryBuilder().where(DownloadInfoDao.Properties.Status.eq(1)).list();
+        List<DownloadInfo> list = DownloadInfoUtil.getDao().queryBuilder()
+                .whereOr(DownloadInfoDao.Properties.Status.eq(1),DownloadInfoDao.Properties.Status.eq(-1)).list();
         if(list ==null || list.isEmpty()){
             ToastUtils.showShort("no results");
             return;
@@ -174,7 +175,7 @@ public class ImgDownloader {
                             info.setStatus(2);
                             info.filePath = file3.getAbsolutePath();
                             try {
-                                DownloadInfoUtil.getDao().insert(info);
+                                DownloadInfoUtil.getDao().update(info);
                             }catch (Throwable throwable){
                                 throwable.printStackTrace();
                             }
