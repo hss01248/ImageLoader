@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="70dp">
+    <CheckBox
+        android:layout_centerVertical="true"
+        android:id="@+id/cb_selected"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"/>
+    <ImageView
+        android:layout_centerVertical="true"
+        android:id="@+id/iv_icon"
+        android:layout_toRightOf="@id/cb_selected"
+        android:layout_width="50dp"
+        android:layout_marginRight="8dp"
+        android:src="@color/design_default_color_error"
+        android:layout_height="50dp"/>
+    <TextView
+        android:textColor="#333333"
+        android:layout_width="wrap_content"
+        android:maxLines="1"
+        android:text="name"
+        android:layout_toRightOf="@id/iv_icon"
+        android:ellipsize="end"
+        android:textSize="15sp"
+        android:id="@+id/tv_name"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_toRightOf="@id/iv_icon"
+        android:textColor="#999999"
+        android:layout_width="wrap_content"
+        android:maxLines="1"
+        android:textSize="11sp"
+        android:text="3.25M"
+        android:ellipsize="end"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/tv_size"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_toRightOf="@id/tv_size"
+        android:textColor="#999999"
+        android:layout_width="wrap_content"
+        android:maxLines="1"
+        android:textSize="11sp"
+        android:text="2021.02.12"
+        android:ellipsize="end"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/tv_data"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:id="@+id/ll_right"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+        <ImageView
+            android:id="@+id/iv_download_btn"
+            android:src="@color/design_default_color_error"
+            android:layout_width="20dp"
+            android:layout_height="20dp"/>
+        <TextView
+
+            android:textColor="#999999"
+            android:layout_width="wrap_content"
+            android:maxLines="1"
+            android:textSize="11sp"
+            android:text="重试"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:id="@+id/tv_download_btn_desc"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+    <com.daimajia.numberprogressbar.NumberProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_toRightOf="@id/iv_icon"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        android:layout_alignParentRight="true"
+        android:textColor="#999999"
+        android:layout_width="wrap_content"
+        android:maxLines="1"
+        android:layout_marginRight="60dp"
+        android:textSize="11sp"
+        android:text="下载失败"
+        android:ellipsize="end"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/tv_status_msg"
+        android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>
