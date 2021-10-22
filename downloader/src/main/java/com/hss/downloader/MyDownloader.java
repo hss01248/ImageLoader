@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.DownloadInfo;
@@ -235,7 +236,8 @@ public class MyDownloader {
     private static void startDownload(DownloadInfo info) {
         DownloadTask task = new DownloadTask.Builder(info.url, info.dir,info.name)
                 // the minimal interval millisecond for callback progress
-                .setMinIntervalMillisCallbackProcess(30)
+                .setMinIntervalMillisCallbackProcess(100)
+                .setConnectionCount(1)
                 // do re-download even if the task has already been completed in the past.
                 .setPassIfAlreadyCompleted(true)
                 .build();
@@ -284,6 +286,7 @@ public class MyDownloader {
             @Override
             public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull Listener1Assist.Listener1Model model) {
 
+                LogUtils.i(cause.name()+" ,"+task.getUrl()+" ,"+realCause);
                 runOnBack(new Runnable() {
                     @Override
                     public void run() {
@@ -297,6 +300,7 @@ public class MyDownloader {
                         }else {
                             String des = cause.name();
                             if(realCause != null){
+                                realCause.printStackTrace();
                                 des = des+","+cause.getClass().getSimpleName()+" "+realCause.getMessage();
                             }
                             info.status = DownloadInfo.STATUS_FAIL;

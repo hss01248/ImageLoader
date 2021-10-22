@@ -36,9 +36,9 @@ public class DownloadList {
             binding.tvTotalProgress.setText("0/"+result.size());
             showViewAsDialog(context,binding.getRoot());
         }else {
-            ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
+           /* ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
             dialog.setMessage("查询数据库...");
-            dialog.show();
+            dialog.show();*/
             ThreadUtils.executeByIo(new ThreadUtils.Task<List<DownloadInfo>>() {
                 @Override
                 public List<DownloadInfo> doInBackground() throws Throwable {
@@ -48,7 +48,7 @@ public class DownloadList {
 
                 @Override
                 public void onSuccess(List<DownloadInfo> result) {
-                    dialog.dismiss();
+                   // dialog.dismiss();
                     DownloadList.showList(ActivityUtils.getTopActivity(),result);
                 }
 

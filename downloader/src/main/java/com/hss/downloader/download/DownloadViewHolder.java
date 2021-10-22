@@ -37,7 +37,7 @@ public class DownloadViewHolder extends BaseViewHolder {
 
     public void onViewRecycled() {
         try {
-            EventBus.getDefault().unregister(this);
+           // EventBus.getDefault().unregister(this);
         }catch (Throwable throwable){
             throwable.printStackTrace();
         }
@@ -55,16 +55,16 @@ public class DownloadViewHolder extends BaseViewHolder {
         //helper.setText(R.id.tv_name,info.name);
 
        if(info.isInSelectMode){
-           helper.setVisible(R.id.cb_selected,true);
+           binding.cbSelected.setVisibility(View.VISIBLE);
        }else {
-           helper.setGone(R.id.cb_selected,true);
+           binding.cbSelected.setVisibility(View.GONE);
        }
 
         if(info.totalLength>0){
             helper.setText(R.id.tv_size, ConvertUtils.byte2FitMemorySize(info.totalLength,2));
         }
         if(info.createTime > 0){
-            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.totalLength),"yy-MM-dd"));
+            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.totalLength),"yy-mm-dd"));
         }
 
 
@@ -97,7 +97,7 @@ public class DownloadViewHolder extends BaseViewHolder {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(DownloadInfo info) {
-        ToastUtils.showShort(info.toString());
+        //ToastUtils.showShort(info.toString());
         if(this.info == null){
             return;
         }
