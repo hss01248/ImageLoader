@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.daimajia.numberprogressbar.NumberProgressBar
+        android:layout_width="match_parent"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/pb_total"
+        android:layout_toLeftOf="@id/tv_total_progress"
+        android:layout_marginRight="16dp"
+        android:layout_height="25dp"/>
+    <TextView
+        android:id="@+id/tv_total_progress"
+        android:layout_marginRight="16dp"
+        android:text="1234/3456"
+        android:gravity="center_vertical"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:id="@+id/recycler"
+        android:layout_below="@id/pb_total"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

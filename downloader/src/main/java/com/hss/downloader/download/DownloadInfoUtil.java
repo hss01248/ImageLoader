@@ -11,6 +11,8 @@ import com.hss.downloader.download.db.DaoSession;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.hss.downloader.download.db.SubFolderCountDao;
 
+import java.util.List;
+
 public class DownloadInfoUtil {
 
     static DownloadInfoDao dao;
@@ -40,6 +42,7 @@ public class DownloadInfoUtil {
         DaoMaster daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
     }
+
 
     private volatile static DaoSession daoSession;
 

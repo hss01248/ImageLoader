@@ -1,3 +1,4 @@
+/*
 package com.hss.downloader.download;
 
 import android.content.Context;
@@ -210,54 +211,7 @@ public class ImgDownloader {
         }
     }
 
-    public static File dealFolderCount(File dir, boolean hideFolder) {
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-        SubFolderCount load = DownloadInfoUtil.getFolderCountDao().load(dir.getAbsolutePath());
-        if(load == null){
-            load = new SubFolderCount();
-            load.dirPath = dir.getAbsolutePath();
-            load.count = 1;
-           File subDir =  createSubDir(dir,1,hideFolder);
-           DownloadInfoUtil.getFolderCountDao().insert(load);
-           return subDir;
-        }
 
-      File  subDir = createSubDir(dir,load.count,hideFolder);
-        File[] list = subDir.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return !file.isDirectory();
-            }
-        });
-        if(list != null && list.length > 3000){
-            load.count = load.count +1;
-            File  subDir2 = createSubDir(dir,load.count,hideFolder);
-            DownloadInfoUtil.getFolderCountDao().update(load);
-            return subDir2;
-        }else {
-            return subDir;
-        }
-    }
-
-    private static File createSubDir(File dir, int count, boolean hideFolder) {
-        dir = new File(dir,dir.getName()+count);
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-        if(hideFolder){
-            File hidden = new File(dir,".nomedia");
-            if(!hidden.exists()){
-                try {
-                    hidden.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return dir;
-    }
 
     private void onOneFinished(Context context, List<String> urls, IFileNamePrefix fileNamePrefix) {
         count.getAndIncrement();
@@ -314,7 +268,8 @@ public class ImgDownloader {
 
 
        // https://github.com/princekin-f/EasyFloat
-       /* EasyFloat.with(context)
+       */
+/* EasyFloat.with(context)
                 .setLayout(textView)
                 // 设置浮窗xml布局文件/自定义View，并可设置详细信息
                 .setLayout(R.layout.float_app) { }
@@ -356,6 +311,8 @@ public class ImgDownloader {
             dragEnd {  }
         }
         // 创建浮窗（这是关键哦😂）
-    .show()*/
+    .show()*//*
+
     }
 }
+*/

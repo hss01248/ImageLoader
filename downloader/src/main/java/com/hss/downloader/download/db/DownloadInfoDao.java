@@ -27,6 +27,11 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         public final static Property Url = new Property(0, String.class, "url", true, "URL");
         public final static Property FilePath = new Property(1, String.class, "filePath", false, "FILE_PATH");
         public final static Property Status = new Property(2, int.class, "status", false, "STATUS");
+        public final static Property Name = new Property(3, String.class, "name", false, "NAME");
+        public final static Property Dir = new Property(4, String.class, "dir", false, "DIR");
+        public final static Property ErrMsg = new Property(5, String.class, "errMsg", false, "ERR_MSG");
+        public final static Property TotalLength = new Property(6, long.class, "totalLength", false, "TOTAL_LENGTH");
+        public final static Property CreateTime = new Property(7, long.class, "createTime", false, "CREATE_TIME");
     }
 
 
@@ -44,7 +49,12 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         db.execSQL("CREATE TABLE " + constraint + "\"DOWNLOAD_INFO\" (" + //
                 "\"URL\" TEXT PRIMARY KEY NOT NULL ," + // 0: url
                 "\"FILE_PATH\" TEXT," + // 1: filePath
-                "\"STATUS\" INTEGER NOT NULL );"); // 2: status
+                "\"STATUS\" INTEGER NOT NULL ," + // 2: status
+                "\"NAME\" TEXT," + // 3: name
+                "\"DIR\" TEXT," + // 4: dir
+                "\"ERR_MSG\" TEXT," + // 5: errMsg
+                "\"TOTAL_LENGTH\" INTEGER NOT NULL ," + // 6: totalLength
+                "\"CREATE_TIME\" INTEGER NOT NULL );"); // 7: createTime
     }
 
     /** Drops the underlying database table. */
@@ -67,6 +77,23 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
             stmt.bindString(2, filePath);
         }
         stmt.bindLong(3, entity.getStatus());
+ 
+        String name = entity.getName();
+        if (name != null) {
+            stmt.bindString(4, name);
+        }
+ 
+        String dir = entity.getDir();
+        if (dir != null) {
+            stmt.bindString(5, dir);
+        }
+ 
+        String errMsg = entity.getErrMsg();
+        if (errMsg != null) {
+            stmt.bindString(6, errMsg);
+        }
+        stmt.bindLong(7, entity.getTotalLength());
+        stmt.bindLong(8, entity.getCreateTime());
     }
 
     @Override
@@ -83,6 +110,23 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
             stmt.bindString(2, filePath);
         }
         stmt.bindLong(3, entity.getStatus());
+ 
+        String name = entity.getName();
+        if (name != null) {
+            stmt.bindString(4, name);
+        }
+ 
+        String dir = entity.getDir();
+        if (dir != null) {
+            stmt.bindString(5, dir);
+        }
+ 
+        String errMsg = entity.getErrMsg();
+        if (errMsg != null) {
+            stmt.bindString(6, errMsg);
+        }
+        stmt.bindLong(7, entity.getTotalLength());
+        stmt.bindLong(8, entity.getCreateTime());
     }
 
     @Override
@@ -95,7 +139,12 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         DownloadInfo entity = new DownloadInfo( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // url
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // filePath
-            cursor.getInt(offset + 2) // status
+            cursor.getInt(offset + 2), // status
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // name
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // dir
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // errMsg
+            cursor.getLong(offset + 6), // totalLength
+            cursor.getLong(offset + 7) // createTime
         );
         return entity;
     }
@@ -105,6 +154,11 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         entity.setUrl(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setFilePath(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setStatus(cursor.getInt(offset + 2));
+        entity.setName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setDir(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setErrMsg(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setTotalLength(cursor.getLong(offset + 6));
+        entity.setCreateTime(cursor.getLong(offset + 7));
      }
     
     @Override

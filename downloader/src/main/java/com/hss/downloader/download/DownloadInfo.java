@@ -31,12 +31,23 @@ public class DownloadInfo {
 
     public String dir;
     public String errMsg;
+    public long totalLength;
+    public long createTime;
 
-    @Generated(hash = 970613150)
-    public DownloadInfo(String url, String filePath, int status) {
+    public transient boolean selected;
+    public transient boolean isInSelectMode;
+
+    @Generated(hash = 691565714)
+    public DownloadInfo(String url, String filePath, int status, String name,
+            String dir, String errMsg, long totalLength, long createTime) {
         this.url = url;
         this.filePath = filePath;
         this.status = status;
+        this.name = name;
+        this.dir = dir;
+        this.errMsg = errMsg;
+        this.totalLength = totalLength;
+        this.createTime = createTime;
     }
     @Generated(hash = 327086747)
     public DownloadInfo() {
@@ -69,5 +80,35 @@ public class DownloadInfo {
     }
     public void setStatus(int status) {
         this.status = status;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getDir() {
+        return this.dir;
+    }
+    public void setDir(String dir) {
+        this.dir = dir;
+    }
+    public String getErrMsg() {
+        return this.errMsg;
+    }
+    public void setErrMsg(String errMsg) {
+        this.errMsg = errMsg;
+    }
+    public long getTotalLength() {
+        return this.totalLength;
+    }
+    public void setTotalLength(long totalLength) {
+        this.totalLength = totalLength;
+    }
+    public long getCreateTime() {
+        return this.createTime;
+    }
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 }
