@@ -60,22 +60,39 @@ public class BaseApp extends MultiDexApplication {
         SpiderWebviewActivity.setShowUrls(new IShowUrls() {
             @Override
             public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
-                ImageListView listView = new ImageListView(context);
-                listView.showUrls(pageTitle,urls, downloadDir,false,downloadImmediately);
-                ImageMediaCenterUtil.showViewAsDialog(listView);
+
+                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, true, new IViewInit() {
+                    @Override
+                    public View init(Activity activity) {
+                        ImageListView listView = new ImageListView(context);
+                        listView.showUrls(pageTitle,urls, downloadDir,hideDir,downloadImmediately);
+                        return listView;
+                    }
+                });
             }
 
             @Override
-            public void showUrls(Context context, String pageTitle, Map<String, List<String>> titlesToImags, List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
-                ImageListView listView = new ImageListView(context);
-                listView.showUrlsFromMap(pageTitle,titlesToImags,urls, downloadDir,false,downloadImmediately);
-                ImageMediaCenterUtil.showViewAsDialog(listView);
+            public void showUrls(Context context, String pageTitle, Map<String, List<String>> titlesToImags,
+                                 List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
+
+
+
+                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, true, new IViewInit() {
+                    @Override
+                    public View init(Activity activity) {
+                        ImageListView listView = new ImageListView(context);
+                        listView.showUrlsFromMap(pageTitle,titlesToImags,urls, downloadDir,hideDir,downloadImmediately);
+                        return listView;
+                    }
+                });
             }
 
             @Override
             public void showFolder(Context context, String absolutePath) {
 
-                ImageMediaCenterUtil.showViewAsActivity(context, new IViewInit() {
+
+
+                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, true, new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(context);
