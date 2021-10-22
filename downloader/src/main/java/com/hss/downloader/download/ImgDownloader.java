@@ -1,4 +1,4 @@
-package com.hss01248.imagelist.download;
+package com.hss.downloader.download;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.TextView;
 
@@ -19,14 +18,9 @@ import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.utils.ThreadPoolFactory;
-import com.hss01248.imagelist.R;
-import com.hss01248.imagelist.download.db.DownloadInfoDao;
-import com.hss01248.notifyutil.NotifyUtil;
-import com.hss01248.notifyutil.builder.ProgressBuilder;
+import com.hss.downloader.download.db.DownloadInfoDao;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
-import com.lzf.easyfloat.enums.SidePattern;
-import com.lzf.easyfloat.utils.DisplayUtils;
 
 
 import java.io.File;

@@ -27,7 +27,7 @@ import com.fondesa.recyclerviewdivider.DividerDecoration;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
-import com.hss01248.imagelist.download.ImgDownloader;
+import com.hss.downloader.download.ImgDownloader;
 import com.hss01248.ui.pop.list.PopList;
 
 import org.apache.commons.io.FileUtils;

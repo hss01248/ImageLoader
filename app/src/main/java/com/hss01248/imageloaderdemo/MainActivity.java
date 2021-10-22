@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -22,10 +21,8 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
@@ -38,13 +35,11 @@ import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
-import com.hss01248.imagelist.download.ImgDownloader;
+import com.hss.downloader.download.ImgDownloader;
 import com.hss01248.ui.pop.list.PopList;
-import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
-import org.devio.takephoto.wrap.TakePhotoUtil;
 
 import java.io.File;
 import java.lang.reflect.Field;

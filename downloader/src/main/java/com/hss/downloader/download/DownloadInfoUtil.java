@@ -1,4 +1,4 @@
-package com.hss01248.imagelist.download;
+package com.hss.downloader.download;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -6,10 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import com.blankj.utilcode.util.Utils;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hss01248.imagelist.download.db.DaoMaster;
-import com.hss01248.imagelist.download.db.DaoSession;
-import com.hss01248.imagelist.download.db.DownloadInfoDao;
-import com.hss01248.imagelist.download.db.SubFolderCountDao;
+import com.hss.downloader.download.db.DaoMaster;
+import com.hss.downloader.download.db.DaoSession;
+import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss.downloader.download.db.SubFolderCountDao;
 
 public class DownloadInfoUtil {
 

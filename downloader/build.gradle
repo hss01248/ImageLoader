@@ -48,4 +48,17 @@ dependencies {
     api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
 
     api project(':imagelist')
+
+    api 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
+    api 'com.blankj:utilcodex:1.30.6'
+
+    api 'org.greenrobot:greendao:3.3.0' // add library
+    api 'io.github.yuweiguocn:GreenDaoUpgradeHelper:v2.2.1'
+}
+
+apply plugin: 'org.greenrobot.greendao'
+greendao {
+    schemaVersion 3  //我们的数据库的版本号  当数据库升级的时候可以在这里改版本
+    daoPackage 'com.hss.downloader.download.db'  //自动生成的DaoMaster、DaoSession、Dao的包名  根据自己想放的位置改变即可
+    targetGenDir 'src/main/java'  //自动生成的DaoMaster、DaoSession、Dao的路径
 }

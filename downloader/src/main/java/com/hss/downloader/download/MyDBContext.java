@@ -1,14 +1,12 @@
-package com.hss01248.imagelist.download;
+package com.hss.downloader.download;
 
 
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.io.File;
-import java.io.IOException;
 
 public class MyDBContext extends ContextWrapper {
 

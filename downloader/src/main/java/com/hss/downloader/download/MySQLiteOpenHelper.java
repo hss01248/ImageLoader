@@ -1,12 +1,12 @@
-package com.hss01248.imagelist.download;
+package com.hss.downloader.download;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.github.yuweiguocn.library.greendao.MigrationHelper;
-import com.hss01248.imagelist.download.db.DaoMaster;
-import com.hss01248.imagelist.download.db.DownloadInfoDao;
-import com.hss01248.imagelist.download.db.SubFolderCountDao;
+import com.hss.downloader.download.db.DaoMaster;
+import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss.downloader.download.db.SubFolderCountDao;
 
 import org.greenrobot.greendao.database.Database;
 

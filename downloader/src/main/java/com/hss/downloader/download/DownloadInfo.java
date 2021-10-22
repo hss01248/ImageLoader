@@ -1,4 +1,4 @@
-package com.hss01248.imagelist.download;
+package com.hss.downloader.download;
 
 import androidx.annotation.Keep;
 
@@ -10,13 +10,28 @@ import org.greenrobot.greendao.annotation.Generated;
 @Entity
 public class DownloadInfo {
 
+    public static final int STATUS_FAIL = -1;
+    public static final int STATUS_ORIGINAL = -2;
+    public static final int STATUS_SUCCESS = 1;
+    public static final int STATUS_DOWNLOADING = 0;
     @Id
     public String url;
+
+    @Deprecated
     public String filePath;
     /**
-     * 成功: 1 下载中 0 下载失败 -1
+     * 成功: 1 下载中 0 下载失败 -1, 初始状态 -2
      */
-    public int status;
+    public int status = -2;
+
+    /**
+     * 文件名
+     */
+    public String name;
+
+    public String dir;
+    public String errMsg;
+
     @Generated(hash = 970613150)
     public DownloadInfo(String url, String filePath, int status) {
         this.url = url;
@@ -38,6 +53,8 @@ public class DownloadInfo {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
+
+
 
 
     @Override

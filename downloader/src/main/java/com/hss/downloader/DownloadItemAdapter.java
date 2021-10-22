@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.hss01248.imagelist.download.DownloadInfo;
+import com.hss.downloader.download.DownloadInfo;
 
 import java.io.File;
 import java.util.List;

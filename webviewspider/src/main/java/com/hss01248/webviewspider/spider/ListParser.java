@@ -7,8 +7,8 @@ import android.util.Log;
 import android.webkit.ValueCallback;
 
 import com.blankj.utilcode.util.ThreadUtils;
-import com.hss01248.imagelist.download.DownloadInfo;
-import com.hss01248.imagelist.download.DownloadInfoUtil;
+import com.hss.downloader.download.DownloadInfo;
+import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
 import com.hss01248.webviewspider.basewebview.WebPageInfo;
 

@@ -1,4 +1,4 @@
-package com.hss01248.imagelist.download.db;
+package com.hss.downloader.download.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

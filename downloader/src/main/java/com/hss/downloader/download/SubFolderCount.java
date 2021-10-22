@@ -1,4 +1,4 @@
-package com.hss01248.imagelist.download;
+package com.hss.downloader.download;
 
 import androidx.annotation.Keep;
 
