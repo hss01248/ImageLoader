@@ -29,6 +29,7 @@ import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.hss.downloader.DownloadUrls;
 import com.hss.downloader.MyDownloader;
 
+import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
 
@@ -499,7 +500,7 @@ public class ImageListView extends FrameLayout {
 
             String name = pre + "-"+ URLUtil.guessFileName(url,"","image/*");
             DownloadUrls info = new DownloadUrls();
-            info.url = url;
+            info.url = LargeImageViewer.getBigImageUrl(url);
             info.name = name;
             info.dir = downloadDir;
             list.add(info);

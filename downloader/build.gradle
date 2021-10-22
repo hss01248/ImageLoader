@@ -14,6 +14,12 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ eventBusIndex : 'com.hss.downloader.MyEventBusAppIndex' ]
+            }
+        }
     }
     viewBinding {
         enabled = true
@@ -54,6 +60,10 @@ dependencies {
 
     api 'org.greenrobot:greendao:3.3.0' // add library
     api 'io.github.yuweiguocn:GreenDaoUpgradeHelper:v2.2.1'
+
+    def eventbus_version = '3.2.0'
+    api "org.greenrobot:eventbus:$eventbus_version"
+    annotationProcessor "org.greenrobot:eventbus-annotation-processor:$eventbus_version"
 }
 
 apply plugin: 'org.greenrobot.greendao'

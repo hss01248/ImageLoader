@@ -7,6 +7,7 @@
     <CheckBox
         android:layout_centerVertical="true"
         android:id="@+id/cb_selected"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_marginRight="10dp"
         android:layout_height="wrap_content"/>
@@ -60,6 +61,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp">
         <ImageView
+            android:visibility="gone"
             android:id="@+id/iv_download_btn"
             android:src="@color/design_default_color_error"
             android:layout_width="20dp"
@@ -67,10 +69,12 @@
         <TextView
 
             android:textColor="#999999"
+            android:background="@drawable/round_stoke"
             android:layout_width="wrap_content"
             android:maxLines="1"
+            android:padding="8dp"
             android:textSize="11sp"
-            android:text="重试"
+            android:text=""
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:id="@+id/tv_download_btn_desc"
@@ -95,7 +99,7 @@
         android:maxLines="1"
         android:layout_marginRight="60dp"
         android:textSize="11sp"
-        android:text="下载失败"
+        android:text=""
         android:ellipsize="end"
         android:layout_alignParentBottom="true"
         android:id="@+id/tv_status_msg"

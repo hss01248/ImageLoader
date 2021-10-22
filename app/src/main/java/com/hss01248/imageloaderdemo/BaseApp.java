@@ -16,6 +16,7 @@ import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.glance.guolindev.Glance;
 import com.hjq.permissions.XXPermissions;
+import com.hss.downloader.MyDownloader;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 

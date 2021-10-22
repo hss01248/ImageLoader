@@ -36,6 +36,7 @@ public class DownloadInfo {
 
     public transient boolean selected;
     public transient boolean isInSelectMode;
+    public transient long currentOffset;
 
     @Generated(hash = 691565714)
     public DownloadInfo(String url, String filePath, int status, String name,
@@ -65,16 +66,23 @@ public class DownloadInfo {
         this.filePath = filePath;
     }
 
-
-
-
     @Override
     public String toString() {
         return "DownloadInfo{" +
                 "url='" + url + '\'' +
                 ", filePath='" + filePath + '\'' +
+                ", status=" + status +
+                ", name='" + name + '\'' +
+                ", dir='" + dir + '\'' +
+                ", errMsg='" + errMsg + '\'' +
+                ", totalLength=" + totalLength +
+                ", createTime=" + createTime +
+                ", selected=" + selected +
+                ", isInSelectMode=" + isInSelectMode +
+                ", currentOffset=" + currentOffset +
                 '}';
     }
+
     public int getStatus() {
         return this.status;
     }

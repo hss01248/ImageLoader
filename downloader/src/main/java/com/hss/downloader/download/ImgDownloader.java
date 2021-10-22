@@ -8,12 +8,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.webkit.URLUtil;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.hss.downloader.R;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
@@ -268,8 +270,7 @@ public class ImgDownloader {
 
 
        // https://github.com/princekin-f/EasyFloat
-       */
-/* EasyFloat.with(context)
+ EasyFloat.with(context)
                 .setLayout(textView)
                 // 设置浮窗xml布局文件/自定义View，并可设置详细信息
                 .setLayout(R.layout.float_app) { }
@@ -311,7 +312,7 @@ public class ImgDownloader {
             dragEnd {  }
         }
         // 创建浮窗（这是关键哦😂）
-    .show()*//*
+    .show()
 
     }
 }

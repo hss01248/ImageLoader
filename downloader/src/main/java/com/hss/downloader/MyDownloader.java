@@ -20,10 +20,71 @@ import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher;
 import com.liulishuo.okdownload.core.listener.DownloadListener1;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyDownloader {
+
+
+    public static void fixDbWhenUpdate(){
+        ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
+        dialog.setMessage("修复上个版本的数据库...");
+        dialog.show();
+        ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
+            @Override
+            public Object doInBackground() throws Throwable {
+                int batchSize = 200;
+                updateBatch(batchSize);
+                return null;
+            }
+
+            @Override
+            public void onSuccess(Object result) {
+                dialog.dismiss();
+                ToastUtils.showShort("修复完成");
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
+            }
+        });
+    }
+
+    private static void updateBatch(int batchSize) {
+        List<DownloadInfo> list = DownloadInfoUtil.getDao().queryBuilder()
+                .where(DownloadInfoDao.Properties.FilePath.isNotNull())
+                .offset(0).limit(batchSize).list();
+        if(list.isEmpty()){
+            return;
+        }
+        for (DownloadInfo info : list) {
+            File file = new File(info.filePath);
+            info.name = file.getName();
+            info.dir = file.getParentFile().getAbsolutePath();
+            info.filePath = null;
+            if(info.status == DownloadInfo.STATUS_DOWNLOADING){
+                info.status = DownloadInfo.STATUS_ORIGINAL;
+            }
+        }
+        try {
+            DownloadInfoUtil.getDao().updateInTx(list);
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
+        if(list.size() == batchSize){
+            updateBatch(batchSize);
+        }
+
+    }
 
 
     public static void showDownloadPage(){
@@ -187,6 +248,7 @@ public class MyDownloader {
                     public void run() {
                         info.status = DownloadInfo.STATUS_DOWNLOADING;
                         DownloadInfoUtil.getDao().update(info);
+                        EventBus.getDefault().post(info);
                     }
                 });
 
@@ -206,6 +268,7 @@ public class MyDownloader {
                         info.totalLength = totalLength;
                         info.status = DownloadInfo.STATUS_DOWNLOADING;
                         DownloadInfoUtil.getDao().update(info);
+                        EventBus.getDefault().post(info);
                     }
                 });
 
@@ -213,7 +276,9 @@ public class MyDownloader {
 
             @Override
             public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
-
+                info.currentOffset = currentOffset;
+                info.status = DownloadInfo.STATUS_DOWNLOADING;
+                EventBus.getDefault().post(info);
             }
 
             @Override
@@ -238,6 +303,7 @@ public class MyDownloader {
                             info.errMsg = des;
                             DownloadInfoUtil.getDao().update(info);
                         }
+                        EventBus.getDefault().post(info);
                     }
                 });
 
