@@ -19,6 +19,7 @@ import com.hjq.permissions.XXPermissions;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 
+import com.hss01248.flipper.DBAspect;
 import com.hss01248.glidev4.Glide4Loader;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
@@ -31,7 +32,6 @@ import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
-import com.simple.spiderman.SpiderMan;
 import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
@@ -49,11 +49,12 @@ public class BaseApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        SpiderMan.init(this);
         ImageLoader.init(getApplicationContext(), 500, new Glide4Loader());
         GlobalConfig.debug = true;
         XXPermissions.setScopedStorage(true);
         //Glance.INSTANCE.initialize(new MyDBContext(this));
+
+        DBAspect.addDB(getFile("imgdownload.db"));
 
         NotifyUtil.init(this);
         SpiderWebviewActivity.setShowUrls(new IShowUrls() {
@@ -168,6 +169,14 @@ public class BaseApp extends MultiDexApplication {
 
             }
         });
+    }
+
+    private File getFile(String name){
+        String dbDir=android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+        dbDir += "/.yuv/databases";//数据库所在目录
+        String dbPath = dbDir+"/"+name;//数据库路径
+        File file = new File(dbPath);
+        return file;
     }
 
     @Override
