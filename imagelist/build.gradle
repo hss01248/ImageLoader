@@ -28,10 +28,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.github.hss01248.ImageLoader:glidev4:3.2.3'
-    api 'com.github.hss01248.ImageLoader:bigimageviewpager:3.2.3'
-    //api project(':imageloader')
-   // api project(':bigimageviewpager')
+    //api 'com.github.hss01248.ImageLoader:glidev4:3.2.3'
+    //api 'com.github.hss01248.ImageLoader:bigimageviewpager:3.2.3'
+    api project(':imageloader')
+    //api project(':bigimageviewpager')
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     testImplementation 'junit:junit:4.12'
