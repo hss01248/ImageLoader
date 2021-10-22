@@ -11,27 +11,23 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.provider.MediaStore;
-
-import com.hss01248.activityresult.StartActivityUtil;
-import com.hss01248.activityresult.TheActivityListener;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AlertDialog;
-
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.ValueCallback;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.BarUtils;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.viewpager.widget.ViewPager;
+
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.hss01248.activityresult.StartActivityUtil;
+import com.hss01248.activityresult.TheActivityListener;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.bigimageviewpager.MyViewPager;
@@ -40,20 +36,11 @@ import com.hss01248.image.MyUtil;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
-import com.hss01248.transactivity.TransActivity;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import io.reactivex.functions.Consumer;
 
 /**
  * time:2019/11/30
@@ -282,7 +269,7 @@ public class ImageMediaCenterUtil {
        // showViewAsDialog(view);
 
 
-        showViewAsActivity(context, new IViewInit() {
+        showViewAsActivityOrDialog(context, true,new IViewInit() {
             @Override
             public View init(Activity activity) {
                 return buildBigIamgeView(activity, urlsOrPaths, position);
@@ -290,6 +277,15 @@ public class ImageMediaCenterUtil {
         });
     }
 
+
+    public static void showViewAsActivityOrDialog(Context context,boolean asDialog, IViewInit init){
+        if(asDialog){
+            showViewAsDialog(context, init);
+        }else {
+            showViewAsActivity( context, init);
+        }
+
+    }
     public static void showViewAsActivity(Context context, IViewInit init){
 
         StartActivityUtil.startActivity(MyUtil.getActivityFromContext(context),EmptyActivity.class,null,false,
@@ -320,11 +316,12 @@ public class ImageMediaCenterUtil {
 
 
 
-    public static void showViewAsDialog(View view) {
+    public static void showViewAsDialog(Context context, IViewInit init) {
+        View view = init.init(MyUtil.getActivityFromContext(context));
         Dialog dialog = new Dialog(view.getContext());
         dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
-        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, ScreenUtils.getScreenHeight()- BarUtils.getStatusBarHeight());//宽高最大
+        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, ScreenUtils.getAppScreenHeight());//宽高最大- BarUtils.getStatusBarHeight()
         dialog.show();
         ImageView ivClose = view.findViewById(R.id.iv_back);
         if(ivClose != null){

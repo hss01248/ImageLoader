@@ -30,6 +30,9 @@ public class TurboCompressor {
 
         //todo 过大的图,resize到1600w像素,仿照谷歌.
         Bitmap bitmap = BitmapFactory.decodeFile(srcPath);
+        if(bitmap == null){
+            return false;
+        }
         boolean success =  false;
         File outFile = new File(outPath);
         try {
@@ -79,6 +82,9 @@ public class TurboCompressor {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, quality, stream);
         bitmap.recycle();
+        if(!file.exists()){
+            boolean newFile = file.createNewFile();
+        }
 
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(stream.toByteArray());
@@ -88,6 +94,9 @@ public class TurboCompressor {
     }
 
     static boolean shouldCompress(File pathname,boolean checkQuality) {
+        if(!pathname.exists()){
+            return false;
+        }
 
         String name = pathname.getName();
         int idx = name.lastIndexOf(".");

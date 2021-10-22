@@ -1,12 +1,12 @@
 package com.hss01248.imagelist.album;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -56,7 +56,7 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         helper.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageMediaCenterUtil.showViewAsActivity(v.getContext(), new IViewInit() {
+                ImageMediaCenterUtil.showViewAsActivityOrDialog(v.getContext(), true,new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(activity);

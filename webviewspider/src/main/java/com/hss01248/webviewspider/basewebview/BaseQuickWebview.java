@@ -8,19 +8,15 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
-
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,11 +27,9 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.PageStateManager;
-import com.hss01248.pagestate.StatefulFrameLayout;
 import com.hss01248.webviewspider.R;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebUIControllerImplBase;
-import com.just.agentweb.IEventHandler;
 import com.just.agentweb.WebViewClient;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -192,7 +186,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         source = source.substring(0,source.length()-1);
                     }
                     source = "<html>"+source +"</html>";
-                    Log.w("source",Thread.currentThread().getName() +source);
+                    Log.v("source",Thread.currentThread().getName() +source);
                     info.htmlSource = source;
                     valueCallback.onReceiveValue(source);
                 }

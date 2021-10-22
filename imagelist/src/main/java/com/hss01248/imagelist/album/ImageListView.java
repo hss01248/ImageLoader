@@ -1,11 +1,17 @@
 package com.hss01248.imagelist.album;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -13,35 +19,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.URLUtil;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.fondesa.recyclerviewdivider.DividerDecoration;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
-import com.google.gson.internal.$Gson$Preconditions;
-import com.hss01248.image.ImageLoader;
-import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
 import com.hss01248.imagelist.download.ImgDownloader;
 import com.hss01248.ui.pop.list.PopList;
 
-
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -341,7 +332,7 @@ public class ImageListView extends FrameLayout {
                 if(images.get(position).isDir){
 
                    // ImageMediaCenterUtil.showViewAsDialog(listView);
-                    ImageMediaCenterUtil.showViewAsActivity(view.getContext(), new IViewInit() {
+                    ImageMediaCenterUtil.showViewAsActivityOrDialog(view.getContext(),true, new IViewInit() {
                         @Override
                         public View init(Activity activity) {
                             ImageListView listView = new ImageListView(activity);

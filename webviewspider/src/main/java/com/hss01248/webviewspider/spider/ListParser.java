@@ -72,8 +72,12 @@ public class ListParser {
                             .get();
                    String htmlStr =  doc.outerHtml();*/
         try {
+            if(idx == paths.size()){
+                callback.onReceiveValue(listToDetailImgsInfo);
+                return;
+            }
             int sleep = (new Random().nextInt(3)+1)*1000;
-            Log.v("caol","sleep "+sleep/1000+"s,then go :"+ idx+", "+paths.get(idx));
+            Log.v("caol","sleep "+sleep/1000+"s,then go :"+ idx+", "+paths.get(idx));// Index: 54, Size: 54
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -92,7 +96,7 @@ public class ListParser {
                                         DownloadInfo load = new DownloadInfo();
                                         load.url = info.url;
                                         load.filePath = "hasparsed";
-                                        DownloadInfoUtil.getDao().insert(load);
+                                        DownloadInfoUtil.getDao().insertOrReplace(load);
                                     }catch (Throwable throwable){
                                         throwable.printStackTrace();
                                     }

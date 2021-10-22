@@ -13,11 +13,6 @@ public class DownloadInfo {
     @Id
     public String url;
     public String filePath;
-
-    public static final int STATUS_FAIL = -1;
-    public static final int STATUS_INIT = 2;
-    public static final int STATUS_SUCCESS = 1;
-    public static final int STATUS_DOWNLOADING = 3;
     /**
      * 成功: 1 下载中 0 下载失败 -1
      */
