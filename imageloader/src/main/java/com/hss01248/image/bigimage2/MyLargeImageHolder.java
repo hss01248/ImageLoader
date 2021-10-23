@@ -92,11 +92,6 @@ public class MyLargeImageHolder {
             }
 
             @Override
-            public void onProgress(int progress) {
-
-            }
-
-            @Override
             public void onFail(Throwable e) {
                 manager.showError(e.getMessage() + "\n" + source);
             }

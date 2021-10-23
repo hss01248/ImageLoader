@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,12 @@ import android.widget.FrameLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hss.downloader.databinding.DownloadListViewBinding;
+import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.download.DownloadResultEvent;
@@ -33,6 +36,39 @@ public class DownloadList {
         EventBus.getDefault().register(this);
     }
 
+    long compressdTotal;
+    long origianlTotal;
+    int compressSuccessCount;
+    int compressTotalCount;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(CompressEvent event) {
+        origianlTotal += event.origianl;
+        compressdTotal += event.after;
+        compressTotalCount++;
+        if(event.success){
+            compressSuccessCount++;
+        }
+        if(origianlTotal==0){
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("压缩结果:")
+                .append("成功/总数:")
+                .append(compressSuccessCount)
+                .append("/")
+                .append(compressTotalCount)
+                .append(",压缩效果:")
+                .append(ConvertUtils.byte2FitMemorySize(compressdTotal,1))
+                .append("/")
+                .append(ConvertUtils.byte2FitMemorySize(origianlTotal,1))
+                .append(",压缩率:")
+                .append(compressdTotal*100/origianlTotal)
+                .append("%");
+        binding.tvCompress.setText(sb.toString());
+
+
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(DownloadResultEvent info) {
         progress++;
@@ -41,13 +77,14 @@ public class DownloadList {
         if(!info.success){
             failCount ++;
         }
-        String text = "("+(progress - failCount) +",f-"+(failCount)+")/"+total;
+        String text = "("+(progress - failCount) +",f-"+(failCount)+")/"+total+",cost:"+ DateUtils.formatElapsedTime((System.currentTimeMillis() - timeStart)/1000);
         binding.tvTotalProgress.setText(text);
     }
     DownloadListViewBinding binding;
     long total;
     int progress;
     int failCount;
+    long timeStart;
     public  void showList(Context context, List<DownloadInfo> result){
 
 
@@ -59,7 +96,7 @@ public class DownloadList {
             //从数据库加载
             adapter.addData(result);
             initClick(adapter,result);
-
+            timeStart = System.currentTimeMillis();
             total = result.size();
             binding.tvTotalProgress.setText("0/"+total);
             binding.pbTotal.setMax((int) total);

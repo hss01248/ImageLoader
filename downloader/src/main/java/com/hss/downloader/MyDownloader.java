@@ -1,23 +1,29 @@
 package com.hss.downloader;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.Utils;
+import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.download.DownloadResultEvent;
 import com.hss.downloader.download.TurboCompressor;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.liulishuo.okdownload.DownloadTask;
+import com.liulishuo.okdownload.OkDownload;
 import com.liulishuo.okdownload.StatusUtil;
 import com.liulishuo.okdownload.core.cause.EndCause;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
+import com.liulishuo.okdownload.core.connection.DownloadUrlConnection;
 import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher;
 import com.liulishuo.okdownload.core.listener.DownloadListener1;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
@@ -30,11 +36,46 @@ import java.util.List;
 
 public class MyDownloader {
 
+    public static void setMaxParallelRunningCount(int maxParallelRunningCount) {
+        MyDownloader.maxParallelRunningCount = maxParallelRunningCount;
+        DownloadDispatcher.setMaxParallelRunningCount(maxParallelRunningCount);
+    }
 
-    public static void fixDbWhenUpdate(){
-        if(true){
+    public static int maxParallelRunningCount = 20;
+
+    static boolean init;
+     static void init(){
+        if(init){
             return;
         }
+        init = true;
+         DownloadDispatcher.setMaxParallelRunningCount(maxParallelRunningCount);
+       /* OkDownload.Builder builder = new OkDownload.Builder(context)
+                .connectionFactory()
+                .downloadStore(downloadStore)
+                .callbackDispatcher(callbackDispatcher)
+                .downloadDispatcher(downloadDispatcher)
+                .connectionFactory(connectionFactory)
+                .outputStreamFactory(outputStreamFactory)
+                .downloadStrategy(downloadStrategy)
+                .processFileStrategy(processFileStrategy)
+                .monitor(monitor);
+
+        OkDownload.setSingletonInstance(builder.build());*/
+       /* DownloadUrlConnection.Factory factory = new DownloadUrlConnection.Factory(
+                new DownloadUrlConnection.Configuration()
+                        .connectTimeout(20000)
+                        .readTimeout(20000));
+        OkDownload.Builder builder = new OkDownload.Builder(Utils.getApp())
+                .connectionFactory(factory);
+        OkDownload.setSingletonInstance(builder.build());*/
+    }
+
+
+    public static void fixDbWhenUpdate(){
+       /* if(true){
+            return;
+        }*/
         ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
         dialog.setMessage("修复上个版本的数据库...");
         dialog.show();
@@ -45,7 +86,7 @@ public class MyDownloader {
                         .where(DownloadInfoDao.Properties.FilePath.isNotNull())
                         .count();
                 int batchSize = 200;
-                updateBatch(batchSize,count);
+                updateBatch(batchSize,count,0);
                 return null;
             }
 
@@ -67,18 +108,18 @@ public class MyDownloader {
         });
     }
 
-    private static void updateBatch(int batchSize, long count) {
+    private static void updateBatch(int batchSize, long count,int batchIdx) {
         LogUtils.d("开始修复一批,待修复:"+count);
         List<DownloadInfo> list = DownloadInfoUtil.getDao().queryBuilder()
                 .where(DownloadInfoDao.Properties.FilePath.isNotNull())
-                .offset(0).limit(batchSize).list();
+                .offset(batchIdx*batchSize).limit(batchSize).list();
         if(list.isEmpty()){
             LogUtils.d("修复完成");
             return;
         }
         for (DownloadInfo info : list) {
             if(!info.filePath.startsWith("/storage/")){
-                LogUtils.d("非文件路径:"+info.filePath);
+               // LogUtils.d("非文件路径:"+info.filePath);
                 continue;
             }
             File file = new File(info.filePath);
@@ -105,7 +146,7 @@ public class MyDownloader {
         count -= list.size();
         if(count >0){
             //LogUtils.d("又修复了一批,待修复:"+count);
-            updateBatch(batchSize, count);
+            updateBatch(batchSize, count,batchIdx+1);
         }else {
             LogUtils.d("修复完成");
         }
@@ -121,12 +162,14 @@ public class MyDownloader {
         ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
         dialog.setMessage("查询数据库...");
         dialog.show();
-        DownloadDispatcher.setMaxParallelRunningCount(6);
+        init();
         ThreadUtils.executeByIo(new ThreadUtils.Task<List<DownloadInfo>>() {
             @Override
             public List<DownloadInfo> doInBackground() throws Throwable {
                 List<DownloadInfo> list = DownloadInfoUtil.getDao().queryBuilder()
-                        .where(DownloadInfoDao.Properties.Status.notEq(DownloadInfo.STATUS_SUCCESS)).list();
+                        .where(DownloadInfoDao.Properties.Status.notEq(DownloadInfo.STATUS_SUCCESS))
+                        .limit(2000)
+                        .orderDesc(DownloadInfoDao.Properties.CreateTime).list();
                 if(list ==null || list.isEmpty()){
                     ToastUtils.showShort("no results");
                     return new ArrayList<>();
@@ -158,7 +201,7 @@ public class MyDownloader {
 
 
     public static void download(List<DownloadUrls> urls){
-        DownloadDispatcher.setMaxParallelRunningCount(6);
+        init();
         //入库
         //开始下载
         ThreadUtils.executeByIo(new ThreadUtils.Task<List<DownloadInfo>>() {
@@ -259,92 +302,65 @@ public class MyDownloader {
     }
 
     public static void startDownload(DownloadInfo info) {
-        DownloadTask task = new DownloadTask.Builder(info.url, info.dir,info.name)
-                // the minimal interval millisecond for callback progress
-                .setMinIntervalMillisCallbackProcess(100)
-                .setConnectionCount(1)
-                // do re-download even if the task has already been completed in the past.
-                .setPassIfAlreadyCompleted(true)
-                .build();
-        task.enqueue(new DownloadListener1() {
-            @Override
-            public void taskStart(@NonNull DownloadTask task, @NonNull Listener1Assist.Listener1Model model) {
-                runOnBack(new Runnable(){
+         if(download == null){
+             LogUtils.w("download == null");
+             return;
+         }
+         download.download(info.url, info.dir + "/" + info.name, new IDownloadCallback() {
+             @Override
+             public void onStart(String url) {
+                 runOnBack(new Runnable(){
 
-                    @Override
-                    public void run() {
-                        info.status = DownloadInfo.STATUS_DOWNLOADING;
-                        DownloadInfoUtil.getDao().update(info);
-                        EventBus.getDefault().post(info);
-                    }
-                });
+                     @Override
+                     public void run() {
+                         info.status = DownloadInfo.STATUS_DOWNLOADING;
+                         DownloadInfoUtil.getDao().update(info);
+                         EventBus.getDefault().post(info);
+                     }
+                 });
+             }
 
-            }
+             @Override
+             public void onSuccess(String url) {
 
-            @Override
-            public void retry(@NonNull DownloadTask task, @NonNull ResumeFailedCause cause) {
+                 info.status = DownloadInfo.STATUS_SUCCESS;
+                 try {
+                     DownloadInfoUtil.getDao().update(info);
+                 }catch (Throwable throwable){
+                     throwable.printStackTrace();
+                 }
 
-            }
+                 EventBus.getDefault().post(info);
+                 EventBus.getDefault().post(new DownloadResultEvent(true));
+                 compressImage(info);
+             }
 
-            @Override
-            public void connected(@NonNull DownloadTask task, int blockCount, long currentOffset, long totalLength) {
-                runOnBack(new Runnable(){
+             @Override
+             public void progress(String url, long currentOffset, long totalLength) {
+                 info.currentOffset = currentOffset;
+                 info.totalLength = totalLength;
+                 info.status = DownloadInfo.STATUS_DOWNLOADING;
+                 EventBus.getDefault().post(info);
+             }
 
-                    @Override
-                    public void run() {
-                        info.totalLength = totalLength;
-                        info.status = DownloadInfo.STATUS_DOWNLOADING;
-                        DownloadInfoUtil.getDao().update(info);
-                        EventBus.getDefault().post(info);
-                    }
-                });
+             @Override
+             public void onFail(String url, String msg, Throwable throwable) {
+                 LogUtils.w(throwable);
+                 info.status = DownloadInfo.STATUS_FAIL;
+                 info.errMsg = msg;
+                 DownloadInfoUtil.getDao().update(info);
 
-            }
-
-            @Override
-            public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
-                info.currentOffset = currentOffset;
-                info.status = DownloadInfo.STATUS_DOWNLOADING;
-                EventBus.getDefault().post(info);
-            }
-
-            @Override
-            public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull Listener1Assist.Listener1Model model) {
-
-                LogUtils.i(cause.name()+" ,"+task.getUrl()+" ,"+realCause);
-                runOnBack(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(cause.equals(EndCause.COMPLETED)){
-                            info.status = DownloadInfo.STATUS_SUCCESS;
-                            if(task.getFile() != null){
-                                info.totalLength = task.getFile().length();
-                            }
-                            try {
-                                DownloadInfoUtil.getDao().update(info);
-                            }catch (Throwable throwable){
-                                throwable.printStackTrace();
-                            }
-                            compressImage(info);
-                        }else {
-                            String des = cause.name();
-                            if(realCause != null){
-                                realCause.printStackTrace();
-                                des = des+","+cause.getClass().getSimpleName()+" "+realCause.getMessage();
-                            }
-                            info.status = DownloadInfo.STATUS_FAIL;
-                            info.errMsg = des;
-                            DownloadInfoUtil.getDao().update(info);
-                        }
-                        EventBus.getDefault().post(info);
-                        EventBus.getDefault().post(new DownloadResultEvent(cause.equals(EndCause.COMPLETED)));
-                    }
-                });
-
-            }
-        });
+                 EventBus.getDefault().post(info);
+                 EventBus.getDefault().post(new DownloadResultEvent(false));
+             }
+         });
     }
 
+    public static void setDownload(IDownload download) {
+        MyDownloader.download = download;
+    }
+
+    static   IDownload download = new OkDownloadImpl();
     private static void runOnBack(Runnable runnable) {
         ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
             @Override
@@ -375,11 +391,17 @@ public class MyDownloader {
         runOnBack(new Runnable() {
             @Override
             public void run() {
-               boolean compressed =  TurboCompressor.compressOriginal(info.dir+"/"+info.name,80);
-               if(compressed){
-                   info.totalLength = new File(info.dir,info.name).length();
-                   EventBus.getDefault().post(info);
-               }
+                CompressEvent event = new CompressEvent();
+                File file = new File(info.dir,info.name);
+                event.origianl = file.length();
+                long start = System.currentTimeMillis();
+               boolean compressed =  TurboCompressor.compressOriginal(file.getAbsolutePath(),80);
+                event.success = compressed;
+                event.timeCost = System.currentTimeMillis() - start;
+                event.after = file.length();
+                EventBus.getDefault().post(event);
+                info.totalLength = file.length();
+                EventBus.getDefault().post(info);
             }
         });
 

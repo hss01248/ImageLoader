@@ -32,7 +32,7 @@ public class DownloadInfo {
     public String dir;
     public String errMsg;
     public long totalLength;
-    public long createTime;
+    public long createTime = System.currentTimeMillis();
 
     public transient boolean selected;
     public transient boolean isInSelectMode;

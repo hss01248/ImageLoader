@@ -37,7 +37,7 @@ public class ThreadPoolFactory {
         if (mDownLoadPool == null) {
             synchronized (ThreadPoolProxy.class) {
                 if (mDownLoadPool == null) {
-                    mDownLoadPool = new ThreadPoolProxy(6, 50, 3000);
+                    mDownLoadPool = new ThreadPoolProxy(6, 20, 3000);
                 }
             }
         }

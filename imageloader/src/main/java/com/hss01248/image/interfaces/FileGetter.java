@@ -14,7 +14,11 @@ public interface FileGetter {
 
     void onFail(Throwable e);
 
-    default void onProgress(int progress) {
+    default void onProgress(long currentOffset, long totalLength) {
+    }
+
+    default void onStart(){
+
     }
 
 }

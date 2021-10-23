@@ -17,11 +17,20 @@
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="25dp"/>
+    <TextView
+        android:id="@+id/tv_compress"
+        android:layout_marginRight="16dp"
+        android:text="压缩率："
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/pb_total"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_marginTop="5dp"
         android:id="@+id/recycler"
-        android:layout_below="@id/pb_total"
+        android:layout_below="@id/tv_compress"
         android:layout_height="match_parent"/>
 
 </RelativeLayout>

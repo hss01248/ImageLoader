@@ -860,7 +860,7 @@ public class Glide4Loader extends ILoader {
 
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
-        File file = new File(url);
+        final File file = new File(url);
         if (file.exists() && file.isFile()) {
             int[] wh = MyUtil.getImageWidthHeight(url);
             getter.onSuccess(file, wh[0], wh[1]);
@@ -871,6 +871,7 @@ public class Glide4Loader extends ILoader {
             @Override
             public void run() {
                 try {
+                    getter.onStart();
                     final File resource = Glide.with(GlobalConfig.context)
                             .asFile()
                             .load(new ProgressableGlideUrl(url))
@@ -896,7 +897,7 @@ public class Glide4Loader extends ILoader {
                         });
                     }
                 } catch (final Throwable throwable) {
-                    throwable.printStackTrace();
+                    //throwable.printStackTrace();
                     // call GlideException#logRootCauses(String) for more detail
                     MyUtil.runOnUIThread(new Runnable() {
                         @Override

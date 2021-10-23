@@ -31,6 +31,7 @@ public class TurboCompressor {
             boolean renameTo = file2.renameTo(file); //垃圾api
             if(renameTo){
                 LogUtils.d("rename success:file.exists() "+file.exists()+",file2.exist:"+file2.exists());
+                return true;
             }else {
                 LogUtils.d("rename failed "+file.exists()+",file2.exist:"+file2.exists());
                 try {
@@ -128,6 +129,7 @@ public class TurboCompressor {
 
     static boolean shouldCompress(File pathname,boolean checkQuality) {
         if(!pathname.exists()){
+            LogUtils.w("source file not exist: "+pathname);
             return false;
         }
 
