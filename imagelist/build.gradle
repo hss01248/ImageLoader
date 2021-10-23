@@ -60,6 +60,8 @@ dependencies {
     api 'com.github.hss01248.StartActivityResult:transactivity:1.1.2'
     api 'com.github.hss01248.StartActivityResult:activityresult:1.1.2'
 
+    api 'com.liulishuo.filedownloader:library:1.7.7'
+
 
 }
 
