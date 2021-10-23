@@ -7,6 +7,7 @@ import android.util.Log;
 import android.webkit.ValueCallback;
 
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
@@ -81,9 +82,26 @@ public class ListParser {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    BaseQuickWebview.loadHtml(context, paths.get(idx), new ValueCallback<WebPageInfo>() {
+                    Handler handler0 = new Handler(Looper.getMainLooper());
+                    Runnable runnable  = new Runnable(){
+
+                        @Override
+                        public void run() {
+                            count[0]--;
+                            progressCallback.onReceiveValue(idx+"/"+paths.size()+",图片数量:"+urls.size());
+                            //if(count[0] ==paths.size() -2){//测试
+                            if(count[0] == 1){
+                                callback.onReceiveValue(listToDetailImgsInfo);
+                            }else {
+                                loadHtml(context,listToDetailImgsInfo,htmlParser, callback, urls, paths, titles, count, idx+1, progressCallback);
+                            }
+                        }
+                    };
+                    handler0.postDelayed(runnable,30000);
+                            BaseQuickWebview.loadHtml(context, paths.get(idx), new ValueCallback<WebPageInfo>() {
                         @Override
                         public void onReceiveValue(WebPageInfo info) {
+                            handler0.removeCallbacks(runnable);
                             count[0]--;
                             List<String> strings = htmlParser.parseDetailPage(info.htmlSource);
                             Log.v("caol",titles.get(idx)+"-imagesize "+strings.size()+",position:"+ idx +",dao:"+count[0]);
@@ -95,7 +113,8 @@ public class ListParser {
                                     try {
                                         DownloadInfo load = new DownloadInfo();
                                         load.url = info.url;
-                                        load.filePath = "hasparsed";
+                                        load.name = "page-"+titles.get(idx);
+                                        load.status = DownloadInfo.STATUS_SUCCESS;
                                         DownloadInfoUtil.getDao().insertOrReplace(load);
                                     }catch (Throwable throwable){
                                         throwable.printStackTrace();
@@ -117,6 +136,8 @@ public class ListParser {
             },sleep);
         } catch (Exception e) {
             e.printStackTrace();
+            ToastUtils.showShort(e.getMessage());
+            loadHtml(context,listToDetailImgsInfo,htmlParser, callback, urls, paths, titles, count, idx+1, progressCallback);
         }
 
     }

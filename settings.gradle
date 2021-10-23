@@ -1,4 +1,6 @@
-include ':downloader'//include ':spiders'
+include ':xxspiders'
+include ':downloader'
+include ':spiders'
 include ':imageDebugger'
 include ':webviewspider'
 include ':bigimgdemo'

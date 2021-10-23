@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -33,6 +35,7 @@ import com.just.agentweb.AgentWebUIControllerImplBase;
 import com.just.agentweb.WebViewClient;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.ThreadUtils;
 
 
 public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleObserver {
@@ -136,6 +139,8 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 
             }
         });*/
+
+
 
         quickWebview.setSourceLoadListener(new ValueCallback<WebPageInfo>() {
             @Override

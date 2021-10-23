@@ -11,9 +11,9 @@ import org.greenrobot.greendao.annotation.Generated;
 public class DownloadInfo {
 
     public static final int STATUS_FAIL = -1;
-    public static final int STATUS_ORIGINAL = -2;
+    public static final int STATUS_ORIGINAL = 0;
     public static final int STATUS_SUCCESS = 1;
-    public static final int STATUS_DOWNLOADING = 0;
+    public static final int STATUS_DOWNLOADING = 2;
     @Id
     public String url;
 
@@ -22,7 +22,7 @@ public class DownloadInfo {
     /**
      * 成功: 1 下载中 0 下载失败 -1, 初始状态 -2
      */
-    public int status = -2;
+    public int status = 0;
 
     /**
      * 文件名

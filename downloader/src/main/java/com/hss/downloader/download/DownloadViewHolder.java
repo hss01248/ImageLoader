@@ -8,7 +8,9 @@ import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.hss.downloader.MyDownloader;
 import com.hss.downloader.R;
 import com.hss.downloader.databinding.ItemDownloadUiBinding;
 
@@ -16,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.Date;
 
 
@@ -62,32 +65,43 @@ public class DownloadViewHolder extends BaseViewHolder {
 
         if(info.totalLength>0){
             helper.setText(R.id.tv_size, ConvertUtils.byte2FitMemorySize(info.totalLength,2));
+        }else {
+            binding.tvSize.setText("");
         }
         if(info.createTime > 0){
-            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.totalLength),"yy-mm-dd"));
+            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.createTime),"yyyy-MM-dd"));
+        }else {
+            binding.tvData.setText("");
         }
 
 
         if(info.status == DownloadInfo.STATUS_DOWNLOADING){
             helper.setText(R.id.tv_status_msg,"下载中");
             helper.setVisible(R.id.progress_bar,true);
-            helper.setText(R.id.tv_download_btn_desc,"点击暂停");
+            helper.setText(R.id.tv_download_btn_desc,"暂停");
             binding.llRight.setVisibility(View.VISIBLE);
+            binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
         }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
             helper.setText(R.id.tv_status_msg,"等待中");
             helper.setVisible(R.id.progress_bar,false);
-            helper.setText(R.id.tv_download_btn_desc,"点击暂停");
+            helper.setText(R.id.tv_download_btn_desc,"暂停");
             binding.llRight.setVisibility(View.VISIBLE);
+            binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
         }else if(info.status == DownloadInfo.STATUS_FAIL){
             helper.setText(R.id.tv_status_msg,"失败:"+info.errMsg);
             helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"重试");
             binding.llRight.setVisibility(View.VISIBLE);
+            binding.ivIcon.setImageResource(R.color.design_default_color_error);
+
         }else if(info.status == DownloadInfo.STATUS_SUCCESS){
             helper.setText(R.id.tv_status_msg,"下载成功");
             helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"");
             binding.llRight.setVisibility(View.GONE);
+            Glide.with(binding.ivIcon)
+                    .load(info.dir+"/"+info.name)
+                    .into(binding.ivIcon);
         }
         if(info.totalLength>0){
             binding.progressBar.setMax((int) info.totalLength);
@@ -95,6 +109,18 @@ public class DownloadViewHolder extends BaseViewHolder {
                 binding.progressBar.setProgress((int) info.currentOffset);
             }
         }
+
+        binding.llRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(info.status  == DownloadInfo.STATUS_FAIL){
+                    MyDownloader.startDownload(info);
+                }else if(info.status == DownloadInfo.STATUS_DOWNLOADING || info.status == DownloadInfo.STATUS_ORIGINAL){
+
+                }
+
+            }
+        });
 
     }
 

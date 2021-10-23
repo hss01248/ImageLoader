@@ -11,9 +11,9 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
+import com.hss.downloader.download.DownloadResultEvent;
 import com.hss.downloader.download.TurboCompressor;
 import com.hss.downloader.download.db.DownloadInfoDao;
-import com.liulishuo.okdownload.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.StatusUtil;
 import com.liulishuo.okdownload.core.cause.EndCause;
@@ -32,14 +32,20 @@ public class MyDownloader {
 
 
     public static void fixDbWhenUpdate(){
+        if(true){
+            return;
+        }
         ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
         dialog.setMessage("修复上个版本的数据库...");
         dialog.show();
         ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
             @Override
             public Object doInBackground() throws Throwable {
+                long count = DownloadInfoUtil.getDao().queryBuilder()
+                        .where(DownloadInfoDao.Properties.FilePath.isNotNull())
+                        .count();
                 int batchSize = 200;
-                updateBatch(batchSize);
+                updateBatch(batchSize,count);
                 return null;
             }
 
@@ -61,36 +67,54 @@ public class MyDownloader {
         });
     }
 
-    private static void updateBatch(int batchSize) {
+    private static void updateBatch(int batchSize, long count) {
+        LogUtils.d("开始修复一批,待修复:"+count);
         List<DownloadInfo> list = DownloadInfoUtil.getDao().queryBuilder()
                 .where(DownloadInfoDao.Properties.FilePath.isNotNull())
                 .offset(0).limit(batchSize).list();
         if(list.isEmpty()){
+            LogUtils.d("修复完成");
             return;
         }
         for (DownloadInfo info : list) {
+            if(!info.filePath.startsWith("/storage/")){
+                LogUtils.d("非文件路径:"+info.filePath);
+                continue;
+            }
             File file = new File(info.filePath);
             info.name = file.getName();
             info.dir = file.getParentFile().getAbsolutePath();
             info.filePath = null;
             if(info.status == DownloadInfo.STATUS_DOWNLOADING){
-                info.status = DownloadInfo.STATUS_ORIGINAL;
+                //info.status = DownloadInfo.STATUS_ORIGINAL;
+            }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
+                info.status = DownloadInfo.STATUS_SUCCESS;
             }
+            if(file.exists()){
+                info.totalLength = file.length();
+                info.createTime = file.lastModified();
+            }
+
         }
         try {
+            //LogUtils.d("入库修复:"+count);
             DownloadInfoUtil.getDao().updateInTx(list);
         }catch (Throwable throwable){
             throwable.printStackTrace();
         }
-        if(list.size() == batchSize){
-            updateBatch(batchSize);
+        count -= list.size();
+        if(count >0){
+            //LogUtils.d("又修复了一批,待修复:"+count);
+            updateBatch(batchSize, count);
+        }else {
+            LogUtils.d("修复完成");
         }
 
     }
 
 
     public static void showDownloadPage(){
-        DownloadList.showList(ActivityUtils.getTopActivity(),null);
+        new DownloadList().showList(ActivityUtils.getTopActivity(),null);
     }
 
     public static void continueDownload(){
@@ -117,7 +141,7 @@ public class MyDownloader {
             @Override
             public void onSuccess(List<DownloadInfo> result) {
                 dialog.dismiss();
-                DownloadList.showList(ActivityUtils.getTopActivity(),result);
+                new DownloadList().showList(ActivityUtils.getTopActivity(),result);
             }
 
             @Override
@@ -217,7 +241,7 @@ public class MyDownloader {
 
             @Override
             public void onSuccess(List<DownloadInfo> result) {
-                DownloadList.showList(ActivityUtils.getTopActivity(),result);
+                new DownloadList().showList(ActivityUtils.getTopActivity(),result);
             }
 
             @Override
@@ -234,7 +258,7 @@ public class MyDownloader {
 
     }
 
-    private static void startDownload(DownloadInfo info) {
+    public static void startDownload(DownloadInfo info) {
         DownloadTask task = new DownloadTask.Builder(info.url, info.dir,info.name)
                 // the minimal interval millisecond for callback progress
                 .setMinIntervalMillisCallbackProcess(100)
@@ -301,7 +325,6 @@ public class MyDownloader {
                             }catch (Throwable throwable){
                                 throwable.printStackTrace();
                             }
-
                             compressImage(info);
                         }else {
                             String des = cause.name();
@@ -314,6 +337,7 @@ public class MyDownloader {
                             DownloadInfoUtil.getDao().update(info);
                         }
                         EventBus.getDefault().post(info);
+                        EventBus.getDefault().post(new DownloadResultEvent(cause.equals(EndCause.COMPLETED)));
                     }
                 });
 
