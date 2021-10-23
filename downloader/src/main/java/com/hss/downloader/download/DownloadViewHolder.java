@@ -72,18 +72,22 @@ public class DownloadViewHolder extends BaseViewHolder {
             helper.setText(R.id.tv_status_msg,"下载中");
             helper.setVisible(R.id.progress_bar,true);
             helper.setText(R.id.tv_download_btn_desc,"点击暂停");
+            binding.llRight.setVisibility(View.VISIBLE);
         }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
             helper.setText(R.id.tv_status_msg,"等待中");
             helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"点击暂停");
+            binding.llRight.setVisibility(View.VISIBLE);
         }else if(info.status == DownloadInfo.STATUS_FAIL){
             helper.setText(R.id.tv_status_msg,"失败:"+info.errMsg);
             helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"重试");
+            binding.llRight.setVisibility(View.VISIBLE);
         }else if(info.status == DownloadInfo.STATUS_SUCCESS){
             helper.setText(R.id.tv_status_msg,"下载成功");
             helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"");
+            binding.llRight.setVisibility(View.GONE);
         }
         if(info.totalLength>0){
             binding.progressBar.setMax((int) info.totalLength);
@@ -109,7 +113,14 @@ public class DownloadViewHolder extends BaseViewHolder {
             this.info.totalLength = info.totalLength;
             this.info.errMsg = info.errMsg;
             this.info.currentOffset = info.currentOffset;
-
+        }
+        if(info.status == DownloadInfo.STATUS_DOWNLOADING){
+            if(info.currentOffset>0 && info.currentOffset != info.totalLength){
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.progressBar.setMax((int) info.totalLength);
+                binding.progressBar.setProgress((int) info.currentOffset);
+                return;
+            }
         }
         showView(info);
 

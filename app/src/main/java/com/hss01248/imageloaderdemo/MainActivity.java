@@ -31,6 +31,7 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
+import com.hss.downloader.download.TurboCompressor;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
@@ -451,11 +452,13 @@ public class MainActivity extends AppCompatActivity {
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
             public void onSuccess(String path) {
+
+                TurboCompressor.compressOriginal(path,70);
                 ImageLoader.with(MainActivity.this)
                         .load(path)
                         // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
                         // .res(R.drawable.thegif)
-                       // .placeHolder(R.mipmap.ic_launcher, false)
+                        // .placeHolder(R.mipmap.ic_launcher, false)
                         //.widthHeight(250, 150)
                         //.asCircle(R.color.colorAccent)
                         .into(ivFile);

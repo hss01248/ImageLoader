@@ -21,6 +21,7 @@
         android:layout_height="50dp"/>
     <TextView
         android:textColor="#333333"
+        android:layout_marginRight="60dp"
         android:layout_width="wrap_content"
         android:maxLines="1"
         android:text="name"
@@ -96,10 +97,12 @@
         android:layout_alignParentRight="true"
         android:textColor="#999999"
         android:layout_width="wrap_content"
-        android:maxLines="1"
+        android:maxLines="2"
+        android:layout_toRightOf="@id/tv_data"
+        android:gravity="right"
         android:layout_marginRight="60dp"
         android:textSize="11sp"
-        android:text=""
+        android:text="错误信息"
         android:ellipsize="end"
         android:layout_alignParentBottom="true"
         android:id="@+id/tv_status_msg"

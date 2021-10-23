@@ -5,16 +5,57 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.CloseUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.quality.Magick;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class TurboCompressor {
+
+    public static int targetQuality = 80;
+
+    public static boolean compressOriginal(String filePath,int quality){
+        File file = new File(filePath);
+        File dir = file.getParentFile();
+        File file2 = new File(dir, "tmp-"+file.getName());
+
+        boolean compress = TurboCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
+        if(compress) {
+            boolean renameTo = file2.renameTo(file); //垃圾api
+            if(renameTo){
+                LogUtils.d("rename success:file.exists() "+file.exists()+",file2.exist:"+file2.exists());
+            }else {
+                LogUtils.d("rename failed "+file.exists()+",file2.exist:"+file2.exists());
+                try {
+                    boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
+                        @Override
+                        public boolean onReplace(File srcFile, File destFile) {
+                            return true;
+                        }
+                    });
+                    if(copy){
+                        file2.delete();
+                    }
+                    return true;
+                }catch (Throwable throwable){
+                    throwable.printStackTrace();
+                    file2.renameTo(file);
+                }
+            }
+
+
+        }else {
+            file2.delete();
+        }
+        return false;
+    }
     /**
      *
      * @param srcPath
@@ -58,7 +99,7 @@ public class TurboCompressor {
         if(success){
             try {
                 ExifUtil.writeExif(ExifUtil.readExif(srcPath),outPath);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }finally {
                 return true;
@@ -79,18 +120,10 @@ public class TurboCompressor {
     }
 
     private static void defaultCompressToFile(Bitmap bitmap, File file, boolean focusAlpha, int quality) throws IOException{
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        OutputStream stream = new FileOutputStream(file);
         bitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, quality, stream);
         bitmap.recycle();
-        if(!file.exists()){
-            boolean newFile = file.createNewFile();
-        }
-
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(stream.toByteArray());
-        fos.flush();
-        fos.close();
-        stream.close();
+        CloseUtils.closeIO(stream);
     }
 
     static boolean shouldCompress(File pathname,boolean checkQuality) {
@@ -125,7 +158,7 @@ public class TurboCompressor {
     }
 
     static int getQuality() {
-        return 80;
+        return targetQuality;
     }
 
     static int getQuality(String path) {
@@ -136,13 +169,21 @@ public class TurboCompressor {
         if (!file.exists()) {
             return 0;
         }
-
+        FileInputStream inputStream  = null;
         try {
-
-            return new Magick().getJPEGImageQuality(new FileInputStream(file));
-        } catch (Exception e) {
+            inputStream = new FileInputStream(file);
+            return new Magick().getJPEGImageQuality(inputStream);
+        } catch (Throwable e) {
             e.printStackTrace();
             return 0;
+        }finally {
+            if(inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

@@ -22,6 +22,10 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+    packagingOptions {
+        // Make sure libjsc.so does not packed in APK
+        pickFirst '**/libc++_shared.so'
+    }
     /*repositories {
         flatDir {
             dirs 'libs' //this way we can find the .aar file in libs folder
@@ -31,6 +35,7 @@ android {
 
 
 dependencies {
+    implementation project(path: ':downloader')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -80,6 +85,8 @@ dependencies {
    // implementation project(path: ':spiders')
     implementation 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
     debugImplementation 'com.glance.guolindev:glance:1.0.0'
+
+    debugImplementation 'com.github.hss01248.flipperUtil:oom:1.2.3'
     configurations.all {
         resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.12.0'
         resolutionStrategy.force 'com.squareup.okio:okio:1.15.0'

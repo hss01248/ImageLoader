@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
+import com.hss.downloader.download.TurboCompressor;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.liulishuo.okdownload.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
@@ -295,7 +296,12 @@ public class MyDownloader {
                             if(task.getFile() != null){
                                 info.totalLength = task.getFile().length();
                             }
-                            DownloadInfoUtil.getDao().update(info);
+                            try {
+                                DownloadInfoUtil.getDao().update(info);
+                            }catch (Throwable throwable){
+                                throwable.printStackTrace();
+                            }
+
                             compressImage(info);
                         }else {
                             String des = cause.name();
@@ -342,6 +348,16 @@ public class MyDownloader {
     }
 
     private static void compressImage(DownloadInfo info) {
+        runOnBack(new Runnable() {
+            @Override
+            public void run() {
+               boolean compressed =  TurboCompressor.compressOriginal(info.dir+"/"+info.name,80);
+               if(compressed){
+                   info.totalLength = new File(info.dir,info.name).length();
+                   EventBus.getDefault().post(info);
+               }
+            }
+        });
 
     }
 }
