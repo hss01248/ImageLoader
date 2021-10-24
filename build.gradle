@@ -2,6 +2,7 @@
 
 buildscript {
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote3.gradle'
+    apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
     repositories {
         google()
         jcenter()
