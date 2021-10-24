@@ -25,6 +25,7 @@ android {
     packagingOptions {
         // Make sure libjsc.so does not packed in APK
         pickFirst '**/libc++_shared.so'
+        exclude("META-INF/*.kotlin_module")
     }
     /*repositories {
         flatDir {
@@ -46,9 +47,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:10.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
 
-    //compile 'com.github.lsjwzh.RecyclerViewPager:lib:v1.1.2'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3'
    // compile project(':fresco')
   //  compile project(':glide')
     //compile project(':memory')
@@ -93,6 +91,14 @@ dependencies {
     }
 
 
+}
+
+apply plugin: 'bugly'
+
+bugly {
+    debug = true
+    appId = '7ac352d904' // 注册时分配的App ID
+    appKey = '4f7a08bf-1fa1-453f-870d-da59f0131c02' // 注册时分配的App Key
 }
 
 configurations.all {

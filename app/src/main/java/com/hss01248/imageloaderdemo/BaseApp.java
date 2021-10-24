@@ -16,7 +16,10 @@ import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
 import com.glance.guolindev.Glance;
 import com.hjq.permissions.XXPermissions;
+import com.hss.downloader.BuildConfig;
 import com.hss.downloader.MyDownloader;
+import com.hss01248.analytics_umeng.UmengUtil;
+import com.hss01248.bugly.XReporter;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 
@@ -33,13 +36,14 @@ import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
-import com.squareup.leakcanary.LeakCanary;
+
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.MyToast;
+import leakcanary.LeakCanary;
 
 /**
  * Created by Administrator on 2017/3/15 0015.
@@ -56,7 +60,9 @@ public class BaseApp extends MultiDexApplication {
         //Glance.INSTANCE.initialize(new MyDBContext(this));
 
         DBAspect.addDB(getFile("imgdownload.db"));
-
+        XReporter.init(this,"7ac352d904",true);
+        //4f7a08bf-1fa1-453f-870d-da59f0131c02
+        UmengUtil.init(this,"6163f5bbac9567566e91bb94","bugly",1,"", BuildConfig.DEBUG);
         NotifyUtil.init(this);
         SpiderWebviewActivity.setShowUrls(new IShowUrls() {
             @Override
@@ -141,7 +147,6 @@ public class BaseApp extends MultiDexApplication {
         // GlobalConfig.errorResId = R.drawable.im_item_list_opt_error;
         //BigImageViewer.initialize(GlideBigLoader.with(this));
         //GlobalConfig.setBigImageDark(false);
-        LeakCanary.install(this);
         MyToast.init(this, true, true);
 
         // PhotoUtil.init(getApplicationContext(),new GlideIniter());//第二个参数根据具体依赖库而定
