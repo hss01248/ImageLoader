@@ -52,7 +52,7 @@ dependencies {
     api 'com.daimajia.numberprogressbar:library:1.4@aar'
 
     api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
-
+    api 'com.noober.floatmenu:common:1.0.4'
 
     api 'com.github.hss01248.metadata:metadata:1.1.2'
     api 'com.github.getActivity:XXPermissions:11.6'//请求存储权限

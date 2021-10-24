@@ -20,6 +20,7 @@ import com.hss.downloader.download.TurboCompressor;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
+import com.liulishuo.okdownload.OkDownloadProvider;
 import com.liulishuo.okdownload.StatusUtil;
 import com.liulishuo.okdownload.core.cause.EndCause;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
@@ -36,40 +37,7 @@ import java.util.List;
 
 public class MyDownloader {
 
-    public static void setMaxParallelRunningCount(int maxParallelRunningCount) {
-        MyDownloader.maxParallelRunningCount = maxParallelRunningCount;
-        DownloadDispatcher.setMaxParallelRunningCount(maxParallelRunningCount);
-    }
 
-    public static int maxParallelRunningCount = 20;
-
-    static boolean init;
-     static void init(){
-        if(init){
-            return;
-        }
-        init = true;
-         DownloadDispatcher.setMaxParallelRunningCount(maxParallelRunningCount);
-       /* OkDownload.Builder builder = new OkDownload.Builder(context)
-                .connectionFactory()
-                .downloadStore(downloadStore)
-                .callbackDispatcher(callbackDispatcher)
-                .downloadDispatcher(downloadDispatcher)
-                .connectionFactory(connectionFactory)
-                .outputStreamFactory(outputStreamFactory)
-                .downloadStrategy(downloadStrategy)
-                .processFileStrategy(processFileStrategy)
-                .monitor(monitor);
-
-        OkDownload.setSingletonInstance(builder.build());*/
-       /* DownloadUrlConnection.Factory factory = new DownloadUrlConnection.Factory(
-                new DownloadUrlConnection.Configuration()
-                        .connectTimeout(20000)
-                        .readTimeout(20000));
-        OkDownload.Builder builder = new OkDownload.Builder(Utils.getApp())
-                .connectionFactory(factory);
-        OkDownload.setSingletonInstance(builder.build());*/
-    }
 
 
     public static void fixDbWhenUpdate(){
@@ -162,7 +130,6 @@ public class MyDownloader {
         ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
         dialog.setMessage("查询数据库...");
         dialog.show();
-        init();
         ThreadUtils.executeByIo(new ThreadUtils.Task<List<DownloadInfo>>() {
             @Override
             public List<DownloadInfo> doInBackground() throws Throwable {
@@ -201,7 +168,6 @@ public class MyDownloader {
 
 
     public static void download(List<DownloadUrls> urls){
-        init();
         //入库
         //开始下载
         ThreadUtils.executeByIo(new ThreadUtils.Task<List<DownloadInfo>>() {
@@ -339,7 +305,7 @@ public class MyDownloader {
              public void progress(String url, long currentOffset, long totalLength) {
                  info.currentOffset = currentOffset;
                  info.totalLength = totalLength;
-                 info.status = DownloadInfo.STATUS_DOWNLOADING;
+                 info.status = currentOffset == totalLength ? DownloadInfo.STATUS_SUCCESS : DownloadInfo.STATUS_DOWNLOADING;
                  EventBus.getDefault().post(info);
              }
 

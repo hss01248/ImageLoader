@@ -3,12 +3,16 @@ package com.hss.downloader;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.blankj.utilcode.util.Utils;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.download.DownloadResultEvent;
 import com.liulishuo.okdownload.DownloadTask;
+import com.liulishuo.okdownload.OkDownload;
 import com.liulishuo.okdownload.core.cause.EndCause;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
+import com.liulishuo.okdownload.core.connection.DownloadUrlConnection;
+import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher;
 import com.liulishuo.okdownload.core.listener.DownloadListener1;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 
@@ -17,6 +21,48 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 
 public class OkDownloadImpl implements IDownload{
+
+    public static void setMaxParallelRunningCount(int maxParallelRunningCount) {
+        OkDownloadImpl.maxParallelRunningCount = maxParallelRunningCount;
+        DownloadDispatcher.setMaxParallelRunningCount(maxParallelRunningCount);
+    }
+
+    public static int maxParallelRunningCount = 20;
+    static volatile boolean init;
+
+    public OkDownloadImpl() {
+        init();
+    }
+
+    static void init(){
+        if(init){
+            return;
+        }
+        init = true;
+
+        /*OkDownload.Builder builder = new OkDownload.Builder(Utils.getApp())
+                .connectionFactory(OkDownloadProvider.)
+                .downloadStore(downloadStore)
+                .callbackDispatcher(callbackDispatcher)
+                .downloadDispatcher(downloadDispatcher)
+                .connectionFactory(connectionFactory)
+                .outputStreamFactory(outputStreamFactory)
+                .downloadStrategy(downloadStrategy)
+                .processFileStrategy(processFileStrategy)
+                .monitor(monitor);
+
+        OkDownload.setSingletonInstance(builder.build());*/
+        DownloadUrlConnection.Factory factory = new DownloadUrlConnection.Factory(
+                new DownloadUrlConnection.Configuration()
+                        .connectTimeout(20000)
+                        .readTimeout(20000));
+        OkDownload.Builder builder = new OkDownload.Builder(Utils.getApp())
+                .connectionFactory(factory);
+        OkDownload.setSingletonInstance(builder.build());
+
+        DownloadDispatcher.setMaxParallelRunningCount(maxParallelRunningCount);
+    }
+
     @Override
     public void download(String url, String filePath, IDownloadCallback callback) {
         File file = new File(filePath);

@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.webkit.ValueCallback;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.DownloadInfo;
@@ -83,10 +84,11 @@ public class ListParser {
                 @Override
                 public void run() {
                     Handler handler0 = new Handler(Looper.getMainLooper());
-                    Runnable runnable  = new Runnable(){
+                    Runnable runnable0  = new Runnable(){
 
                         @Override
                         public void run() {
+                            LogUtils.w("caol","30s timeout parse html source "+sleep/1000+"s,then go :"+ idx+", "+paths.get(idx));// Index: 54, Size: 54
                             count[0]--;
                             progressCallback.onReceiveValue(idx+"/"+paths.size()+",图片数量:"+urls.size());
                             //if(count[0] ==paths.size() -2){//测试
@@ -97,16 +99,22 @@ public class ListParser {
                             }
                         }
                     };
-                    handler0.postDelayed(runnable,30000);
+                    handler0.postDelayed(runnable0,30000);
                             BaseQuickWebview.loadHtml(context, paths.get(idx), new ValueCallback<WebPageInfo>() {
                         @Override
                         public void onReceiveValue(WebPageInfo info) {
-                            handler0.removeCallbacks(runnable);
-                            count[0]--;
-                            List<String> strings = htmlParser.parseDetailPage(info.htmlSource);
-                            Log.v("caol",titles.get(idx)+"-imagesize "+strings.size()+",position:"+ idx +",dao:"+count[0]);
-                            listToDetailImgsInfo.titlesToImags.put(titles.get(idx),strings);
-                            urls.addAll(strings);
+                            try {
+                                LogUtils.d("caol"," parse html source less then 30s,  removeCallbacks:"+idx+", "+paths.get(idx));
+                                handler0.removeCallbacks(runnable0);
+                                count[0]--;
+                                List<String> strings = htmlParser.parseDetailPage(info.htmlSource);
+                                Log.v("caol",titles.get(idx)+"-imagesize "+strings.size()+",position:"+ idx +",dao:"+count[0]);
+                                listToDetailImgsInfo.titlesToImags.put(titles.get(idx),strings);
+                                urls.addAll(strings);
+                            }catch (Throwable throwable){
+                                LogUtils.w(throwable);
+                            }
+
                             ThreadUtils.getIoPool().execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -135,9 +143,8 @@ public class ListParser {
                 }
             },sleep);
         } catch (Exception e) {
-            e.printStackTrace();
-            ToastUtils.showShort(e.getMessage());
-            loadHtml(context,listToDetailImgsInfo,htmlParser, callback, urls, paths, titles, count, idx+1, progressCallback);
+            LogUtils.w(e);
+            //loadHtml(context,listToDetailImgsInfo,htmlParser, callback, urls, paths, titles, count, idx+1, progressCallback);
         }
 
     }

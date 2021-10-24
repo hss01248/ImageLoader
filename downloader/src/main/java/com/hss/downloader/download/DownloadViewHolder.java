@@ -80,35 +80,52 @@ public class DownloadViewHolder extends BaseViewHolder {
             helper.setVisible(R.id.progress_bar,true);
             helper.setText(R.id.tv_download_btn_desc,"暂停");
             binding.llRight.setVisibility(View.VISIBLE);
+            if(info.totalLength>0){
+                binding.progressBar.setMax((int) info.totalLength);
+                if(info.currentOffset >=0){
+                    binding.progressBar.setProgress((int) info.currentOffset);
+                }
+            }
             binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
         }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
             helper.setText(R.id.tv_status_msg,"等待中");
             helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"暂停");
-            binding.llRight.setVisibility(View.VISIBLE);
+            binding.llRight.setVisibility(View.GONE);
             binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
+
+            if(info.totalLength>0 && info.currentOffset>0){
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.progressBar.setMax((int) info.totalLength);
+                binding.progressBar.setProgress((int) info.currentOffset);
+            }else {
+                binding.progressBar.setVisibility(View.GONE);
+            }
+
         }else if(info.status == DownloadInfo.STATUS_FAIL){
             helper.setText(R.id.tv_status_msg,"失败:"+info.errMsg);
             helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"重试");
-            binding.llRight.setVisibility(View.VISIBLE);
+            binding.llRight.setVisibility(View.GONE);
             binding.ivIcon.setImageResource(R.color.design_default_color_error);
+            if(info.totalLength>0 && info.currentOffset>0){
+                binding.progressBar.setVisibility(View.VISIBLE);
+                binding.progressBar.setMax((int) info.totalLength);
+                binding.progressBar.setProgress((int) info.currentOffset);
+            }else {
+                binding.progressBar.setVisibility(View.GONE);
+            }
 
         }else if(info.status == DownloadInfo.STATUS_SUCCESS){
             helper.setText(R.id.tv_status_msg,"下载成功");
-            helper.setVisible(R.id.progress_bar,false);
             helper.setText(R.id.tv_download_btn_desc,"");
             binding.llRight.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
             Glide.with(binding.ivIcon)
                     .load(info.dir+"/"+info.name)
                     .into(binding.ivIcon);
         }
-        if(info.totalLength>0){
-            binding.progressBar.setMax((int) info.totalLength);
-            if(info.currentOffset >=0){
-                binding.progressBar.setProgress((int) info.currentOffset);
-            }
-        }
+
 
         binding.llRight.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +159,7 @@ public class DownloadViewHolder extends BaseViewHolder {
         }
         if(info.status == DownloadInfo.STATUS_DOWNLOADING){
             if(info.currentOffset>0 && info.currentOffset != info.totalLength){
-                binding.progressBar.setVisibility(View.VISIBLE);
+                //binding.progressBar.setVisibility(View.VISIBLE);
                 binding.progressBar.setMax((int) info.totalLength);
                 binding.progressBar.setProgress((int) info.currentOffset);
                 return;

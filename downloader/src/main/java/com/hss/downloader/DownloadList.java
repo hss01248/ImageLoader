@@ -1,6 +1,7 @@
 package com.hss.downloader;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -17,17 +18,20 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hss.downloader.databinding.DownloadListViewBinding;
 import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.download.DownloadResultEvent;
+import com.noober.menu.FloatMenu;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadList {
@@ -75,14 +79,23 @@ public class DownloadList {
 
         binding.pbTotal.setProgress(progress);
         if(!info.success){
-            failCount ++;
+            if(successCount + failCount < total){
+                failCount ++;
+            }
+        }else {
+            successCount++;
+            if(successCount + failCount >= total){
+                failCount --;
+            }
         }
-        String text = "("+(progress - failCount) +",f-"+(failCount)+")/"+total+",cost:"+ DateUtils.formatElapsedTime((System.currentTimeMillis() - timeStart)/1000);
+
+        String text = "("+(successCount) +",f-"+(failCount)+")/"+total+",cost:"+ DateUtils.formatElapsedTime((System.currentTimeMillis() - timeStart)/1000);
         binding.tvTotalProgress.setText(text);
     }
     DownloadListViewBinding binding;
     long total;
     int progress;
+    int successCount;
     int failCount;
     long timeStart;
     public  void showList(Context context, List<DownloadInfo> result){
@@ -94,6 +107,7 @@ public class DownloadList {
             binding.recycler.setAdapter(adapter);
             binding.recycler.setLayoutManager(new LinearLayoutManager(context));
             //从数据库加载
+            datas = result;
             adapter.addData(result);
             initClick(adapter,result);
             timeStart = System.currentTimeMillis();
@@ -166,17 +180,170 @@ public class DownloadList {
 
     }
 
+    public static void setLargeImagesViewer(ILargeImagesViewer largeImagesViewer) {
+        DownloadList.largeImagesViewer = largeImagesViewer;
+    }
+
+    static ILargeImagesViewer largeImagesViewer;
+    List<DownloadInfo> datas;
     private void initClick(DownloadItemAdapter adapter, List<DownloadInfo> result) {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                final int[] realPosition = {0};
+                ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
+                dialog.setMessage("查询数据...");
+                dialog.show();
+                ThreadUtils.executeByCpu(new ThreadUtils.Task<List<String>>() {
+                    @Override
+                    public List<String> doInBackground() throws Throwable {
+                        List<String> files = new ArrayList<>();
+                        int idx = -1;
+                        int successIdx = -1;
+                        for (DownloadInfo downloadInfo : result) {
+                            idx++;
+
+                            if(downloadInfo.status == DownloadInfo.STATUS_SUCCESS){
+                                files.add(downloadInfo.dir+"/"+downloadInfo.name);
+                                successIdx++;
+                            }
+                            if(position == idx){
+                                realPosition[0] = successIdx;
+                            }
+                        }
+                        return files;
+                    }
+
+                    @Override
+                    public void onSuccess(List<String> result) {
+                        dialog.dismiss();
+                        if(largeImagesViewer != null){
+                            largeImagesViewer.showBig(ActivityUtils.getTopActivity(),result, realPosition[0]);
+                        }else {
+                            ToastUtils.showShort("please set largeImagesViewer impl");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+
+                    @Override
+                    public void onFail(Throwable t) {
+
+                    }
+                });
 
             }
         });
         adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                onItemLongClicked(view,position);
                 return true;
+            }
+        });
+        binding.tvRetryall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFailPop(view);
+
+            }
+        });
+    }
+
+    private void onItemLongClicked(View view, int position) {
+        final FloatMenu floatMenu = new FloatMenu(view.getContext(), view);
+        //String hide = DbUtil.showHidden ? "隐藏文件夹":"显示隐藏的文件夹";
+        String[] desc = new String[2];
+        desc[0] = "打开下载文件夹"  ;
+        desc[1] ="todo";
+
+        floatMenu.items(desc);
+        floatMenu.setOnItemClickListener(new FloatMenu.OnItemClickListener() {
+            @Override
+            public void onClick(View v, int position) {
+                if(position == 0){
+                    if(largeImagesViewer != null){
+                        largeImagesViewer.viewDir(ActivityUtils.getTopActivity(),datas.get(position).dir,"");
+                    }else {
+
+                    }
+
+                }else if(position == 1){
+                   // dealFailData(1);
+                }
+            }
+        });
+
+        floatMenu.showAsDropDown(view);
+    }
+
+    private void showFailPop(View view) {
+        final FloatMenu floatMenu = new FloatMenu(view.getContext(), view);
+        //String hide = DbUtil.showHidden ? "隐藏文件夹":"显示隐藏的文件夹";
+        String[] desc = new String[2];
+        desc[0] = "重试"  ;
+        desc[1] ="在数据库里删除所有失败条目";
+
+        floatMenu.items(desc);
+        floatMenu.setOnItemClickListener(new FloatMenu.OnItemClickListener() {
+            @Override
+            public void onClick(View v, int position) {
+                if(position == 0){
+                   dealFailData(0);
+
+                }else if(position == 1){
+                    dealFailData(1);
+                }
+            }
+        });
+
+        floatMenu.showAsDropDown(view);
+    }
+
+    private void dealFailData(int idx) {
+        ThreadUtils.executeByCpu(new ThreadUtils.Task<List<DownloadInfo>>() {
+            @Override
+            public List<DownloadInfo> doInBackground() throws Throwable {
+                List<DownloadInfo> infos = new ArrayList<>();
+                for (DownloadInfo downloadInfo : datas) {
+                    if(downloadInfo.status == DownloadInfo.STATUS_FAIL){
+                        infos.add(downloadInfo);
+                    }
+                }
+                if(idx ==0){
+                    for (DownloadInfo downloadInfo : infos) {
+                        MyDownloader.startDownload(downloadInfo);
+                    }
+                }else {
+                    DownloadInfoUtil.getDao().deleteInTx(infos);
+                }
+                return infos;
+            }
+
+            @Override
+            public void onSuccess(List<DownloadInfo> result) {
+                String msg = "";
+                if(idx ==0){
+                    msg = "已批量重试";
+                }else {
+                    msg = "已在数据库里删除当前所有失败条目";
+                }
+                ToastUtils.showShort(msg);
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+
             }
         });
     }
