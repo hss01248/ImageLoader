@@ -2,8 +2,11 @@ package com.hss.downloader.download;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.CloseUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -16,6 +19,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+
+import javax.xml.transform.sax.TemplatesHandler;
 
 public class TurboCompressor {
 
@@ -87,7 +93,7 @@ public class TurboCompressor {
         boolean success =  false;
         File outFile = new File(outPath);
         try {
-            success = compressByAndroid(bitmap,quality,outPath);
+            success = compressOringinal2(srcPath,quality,outPath);
         }catch (Throwable throwable){
             throwable.printStackTrace();
             //success = compressByAndroid(bitmap,quality,outPath);
@@ -121,22 +127,57 @@ public class TurboCompressor {
         return false;
     }
 
-    static boolean compressByAndroid(Bitmap bitmap, int quality, String outPath) {
+
+    private static boolean compressOringinal2(String absolutePath, int quality, String outPath) {
         try {
             File file = new File(outPath);
-            defaultCompressToFile(bitmap,file,false,quality);
-            return file.exists() && file.length() > 50;
+            Bitmap bitmap = BitmapFactory.decodeFile(absolutePath);
+
+            ExifInterface exifInterface = new ExifInterface(absolutePath);
+            int oritation = exifInterface.getRotationDegrees();
+            Map<String, String> exifMap =  ExifUtil.readExif(absolutePath);;
+            if(oritation != 0){
+                try {
+                    bitmap =   rotaingImageView(oritation,bitmap);
+                    exifMap.put(ExifInterface.TAG_ORIENTATION,"0");
+                }catch (Throwable throwable){
+                    throwable.printStackTrace();
+                    LogUtils.w("compress fail when rotate");
+                }
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            boolean success =  bitmap.compress(Bitmap.CompressFormat.JPEG,quality,fileOutputStream);
+            success =  success && file.exists() && file.length() > 50;
+            CloseUtils.closeIO(fileOutputStream);
+
+            if(success){
+                try {
+                    if(exifMap == null){
+                        ExifUtil.writeExif(exifMap,outPath);
+                    }
+                    return true;
+                } catch (Throwable e) {
+                    LogUtils.w(outPath+",write exif failed:"+e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+            return false;
+
         } catch (Throwable e) {
             LogUtils.w(outPath,"compress fail by e",e.getClass().getSimpleName(),e.getMessage());
             return false;
         }
     }
 
-    private static void defaultCompressToFile(Bitmap bitmap, File file, boolean focusAlpha, int quality) throws IOException{
-        OutputStream stream = new FileOutputStream(file);
-        bitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, quality, stream);
-        bitmap.recycle();
-        CloseUtils.closeIO(stream);
+    //旋转图片
+
+     static Bitmap rotaingImageView(int degree, Bitmap bitmap) { //angle 旋转的角度  bitmap需要旋转的图片
+
+            Matrix matrix = new Matrix();
+            matrix.postRotate(degree);
+            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            return resizedBitmap;
     }
 
     static boolean shouldCompress(File pathname,boolean checkQuality) {
