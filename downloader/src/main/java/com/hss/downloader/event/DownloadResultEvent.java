@@ -1,4 +1,4 @@
-package com.hss.downloader.download;
+package com.hss.downloader.event;
 
 public class DownloadResultEvent {
 

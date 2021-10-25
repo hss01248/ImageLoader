@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ScreenUtils;
@@ -322,7 +323,8 @@ public class ImageMediaCenterUtil {
         Dialog dialog = new Dialog(view.getContext());
         dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
-        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, ScreenUtils.getScreenHeight()- BarUtils.getStatusBarHeight());//宽高最大- BarUtils.getStatusBarHeight()
+        int height = calHeight();
+        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, height);//宽高最大- BarUtils.getStatusBarHeight()
         dialog.show();
         ImageView ivClose = view.findViewById(R.id.iv_back);
         if(ivClose != null){
@@ -351,6 +353,14 @@ public class ImageMediaCenterUtil {
 
 
 
+    }
+
+    private static int calHeight() {
+        if(!BarUtils.isNavBarVisible(ActivityUtils.getTopActivity())){
+            return  ScreenUtils.getScreenHeight()- BarUtils.getStatusBarHeight();
+        }
+
+        return ScreenUtils.getScreenHeight()- BarUtils.getNavBarHeight();
     }
 
 

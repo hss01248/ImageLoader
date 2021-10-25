@@ -4,9 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.Utils;
-import com.hss.downloader.download.DownloadInfo;
-import com.hss.downloader.download.DownloadInfoUtil;
-import com.hss.downloader.download.DownloadResultEvent;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
 import com.liulishuo.okdownload.core.cause.EndCause;
@@ -15,8 +12,6 @@ import com.liulishuo.okdownload.core.connection.DownloadUrlConnection;
 import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher;
 import com.liulishuo.okdownload.core.listener.DownloadListener1;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 

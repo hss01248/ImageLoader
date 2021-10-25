@@ -36,7 +36,7 @@
         <TextView
             android:id="@+id/tv_title"
             android:textColor="#ffffff"
-            android:background="#99999999"
+            android:background="#dd999999"
             android:gravity="center"
             android:paddingLeft="60dp"
             android:paddingRight="20dp"
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"/>
         <ImageView
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:src="@drawable/icon_back_page"
             android:id="@+id/iv_back"
             android:scaleType="centerInside"
             android:layout_width="50dp"

@@ -13,6 +13,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.hss.downloader.MyDownloader;
 import com.hss.downloader.R;
 import com.hss.downloader.databinding.ItemDownloadUiBinding;
+import com.hss.downloader.event.DialogCloseEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -168,5 +169,14 @@ public class DownloadViewHolder extends BaseViewHolder {
         showView(info);
 
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DialogCloseEvent info) {
+        try {
+             EventBus.getDefault().unregister(this);
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
     }
 }

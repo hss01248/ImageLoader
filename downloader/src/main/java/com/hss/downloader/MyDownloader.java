@@ -1,33 +1,18 @@
 package com.hss.downloader;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
 import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
-import com.hss.downloader.download.DownloadResultEvent;
+import com.hss.downloader.event.DownloadResultEvent;
 import com.hss.downloader.download.TurboCompressor;
 import com.hss.downloader.download.db.DownloadInfoDao;
-import com.liulishuo.okdownload.DownloadTask;
-import com.liulishuo.okdownload.OkDownload;
-import com.liulishuo.okdownload.OkDownloadProvider;
 import com.liulishuo.okdownload.StatusUtil;
-import com.liulishuo.okdownload.core.cause.EndCause;
-import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
-import com.liulishuo.okdownload.core.connection.DownloadUrlConnection;
-import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher;
-import com.liulishuo.okdownload.core.listener.DownloadListener1;
-import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 
 import org.greenrobot.eventbus.EventBus;
 

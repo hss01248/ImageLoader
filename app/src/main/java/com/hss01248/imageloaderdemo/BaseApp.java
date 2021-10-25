@@ -17,6 +17,8 @@ import com.github.piasy.biv.view.BigImageView;
 import com.glance.guolindev.Glance;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.BuildConfig;
+import com.hss.downloader.DownloadList;
+import com.hss.downloader.ILargeImagesViewer;
 import com.hss.downloader.MyDownloader;
 import com.hss01248.analytics_umeng.UmengUtil;
 import com.hss01248.bugly.XReporter;
@@ -64,6 +66,24 @@ public class BaseApp extends MultiDexApplication {
         //4f7a08bf-1fa1-453f-870d-da59f0131c02
         UmengUtil.init(this,"6163f5bbac9567566e91bb94","bugly",1,"", BuildConfig.DEBUG);
         NotifyUtil.init(this);
+        DownloadList.setLargeImagesViewer(new ILargeImagesViewer() {
+            @Override
+            public void showBig(Context context, List<String> uris0, int position) {
+                ImageMediaCenterUtil.showBigImag(context, uris0, position);
+            }
+
+            @Override
+            public void viewDir(Context context, String dir, String file) {
+                ImageMediaCenterUtil.showViewAsDialog(context, new IViewInit() {
+                    @Override
+                    public View init(Activity activity) {
+                        ImageListView listView = new ImageListView(activity);
+                        listView.showImagesInDir(dir);
+                        return listView;
+                    }
+                });
+            }
+        });
         SpiderWebviewActivity.setShowUrls(new IShowUrls() {
             @Override
             public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {

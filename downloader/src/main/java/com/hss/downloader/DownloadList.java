@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -24,7 +25,8 @@ import com.hss.downloader.databinding.DownloadListViewBinding;
 import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
-import com.hss.downloader.download.DownloadResultEvent;
+import com.hss.downloader.event.DialogCloseEvent;
+import com.hss.downloader.event.DownloadResultEvent;
 import com.noober.menu.FloatMenu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -348,18 +350,26 @@ public class DownloadList {
         });
     }
 
+    private static int calHeight() {
+        if(!BarUtils.isNavBarVisible(ActivityUtils.getTopActivity())){
+            return  ScreenUtils.getScreenHeight()- BarUtils.getStatusBarHeight();
+        }
 
+        return ScreenUtils.getScreenHeight()- BarUtils.getNavBarHeight();
+    }
     public  void showViewAsDialog(Context context, View view) {
         //View view = init.init(MyUtil.getActivityFromContext(context));
         Dialog dialog = new Dialog(view.getContext());
         dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
-        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, ScreenUtils.getAppScreenHeight());//宽高最大- BarUtils.getStatusBarHeight()
+        int height = calHeight();
+        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, height);//宽高最大- BarUtils.getStatusBarHeight()
         dialog.show();
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 try {
+                    EventBus.getDefault().post(new DialogCloseEvent());
                     EventBus.getDefault().unregister(DownloadList.this);
                 }catch (Throwable throwable){
                     throwable.printStackTrace();
@@ -370,6 +380,7 @@ public class DownloadList {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
                 try {
+                    EventBus.getDefault().post(new DialogCloseEvent());
                     EventBus.getDefault().unregister(DownloadList.this);
                 }catch (Throwable throwable){
                     throwable.printStackTrace();
