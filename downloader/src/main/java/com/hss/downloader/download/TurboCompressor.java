@@ -30,10 +30,10 @@ public class TurboCompressor {
         if(compress) {
             boolean renameTo = file2.renameTo(file); //垃圾api
             if(renameTo){
-                LogUtils.d("rename success:file.exists() "+file.exists()+",file2.exist:"+file2.exists());
+                //LogUtils.d("rename success:file.exists() "+file.exists()+",file2.exist:"+file2.exists());
                 return true;
             }else {
-                LogUtils.d("rename failed "+file.exists()+",file2.exist:"+file2.exists());
+               // LogUtils.d("rename failed "+file.exists()+",file2.exist:"+file2.exists());
                 try {
                     boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
                         @Override
@@ -43,11 +43,13 @@ public class TurboCompressor {
                     });
                     if(copy){
                         file2.delete();
+                    }else {
+                        LogUtils.w("copy failed:1");
                     }
                     return true;
                 }catch (Throwable throwable){
-                    throwable.printStackTrace();
-                    file2.renameTo(file);
+                    LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
+                    //file2.renameTo(file);
                 }
             }
 
@@ -67,11 +69,18 @@ public class TurboCompressor {
     public static boolean compressOringinal(String srcPath,int quality,String outPath){
         File file = new File(srcPath);
         if(!shouldCompress(file,true)){
+            LogUtils.d(outPath+",no need to compress");
             return false;
         }
 
         //todo 过大的图,resize到1600w像素,仿照谷歌.
-        Bitmap bitmap = BitmapFactory.decodeFile(srcPath);
+        Bitmap bitmap = null;
+        try {
+             bitmap = BitmapFactory.decodeFile(srcPath);
+        }catch (Throwable throwable){
+            LogUtils.w(srcPath+" , decode bitmap failed:"+throwable.getMessage());
+        }
+
         if(bitmap == null){
             return false;
         }
@@ -84,15 +93,18 @@ public class TurboCompressor {
             //success = compressByAndroid(bitmap,quality,outPath);
         }
 
-        if(outFile.exists() && outFile.length()> 50){
+        if(success && outFile.exists() && outFile.length()> 50){
             //如果压缩后的图比压缩前还大,那么就不压缩,返回原图
             if(file.length() < outFile.length()){
-                Log.w("tubor","file.length() < outFile.length()");
-                //outFile.delete();
-                return false;
+                LogUtils.w(outFile.getAbsolutePath()+"  file.length() < outFile.length(), ignore");
+                outFile.delete();
+                success = false;
+            }else {
+                success = true;
             }
-            success = true;
+
         }else {
+            LogUtils.w(outFile.getAbsolutePath()+"  compress progress fail:",success,outFile.exists(),outFile.length());
             success = false;
         }
 
@@ -100,10 +112,10 @@ public class TurboCompressor {
         if(success){
             try {
                 ExifUtil.writeExif(ExifUtil.readExif(srcPath),outPath);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }finally {
                 return true;
+            } catch (Throwable e) {
+                LogUtils.w(outPath+",write exif failed:"+e.getMessage());
+                e.printStackTrace();
             }
         }
         return false;
@@ -114,8 +126,8 @@ public class TurboCompressor {
             File file = new File(outPath);
             defaultCompressToFile(bitmap,file,false,quality);
             return file.exists() && file.length() > 50;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
+            LogUtils.w(outPath,"compress fail by e",e.getClass().getSimpleName(),e.getMessage());
             return false;
         }
     }
@@ -155,7 +167,7 @@ public class TurboCompressor {
         }
 
         int quality = getQuality(pathname.getAbsolutePath());
-        Log.i("quality","quality:"+quality +":"+pathname.getAbsolutePath());
+        //LogUtils.d("quality:"+quality +":"+pathname.getAbsolutePath());
         return  (quality ==  0) ||  (quality > getQuality());
     }
 
