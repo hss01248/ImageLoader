@@ -163,6 +163,10 @@ public class DownloadViewHolder extends BaseViewHolder {
                 //binding.progressBar.setVisibility(View.VISIBLE);
                 binding.progressBar.setMax((int) info.totalLength);
                 binding.progressBar.setProgress((int) info.currentOffset);
+                if(binding.tvSize.getText().length() ==0){
+                    binding.tvSize.setText(ConvertUtils.byte2FitMemorySize(info.totalLength,2));
+                }
+
                 return;
             }
         }
