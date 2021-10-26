@@ -1,7 +1,9 @@
 package com.hss01248.bigimageviewpager;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -17,6 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.hss01248.bigimageviewpager.databinding.ItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.databinding.StateItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
@@ -240,6 +245,37 @@ public class MyLargeImageView extends FrameLayout {
         } else {
             gifView.setVisibility(GONE);
             jpgView.setVisibility(VISIBLE);
+
+            //兼容avif格式
+            if(uri.endsWith(".avif")){
+                //todo 如何获取avif图片的宽高
+                Glide.with(getContext())
+                        .asBitmap()
+                        .load(uri)
+                        //.override(w,h)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                if(resource != null){
+                                    jpgView.setImage(resource);
+                                    stateManager.showContent();
+                                }else {
+                                    onLoadFailed(null);
+                                }
+
+                            }
+
+                            @Override
+                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                info.throwable = new Throwable("load avif faild");
+                                stateManager.showError("load avif failed");
+                            }
+                        });
+                return;
+            }
+
+
+
             Observable.just(uri)
                     .subscribeOn(Schedulers.io())
                     .map(new Function<String, InputStreamBitmapDecoderFactory>() {

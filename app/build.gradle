@@ -85,6 +85,7 @@ dependencies {
     debugImplementation 'com.glance.guolindev:glance:1.0.0'
 
     debugImplementation 'com.github.hss01248.flipperUtil:oom:1.2.3'
+    api 'jp.co.link_u.library.glideavif:glideavif:0.8.1'
     configurations.all {
         resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.12.0'
         resolutionStrategy.force 'com.squareup.okio:okio:1.15.0'

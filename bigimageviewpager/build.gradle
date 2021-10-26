@@ -54,5 +54,5 @@ dependencies {
 
     api 'androidx.viewpager:viewpager:1.0.0'
     api 'com.github.hss01248.metadata:metadata:1.1.2'
-
+    api 'jp.co.link_u.library.glideavif:glideavif:0.8.1'
 }
