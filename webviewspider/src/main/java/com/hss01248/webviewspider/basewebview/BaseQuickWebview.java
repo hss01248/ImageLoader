@@ -16,6 +16,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -335,6 +336,10 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         if(mAgentWeb == null){
             mAgentWeb = preAgentWeb.go(url);
             webView = mAgentWeb.getWebCreator().getWebView();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+            }
+
             stateManager = PageStateManager.initWhenUse(mAgentWeb.getWebCreator().getWebParentLayout(), new PageStateConfig() {
 
                 @Override
