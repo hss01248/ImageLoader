@@ -1,3 +1,4 @@
+include ':compressor'
 include ':xxspiders'
 include ':downloader'
 include ':spiders'

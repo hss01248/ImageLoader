@@ -1,5 +1,6 @@
-package com.hss.downloader.download;
+package com.hss01248.img.compressor;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -7,9 +8,12 @@ import android.text.TextUtils;
 
 import androidx.exifinterface.media.ExifInterface;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.CloseUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.Utils;
 import com.hss01248.avif.AvifEncoder;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.quality.Magick;
@@ -26,9 +30,10 @@ import java.util.Map;
  */
 public class ImageCompressor {
 
-    public static int targetQuality = 80;
+    public static int targetJpgQuality = 80;
 
     public static File compressToAvif(String filePath,boolean deleteOriginalIfAvifSuccess){
+        AvifEncoder.init(Utils.getApp());
         File file = AvifEncoder.encodeOneFile(filePath);
         File in = new File(filePath);
         if(file.getAbsolutePath().equals(filePath)){
@@ -40,11 +45,60 @@ public class ImageCompressor {
             if(deleteOriginalIfAvifSuccess){
                 in.delete();
             }
-
             return file;
         }
-
     }
+
+    public interface Callback{
+        void onResult(File file,boolean hasCompressed);
+
+       default void onFailed(Throwable throwable){
+           throwable.printStackTrace();
+       }
+    }
+
+    public static void compressToAvifAsync(String filePath,boolean deleteOriginalIfAvifSuccess,boolean withLoadingDialog,Callback callback){
+        ProgressDialog dialog = null;
+        if(withLoadingDialog){
+            dialog = new ProgressDialog(ActivityUtils.getTopActivity());
+            dialog.setMessage("图片压缩中...");
+        }
+        ProgressDialog finalDialog = dialog;
+        ThreadUtils.executeByIo(new ThreadUtils.Task<File>() {
+            @Override
+            public File doInBackground() throws Throwable {
+                File file = compressToAvif(filePath, deleteOriginalIfAvifSuccess);
+                return file;
+            }
+
+            @Override
+            public void onSuccess(File result) {
+                if(finalDialog != null){
+                    finalDialog.dismiss();
+                }
+                boolean notCompressed = filePath.equals(result.getAbsolutePath()) && result.length() == new File(filePath).length();
+                callback.onResult(result,!notCompressed);
+
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+                if(finalDialog != null){
+                    finalDialog.dismiss();
+                }
+                callback.onFailed(t);
+
+            }
+        });
+    }
+
+
 
     public static boolean compressOriginalToJpg(String filePath, int quality){
         File file = new File(filePath);
@@ -232,7 +286,7 @@ public class ImageCompressor {
     }
 
     static int getQuality() {
-        return targetQuality;
+        return targetJpgQuality;
     }
 
     static int getQuality(String path) {
