@@ -64,7 +64,7 @@ public class ImageCompressor {
             dialog.setMessage("图片压缩中...");
         }
         ProgressDialog finalDialog = dialog;
-        ThreadUtils.executeByIo(new ThreadUtils.Task<File>() {
+        ThreadUtils.executeBySingle(new ThreadUtils.Task<File>() {
             @Override
             public File doInBackground() throws Throwable {
                 File file = compressToAvif(filePath, deleteOriginalIfAvifSuccess);

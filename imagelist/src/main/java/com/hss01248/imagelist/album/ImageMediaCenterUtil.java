@@ -271,7 +271,7 @@ public class ImageMediaCenterUtil {
        // showViewAsDialog(view);
 
 
-        showViewAsActivityOrDialog(context, true,new IViewInit() {
+        showViewAsActivityOrDialog(context, false,new IViewInit() {
             @Override
             public View init(Activity activity) {
                 return buildBigIamgeView(activity, urlsOrPaths, position);

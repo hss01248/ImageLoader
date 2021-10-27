@@ -337,7 +337,7 @@ public class ImageListView extends FrameLayout {
                 if(images.get(position).isDir){
 
                    // ImageMediaCenterUtil.showViewAsDialog(listView);
-                    ImageMediaCenterUtil.showViewAsActivityOrDialog(view.getContext(),true, new IViewInit() {
+                    ImageMediaCenterUtil.showViewAsActivityOrDialog(view.getContext(),false, new IViewInit() {
                         @Override
                         public View init(Activity activity) {
                             ImageListView listView = new ImageListView(activity);

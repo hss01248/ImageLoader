@@ -123,7 +123,7 @@ public class DownloadViewHolder extends BaseViewHolder {
             binding.llRight.setVisibility(View.GONE);
             binding.progressBar.setVisibility(View.GONE);
             Glide.with(binding.ivIcon)
-                    .load(info.dir+"/"+info.name)
+                    .load(new File(info.dir+"/"+info.name))
                     .into(binding.ivIcon);
             if(info.isCompressing){
                 binding.tvStatusMsg.setText("压缩中");

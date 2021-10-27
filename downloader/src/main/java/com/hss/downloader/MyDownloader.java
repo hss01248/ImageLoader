@@ -344,6 +344,7 @@ public class MyDownloader {
         File file = new File(info.dir,info.name);
         long start = System.currentTimeMillis();
         info.isCompressing = true;
+        long lengh =file.length();
         EventBus.getDefault().post(info);
         ImageCompressor.compressToAvifAsync(file.getAbsolutePath(), true, false,
                 new ImageCompressor.Callback() {
@@ -353,7 +354,7 @@ public class MyDownloader {
                 event.success = compressed.length() != file.length();
                 event.timeCost = System.currentTimeMillis() - start;
                 event.after = compressed.length();
-                event.origianl = file.length();
+                event.origianl = lengh;
                 EventBus.getDefault().post(event);
 
 
