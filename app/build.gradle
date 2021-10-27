@@ -73,7 +73,7 @@ dependencies {
     compile 'androidx.recyclerview:recyclerview:1.0.0'
     compile 'com.google.android.material:material:1.0.0'
     compile 'com.makeramen:roundedimageview:2.3.0'
-
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     compile 'com.joooonho:selectableroundedimageview:1.0.1'
     compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 

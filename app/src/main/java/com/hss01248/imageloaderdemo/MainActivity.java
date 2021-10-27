@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
@@ -21,17 +22,22 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.elvishew.xlog.XLog;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
-import com.hss.downloader.download.TurboCompressor;
+import com.hss.downloader.download.ImageCompressor;
+import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
@@ -453,15 +459,40 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String path) {
 
-                TurboCompressor.compressOriginal(path,70);
-                ImageLoader.with(MainActivity.this)
-                        .load(path)
+                //TurboCompressor.compressOriginal(path,70);
+                File file = ImageCompressor.compressToAvif(path,false);
+               /* ImageLoader.with(MainActivity.this)
+                        .file(file.getAbsolutePath())
                         // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
                         // .res(R.drawable.thegif)
                         // .placeHolder(R.mipmap.ic_launcher, false)
                         //.widthHeight(250, 150)
                         //.asCircle(R.color.colorAccent)
-                        .into(ivFile);
+                        .into(ivUrl);*/
+               /* Glide.with(MainActivity.this)
+                        .load(file)
+                        .into(ivUrl);*/
+
+                LogUtils.i("avif compress result: "+file.getAbsolutePath());
+                Glide.with(MainActivity.this)
+                        .asBitmap()
+                        .load(file)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                LogUtils.d("bitmap size:"+resource.getWidth()+"x"+resource.getHeight());
+                                ivUrl.setImageBitmap(resource);
+                            }
+                        });
+                ivUrl.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        List<String> paths = new ArrayList<>();
+                        paths.add(path);
+                        paths.add(file.getAbsolutePath());
+                        ImageMediaCenterUtil.showBigImag(MainActivity.this,paths,0);
+                    }
+                });
             }
 
             @Override

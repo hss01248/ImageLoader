@@ -11,6 +11,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
 
+import com.blankj.utilcode.util.Utils;
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
@@ -21,6 +22,7 @@ import com.hss.downloader.DownloadList;
 import com.hss.downloader.ILargeImagesViewer;
 import com.hss.downloader.MyDownloader;
 import com.hss01248.analytics_umeng.UmengUtil;
+import com.hss01248.avif.AvifEncoder;
 import com.hss01248.bugly.XReporter;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
@@ -56,6 +58,7 @@ public class BaseApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Utils.init(this);
         ImageLoader.init(getApplicationContext(), 500, new Glide4Loader());
         GlobalConfig.debug = true;
         XXPermissions.setScopedStorage(true);
@@ -63,6 +66,7 @@ public class BaseApp extends MultiDexApplication {
 
         DBAspect.addDB(getFile("imgdownload.db"));
         XReporter.init(this,"7ac352d904",true);
+        AvifEncoder.init(this);
         //4f7a08bf-1fa1-453f-870d-da59f0131c02
         UmengUtil.init(this,"6163f5bbac9567566e91bb94","bugly",1,"", BuildConfig.DEBUG);
         NotifyUtil.init(this);

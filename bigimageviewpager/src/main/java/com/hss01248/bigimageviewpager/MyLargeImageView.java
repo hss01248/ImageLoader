@@ -1,12 +1,16 @@
 package com.hss01248.bigimageviewpager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -249,26 +253,33 @@ public class MyLargeImageView extends FrameLayout {
             //兼容avif格式
             if(uri.endsWith(".avif")){
                 //todo 如何获取avif图片的宽高
+                stateManager.showLoading();
                 Glide.with(getContext())
                         .asBitmap()
-                        .load(uri)
+                        .load(new File(uri))
                         //.override(w,h)
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                Log.d("large","large image load onResourceReady:"+resource.getWidth()+"x"+resource.getHeight());
                                 if(resource != null){
                                     jpgView.setImage(resource);
                                     stateManager.showContent();
                                 }else {
                                     onLoadFailed(null);
+                                    //jpgView.setImageDrawable(new BitmapDrawable(BitmapFactory.decodeFile(uri.replace(".avif",",jpg"))));
+                                   // stateManager.showContent();
                                 }
-
                             }
 
                             @Override
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                Log.w("avif","large image load failed:"+uri);
                                 info.throwable = new Throwable("load avif faild");
-                                stateManager.showError("load avif failed");
+                                stateManager.showError(errorDrawable+" - load avif failed:\n"+uri+"\n"+new File(uri).exists());
+
+                               /* jpgView.setImageDrawable(new BitmapDrawable(BitmapFactory.decodeFile(uri.replace(".avif",".jpg"))));
+                                stateManager.showContent();*/
                             }
                         });
                 return;

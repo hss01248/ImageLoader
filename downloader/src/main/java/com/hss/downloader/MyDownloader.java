@@ -10,7 +10,7 @@ import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.event.DownloadResultEvent;
-import com.hss.downloader.download.TurboCompressor;
+import com.hss.downloader.download.ImageCompressor;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.liulishuo.okdownload.StatusUtil;
 
@@ -346,13 +346,16 @@ public class MyDownloader {
                 File file = new File(info.dir,info.name);
                 event.origianl = file.length();
                 long start = System.currentTimeMillis();
-               boolean compressed =  TurboCompressor.compressOriginal(file.getAbsolutePath(),80);
-                event.success = compressed;
+               File compressed =  ImageCompressor.compressToAvif(file.getAbsolutePath(),true);
+                event.success = compressed.length() != file.length();
                 event.timeCost = System.currentTimeMillis() - start;
-                event.after = file.length();
+                event.after = compressed.length();
+               info.name = compressed.getName();
+                info.totalLength = compressed.length();
+
                 EventBus.getDefault().post(event);
-                info.totalLength = file.length();
                 EventBus.getDefault().post(info);
+                DownloadInfoUtil.getDao().update(info);
             }
         });
 

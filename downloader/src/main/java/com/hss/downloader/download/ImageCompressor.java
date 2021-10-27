@@ -4,13 +4,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.CloseUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.hss01248.avif.AvifEncoder;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.quality.Magick;
 
@@ -18,20 +18,37 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
 
 
-public class TurboCompressor {
+public class ImageCompressor {
 
     public static int targetQuality = 80;
+
+    public static File compressToAvif(String filePath,boolean deleteOriginalIfAvifSuccess){
+        File file = AvifEncoder.encodeOneFile(filePath);
+        File in = new File(filePath);
+        if(file.getAbsolutePath().equals(filePath)){
+            //没有压缩. 否则后缀名变了
+            boolean success =  compressOriginal(filePath,80);
+            return in;
+        }else {
+           //删除jpg/png原图
+            if(deleteOriginalIfAvifSuccess){
+                in.delete();
+            }
+
+            return file;
+        }
+
+    }
 
     public static boolean compressOriginal(String filePath,int quality){
         File file = new File(filePath);
         File dir = file.getParentFile();
         File file2 = new File(dir, "tmp-"+file.getName());
 
-        boolean compress = TurboCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
+        boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
         if(compress) {
             boolean renameTo = file2.renameTo(file); //垃圾api
             if(renameTo){

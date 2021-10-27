@@ -4,9 +4,11 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
@@ -20,6 +22,7 @@ import com.bumptech.glide.module.LibraryGlideModule;
 import com.hss01248.image.config.GlobalConfig;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -32,6 +35,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import jp.co.link_u.library.glideavif.AvifDecoderFromByteBuffer;
 import me.jessyan.progressmanager.ProgressManager;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -63,7 +67,7 @@ public class GlideModelConfig extends LibraryGlideModule {
         /**
          * 不带拦截功能，只是单纯替换通讯组件
          */
-
+        LogUtils.w("in lib: registerComponents");
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
                 //.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         if(GlobalConfig.debug){
@@ -77,6 +81,7 @@ public class GlideModelConfig extends LibraryGlideModule {
                 .writeTimeout(30, TimeUnit.SECONDS);
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getInstance()
                 .with(builder).build()));
+        registry.prepend(ByteBuffer.class, Bitmap.class,new AvifDecoderFromByteBuffer());
         Log.i("glide", "registerComponents---");
 
     }
