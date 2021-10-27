@@ -44,19 +44,21 @@ public class DownloadList {
 
     long compressdTotal;
     long origianlTotal;
+    long fileTotal;
     int compressSuccessCount;
     int compressTotalCount;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(CompressEvent event) {
-        origianlTotal += event.origianl;
-        compressdTotal += event.after;
+
+        fileTotal += event.origianl;
+       // compressdTotal += event.after;
         compressTotalCount++;
         if(event.success){
             compressSuccessCount++;
+            origianlTotal += event.origianl;
+            compressdTotal += event.after;
         }
-        if(origianlTotal==0){
-            return;
-        }
+
         StringBuilder sb = new StringBuilder();
         sb.append("压缩结果:")
                 .append("成功/总数:")
@@ -67,8 +69,10 @@ public class DownloadList {
                 .append(ConvertUtils.byte2FitMemorySize(compressdTotal,1))
                 .append("/")
                 .append(ConvertUtils.byte2FitMemorySize(origianlTotal,1))
+                .append("/")
+                .append(ConvertUtils.byte2FitMemorySize(fileTotal,1))
                 .append(",压缩率:")
-                .append(compressdTotal*100/origianlTotal)
+                .append(origianlTotal == 0 ? 0 : compressdTotal*100/origianlTotal)
                 .append("%");
         binding.tvCompress.setText(sb.toString());
 
