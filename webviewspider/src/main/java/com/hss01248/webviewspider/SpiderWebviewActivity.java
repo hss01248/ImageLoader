@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
+import com.hss01248.webviewspider.spider.GoogleImageParser;
 import com.hss01248.webviewspider.spider.IHtmlParser;
 import com.hss01248.webviewspider.spider.ListParser;
 import com.hss01248.webviewspider.spider.ListToDetailImgsInfo;
@@ -70,6 +71,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     static Map<String,IHtmlParser> parsers = new HashMap<>();
     static {
         parsers.put(new PexelImageParser().entranceUrl(),new PexelImageParser());
+        parsers.put(new GoogleImageParser().entranceUrl(),new GoogleImageParser());
     }
     IHtmlParser parser;
 

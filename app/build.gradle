@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+apply from: "${rootProject.rootDir}/function.gradle"
 android {
 
     compileSdkVersion 30
@@ -50,6 +51,7 @@ dependencies {
    // compile project(':fresco')
   //  compile project(':glide')
     //compile project(':memory')
+    compile project(':imagelist')
     compile project(':imagelist')
     //compile project(':picasso')
     compile project(':glidev4')

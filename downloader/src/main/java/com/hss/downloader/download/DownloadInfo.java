@@ -37,6 +37,7 @@ public class DownloadInfo {
     public transient boolean selected;
     public transient boolean isInSelectMode;
     public transient long currentOffset;
+    public transient boolean isCompressing;
 
     @Generated(hash = 691565714)
     public DownloadInfo(String url, String filePath, int status, String name,

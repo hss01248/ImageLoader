@@ -28,6 +28,7 @@ import androidx.annotation.RequiresApi;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.PageStateManager;
 import com.hss01248.webviewspider.R;
@@ -192,7 +193,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         source = source.substring(0,source.length()-1);
                     }
                     source = "<html>"+source +"</html>";
-                    Log.v("source",Thread.currentThread().getName() +source);
+                    LogUtils.v(source);
                     info.htmlSource = source;
                     valueCallback.onReceiveValue(source);
                 }

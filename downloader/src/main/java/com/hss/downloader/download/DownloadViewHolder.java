@@ -125,6 +125,11 @@ public class DownloadViewHolder extends BaseViewHolder {
             Glide.with(binding.ivIcon)
                     .load(info.dir+"/"+info.name)
                     .into(binding.ivIcon);
+            if(info.isCompressing){
+                binding.tvStatusMsg.setText("压缩中");
+            }else {
+                binding.tvStatusMsg.setText("下载压缩完成");
+            }
         }
 
 

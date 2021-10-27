@@ -22,7 +22,6 @@ import com.hss.downloader.DownloadList;
 import com.hss.downloader.ILargeImagesViewer;
 import com.hss.downloader.MyDownloader;
 import com.hss01248.analytics_umeng.UmengUtil;
-import com.hss01248.avif.AvifEncoder;
 import com.hss01248.bugly.XReporter;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
@@ -66,7 +65,6 @@ public class BaseApp extends MultiDexApplication {
 
         DBAspect.addDB(getFile("imgdownload.db"));
         XReporter.init(this,"7ac352d904",true);
-        AvifEncoder.init(this);
         //4f7a08bf-1fa1-453f-870d-da59f0131c02
         UmengUtil.init(this,"6163f5bbac9567566e91bb94","bugly",1,"", BuildConfig.DEBUG);
         NotifyUtil.init(this);
@@ -78,7 +76,7 @@ public class BaseApp extends MultiDexApplication {
 
             @Override
             public void viewDir(Context context, String dir, String file) {
-                ImageMediaCenterUtil.showViewAsDialog(context, new IViewInit() {
+                ImageMediaCenterUtil.showViewAsActivity(context, new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(activity);
@@ -92,7 +90,7 @@ public class BaseApp extends MultiDexApplication {
             @Override
             public void showUrls(Context context, String pageTitle, List<String> urls, @Nullable String downloadDir, boolean hideDir,boolean downloadImmediately) {
 
-                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, true, new IViewInit() {
+                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, false, new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(context);
@@ -108,7 +106,7 @@ public class BaseApp extends MultiDexApplication {
 
 
 
-                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, true, new IViewInit() {
+                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, false, new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(context);
@@ -123,7 +121,7 @@ public class BaseApp extends MultiDexApplication {
 
 
 
-                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, true, new IViewInit() {
+                ImageMediaCenterUtil.showViewAsActivityOrDialog(context, false, new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(context);

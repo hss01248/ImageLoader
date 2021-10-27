@@ -36,13 +36,13 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
-import com.hss.downloader.download.ImageCompressor;
-import com.hss01248.bigimageviewpager.MyLargeImageView;
+
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.img.compressor.ImageCompressor;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
@@ -123,10 +123,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //GlideFaceDetector.releaseDetector();
-        if (timer != null) {
-            timer.cancel();
-        }
     }
 
     private void show() {
@@ -197,94 +193,6 @@ public class MainActivity extends AppCompatActivity {
                 .blur(10)
                 .url("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg");
         //.into(ivUrlBlur);
-
-
-        /*Glide.with(MainActivity.this)
-                .load("http://img3.ynet.com/2018/03/22/071135542b5deabc409e36af01290c89_600x-_90.jpg")
-                //.load("https://c-ssl.duitang.com/uploads/blog/201407/04/20140704234425_j5zHS.thumb.700_0.gif")
-               // .asGif()
-                //.asBitmap()
-               // .bitmapTransform(new CenterCrop(this),new RoundedCornersTransformation(this,30,0))
-                //.diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .skipMemoryCache(true);*/
-        //.into(ivUrl);
-               /* .listener(new RequestListener<String, Bitmap>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-
-                        ImageLoader.getActualLoader().getFileFromDiskCache(model, new FileGetter() {
-                            @Override
-                            public void onSuccess(File file, int width, int height) {
-                                GifDrawable gifDrawable = null;
-                                try {
-                                    gifDrawable = new GifDrawable(file);
-                                    ivUrl.setImageDrawable(gifDrawable);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFail(Throwable e) {
-
-                            }
-                        });
-                        return true;
-                    }
-                });*/
-               /* .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-
-
-
-                        ImageLoader.getActualLoader().getFileFromDiskCache(model, new FileGetter() {
-                            @Override
-                            public void onSuccess(File file, int width, int height) {
-                                GifDrawable gifDrawable = null;
-                                try {
-                                    gifDrawable = new GifDrawable(file);
-                                    ivFile.setImageDrawable(gifDrawable);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFail(Throwable e) {
-
-                            }
-                        });
-                        return true;
-                    }
-                })*/
-        // .into(ivUrl);
-
-        /*Glide.with(this).load("https://img.zcool.cn/community/01f1bc58413d49a8012060c80de125.gif")
-                .downloadOnly(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-                        GifDrawable gifDrawable = null;
-                        try {
-                            gifDrawable = new GifDrawable(resource);
-                            ivFile.setImageDrawable(gifDrawable);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                });*/
 
 
     }
@@ -364,83 +272,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    Timer timer;
+
 
     @Override
     protected void onResume() {
         super.onResume();
         //ImageMemoryHookManager.show(this);
-       // List<Bitmap> bitmaps = getBitmapsFromGlidePool();
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-               // getBitmapsFromGlidePool();
-            }
-        }, 3000, 3000);
+
 
 
     }
 
 
-    private List<Bitmap> getBitmapsFromGlidePool() {
-        List<Bitmap> bitmaps = new ArrayList<>();
-        try {
-            LruBitmapPool lruBitmapPool = (LruBitmapPool) Glide.get(this).getBitmapPool();
-            //lruBitmapPool.put()
-
-            Class clz = lruBitmapPool.getClass();
-            Field field = clz.getDeclaredField("strategy");
-            field.setAccessible(true);
-
-            Object strategy = field.get(lruBitmapPool);
-            XLog.d(strategy);
-
-            Class clz2 = strategy.getClass();
-            Field field2 = clz2.getDeclaredField("groupedMap");
-            field2.setAccessible(true);
-
-            Object groupedMap = field2.get(strategy);
-            XLog.d(groupedMap);
-
-            Class clz3 = groupedMap.getClass();
-            Field field3 = clz3.getDeclaredField("keyToEntry");
-            field3.setAccessible(true);
-
-            Map map = (Map) field3.get(groupedMap);
-            XLog.d(map);
-
-            for (Object key : map.keySet()) {
-                Object linkedEntry = map.get(key);//LinkedEntry.
-                Class clz4 = linkedEntry.getClass();
-                Field field4 = clz4.getDeclaredField("values");
-                field4.setAccessible(true);
-                XLog.d(linkedEntry);
-
-                List<Bitmap> values = (List<Bitmap>) field4.get(linkedEntry);
-                XLog.d(values);
-                if (values != null) {
-                    bitmaps.addAll(values);
-                }
-
-            }
-            XLog.d("bitmaps.size():" + bitmaps.size());
-
-            //GroupedLinkedMap<Object, Bitmap> groupedMap =
-
-
-
-
-            /*Method method = clz.getMethod("setPrice", int.class);
-            Constructor constructor = clz.getConstructor();
-            Object object = constructor.newInstance();
-            method.invoke(object, 4);*/
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-
-        }
-        return bitmaps;
-    }
 
     public void loadUrl(View view) {
         ImageLoader.with(this)

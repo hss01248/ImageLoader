@@ -10,8 +10,9 @@ import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.event.DownloadResultEvent;
-import com.hss.downloader.download.ImageCompressor;
+
 import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss01248.img.compressor.ImageCompressor;
 import com.liulishuo.okdownload.StatusUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -172,7 +173,7 @@ public class MyDownloader {
                         load.url = info.url;
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.dir = info.dir;
-                        load.name = info.name;
+                        load.name = info.name.replace("/","-");//避免多级目录
                         load.createTime = System.currentTimeMillis();
                         //兼具去重功能  功能优先于性能
                         try {
@@ -281,7 +282,7 @@ public class MyDownloader {
                      throwable.printStackTrace();
                  }
 
-                 EventBus.getDefault().post(info);
+                 //EventBus.getDefault().post(info);
                  EventBus.getDefault().post(new DownloadResultEvent(true));
                  compressImage(info);
              }
@@ -339,21 +340,28 @@ public class MyDownloader {
     }
 
     private static void compressImage(DownloadInfo info) {
-        runOnBack(new Runnable() {
+
+        File file = new File(info.dir,info.name);
+        long start = System.currentTimeMillis();
+        info.isCompressing = true;
+        EventBus.getDefault().post(info);
+        ImageCompressor.compressToAvifAsync(file.getAbsolutePath(), true, false,
+                new ImageCompressor.Callback() {
             @Override
-            public void run() {
+            public void onResult(File compressed, boolean hasCompressed) {
                 CompressEvent event = new CompressEvent();
-                File file = new File(info.dir,info.name);
-                event.origianl = file.length();
-                long start = System.currentTimeMillis();
-               File compressed =  ImageCompressor.compressToAvif(file.getAbsolutePath(),true);
                 event.success = compressed.length() != file.length();
                 event.timeCost = System.currentTimeMillis() - start;
                 event.after = compressed.length();
-               info.name = compressed.getName();
-                info.totalLength = compressed.length();
-
+                event.origianl = file.length();
                 EventBus.getDefault().post(event);
+
+
+
+                info.isCompressing = false;
+                info.name = compressed.getName();
+                info.dir = compressed.getParentFile().getAbsolutePath();
+                info.totalLength = compressed.length();
                 EventBus.getDefault().post(info);
                 DownloadInfoUtil.getDao().update(info);
             }
