@@ -10,6 +10,7 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.CloseUtils;
+import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -34,8 +35,10 @@ public class ImageCompressor {
 
     public static File compressToAvif(String filePath,boolean deleteOriginalIfAvifSuccess){
         AvifEncoder.init(Utils.getApp());
-        File file = AvifEncoder.encodeOneFile(filePath);
         File in = new File(filePath);
+        EncryptUtils.encryptMD5ToString(in.getName());
+        File file = AvifEncoder.encodeOneFile(filePath);
+
         if(file.getAbsolutePath().equals(filePath)){
             //没有压缩. 否则后缀名变了
             boolean success =  compressOriginalToJpg(filePath,80);

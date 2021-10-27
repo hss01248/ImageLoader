@@ -36,7 +36,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    api 'com.github.hss01248:avif-android:1.0.0'
+   // api 'com.github.hss01248:avif-android:1.0.0'
+    api project(path: ':avif')
     api 'com.blankj:utilcodex:1.30.6'
     api 'com.github.hss01248.metadata:metadata:1.1.2'
 }
