@@ -288,6 +288,21 @@ public class ImageMediaCenterUtil {
         }
 
     }
+
+
+    public static void showImagesInDir(Context context,String dir){
+        ImageMediaCenterUtil.showViewAsActivity(context, new IViewInit() {
+            @Override
+            public View init(Activity activity) {
+                ImageListView listView = new ImageListView(activity);
+                listView.showImagesInDir(dir);
+                return listView;
+            }
+        });
+    }
+
+
+
     public static void showViewAsActivity(Context context, IViewInit init){
 
         StartActivityUtil.startActivity(MyUtil.getActivityFromContext(context),EmptyActivity.class,null,false,

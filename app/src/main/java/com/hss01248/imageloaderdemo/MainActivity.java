@@ -43,6 +43,8 @@ import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.img.compressor.ImageCompressor;
+import com.hss01248.img.compressor.ImageDirCompressor;
+import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
@@ -301,6 +303,18 @@ public class MainActivity extends AppCompatActivity {
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
             public void onSuccess(String path) {
+
+                if(new File(path).isDirectory()){
+                    ImageDirCompressor.compressDir(path,new UiForDirCompress(){
+
+                        @Override
+                        public void showDirImags(String dir) {
+                            ImageMediaCenterUtil.showImagesInDir(view.getContext(),dir);
+                        }
+                    });
+
+                    return;
+                }
 
                 //TurboCompressor.compressOriginal(path,70);
                 File file = ImageCompressor.compressToAvif(path,false,false);

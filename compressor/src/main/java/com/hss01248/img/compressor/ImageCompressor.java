@@ -10,7 +10,6 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.CloseUtils;
-import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -22,6 +21,7 @@ import com.hss01248.media.metadata.quality.Magick;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Map;
 
@@ -38,6 +38,9 @@ public class ImageCompressor {
         File in = new File(filePath);
         //太大的图,使用jpg,不使用avif. 否则压缩,解析都太过耗时.
         if(!in.exists()){
+            return in;
+        }
+        if(!isImagesToCompress(filePath)){
             return in;
         }
         if(noAvifOver2k){
@@ -65,6 +68,9 @@ public class ImageCompressor {
     }
 
     static int[] getImageWidthHeight(String path) {
+        if(path.endsWith(".avif") || !isImagesToCompress(path)){
+            return new int[]{-1,-1};
+        }
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         try {
@@ -75,6 +81,17 @@ public class ImageCompressor {
         return new int[]{options.outWidth, options.outHeight};
     }
 
+     static boolean isImagesToCompress(String path) {
+        return path.endsWith(".jpg")
+                || path.endsWith(".jpeg")
+        || path.endsWith(".JPG")
+                || path.endsWith(".JPEG")
+        || path.endsWith(".png")
+                || path.endsWith(".PNG")
+                || path.endsWith(".webp")
+                || path.endsWith(".WEBP");
+    }
+
     public interface Callback{
         void onResult(File file,boolean hasCompressed);
 
@@ -82,6 +99,10 @@ public class ImageCompressor {
            throwable.printStackTrace();
        }
     }
+
+
+
+
 
     public static void compressToAvifAsync(String filePath,boolean deleteOriginalIfAvifSuccess,boolean noAvifOver2k,boolean withLoadingDialog,Callback callback){
         ProgressDialog dialog = null;
