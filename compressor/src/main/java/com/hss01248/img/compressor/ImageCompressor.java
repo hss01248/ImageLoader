@@ -33,10 +33,22 @@ public class ImageCompressor {
 
     public static int targetJpgQuality = 80;
 
-    public static File compressToAvif(String filePath,boolean deleteOriginalIfAvifSuccess){
+    public static File compressToAvif(String filePath,boolean deleteOriginalIfAvifSuccess,boolean noAvifOver2k){
         AvifEncoder.init(Utils.getApp());
         File in = new File(filePath);
-        EncryptUtils.encryptMD5ToString(in.getName());
+        //太大的图,使用jpg,不使用avif. 否则压缩,解析都太过耗时.
+        if(!in.exists()){
+            return in;
+        }
+        if(noAvifOver2k){
+            int[] wh = getImageWidthHeight(filePath);
+            if(wh[0] * wh[1] > 2048*1024){
+                //2k
+                LogUtils.i("分辨率大于2k,使用jpg压缩,不使用avif,避免过多耗时 ",filePath);
+                boolean success =  compressOriginalToJpg(filePath,80);
+                return in;
+            }
+        }
         File file = AvifEncoder.encodeOneFile(filePath);
 
         if(file.getAbsolutePath().equals(filePath)){
@@ -52,6 +64,17 @@ public class ImageCompressor {
         }
     }
 
+    static int[] getImageWidthHeight(String path) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(path, options); // 此时返回的bitmap为null
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new int[]{options.outWidth, options.outHeight};
+    }
+
     public interface Callback{
         void onResult(File file,boolean hasCompressed);
 
@@ -60,7 +83,7 @@ public class ImageCompressor {
        }
     }
 
-    public static void compressToAvifAsync(String filePath,boolean deleteOriginalIfAvifSuccess,boolean withLoadingDialog,Callback callback){
+    public static void compressToAvifAsync(String filePath,boolean deleteOriginalIfAvifSuccess,boolean noAvifOver2k,boolean withLoadingDialog,Callback callback){
         ProgressDialog dialog = null;
         if(withLoadingDialog){
             dialog = new ProgressDialog(ActivityUtils.getTopActivity());
@@ -70,7 +93,7 @@ public class ImageCompressor {
         ThreadUtils.executeBySingle(new ThreadUtils.Task<File>() {
             @Override
             public File doInBackground() throws Throwable {
-                File file = compressToAvif(filePath, deleteOriginalIfAvifSuccess);
+                File file = compressToAvif(filePath, deleteOriginalIfAvifSuccess,noAvifOver2k);
                 return file;
             }
 

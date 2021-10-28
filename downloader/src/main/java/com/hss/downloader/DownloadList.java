@@ -358,7 +358,6 @@ public class DownloadList {
         if(!BarUtils.isNavBarVisible(ActivityUtils.getTopActivity())){
             return  ScreenUtils.getScreenHeight()- BarUtils.getStatusBarHeight();
         }
-
         return ScreenUtils.getScreenHeight()- BarUtils.getNavBarHeight();
     }
     public  void showViewAsDialog(Context context, View view) {

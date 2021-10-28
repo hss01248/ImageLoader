@@ -71,7 +71,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     static Map<String,IHtmlParser> parsers = new HashMap<>();
     static {
         parsers.put(new PexelImageParser().entranceUrl(),new PexelImageParser());
-        parsers.put(new GoogleImageParser().entranceUrl(),new GoogleImageParser());
+       // parsers.put(new GoogleImageParser().entranceUrl(),new GoogleImageParser());
     }
     IHtmlParser parser;
 

@@ -693,7 +693,10 @@ public class Glide4Loader extends ILoader {
         if (!TextUtils.isEmpty(config.getSourceString())) {
             if (config.getSourceString().startsWith("http")) {
                 request = requestManager.load(getGlideUrl(config));
-            } else {
+            } else if(config.getSourceString().startsWith("/storage/")){
+                //兼容avif
+                request = requestManager.load(new File(config.getSourceString()));
+            }else {
                 request = requestManager.load(config.getSourceString());
             }
         } else if (config.getResId() != 0) {

@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -57,6 +58,14 @@ public class BaseApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build());
         Utils.init(this);
         ImageLoader.init(getApplicationContext(), 500, new Glide4Loader());
         GlobalConfig.debug = true;

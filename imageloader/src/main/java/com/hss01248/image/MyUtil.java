@@ -532,6 +532,9 @@ public class MyUtil {
     }
 
     public static int[] getImageWidthHeight(String path) {
+        if(path.endsWith(".avif")){
+             return new int[]{-1, -1};
+        }
         BitmapFactory.Options options = new BitmapFactory.Options();
 
         /**

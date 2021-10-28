@@ -303,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(String path) {
 
                 //TurboCompressor.compressOriginal(path,70);
-                File file = ImageCompressor.compressToAvif(path,false);
+                File file = ImageCompressor.compressToAvif(path,false,false);
                /* ImageLoader.with(MainActivity.this)
                         .file(file.getAbsolutePath())
                         // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")

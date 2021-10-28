@@ -292,7 +292,7 @@ public class ImageListView extends FrameLayout {
         dialog.setMessage("展示文件夹");
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();*/
-        File[] files = dir.listFiles();
+        File[] files = dir.listFiles();//todo 主线程io
         if (files == null || files.length == 0) {
             //dialog.dismiss();
             ToastUtils.showShort("folder is empty");

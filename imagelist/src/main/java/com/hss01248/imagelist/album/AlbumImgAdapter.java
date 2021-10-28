@@ -11,6 +11,7 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
@@ -102,34 +103,38 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
             }*/
             helper.setText(R.id.tv_info, text+"\n"+name);
         } else {
-            int[] wh = MyUtil.getImageWidthHeight(item.path);
+           ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
+               @Override
+               public Object doInBackground() throws Throwable {
+                   int[] wh = MyUtil.getImageWidthHeight(item.path);//文件io
+                   item.width = wh[0];
+                   item.height = wh[1];
+                   return null;
+               }
+
+               @Override
+               public void onSuccess(Object result) {
+                   helper.setText(R.id.tv_info, item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize));
+               }
+
+               @Override
+               public void onCancel() {
+
+               }
+
+               @Override
+               public void onFail(Throwable t) {
+
+               }
+           });
+           /* int[] wh = MyUtil.getImageWidthHeight(item.path);//文件io
             item.width = wh[0];
-            item.height = wh[1];
+            item.height = wh[1];*/
             item.fileSize = new File(item.path).length();
 
-            String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize)
+           /* String text = item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize)
                     +"\n"+item.path.substring(item.path.lastIndexOf("/")+1);
-            helper.setText(R.id.tv_info, text+"\n"+name);
-           /* try {
-                ExifInterface exifInterface = new ExifInterface(item.path);
-                int attr =   exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,0);
-                if(attr == ExifInterface.ORIENTATION_ROTATE_90){
-                    text = text + "\n90c";
-                    item.oritation = 90;
-                }else   if(attr == ExifInterface.ORIENTATION_ROTATE_270){
-                    text = text + "\n270c";
-                    item.oritation = 270;
-                }else   if(attr == ExifInterface.ORIENTATION_ROTATE_180){
-                    text = text + "\n180c";
-                    item.oritation = 180;
-                }
-                 helper.setText(R.id.tv_info, text);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-
-
-
+            helper.setText(R.id.tv_info, text+"\n"+name);*/
             helper.setText(R.id.tv_info, item.width + "x" + item.height + "," + MyUtil.formatFileSize(item.fileSize));
         }
 
