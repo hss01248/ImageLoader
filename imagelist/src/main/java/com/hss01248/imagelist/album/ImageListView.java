@@ -33,6 +33,8 @@ import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.imagelist.NormalCallback;
 import com.hss01248.imagelist.R;
 
+import com.hss01248.img.compressor.ImageDirCompressor;
+import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.ui.pop.list.PopList;
 
 import org.apache.commons.io.FileUtils;
@@ -98,52 +100,96 @@ public class ImageListView extends FrameLayout {
         tvRIght.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final BaseQuickAdapter adapter = (BaseQuickAdapter) recyclerView.getAdapter();
-                final List datas = adapter.getData();
-                if (datas.get(0) instanceof Image) {
-                    String[] strings = new String[]{"日期", "日期(倒序)", "文件名", "文件大小", "文件大小(倒序)"};
+                String[] strings0 = new String[]{"排序", "压缩"};
 
-                    new AlertDialog.Builder(v.getContext())
-                            .setItems(strings, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, final int which) {
-                                    dialog.dismiss();
-
-                                    List<Image> datas2 = datas;
-                                    Collections.sort(datas2, new Comparator<Image>() {
-                                        @Override
-                                        public int compare(Image o1, Image o2) {
-                                            if (which == 0) {
-                                                return (int) (o1.addDate - o2.addDate);
-                                            } else if (which == 1) {
-                                                return (int) (o2.addDate - o1.addDate);
-                                            } else if (which == 2) {
-                                                return o1.name.compareTo(o2.name);
-                                            } else if (which == 3) {
-                                                return (int) (o1.fileSize - o2.fileSize);
-                                            } else if (which == 4) {
-                                                return (int) (o2.fileSize - o1.fileSize);
-                                            } else {
-                                                return (int) (o2.addDate - o1.addDate);
-                                            }
-
-                                        }
-                                    });
-                                    adapter.replaceData(datas2);
-
+                new AlertDialog.Builder(v.getContext())
+                        .setItems(strings0, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, final int which) {
+                                dialog.dismiss();
+                                if(which ==0){
+                                    reOrder(v);
+                                }else if(which ==1){
+                                    compressDir();
                                 }
-                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
 
-                        }
-                    }).create().show();
+                            }
+                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).create().show();
 
 
-                }
+
+
+
+
 
             }
         });
+    }
+
+    private void compressDir() {
+        ImageDirCompressor.compressDir(dir, new UiForDirCompress() {
+            @Override
+            public void showDirImags(String dir0) {
+                ImageMediaCenterUtil.showImagesInDir(getContext(),dir0);
+
+            }
+        });
+
+    }
+
+    private void reOrder(View v) {
+        final BaseQuickAdapter adapter = (BaseQuickAdapter) recyclerView.getAdapter();
+        final List datas = adapter.getData();
+        if (datas.get(0) instanceof Image) {
+            String[] strings = new String[]{"日期", "日期(倒序)", "文件名", "文件大小", "文件大小(倒序)"};
+
+            new AlertDialog.Builder(v.getContext())
+                    .setItems(strings, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, final int which) {
+                            dialog.dismiss();
+
+                            List<Image> datas2 = datas;
+                            Collections.sort(datas2, new Comparator<Image>() {
+                                @Override
+                                public int compare(Image o1, Image o2) {
+                                    if (which == 0) {
+                                        return (int) (o1.addDate - o2.addDate);
+                                    } else if (which == 1) {
+                                        return (int) (o2.addDate - o1.addDate);
+                                    } else if (which == 2) {
+                                        if(o1.isDir && !o2.isDir){
+                                            return -1;
+                                        }
+                                        if(!o2.isDir && o1.isDir){
+                                            return 1;
+                                        }
+                                        return o1.name.toLowerCase().compareTo(o2.name.toLowerCase());
+                                    } else if (which == 3) {
+                                        return (int) (o1.fileSize - o2.fileSize);
+                                    } else if (which == 4) {
+                                        return (int) (o2.fileSize - o1.fileSize);
+                                    } else {
+                                        return (int) (o2.addDate - o1.addDate);
+                                    }
+
+                                }
+                            });
+                            adapter.replaceData(datas2);
+
+                        }
+                    }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }).create().show();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -282,7 +328,9 @@ public class ImageListView extends FrameLayout {
     }
 
 
+
     public void showImagesInDir(final String dirPath) {
+        dir = dirPath;
         File dir = new File(dirPath);
         if (!dir.exists() || !dir.isDirectory()) {
             Log.w(TAG, dirPath + " is not exist or not a directory!");
@@ -317,7 +365,7 @@ public class ImageListView extends FrameLayout {
                 if(!image.isDir && t1.isDir){
                     return 1;
                 }
-                return image.name.compareTo(t1.name);
+                return image.name.toLowerCase().compareTo(t1.name.toLowerCase());
             }
         });
 

@@ -3,6 +3,7 @@ package com.hss01248.img.compressor;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.text.format.DateUtils;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AlertDialog;
@@ -60,7 +61,9 @@ public abstract class UiForDirCompress implements ImageDirCompressor.DirCallback
     AlertDialog dialog = null;
     ProgressBar progressBar;
     private void showProgressDialog(int toCompressCount) {
-         progressBar = new ProgressBar(ActivityUtils.getTopActivity());
+         progressBar = new ProgressBar(ActivityUtils.getTopActivity(),null,android.R.attr.progressBarStyleHorizontal);
+        //progressBar.setScrollBarStyle(View.SCROLL_AXIS_HORIZONTAL);
+
         progressBar.setMax(toCompressCount);
          dialog = new AlertDialog.Builder(ActivityUtils.getTopActivity())
          .setMessage("开始压缩")
@@ -112,7 +115,7 @@ public abstract class UiForDirCompress implements ImageDirCompressor.DirCallback
                 .append("\n当前压缩率/总压缩率:")
                 .append(100*sizeAfterCompressed/origianlSize)
                 .append("%/")
-                .append(100*totalSizeAfterCompressed/totalOriginalSize) .append("%/");
+                .append(100*totalSizeAfterCompressed/totalOriginalSize) .append("%");
         if(dialog != null){
             dialog.setMessage(sb.toString());
             progressBar.setProgress(currentCount);
