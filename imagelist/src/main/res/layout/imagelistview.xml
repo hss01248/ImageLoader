@@ -34,7 +34,7 @@
             android:id="@+id/tv_right"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="排序"
+            android:text="菜单选项"
             android:textSize="15sp"
             android:gravity="center_vertical"
             android:textStyle="bold"

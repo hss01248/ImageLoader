@@ -56,7 +56,7 @@ public class AlbumImgAdapter extends BaseQuickAdapter<Image, BaseViewHolder> imp
         String name = item.path.substring(item.path.lastIndexOf("/")+1);
 
         if(item.isDir){
-            helper.setText(R.id.tv_info, "文件夹:"+name);
+            helper.setText(R.id.tv_info, "文件夹 "+name);
             imageView.setImageResource(R.drawable.icon_folder_imgs);
            /* ImageLoader.with(helper.itemView.getContext())
                     .res(R.drawable.ic_empty_page_2)

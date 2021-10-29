@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.URLUtil;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,8 +23,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SizeUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.fondesa.recyclerviewdivider.DividerDecoration;
@@ -40,6 +45,7 @@ import com.hss01248.ui.pop.list.PopList;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,7 +106,10 @@ public class ImageListView extends FrameLayout {
         tvRIght.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] strings0 = new String[]{"排序", "压缩"};
+                if(!TextUtils.isEmpty(dir)){
+
+                }
+                String[] strings0 = new String[]{"排序", "压缩","过滤","删除当前所有文件"};
 
                 new AlertDialog.Builder(v.getContext())
                         .setItems(strings0, new DialogInterface.OnClickListener() {
@@ -111,6 +120,10 @@ public class ImageListView extends FrameLayout {
                                     reOrder(v);
                                 }else if(which ==1){
                                     compressDir();
+                                }else if(which ==2){
+                                    filterDir(dir);
+                                }else if(which ==3){
+                                    deleteAll();
                                 }
 
                             }
@@ -126,6 +139,163 @@ public class ImageListView extends FrameLayout {
 
 
 
+
+            }
+        });
+    }
+
+    private void deleteAll() {
+        List data = adapter.getData();
+        List<File> files = new ArrayList<>(data.size());
+        long length = 0;
+        for (Object datum : data) {
+            if(datum instanceof  Image){
+                Image image = (Image) datum;
+                if(!image.isDir){
+                    File file = new File(image.path);
+                    files.add(file);
+                    length += file.length();
+                }
+            }
+        }
+        String str = "当前有"+files.size()+"个文件,大小为:"+ ConvertUtils.byte2FitMemorySize(length,1)+"\n是否删除当前所有文件?";
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("批量删除文件")
+                .setMessage(str)
+        .setPositiveButton("删除", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
+                    @Override
+                    public Object doInBackground() throws Throwable {
+                        for (File file : files) {
+                            file.delete();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public void onSuccess(Object result) {
+                        ToastUtils.showLong("删除完成");
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+
+                    @Override
+                    public void onFail(Throwable t) {
+                        ToastUtils.showLong("删除失败:"+t.getMessage());
+
+                    }
+                });
+            }
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.create().show();
+    }
+
+    private void filterDir(String dir) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        EditText editText = new EditText(getContext());
+        //editText.setPadding(SizeUtils.dp2px(20),0,SizeUtils.dp2px(20),0);
+
+        builder.setTitle("根据文件名过滤")
+                .setMessage("只保留文件名里含输入内容的文件\n为空则显示当前文件夹全部文件")
+                .setView(editText)
+                .setPositiveButton("过滤", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(TextUtils.isEmpty(editText.getText().toString().trim())){
+                            ToastUtils.showLong("输入为空,显示全部文件");
+                            doFilter("");
+                        }else {
+                            String text = editText.getText().toString().trim();
+                            doFilter(text);
+
+                        }
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                editText.setFocusable(true);
+                editText.setFocusableInTouchMode(true);
+                editText.requestFocus();
+            }
+        });
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+        ViewGroup.LayoutParams layoutParams = editText.getLayoutParams();
+        if(layoutParams instanceof FrameLayout.LayoutParams){
+            FrameLayout.LayoutParams params = (LayoutParams) layoutParams;
+            params.leftMargin = SizeUtils.dp2px(22);
+            params.rightMargin = SizeUtils.dp2px(22);
+            editText.setLayoutParams(params);
+        }
+
+
+
+
+
+
+    }
+
+    private void doFilter(String text) {
+        ThreadUtils.executeByIo(new ThreadUtils.Task<List<Image>>() {
+            @Override
+            public List<Image> doInBackground() throws Throwable {
+                File[] files = new File(dir).listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        if(TextUtils.isEmpty(text)){
+                            return true;
+                        }
+                        return name.contains(text);
+                    }
+                });
+                final List<Image> images = new ArrayList<>();
+                for (File file : files) {
+                    Image image = new Image(0, file.getName(), dir + "/" + file.getName(), false);
+                    image.isDir = file.isDirectory();
+                    images.add(image);
+                }
+                Collections.sort(images, new Comparator<Image>() {
+                    @Override
+                    public int compare(Image image, Image t1) {
+                        if(image.isDir && !t1.isDir){
+                            return -1;
+                        }
+                        if(!image.isDir && t1.isDir){
+                            return 1;
+                        }
+                        return image.name.toLowerCase().compareTo(t1.name.toLowerCase());
+                    }
+                });
+                return images;
+            }
+
+            @Override
+            public void onSuccess(List<Image> result) {
+                adapter.setNewData(result);
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+                t.printStackTrace();
 
             }
         });
