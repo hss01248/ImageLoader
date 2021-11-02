@@ -2,7 +2,6 @@ package com.hss01248.img.compressor;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -169,7 +168,7 @@ public class ImageDirCompressor {
         for (File file : files) {
             long eachStart = System.currentTimeMillis();
             long originalSize = file.length();
-            File compressed = ImageCompressor.compressToAvif(file.getAbsolutePath(), false, true);
+            File compressed = ImageCompressor.compress(file.getAbsolutePath(), false, true);
             if(compressed.getAbsolutePath().equals(file.getAbsolutePath()) && originalSize == compressed.length()){
                 //压缩失败或跳过
                 LogUtils.w("压缩跳过或失败 ",file.getAbsolutePath());

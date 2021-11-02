@@ -346,7 +346,7 @@ public class MyDownloader {
         info.isCompressing = true;
         long lengh =file.length();
         EventBus.getDefault().post(info);
-        ImageCompressor.compressToAvifAsync(file.getAbsolutePath(), true, true,false,
+        ImageCompressor.compressAsync(file.getAbsolutePath(), true, true,false,
                 new ImageCompressor.Callback() {
             @Override
             public void onResult(File compressed, boolean hasCompressed) {

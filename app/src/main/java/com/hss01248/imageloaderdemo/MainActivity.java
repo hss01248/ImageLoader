@@ -27,11 +27,8 @@ import com.blankj.utilcode.util.PermissionUtils;
 
 import com.bumptech.glide.Glide;
 
-import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.elvishew.xlog.XLog;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
@@ -51,13 +48,9 @@ import com.hss01248.webviewspider.SpiderWebviewActivity;
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 import butterknife.BindView;
@@ -317,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //TurboCompressor.compressOriginal(path,70);
-                File file = ImageCompressor.compressToAvif(path,false,false);
+                File file = ImageCompressor.compress(path,false,false);
                /* ImageLoader.with(MainActivity.this)
                         .file(file.getAbsolutePath())
                         // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
