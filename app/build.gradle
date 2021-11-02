@@ -25,7 +25,7 @@ android {
     }
     packagingOptions {
         // Make sure libjsc.so does not packed in APK
-        pickFirst '**/libc++_shared.so'
+        //pickFirst '**/libc++_shared.so'
         exclude("META-INF/*.kotlin_module")
     }
     /*repositories {
@@ -86,7 +86,7 @@ dependencies {
     implementation 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
     debugImplementation 'com.glance.guolindev:glance:1.0.0'
 
-    debugImplementation 'com.github.hss01248.flipperUtil:oom:1.2.3'
+    //debugImplementation 'com.github.hss01248.flipperUtil:oom:1.2.3'
     api 'jp.co.link_u.library.glideavif:glideavif:0.8.1'
     configurations.all {
         resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.12.0'
