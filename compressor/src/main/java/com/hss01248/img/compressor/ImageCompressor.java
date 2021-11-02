@@ -223,7 +223,7 @@ public class ImageCompressor {
                 return file2;
             }
         }else {
-            LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
+            //LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
             file2.delete();
             return file;
         }

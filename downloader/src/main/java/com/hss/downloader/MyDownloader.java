@@ -351,7 +351,7 @@ public class MyDownloader {
             @Override
             public void onResult(File compressed, boolean hasCompressed) {
                 CompressEvent event = new CompressEvent();
-                event.success = compressed.length() != file.length();
+                event.success = compressed.length() != lengh;
                 event.timeCost = System.currentTimeMillis() - start;
                 event.after = compressed.length();
                 event.origianl = lengh;
