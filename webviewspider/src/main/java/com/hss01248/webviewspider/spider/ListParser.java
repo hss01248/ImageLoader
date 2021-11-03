@@ -107,10 +107,10 @@ public class ListParser {
                                 LogUtils.d("caol"," parse html source less then 30s,  removeCallbacks:"+idx+", "+paths.get(idx));
                                 handler0.removeCallbacks(runnable0);
                                 count[0]--;
-                                List<String> strings = htmlParser.parseDetailPage(info.htmlSource);
-                                Log.v("caol",titles.get(idx)+"-imagesize "+strings.size()+",position:"+ idx +",dao:"+count[0]);
-                                listToDetailImgsInfo.titlesToImags.put(titles.get(idx),strings);
-                                urls.addAll(strings);
+                                List<String> imageUrls = htmlParser.parseDetailPage(info.htmlSource);
+                                Log.v("caol",titles.get(idx)+"-imagesize "+imageUrls.size()+",position:"+ idx +",dao:"+count[0]);
+                                listToDetailImgsInfo.titlesToImags.put(titles.get(idx),imageUrls);
+                                urls.addAll(imageUrls);
                             }catch (Throwable throwable){
                                 LogUtils.w(throwable);
                             }
