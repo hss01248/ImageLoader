@@ -29,16 +29,20 @@ import androidx.annotation.RequiresApi;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
+
+import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.PageStateManager;
 import com.hss01248.webviewspider.R;
+import com.hss01248.webviewspider.databinding.TitlebarForWebviewBinding;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebUIControllerImplBase;
 import com.just.agentweb.WebViewClient;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.ThreadUtils;
+
 
 
 public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleObserver {
@@ -52,7 +56,6 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     }
 
     AgentWeb mAgentWeb;
-    TitleBar titleBar;
     AgentWeb.PreAgentWeb preAgentWeb;
 
     public WebView getWebView() {
@@ -113,18 +116,48 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         initWebView();
     }
 
+    TitlebarForWebviewBinding titleBar;
     private void initTitlebar(Context context) {
-        titleBar = new TitleBar(context);
-        LinearLayout.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,TitleBar.dip2px(50));
-        titleBar.setLayoutParams(params);
-        titleBar.setLeftImageResource(R.drawable.comm_title_back);
-        addView(titleBar);
-        titleBar.setLeftClickListener(new View.OnClickListener() {
+
+        /*<com.hjq.bar.TitleBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:barStyle="night"
+                app:leftTitle="返回"
+                app:rightTitle="设置"
+                app:title="夜间模式的标题栏" />*/
+        Activity activity = WebDebugger.getActivityFromContext(context);
+        titleBar = TitlebarForWebviewBinding.inflate(activity.getLayoutInflater(),this,false);
+
+        addView(titleBar.getRoot());
+        titleBar.ivBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                boolean b = onBackPressed();
+                if(!b){
+                    ActivityUtils.getTopActivity().finish();
+                }
             }
         });
+        titleBar.ivClose.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityUtils.getTopActivity().finish();
+            }
+        });
+        titleBar.ivMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMenu();
+            }
+        });
+
+    }
+
+    protected void showMenu() {
+        ToastUtils.showLong("show menu");
+
     }
 
     public void getSource(ValueCallback<String> valueCallback){
@@ -227,21 +260,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     }
 
 
-    TextView tvError;
 
-    private TextView getTvError(){
-        if(tvError == null){
-            if(mAgentWeb == null){
-                return null;
-            }
-            FrameLayout frameLayout = mAgentWeb.getWebCreator().getWebParentLayout();
-            View viewById = frameLayout.findViewById(R.id.tv_msg_error);
-            if(viewById != null){
-                tvError = (TextView) viewById;
-            }
-        }
-        return tvError;
-    }
     PageStateManager stateManager;
 
     JsCreateNewWinImpl jsCreateNewWin = new JsCreateNewWinImpl();
@@ -249,7 +268,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     private void initWebView() {
         preAgentWeb = AgentWeb.with((Activity) getContext())//传入Activity or Fragment
                 .setAgentWebParent(this,
-                        new LayoutParams(-1, -1))
+                        new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
                 //传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams ,第一个参数和第二个参数应该对应。
                 .useDefaultIndicator()// 使用默认进度条
                 .setAgentWebUIController(new AgentWebUIControllerImplBase(){
@@ -333,7 +352,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     @Override
                     public void onReceivedTitle(WebView view, String title) {
                         super.onReceivedTitle(view, title);
-                        titleBar.setTitle(title);
+                        titleBar.tvTitle.setText(title);
                         currentTitle = title;
                         info.title = title;
                     }
@@ -383,10 +402,11 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         WebConfigger.syncCookie(webView,url);
         if(mAgentWeb == null){
             LogUtils.w("mAgentWeb == null");
-            mAgentWeb = preAgentWeb.go(url);
+            //mAgentWeb = preAgentWeb.go(url);
         }else {
             mAgentWeb.getUrlLoader().loadUrl(url);
         }
+
 
     }
 

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.hss01248.webviewspider.basewebview.TitleBar
-        android:layout_width="match_parent"
-        android:id="@+id/titlebar"
-        android:layout_height="50dp"/>
+    <com.hss01248.webviewspider.basewebview.BaseQuickWebview
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:id="@+id/root_ll"
+        android:layout_height="match_parent">
+    </com.hss01248.webviewspider.basewebview.BaseQuickWebview>
 
-</LinearLayout>
+</RelativeLayout>

@@ -21,6 +21,8 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.SizeUtils;
+
 import java.net.URLDecoder;
 
 import uk.co.alt236.webviewdebug.DebugWebChromeClient;
@@ -109,7 +111,7 @@ public class WebDebugger {
         }
     }
 
-    public  void setWebviewDebugDebugLine(WebView webview, TitleBar titleBar){
+    public  void setWebviewDebugDebugLine(WebView webview){
         if (!debug) {
             return;
         }
@@ -134,7 +136,7 @@ public class WebDebugger {
         if (debugView == null) {
             debugView = new TextView(webview.getContext());
             debugView.setTextColor(Color.BLUE);
-            int dp = TitleBar.dip2px(20);
+            int dp = SizeUtils.dp2px(20);
             debugView.setPadding(dp, dp/3, dp, dp);
             debugView.setTextSize(11);
             layout2.addView(debugView,

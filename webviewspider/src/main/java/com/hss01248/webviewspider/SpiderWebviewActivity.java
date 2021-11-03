@@ -84,7 +84,7 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        url = getIntent().getStringExtra("url");
         if(!getIntent().getBooleanExtra(ISetWebviewHolder.setWebviewHolderByOutSide,false)){
             parser = parsers.get(url);
             setContentView(R.layout.activity_web_spider);

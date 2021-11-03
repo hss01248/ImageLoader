@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +18,7 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.activityresult.StartActivityUtil;
 import com.hss01248.activityresult.TheActivityListener;
+import com.hss01248.webviewspider.R;
 
 public class JsCreateNewWinImpl {
 
@@ -44,11 +47,14 @@ public class JsCreateNewWinImpl {
                     protected void onActivityCreated(@NonNull AppCompatActivity activity, @Nullable Bundle savedInstanceState) {
                         super.onActivityCreated(activity, savedInstanceState);
                         if(activity instanceof ISetWebviewHolder){
-                            BaseQuickWebview quickWebview = new BaseQuickWebview(activity);
+                        /*    BaseQuickWebview quickWebview = new BaseQuickWebview(activity);
+                            ViewGroup.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+                            quickWebview.setLayoutParams(layoutParams);*/
                             ISetWebviewHolder holder = (ISetWebviewHolder) activity;
 
+                            activity.setContentView(R.layout.default_webview_container);
+                            BaseQuickWebview quickWebview = activity.findViewById(R.id.root_ll);
                             holder.setWebviewHolder(quickWebview);
-                            activity.setContentView(quickWebview);
 
                             //相当于load url
                            WebView  newWebView = quickWebview.getWebView();

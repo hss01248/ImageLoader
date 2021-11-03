@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="56dp">
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="40dp"
+        android:src="@drawable/comm_title_back"
+        android:scaleType="centerInside"
+        android:layout_centerVertical="true"
+        android:layout_height="40dp"/>
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="40dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/iv_back"
+        android:src="@drawable/icon_close"
+        android:scaleType="centerInside"
+        android:layout_height="40dp"/>
+    <TextView
+        android:id="@+id/tv_title"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginLeft="90dp"
+        android:layout_marginRight="90dp"
+        android:gravity="center"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <ImageView
+        android:id="@+id/iv_menu"
+        android:layout_width="40dp"
+        android:src="@drawable/icon_menu_webview"
+        android:scaleType="fitCenter"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_height="40dp"/>
+
+
+
+</RelativeLayout>
