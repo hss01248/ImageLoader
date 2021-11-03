@@ -7,6 +7,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -53,6 +54,11 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     AgentWeb mAgentWeb;
     TitleBar titleBar;
     AgentWeb.PreAgentWeb preAgentWeb;
+
+    public WebView getWebView() {
+        return webView;
+    }
+
     WebView webView;
 
     public String getCurrentTitle() {
@@ -97,9 +103,21 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 
     private void init(Context context) {
         info = new WebPageInfo();
+        initTitlebar(context);
+
+        Activity activity = WebDebugger.getActivityFromContext(context);
+        if(activity instanceof LifecycleOwner){
+            LifecycleOwner owner = (LifecycleOwner) activity;
+            addLifecycle(owner);
+        }
+        initWebView();
+    }
+
+    private void initTitlebar(Context context) {
         titleBar = new TitleBar(context);
         LinearLayout.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,TitleBar.dip2px(50));
         titleBar.setLayoutParams(params);
+        titleBar.setLeftImageResource(R.drawable.comm_title_back);
         addView(titleBar);
         titleBar.setLeftClickListener(new View.OnClickListener() {
             @Override
@@ -107,12 +125,6 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                 onBackPressed();
             }
         });
-        Activity activity = WebDebugger.getActivityFromContext(context);
-        if(activity instanceof LifecycleOwner){
-            LifecycleOwner owner = (LifecycleOwner) activity;
-            addLifecycle(owner);
-        }
-        initWebView();
     }
 
     public void getSource(ValueCallback<String> valueCallback){
@@ -232,6 +244,8 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     }
     PageStateManager stateManager;
 
+    JsCreateNewWinImpl jsCreateNewWin = new JsCreateNewWinImpl();
+
     private void initWebView() {
         preAgentWeb = AgentWeb.with((Activity) getContext())//传入Activity or Fragment
                 .setAgentWebParent(this,
@@ -315,6 +329,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     }
                 })
                 .setWebChromeClient(new com.just.agentweb.WebChromeClient(){
+
                     @Override
                     public void onReceivedTitle(WebView view, String title) {
                         super.onReceivedTitle(view, title);
@@ -322,11 +337,42 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         currentTitle = title;
                         info.title = title;
                     }
+
+                    @Override
+                    public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+                        return jsCreateNewWin.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
+                    }
+
+                    @Override
+                    public void onCloseWindow(WebView window) {
+                        jsCreateNewWin.onCloseWindow(window);
+                    }
                 })
               // .setMainFrameErrorView(R.layout.pager_error,R.id.error_btn_retry)
                 //.setMainFrameErrorView(errorLayout)
                 .createAgentWeb()//
                 .ready();
+
+        mAgentWeb = preAgentWeb.get();
+
+        webView = mAgentWeb.getWebCreator().getWebView();
+        stateManager = PageStateManager.initWhenUse(mAgentWeb.getWebCreator().getWebParentLayout(), new PageStateConfig() {
+
+            @Override
+            public boolean isFirstStateLoading() {
+                return false;
+            }
+
+            @Override
+            public void onRetry(View retryView) {
+                stateManager.showContent();
+                webView.reload();
+
+            }
+        });
+        WebConfigger.config(webView);
+        debugger =  new WebDebugger();
+        debugger.setWebviewDebug(webView);
 
     }
 
@@ -334,31 +380,10 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 
     private void go(String url){
         info.url = url;
+        WebConfigger.syncCookie(webView,url);
         if(mAgentWeb == null){
+            LogUtils.w("mAgentWeb == null");
             mAgentWeb = preAgentWeb.go(url);
-            webView = mAgentWeb.getWebCreator().getWebView();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-            }
-
-            stateManager = PageStateManager.initWhenUse(mAgentWeb.getWebCreator().getWebParentLayout(), new PageStateConfig() {
-
-                @Override
-                public boolean isFirstStateLoading() {
-                    return false;
-                }
-
-                @Override
-                public void onRetry(View retryView) {
-                    stateManager.showContent();
-                    webView.reload();
-
-                }
-            });
-            WebConfigger.config(webView,url);
-            debugger =  new WebDebugger();
-            debugger.setWebviewDebug(webView);
-            //debugger.setWebviewDebugDebugLine(webView,titleBar);
         }else {
             mAgentWeb.getUrlLoader().loadUrl(url);
         }

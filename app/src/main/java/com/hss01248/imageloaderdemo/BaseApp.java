@@ -12,6 +12,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.Utils;
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
@@ -27,6 +28,8 @@ import com.hss01248.bugly.XReporter;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 
+import com.hss01248.dokit.IWebDoor;
+import com.hss01248.dokit.MyDokit;
 import com.hss01248.flipper.DBAspect;
 import com.hss01248.glidev4.Glide4Loader;
 import com.hss01248.image.ImageLoader;
@@ -40,6 +43,9 @@ import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
+import com.hss01248.webviewspider.basewebview.BaseWebviewActivity;
+import com.hss01248.webviewspider.basewebview.WebConfigger;
+import com.hss01248.webviewspider.basewebview.WebviewInit;
 
 
 import java.io.File;
@@ -71,6 +77,19 @@ public class BaseApp extends MultiDexApplication {
         GlobalConfig.debug = true;
         XXPermissions.setScopedStorage(true);
         //Glance.INSTANCE.initialize(new MyDBContext(this));
+        MyDokit.setWebDoorl(new IWebDoor() {
+            @Override
+            public void load(Context context, String url) {
+                BaseWebviewActivity.start(ActivityUtils.getTopActivity(),url);
+            }
+        });
+        WebConfigger.init(new WebviewInit() {
+            @Override
+            public Class html5ActivityClass() {
+                return BaseWebviewActivity.class;
+            }
+        });
+
 
         DBAspect.addDB(getFile("imgdownload.db"));
         XReporter.init(this,"7ac352d904",true);

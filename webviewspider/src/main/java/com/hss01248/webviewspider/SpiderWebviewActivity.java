@@ -21,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
+import com.hss01248.webviewspider.basewebview.BaseWebviewActivity;
+import com.hss01248.webviewspider.basewebview.ISetWebviewHolder;
 import com.hss01248.webviewspider.spider.GoogleImageParser;
 import com.hss01248.webviewspider.spider.IHtmlParser;
 import com.hss01248.webviewspider.spider.ListParser;
@@ -40,7 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class SpiderWebviewActivity extends AppCompatActivity {
+public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebviewHolder {
 
     public static void setShowUrls(IShowUrls iShowUrls) {
         SpiderWebviewActivity.iShowUrls = iShowUrls;
@@ -55,7 +57,7 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     }
 
     String url  = "";
-    BaseQuickWebview quickWebview;
+   BaseQuickWebview quickWebview;
     Button button;
 
 
@@ -82,11 +84,14 @@ public class SpiderWebviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = getIntent().getStringExtra("url");
-        parser = parsers.get(url);
-        setContentView(R.layout.activity_web_spider);
-        button = findViewById(R.id.btn_float);
-        initWebView();
+
+        if(!getIntent().getBooleanExtra(ISetWebviewHolder.setWebviewHolderByOutSide,false)){
+            parser = parsers.get(url);
+            setContentView(R.layout.activity_web_spider);
+            button = findViewById(R.id.btn_float);
+            initWebView();
+        }
+
     }
 
     private void initWebView() {
@@ -290,5 +295,10 @@ public class SpiderWebviewActivity extends AppCompatActivity {
             super.onBackPressed();
         }
 
+    }
+
+    @Override
+    public void setWebviewHolder(BaseQuickWebview webview) {
+        quickWebview = webview;
     }
 }
