@@ -23,6 +23,7 @@ import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
 import com.hss01248.webviewspider.basewebview.BaseWebviewActivity;
 import com.hss01248.webviewspider.basewebview.ISetWebviewHolder;
+import com.hss01248.webviewspider.spider.BaiduImageParser;
 import com.hss01248.webviewspider.spider.GoogleImageParser;
 import com.hss01248.webviewspider.spider.IHtmlParser;
 import com.hss01248.webviewspider.spider.ListParser;
@@ -73,7 +74,8 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
     static Map<String,IHtmlParser> parsers = new HashMap<>();
     static {
         parsers.put(new PexelImageParser().entranceUrl(),new PexelImageParser());
-       // parsers.put(new GoogleImageParser().entranceUrl(),new GoogleImageParser());
+        parsers.put(new GoogleImageParser().entranceUrl(),new GoogleImageParser());
+        parsers.put(new BaiduImageParser().entranceUrl(),new BaiduImageParser());
     }
     IHtmlParser parser;
 

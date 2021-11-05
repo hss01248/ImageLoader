@@ -224,7 +224,8 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 //            valueCallback.onReceiveValue(source);
 //            return;
 //        }
-        String script = "javascript:document.getElementsByTagName('html')[0].innerHTML";
+        //String script = "javascript:document.getElementsByTagName('html')[0].innerHTML";
+        String script = "javascript:document.getElementsByTagName('body')[0].innerHTML";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //在主线程执行,耗时好几s
             webView.evaluateJavascript(script, new ValueCallback<String>() {
@@ -237,7 +238,8 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     if(source.endsWith("\"")){
                         source = source.substring(0,source.length()-1);
                     }
-                    source = "<html>"+source +"</html>";
+                    //source = "<html>"+source +"</html>";
+                    source = "<body>"+source +"</body>";
                     LogUtils.v(source);
                     info.htmlSource = source;
                     valueCallback.onReceiveValue(source);

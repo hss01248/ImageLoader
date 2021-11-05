@@ -369,9 +369,9 @@ public class MainActivity extends AppCompatActivity {
                 if(position == menus.size()-1){
                     MyDownloader.continueDownload();
                     //ImgDownloader.downladUrlsInDB(MainActivity.this,new File(SpiderWebviewActivity.getSaveDir("继续下载","")));
-                }else if(position == 1) {
+                }else if(position ==  menus.size()-3) {
                     MyDownloader.showDownloadPage();
-                }else if(position == 2) {
+                }else if(position == menus.size()-2) {
                     MyDownloader.fixDbWhenUpdate();
                 }else {
                     SpiderWebviewActivity.start(MainActivity.this,str);
