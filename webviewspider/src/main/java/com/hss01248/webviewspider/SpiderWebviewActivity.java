@@ -29,6 +29,7 @@ import com.hss01248.webviewspider.spider.IHtmlParser;
 import com.hss01248.webviewspider.spider.ListParser;
 import com.hss01248.webviewspider.spider.ListToDetailImgsInfo;
 import com.hss01248.webviewspider.spider.PexelImageParser;
+import com.hss01248.webviewspider.spider.ToutiaoImageParser;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 
@@ -76,6 +77,7 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
         parsers.put(new PexelImageParser().entranceUrl(),new PexelImageParser());
         parsers.put(new GoogleImageParser().entranceUrl(),new GoogleImageParser());
         parsers.put(new BaiduImageParser().entranceUrl(),new BaiduImageParser());
+        parsers.put(new ToutiaoImageParser().entranceUrl(),new ToutiaoImageParser());
     }
     IHtmlParser parser;
 
@@ -252,7 +254,7 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
     }
 
     private void parseUrlsAndShow() {
-        quickWebview.getSource(new ValueCallback<String>() {
+        quickWebview.loadSource(new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
                 List<String> list = parser.parseDetailPage(value);
@@ -271,7 +273,7 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
     }
 
     private void showSource() {
-        quickWebview.getSource(new ValueCallback<String>() {
+        quickWebview.loadSource(new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
                 new AlertDialog.Builder(SpiderWebviewActivity.this)
