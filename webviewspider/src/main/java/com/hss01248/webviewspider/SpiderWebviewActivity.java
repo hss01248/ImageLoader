@@ -102,6 +102,9 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
         quickWebview = findViewById(R.id.root_ll);
         quickWebview.setNeedBlockImageLoad( parser.interceptImage(url));
         //quickWebview.addLifecycle(this);
+        if(parser.usePcAgent()){
+            quickWebview.getWebView().getSettings().setUserAgentString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36");
+        }
         quickWebview.loadUrl(url);
 
         button.setOnClickListener(new View.OnClickListener() {

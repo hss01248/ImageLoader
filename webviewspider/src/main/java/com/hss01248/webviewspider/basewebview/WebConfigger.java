@@ -58,6 +58,7 @@ public class WebConfigger {
         //支持获取手势焦点，输入用户名、密码或其他
         webView.requestFocusFromTouch();
 
+
         mWebSettings.setSupportZoom(false);//不支持缩放
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);

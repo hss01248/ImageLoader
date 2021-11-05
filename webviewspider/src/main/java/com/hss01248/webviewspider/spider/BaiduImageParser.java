@@ -21,6 +21,11 @@ public class BaiduImageParser implements IHtmlParser{
     }
 
     @Override
+    public boolean usePcAgent() {
+        return true;
+    }
+
+    @Override
     public List<String> parseDetailPage(String html) {
         //img.sfc-image-content-ssr-img  src
         final ArrayList<String> urls = new ArrayList<>();
@@ -29,7 +34,7 @@ public class BaiduImageParser implements IHtmlParser{
             ///img.sfc-image-content-ssr-img  src
             //https://p3-search.byteimg.com/img/labis/0597604662ce7ba8b1079c49553e0f58~480x480.JPEG
             //https://p3-search.byteimg.com/img/labis/0597604662ce7ba8b1079c49553e0f58~0x0.JPEG
-            Elements elements = element0.select("div.sfc-image-content-norcell-img-wrapper > div > img");
+            Elements elements = element0.select("div.imgbox-border > a > img");
             //选择多个class,则不要有空格
             if(elements == null || elements.isEmpty()){
                 LogUtils.w("baidu image empty!!");

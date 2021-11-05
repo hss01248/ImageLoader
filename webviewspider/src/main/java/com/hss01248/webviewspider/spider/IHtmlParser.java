@@ -30,6 +30,10 @@ public interface IHtmlParser {
         return false;
     }
 
+    default boolean usePcAgent(){
+       return false;
+    }
+
 
 
     @Deprecated
