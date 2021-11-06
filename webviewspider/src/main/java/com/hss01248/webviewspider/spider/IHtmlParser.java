@@ -22,6 +22,10 @@ public interface IHtmlParser {
 
     String folderName();
 
+  default   long delayAfterOnFinished(){
+        return 0;
+    }
+
    default String subfolderName(String title,String url){
         return "";
     }

@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 
@@ -25,6 +26,12 @@ public class JsCreateNewWinImpl {
 
 
      Activity activity;
+
+     public static void enableMultipulWindow(WebView webView, boolean supportMultiplWindow){
+         WebSettings mWebSettings = webView.getSettings();
+         mWebSettings.setSupportMultipleWindows(true);
+         mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);//支持通过js打开新的窗口
+     }
 
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
