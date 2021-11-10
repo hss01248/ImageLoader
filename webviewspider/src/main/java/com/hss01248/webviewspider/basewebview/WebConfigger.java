@@ -59,7 +59,8 @@ public class WebConfigger {
         webView.requestFocusFromTouch();
 
 
-        mWebSettings.setSupportZoom(false);//不支持缩放
+        mWebSettings.setSupportZoom(true);//不支持缩放
+        mWebSettings.setBuiltInZoomControls(true);
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
         }
@@ -80,9 +81,9 @@ public class WebConfigger {
 
         //调用JS方法.安卓版本大于17,加上注解 @JavascriptInterface
         mWebSettings.setJavaScriptEnabled(true);//支持javascript
-        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);//支持通过js打开新的窗口
+
         mWebSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);//提高渲染等级
-        mWebSettings.setSupportMultipleWindows(true);
+
         mWebSettings.setEnableSmoothTransition(true);
         webView.setFitsSystemWindows(true);
         //缓存数据 (localStorage)

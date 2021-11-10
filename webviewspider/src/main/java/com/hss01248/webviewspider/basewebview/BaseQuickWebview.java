@@ -56,6 +56,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     }
 
     AgentWeb mAgentWeb;
+    long delayAfterOnFinish;
     AgentWeb.PreAgentWeb preAgentWeb;
 
     public WebView getWebView() {
@@ -168,9 +169,10 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         loadSource(valueCallback);
     }
 
-    public static BaseQuickWebview loadHtml(Context context,String url,ValueCallback<WebPageInfo> sourceLoadListener){
+    public static BaseQuickWebview loadHtml(Context context,String url,long delayAfterOnFinish,ValueCallback<WebPageInfo> sourceLoadListener){
         BaseQuickWebview quickWebview = new BaseQuickWebview(context);
         quickWebview.needBlockImageLoad = true;
+        quickWebview.delayAfterOnFinish = delayAfterOnFinish;
 /*
         Dialog dialog = new Dialog(context);
         dialog.setCanceledOnTouchOutside(false);
@@ -309,14 +311,20 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
-                        loadSource(new ValueCallback<String>() {
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
-                            public void onReceiveValue(String value) {
-                                if(sourceLoadListener != null){
-                                    sourceLoadListener.onReceiveValue(info);
-                                }
+                            public void run() {
+                                loadSource(new ValueCallback<String>() {
+                                    @Override
+                                    public void onReceiveValue(String value) {
+                                        if(sourceLoadListener != null){
+                                            sourceLoadListener.onReceiveValue(info);
+                                        }
+                                    }
+                                });
                             }
-                        });
+                        },delayAfterOnFinish);
+
                     }
                     @Override
                     public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
@@ -359,7 +367,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         info.title = title;
                     }
 
-                    @Override
+                   /* @Override
                     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
                         return jsCreateNewWin.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
                     }
@@ -367,7 +375,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     @Override
                     public void onCloseWindow(WebView window) {
                         jsCreateNewWin.onCloseWindow(window);
-                    }
+                    }*/
                 })
               // .setMainFrameErrorView(R.layout.pager_error,R.id.error_btn_retry)
                 //.setMainFrameErrorView(errorLayout)

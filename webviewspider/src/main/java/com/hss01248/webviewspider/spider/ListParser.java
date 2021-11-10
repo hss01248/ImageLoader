@@ -100,7 +100,7 @@ public class ListParser {
                         }
                     };
                     handler0.postDelayed(runnable0,30000);
-                            BaseQuickWebview.loadHtml(context, paths.get(idx), new ValueCallback<WebPageInfo>() {
+                            BaseQuickWebview.loadHtml(context, paths.get(idx),htmlParser.delayAfterOnFinished(), new ValueCallback<WebPageInfo>() {
                         @Override
                         public void onReceiveValue(WebPageInfo info) {
                             try {
