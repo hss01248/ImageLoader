@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
@@ -28,7 +29,7 @@ import com.hss01248.bugly.XReporter;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 
-import com.hss01248.dokit.IWebDoor;
+import com.hss01248.dokit.IDokitConfig;
 import com.hss01248.dokit.MyDokit;
 import com.hss01248.flipper.DBAspect;
 import com.hss01248.glidev4.Glide4Loader;
@@ -76,10 +77,18 @@ public class BaseApp extends MultiDexApplication {
         GlobalConfig.debug = true;
         XXPermissions.setScopedStorage(true);
         //Glance.INSTANCE.initialize(new MyDBContext(this));
-        MyDokit.setWebDoorl(new IWebDoor() {
+
+        MyDokit.setConfig(new IDokitConfig() {
             @Override
-            public void load(Context context, String url) {
+            public void loadUrl(Context context, String url) {
                 BaseWebviewActivity.start(ActivityUtils.getTopActivity(),url);
+            }
+
+            @Override
+            public void report(Object o) {
+                if(o instanceof Throwable){
+                    XReporter.reportException((Throwable) o);
+                }
             }
         });
         WebConfigger.init(new WebviewInit() {
