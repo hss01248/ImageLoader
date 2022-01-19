@@ -24,9 +24,9 @@ allprojects {
         mavenCentral()
         mavenLocal()
         maven { url "https://jitpack.io" }
-        maven {
-            url "http://dl.bintray.com/piasy/maven"
-        }
+       /* maven {
+            url "https://dl.bintray.com/piasy/maven"
+        }*/
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         //maven { url 'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository' }
        // maven { url 'https://raw.githubusercontent.com/link-u/AndroidGlideAvifDecoder/master/repository' }
