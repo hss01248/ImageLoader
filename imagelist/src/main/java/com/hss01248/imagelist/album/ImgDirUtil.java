@@ -45,7 +45,7 @@ public class ImgDirUtil {
         if(!dir.exists()){
             dir.mkdirs();
         }
-        if(hideFolder){
+       // if(hideFolder){
             File hidden = new File(dir,".nomedia");
             if(!hidden.exists()){
                 try {
@@ -54,7 +54,7 @@ public class ImgDirUtil {
                     e.printStackTrace();
                 }
             }
-        }
+       // }
         return dir;
     }
 }
