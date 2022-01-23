@@ -1,0 +1,154 @@
+//all deps have updates:
+dependencies {
+
+     implementation "am.util:viewpager:25.3.0" // --> 28.0.0
+ //  url : https://jcenter.bintray.com/am/util/viewpager/maven-metadata.xml
+     implementation "androidx.activity:activity:1.2.4" // --> 1.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/activity/activity/maven-metadata.xml
+     implementation "androidx.annotation:annotation:1.2.0" // --> 1.4.0-alpha01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/annotation/annotation/maven-metadata.xml
+     implementation "androidx.annotation:annotation-experimental:1.0.0" // --> 1.2.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/annotation/annotation-experimental/maven-metadata.xml
+     implementation "androidx.appcompat:appcompat:1.3.1" // --> 1.4.1
+ //  url : https://dl.google.com/dl/android/maven2/androidx/appcompat/appcompat/maven-metadata.xml
+     implementation "androidx.appcompat:appcompat-resources:1.3.1" // --> 1.4.1
+ //  url : https://dl.google.com/dl/android/maven2/androidx/appcompat/appcompat-resources/maven-metadata.xml
+     implementation "androidx.collection:collection:1.1.0" // --> 1.2.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/collection/collection/maven-metadata.xml
+     implementation "androidx.constraintlayout:constraintlayout:2.1.0" // --> 2.1.3
+ //  url : https://dl.google.com/dl/android/maven2/androidx/constraintlayout/constraintlayout/maven-metadata.xml
+     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0" // --> 1.2.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/coordinatorlayout/coordinatorlayout/maven-metadata.xml
+     implementation "androidx.core:core:1.5.0" // --> 1.8.0-alpha02
+ //  url : https://dl.google.com/dl/android/maven2/androidx/core/core/maven-metadata.xml
+     implementation "androidx.databinding:viewbinding:4.2.2" // --> 7.2.0-alpha07
+ //  url : https://dl.google.com/dl/android/maven2/androidx/databinding/viewbinding/maven-metadata.xml
+     implementation "androidx.documentfile:documentfile:1.0.0" // --> 1.1.0-alpha01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/documentfile/documentfile/maven-metadata.xml
+     implementation "androidx.dynamicanimation:dynamicanimation:1.0.0" // --> 1.1.0-alpha03
+ //  url : https://dl.google.com/dl/android/maven2/androidx/dynamicanimation/dynamicanimation/maven-metadata.xml
+     implementation "androidx.exifinterface:exifinterface:1.3.2" // --> 1.3.3
+ //  url : https://dl.google.com/dl/android/maven2/androidx/exifinterface/exifinterface/maven-metadata.xml
+     implementation "androidx.fragment:fragment:1.3.6" // --> 1.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/fragment/fragment/maven-metadata.xml
+     implementation "androidx.lifecycle:lifecycle-common:2.3.1" // --> 2.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-common/maven-metadata.xml
+     implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1" // --> 2.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-common-java8/maven-metadata.xml
+     implementation "androidx.lifecycle:lifecycle-livedata:2.2.0" // --> 2.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-livedata/maven-metadata.xml
+     implementation "androidx.lifecycle:lifecycle-livedata-core:2.3.1" // --> 2.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-livedata-core/maven-metadata.xml
+     implementation "androidx.lifecycle:lifecycle-runtime:2.3.1" // --> 2.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-runtime/maven-metadata.xml
+     implementation "androidx.lifecycle:lifecycle-viewmodel:2.3.1" // --> 2.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-viewmodel/maven-metadata.xml
+     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1" // --> 2.4.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-viewmodel-savedstate/maven-metadata.xml
+     implementation "androidx.loader:loader:1.0.0" // --> 1.1.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/loader/loader/maven-metadata.xml
+     implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0" // --> 1.1.0
+ //  url : https://dl.google.com/dl/android/maven2/androidx/localbroadcastmanager/localbroadcastmanager/maven-metadata.xml
+     implementation "androidx.media:media:1.0.0" // --> 1.5.0-beta01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/media/media/maven-metadata.xml
+     implementation "androidx.multidex:multidex:2.0.0" // --> 2.0.1
+ //  url : https://dl.google.com/dl/android/maven2/androidx/multidex/multidex/maven-metadata.xml
+     implementation "androidx.print:print:1.0.0" // --> 1.1.0-beta01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/print/print/maven-metadata.xml
+     implementation "androidx.recyclerview:recyclerview:1.2.0-alpha04" // --> 1.3.0-alpha01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/recyclerview/recyclerview/maven-metadata.xml
+     implementation "androidx.slidingpanelayout:slidingpanelayout:1.0.0" // --> 1.2.0-rc01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/slidingpanelayout/slidingpanelayout/maven-metadata.xml
+     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0" // --> 1.2.0-alpha01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/swiperefreshlayout/swiperefreshlayout/maven-metadata.xml
+     implementation "androidx.transition:transition:1.2.0" // --> 1.4.1
+ //  url : https://dl.google.com/dl/android/maven2/androidx/transition/transition/maven-metadata.xml
+     implementation "androidx.vectordrawable:vectordrawable:1.1.0" // --> 1.2.0-alpha02
+ //  url : https://dl.google.com/dl/android/maven2/androidx/vectordrawable/vectordrawable/maven-metadata.xml
+     implementation "androidx.viewpager2:viewpager2:1.0.0" // --> 1.1.0-beta01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/viewpager2/viewpager2/maven-metadata.xml
+     implementation "androidx.viewpager:viewpager:1.0.0" // --> 1.1.0-alpha01
+ //  url : https://dl.google.com/dl/android/maven2/androidx/viewpager/viewpager/maven-metadata.xml
+     implementation "com.blankj:utilcodex:1.30.6" // --> 1.31.0
+ //  url : https://jcenter.bintray.com/com/blankj/utilcodex/maven-metadata.xml
+     implementation "com.facebook.flipper:flipper:0.105.0" // --> 0.128.4
+ //  url : https://repo.maven.apache.org/maven2/com/facebook/flipper/flipper/maven-metadata.xml
+     implementation "com.facebook.soloader:annotation:0.10.1" // --> 0.10.3
+ //  url : https://repo1.maven.org/maven2/com/facebook/soloader/annotation/maven-metadata.xml
+     implementation "com.facebook.soloader:nativeloader:0.10.1" // --> 0.10.3
+ //  url : https://repo.maven.apache.org/maven2/com/facebook/soloader/nativeloader/maven-metadata.xml
+     implementation "com.facebook.soloader:soloader:0.10.1" // --> 0.10.3
+ //  url : https://repo.maven.apache.org/maven2/com/facebook/soloader/soloader/maven-metadata.xml
+     implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47" // --> 3.0.4
+ //  url : https://jcenter.bintray.com/com/github/CymChad/BaseRecyclerViewAdapterHelper/maven-metadata.xml
+     implementation "com.github.Justson.AgentWeb:agentweb-core:v4.1.9-androidx" // --> 5.0.0-alpha.1-androidx
+ //  url : https://jitpack.io/com/github/Justson/AgentWeb/agentweb-core/maven-metadata.xml
+     implementation "com.github.bumptech.glide:annotations:4.11.0" // --> 4.12.0
+ //  url : https://jcenter.bintray.com/com/github/bumptech/glide/annotations/maven-metadata.xml
+     implementation "com.github.bumptech.glide:disklrucache:4.11.0" // --> 4.12.0
+ //  url : https://repo1.maven.org/maven2/com/github/bumptech/glide/disklrucache/maven-metadata.xml
+     implementation "com.github.bumptech.glide:gifdecoder:4.11.0" // --> 4.12.0
+ //  url : https://jcenter.bintray.com/com/github/bumptech/glide/gifdecoder/maven-metadata.xml
+     implementation "com.github.bumptech.glide:glide:4.11.0" // --> 4.12.0
+ //  url : https://jcenter.bintray.com/com/github/bumptech/glide/glide/maven-metadata.xml
+     implementation "com.github.bumptech.glide:okhttp3-integration:4.11.0" // --> 4.12.0
+ //  url : https://repo1.maven.org/maven2/com/github/bumptech/glide/okhttp3-integration/maven-metadata.xml
+     implementation "com.github.getActivity:XXPermissions:11.6" // --> 13.2
+ //  url : https://jitpack.io/com/github/getActivity/XXPermissions/maven-metadata.xml
+     implementation "com.github.hss01248.StartActivityResult:activityresult:1.1.2" // --> 1.1.3
+ //  url : https://jitpack.io/com/github/hss01248/StartActivityResult/activityresult/maven-metadata.xml
+     implementation "com.github.hss01248.StartActivityResult:transactivity:1.1.2" // --> 1.1.3
+ //  url : https://jitpack.io/com/github/hss01248/StartActivityResult/transactivity/maven-metadata.xml
+     implementation "com.github.hss01248.StartActivityResult:transfrag:1.1.2" // --> 1.1.3
+ //  url : https://jitpack.io/com/github/hss01248/StartActivityResult/transfrag/maven-metadata.xml
+     implementation "com.github.hss01248.flipperUtil:dokit:1.3.4" // --> 1.3.5
+ //  url : https://jitpack.io/com/github/hss01248/flipperUtil/dokit/maven-metadata.xml
+     implementation "com.github.hss01248.flipperUtil:flipper:1.3.4" // --> 1.3.5
+ //  url : https://jitpack.io/com/github/hss01248/flipperUtil/flipper/maven-metadata.xml
+     implementation "com.github.hss01248.flipperUtil:network:1.3.4" // --> 1.3.5
+ //  url : https://jitpack.io/com/github/hss01248/flipperUtil/network/maven-metadata.xml
+     implementation "com.github.hss01248.flipperUtil:oom:1.2.3" // --> 1.3.5
+ //  url : https://jitpack.io/com/github/hss01248/flipperUtil/oom/maven-metadata.xml
+     implementation "com.github.princekin-f:EasyFloat:2.0.3" // --> 2.0.4
+ //  url : https://jitpack.io/com/github/princekin-f/EasyFloat/maven-metadata.xml
+     implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8" // --> 1.1.9
+ //  url : https://jitpack.io/com/github/simplepeng/SpiderMan/spiderman/maven-metadata.xml
+     implementation "com.github.skyNet2017:webviewdebug:1.2.2-from117" // --> 1.2.3
+ //  url : https://jitpack.io/com/github/skyNet2017/webviewdebug/maven-metadata.xml
+     implementation "com.google.android.material:material:1.4.0" // --> 1.6.0-alpha01
+ //  url : https://dl.google.com/dl/android/maven2/com/google/android/material/material/maven-metadata.xml
+     implementation "com.google.code.gson:gson:2.8.6" // --> 2.8.9
+ //  url : https://jcenter.bintray.com/com/google/code/gson/gson/maven-metadata.xml
+     implementation "com.squareup.okhttp3:logging-interceptor:3.12.12" // --> 5.0.0-alpha.3
+ //  url : https://repo.maven.apache.org/maven2/com/squareup/okhttp3/logging-interceptor/maven-metadata.xml
+     implementation "com.squareup.okhttp3:okhttp:3.14.7" // --> 5.0.0-alpha.3
+ //  url : https://repo.maven.apache.org/maven2/com/squareup/okhttp3/okhttp/maven-metadata.xml
+     implementation "com.squareup.okio:okio:1.17.2" // --> 3.0.0
+ //  url : https://repo.maven.apache.org/maven2/com/squareup/okio/okio/maven-metadata.xml
+     implementation "com.tencent.bugly:nativecrashreport:3.7.700" // --> 3.9.2
+ //  url : https://repo.maven.apache.org/maven2/com/tencent/bugly/nativecrashreport/maven-metadata.xml
+     implementation "commons-io:commons-io:1.3.2" // --> 2.11.0
+ //  url : https://repo.maven.apache.org/maven2/commons-io/commons-io/maven-metadata.xml
+     implementation "io.github.yuweiguocn:GreenDaoUpgradeHelper:v2.2.1" // --> 2.2.1
+ //  url : https://jcenter.bintray.com/io/github/yuweiguocn/GreenDaoUpgradeHelper/maven-metadata.xml
+     implementation "io.reactivex.rxjava2:rxandroid:2.1.0" // --> 2.1.1
+ //  url : https://jcenter.bintray.com/io/reactivex/rxjava2/rxandroid/maven-metadata.xml
+     implementation "io.reactivex.rxjava2:rxjava:2.2.0" // --> 2.2.21
+ //  url : https://repo.maven.apache.org/maven2/io/reactivex/rxjava2/rxjava/maven-metadata.xml
+     implementation "org.aspectj:aspectjrt:1.9.6" // --> 1.9.8.RC3
+ //  url : https://repo.maven.apache.org/maven2/org/aspectj/aspectjrt/maven-metadata.xml
+     implementation "org.greenrobot:eventbus:3.2.0" // --> 3.3.1
+ //  url : https://repo.maven.apache.org/maven2/org/greenrobot/eventbus/maven-metadata.xml
+     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32" // --> 1.6.10
+ //  url : https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/maven-metadata.xml
+     implementation "org.jetbrains.kotlin:kotlin-stdlib-common:1.4.32" // --> 1.6.10
+ //  url : https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/maven-metadata.xml
+     implementation "org.jetbrains:annotations:13.0" // --> 23.0.0
+ //  url : https://repo.maven.apache.org/maven2/org/jetbrains/annotations/maven-metadata.xml
+     implementation "org.jsoup:jsoup:1.13.1" // --> 1.14.3
+ //  url : https://repo.maven.apache.org/maven2/org/jsoup/jsoup/maven-metadata.xml
+     implementation "org.reactivestreams:reactive-streams:1.0.2" // --> 1.0.3
+ //  url : https://repo.maven.apache.org/maven2/org/reactivestreams/reactive-streams/maven-metadata.xml
+     implementation "pl.droidsonroids.gif:android-gif-drawable:1.2.19" // --> 1.2.24
+ //  url : https://repo.maven.apache.org/maven2/pl/droidsonroids/gif/android-gif-drawable/maven-metadata.xml
+}

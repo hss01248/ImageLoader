@@ -1,0 +1,49 @@
+buildscript{
+
+     repositories {
+        maven {//google()
+             url  'https://dl.google.com/dl/android/maven2/'
+        }
+        maven {//jcenter()
+             url  'https://jcenter.bintray.com/'
+        }
+        maven {//mavenCentral()
+             url  'https://repo.maven.apache.org/maven2/'
+        }
+        maven {
+             url  'https://jitpack.io'
+        }
+        maven {
+             url  'https://dl.bintray.com/magnusja/maven'
+        }
+        maven {
+             url  'https://repo1.maven.org/maven2/'
+        }
+}
+
+//list all plugin classPath:
+dependencies {
+     classpath "com.android.tools.build:gradle:4.1.0"
+     classpath "com.tencent.bugly:symtabfileuploader:2.2.1"
+     classpath "com.umeng.umsdk:apm-plugin:0.0.1"
+     classpath "io.github.didi.dokit:dokitx-plugin:3.5.0.1"
+     classpath "io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11"
+     classpath "org.greenrobot:greendao-gradle-plugin:3.3.0"
+  }
+}
+
+
+//当前工程应用的插件信息:
+// [class:class org.gradle.api.plugins.HelpTasksPlugin]
+// [class:class org.gradle.buildinit.plugins.BuildInitPlugin]
+// [class:class org.gradle.buildinit.plugins.WrapperPlugin]
+// [class:class com.android.build.gradle.internal.plugins.VersionCheckPlugin]
+// [class:class com.android.build.gradle.api.AndroidBasePlugin]
+// [class:class org.gradle.language.base.plugins.LifecycleBasePlugin]
+// [class:class org.gradle.api.plugins.BasePlugin]
+// [class:class org.gradle.api.plugins.ReportingBasePlugin]
+// [class:class org.gradle.api.plugins.JavaBasePlugin]
+// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@7f5fd41, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, extensionClass:class com.android.build.gradle.internal.dsl.BaseAppModuleExtension, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@20fc932d, variantManager:com.android.build.gradle.internal.VariantManager@61e5a995]
+// [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
+// [allDebugSoFiles:[], outputDirName:null, class:class com.tencent.bugly.gradle.BuglyPlugin, allMappingFiles:[D:\projects\StudioProjects\ImageLoader\xxspiders\build\tmp\compileDebugJavaWithJavac\source-classes-mapping.txt]]
+// [class:class com.hujiang.gradle.plugin.android.aspectjx.AJXPlugin]

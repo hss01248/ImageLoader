@@ -3,6 +3,7 @@
 buildscript {
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote3.gradle'
     apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
+    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/depsLastestChecker.gradle'
     repositories {
         google()
         jcenter()
@@ -20,13 +21,13 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+       // jcenter()
         mavenCentral()
         mavenLocal()
         maven { url "https://jitpack.io" }
-        maven {
+       /* maven {
             url "http://dl.bintray.com/piasy/maven"
-        }
+        }*/
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         //maven { url 'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository' }
        // maven { url 'https://raw.githubusercontent.com/link-u/AndroidGlideAvifDecoder/master/repository' }
