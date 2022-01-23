@@ -1,6 +1,7 @@
 package com.hss01248.bigimageviewpager;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
@@ -8,6 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.shizhefei.view.largeimage.BlockImageLoader;
 import com.shizhefei.view.largeimage.LargeImageView;
 
 public class MyLargeJpgView extends LargeImageView {
@@ -37,7 +39,7 @@ public class MyLargeJpgView extends LargeImageView {
             @Override
             public float getMinScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMinScale) {
 
-                return 1.0f;
+                return suggestMinScale;
             }
 
             @Override
@@ -66,6 +68,7 @@ public class MyLargeJpgView extends LargeImageView {
 
 
     int oldPercent =  100;
+    float realPercentNow = 0f;
     @Override
     protected void onDraw(Canvas canvas) {
          layoutWidth = getMeasuredWidth();
@@ -75,7 +78,8 @@ public class MyLargeJpgView extends LargeImageView {
        int realWith = getImageWidth();
        int percent = 100;
        if(realWith > 0){
-           percent = Math.round(nowWidth * 100f / realWith );
+           realPercentNow = nowWidth * 1.0f / realWith;
+           percent = Math.round(realPercentNow * 100f  );
            if(onScaleChangeListener != null){
                if(oldPercent != percent){
                    onScaleChangeListener.onScaleChanged(percent,getScale());
@@ -83,9 +87,84 @@ public class MyLargeJpgView extends LargeImageView {
                }
            }
        }
-        Log.w("large","onDraw ,percent: "+percent+"% , scale:"+getScale());
+        Log.v("large","onDraw ,percent: "+percent+"% , scale:"+getScale());
         canvas.setDrawFilter(pfd);
         super.onDraw(canvas);
     }
 
+    long last = 0;
+    public void setOritation(boolean isLandscape, boolean fromConfigChange){
+       if(layoutHeight ==0 && layoutWidth ==0){
+           return;
+       }
+        //layoutHeight = getMeasuredHeight();
+      // layoutWidth = getMeasuredWidth();
+        if(imageWidth ==0 && imageHeight ==0){
+            return;
+        }
+        if(!fromConfigChange){
+            if(last != 0 && last - System.currentTimeMillis() < 1000){
+                return;
+            }
+            last = System.currentTimeMillis();
+        }
+
+       float scaleWidth = 1.0f;
+        float scaleHeight = 1.0f;
+        scaleHeight =  layoutHeight* 1.0f / imageHeight;
+        scaleWidth =  layoutWidth* 1.0f / imageWidth;
+
+       Log.d("measure","view: "+ layoutWidth+"x"+layoutHeight+", iamge:"+imageWidth+"x"+imageHeight+", scaleWidth:"+
+               scaleWidth+",scaleHeight"+scaleHeight+", minScale:"+ getMinScale()+", maxScale:"+ getMaxScale()+
+               ", maxratio:"+ getMaxScaleRatio()+", isLandscape:"+ isLandscape+",currentScale:"+getScale()+",realPercentNow:"+realPercentNow);
+
+       //getScale()
+        if(isLandscape){
+            if(!fromConfigChange){
+                setScale(scaleHeight/scaleWidth);
+            }else {
+                setScale(getMinScale()/scaleHeight);
+            }
+           // smoothScale(scaleHeight/scaleWidth,0,0);
+
+        }else {
+            if(fromConfigChange){
+                setScale(scaleHeight/scaleWidth);
+            }else {
+                setScale(1.0f);
+            }
+
+        }
+
+        //setScale(getMinScale());
+    }
+
+    int imageWidth;
+    int imageHeight;
+    @Override
+    public void onLoadImageSize(int imageWidth, int imageHeight) {
+        super.onLoadImageSize(imageWidth, imageHeight);
+        preOrientation = getContext().getResources().getConfiguration().orientation;
+        if(preOrientation == Configuration.ORIENTATION_LANDSCAPE){
+            this.imageWidth = imageWidth;
+            this.imageHeight = imageHeight;
+            setOritation(true,false);
+
+        }else {
+            this.imageWidth = imageWidth;
+            this.imageHeight = imageHeight;
+            setOritation(false,false);
+        }
+    }
+
+    int preOrientation;
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d("onConfigurationChanged",newConfig.orientation+"--");
+        if(newConfig.orientation != preOrientation){
+            preOrientation = newConfig.orientation;
+            setOritation(preOrientation == Configuration.ORIENTATION_LANDSCAPE,true);
+        }
+    }
 }

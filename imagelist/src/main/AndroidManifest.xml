@@ -3,6 +3,9 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application>
-        <activity android:name=".album.EmptyActivity" android:theme="@style/thetransAppTheme3"/>
+        <activity android:name=".album.EmptyActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="sensor"
+            android:theme="@style/thetransAppTheme3"/>
     </application>
 </manifest>

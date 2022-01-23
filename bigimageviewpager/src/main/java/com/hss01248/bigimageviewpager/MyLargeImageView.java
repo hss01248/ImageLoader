@@ -2,6 +2,7 @@ package com.hss01248.bigimageviewpager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -148,11 +149,31 @@ public class MyLargeImageView extends FrameLayout {
     public MyLargeImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
+        /*preOrientation = context.getResources().getConfiguration().orientation;
+        if(preOrientation == Configuration.ORIENTATION_LANDSCAPE){
+            stateBinding.itemLargeImg.setVisibility(GONE);
+        }else {
+            tvScale.setVisibility(VISIBLE);
+        }*/
     }
 
     private void reload() {
         loadUri(info.uri);
 
+    }
+
+    int preOrientation;
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        /*if(newConfig.orientation != preOrientation){
+            preOrientation = newConfig.orientation;
+            if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                tvScale.setVisibility(GONE);
+            }else {
+                tvScale.setVisibility(VISIBLE);
+            }
+        }*/
     }
 
 
