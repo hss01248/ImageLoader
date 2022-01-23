@@ -388,7 +388,17 @@ public class ImageMediaCenterUtil {
         final TextView textView = view.findViewById(R.id.tv_indicator);
         //ImageLoader.loadBigImages(viewPager, urls);
         LargeImageViewer.showBig(context,viewPager,urls,position);
+        viewPager.setOnOrientationChangeListener(new MyViewPager.OnOrientationChangeListener() {
+            @Override
+            public void onChage(boolean isLandscape) {
 
+                if(isLandscape){
+                    tvTitle.setVisibility(View.GONE);
+                }else {
+                    tvTitle.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

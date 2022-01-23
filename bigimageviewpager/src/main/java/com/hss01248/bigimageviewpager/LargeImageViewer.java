@@ -23,6 +23,7 @@ public class LargeImageViewer {
         if(viewPager == null){
             viewPager = new MyViewPager(context);
         }
+
         List<String> uris = new ArrayList<>(uris0.size());
         uris.addAll(uris0);
         // ImageLoader.loadBigImages(viewPager, urls);

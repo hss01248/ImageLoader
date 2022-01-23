@@ -157,6 +157,12 @@ public class MyLargeImageView extends FrameLayout {
         }*/
     }
 
+    public void setOritation(boolean isLandscape, boolean fromConfigChange){
+        if(jpgView != null){
+            jpgView.setOritation(isLandscape,fromConfigChange);
+        }
+    }
+
     private void reload() {
         loadUri(info.uri);
 

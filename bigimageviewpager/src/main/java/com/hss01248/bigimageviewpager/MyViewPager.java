@@ -1,6 +1,7 @@
 package com.hss01248.bigimageviewpager;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -25,5 +26,26 @@ public class MyViewPager extends ViewPager {
             throwable.printStackTrace();
             return false;
         }
+    }
+
+    int preOrientation;
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(newConfig.orientation != preOrientation){
+            preOrientation = newConfig.orientation;
+            if(onOrientationChangeListener != null){
+                onOrientationChangeListener.onChage(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE);
+            }
+        }
+    }
+
+    public void setOnOrientationChangeListener(OnOrientationChangeListener onOrientationChangeListener) {
+        this.onOrientationChangeListener = onOrientationChangeListener;
+    }
+
+    OnOrientationChangeListener onOrientationChangeListener;
+    public interface OnOrientationChangeListener{
+        void onChage(boolean isLandscape);
     }
 }
