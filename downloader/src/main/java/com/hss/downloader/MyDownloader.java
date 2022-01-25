@@ -173,7 +173,7 @@ public class MyDownloader {
                         load.url = info.url;
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.dir = info.dir;
-                        load.name = info.name.replace("/","-");//避免多级目录
+                        load.name = info.name.replaceAll("/","-");//避免多级目录
                         load.createTime = System.currentTimeMillis();
                         //兼具去重功能  功能优先于性能
                         try {

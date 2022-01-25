@@ -710,13 +710,14 @@ public class ImageListView extends FrameLayout {
         }
 
         List<DownloadUrls> list = new ArrayList<>();
-        for (String url : urls) {
+        for (int i = 0; i < urls.size(); i++) {
+            String url = urls.get(i);
             String pre  = title;
             if(fileNamePrefix != null){
                 pre =  fileNamePrefix.getFileNamePreffix(url);
             }
 
-            String name = pre + "-"+ URLUtil.guessFileName(url,"","image/*");
+            String name = pre + "-"+String.format("%04d",i)+"-"+ URLUtil.guessFileName(url,"","image/*");
             DownloadUrls info = new DownloadUrls();
             info.url = LargeImageViewer.getBigImageUrl(url);
             info.name = name;
