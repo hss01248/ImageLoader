@@ -18,7 +18,6 @@ import com.blankj.utilcode.util.Utils;
 import com.elvishew.xlog.XLog;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.view.BigImageView;
-import com.glance.guolindev.Glance;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.BuildConfig;
 import com.hss.downloader.DownloadList;
