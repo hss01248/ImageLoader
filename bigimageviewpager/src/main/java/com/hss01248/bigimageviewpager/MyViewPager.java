@@ -28,6 +28,7 @@ public class MyViewPager extends ViewPager {
         }
     }
 
+
     int preOrientation;
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {

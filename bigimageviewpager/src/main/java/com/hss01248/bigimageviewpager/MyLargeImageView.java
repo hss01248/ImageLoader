@@ -182,7 +182,14 @@ public class MyLargeImageView extends FrameLayout {
         }*/
     }
 
-
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        if(jpgView != null){
+            jpgView.setOnClickListener(l);
+        }else if(gifView != null){
+            gifView.setOnClickListener(l);
+        }
+    }
 
     private void loadUrl(String url) {
 
