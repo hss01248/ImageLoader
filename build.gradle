@@ -4,6 +4,16 @@ buildscript {
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote3.gradle'
     apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/depsLastestChecker.gradle'
+    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/uploadAllTask.gradle'
+
+    ext {
+// 快照版需要在版本号后面加-SNAPSHOT
+        //groupId='com.xxx.yyy.mylib'
+        groupIdPreffix='com.github.hss01248.ImageLoader'
+        versionCode = '3.3.3'
+        isPublisToLocal=true
+
+    }
     repositories {
         google()
         jcenter()
