@@ -305,7 +305,9 @@ public class MyDownloader {
 
              @Override
              public void onFail(String url, String msg, Throwable throwable) {
-                 LogUtils.w(throwable);
+                 //File name too long
+                 LogUtils.w(url,info.name,info.name.length(),info.name.getBytes().length,info.dir + "/" + info.name,throwable);
+
                  info.status = DownloadInfo.STATUS_FAIL;
                  info.errMsg = msg;
                  DownloadInfoUtil.getDao().update(info);

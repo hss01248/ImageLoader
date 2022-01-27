@@ -722,6 +722,11 @@ public class ImageListView extends FrameLayout {
             }
 
             //特殊字符的解决方案: https://www.cxybb.com/article/weixin_42834380/103633387
+            if(!TextUtils.isEmpty(pre)){
+                if(pre.length() > 50){
+                    pre = pre.substring(0,50);
+                }
+            }
             String name = pre + "-"+String.format("%04d",i)+"-"+ URLUtil.guessFileName(url,"","image/*");
             //处理文件长度太长的情况
             //Linux文件名的长度限制是255个字符

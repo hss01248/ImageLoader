@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
@@ -68,15 +69,25 @@ public class DownloadInfoUtil {
              return "name-empty";
          }
         name = checkFileName(name);
-        if(name.length()> 255){
-            //   //处理文件长度太长的情况
-            //            //Linux文件名的长度限制是255个字符
-            //            //windows下完全限定文件名必须少于260个字符，目录名必须小于248个字符。
-            name = name.substring(0,255);
+         String suffix = "";
+         if(name.contains(".")){
+             suffix = name.substring(name.lastIndexOf("."));
+         }
+
+         name = name.substring(0,name.length() - suffix.length() -1);
+
+         int maxLenght = 240- suffix.length() -2;
+        //   //处理文件长度太长的情况
+        //            //Linux文件名的长度限制是255个字节
+        //            //windows下完全限定文件名必须少于260个字节，目录名必须小于248个字节。
+         while (name.getBytes().length> maxLenght ){
+             name = name.substring(0,name.length()-2);
+             LogUtils.w("缩短文件名",name);
         }
+       name = name + suffix;
         return name;
     }
-    static final Pattern pattern =  Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|.]");
+    static final Pattern pattern =  Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|]");
     /**
      * window操作系统文件名不能含有 ? “ ”/ \ < > * | :
      * mac操作系统文件名不能以.开头
