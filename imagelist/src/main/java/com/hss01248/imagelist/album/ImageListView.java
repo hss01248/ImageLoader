@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * time:2019/11/30
@@ -693,6 +695,8 @@ public class ImageListView extends FrameLayout {
         String getFileNamePreffix(String url);
     }
 
+
+
     private void downloadAndSave(final String title, List<String> urls, String downloadDir, boolean hideFolder, IFileNamePrefix fileNamePrefix) {
         File dir = new File(downloadDir);
         if(!dir.exists()){
@@ -717,7 +721,12 @@ public class ImageListView extends FrameLayout {
                 pre =  fileNamePrefix.getFileNamePreffix(url);
             }
 
+            //特殊字符的解决方案: https://www.cxybb.com/article/weixin_42834380/103633387
             String name = pre + "-"+String.format("%04d",i)+"-"+ URLUtil.guessFileName(url,"","image/*");
+            //处理文件长度太长的情况
+            //Linux文件名的长度限制是255个字符
+            //windows下完全限定文件名必须少于260个字符，目录名必须小于248个字符。
+
             DownloadUrls info = new DownloadUrls();
             info.url = LargeImageViewer.getBigImageUrl(url);
             info.name = name;

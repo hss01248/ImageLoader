@@ -2,6 +2,7 @@ package com.hss.downloader.download;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.util.Utils;
 import com.hjq.permissions.Permission;
@@ -12,6 +13,8 @@ import com.hss.downloader.download.db.DownloadInfoDao;
 import com.hss.downloader.download.db.SubFolderCountDao;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DownloadInfoUtil {
 
@@ -58,5 +61,33 @@ public class DownloadInfoUtil {
             }
         }
         return daoSession;
+    }
+
+    public static String getLeagalFileName(String name){
+         if(TextUtils.isEmpty(name)){
+             return "name-empty";
+         }
+        name = checkFileName(name);
+        if(name.length()> 255){
+            //   //处理文件长度太长的情况
+            //            //Linux文件名的长度限制是255个字符
+            //            //windows下完全限定文件名必须少于260个字符，目录名必须小于248个字符。
+            name = name.substring(0,255);
+        }
+        return name;
+    }
+    static final Pattern pattern =  Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|.]");
+    /**
+     * window操作系统文件名不能含有 ? “ ”/ \ < > * | :
+     * mac操作系统文件名不能以.开头
+     * linux和Mac基本一直，
+     *
+     * @param fileName
+     * @return
+     */
+    public static String checkFileName(String fileName) {
+        Matcher matcher = pattern.matcher(fileName);
+        fileName = matcher.replaceAll(""); // 将匹配到的非法字符以空替换
+        return fileName;
     }
 }

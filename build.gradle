@@ -9,7 +9,7 @@ buildscript {
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
-        groupIdPreffix='com.github.hss01248.ImageLoader'
+        groupId='com.github.hss01248.ImageLoader'
         versionCode = '3.3.3'
         isPublisToLocal=true
 

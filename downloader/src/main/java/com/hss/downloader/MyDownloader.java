@@ -156,12 +156,16 @@ public class MyDownloader {
     public static void download(List<DownloadUrls> urls){
         //入库
         //开始下载
+        ProgressDialog dialog  = new ProgressDialog(ActivityUtils.getTopActivity());
+        dialog.show();
+        long start = System.currentTimeMillis();
         ThreadUtils.executeByIo(new ThreadUtils.Task<List<DownloadInfo>>() {
             @Override
             public List<DownloadInfo> doInBackground() throws Throwable {
                 List<DownloadInfo> toShow = new ArrayList<>();
-               /* List<DownloadInfo> toAdd = new ArrayList<>();
-                List<DownloadInfo> toUpdate = new ArrayList<>();*/
+                List<DownloadInfo> toAdd = new ArrayList<>();
+                List<DownloadInfo> toUpdate = new ArrayList<>();
+                List<DownloadInfo> toDownload = new ArrayList<>();
                 for (DownloadUrls info : urls) {
                     DownloadInfo load = DownloadInfoUtil.getDao().load(info.url);
                     if(load != null && load.status == DownloadInfo.STATUS_SUCCESS){
@@ -173,19 +177,20 @@ public class MyDownloader {
                         load.url = info.url;
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.dir = info.dir;
-                        load.name = info.name.replaceAll("/","-");//避免多级目录
+                        load.name = DownloadInfoUtil.getLeagalFileName(info.name);//避免多级目录,非法字符,文件过长等情况
                         load.createTime = System.currentTimeMillis();
                         //兼具去重功能  功能优先于性能
-                        try {
+                        toAdd.add(load);
+                        //会导致界面一直卡住
+                        /*try {
                             DownloadInfoUtil.getDao().insert(load);
                         }catch (Throwable throwable){
                             throwable.printStackTrace();
-                        }
-
-
+                        }*/
                     }else {
                         load.dir = info.dir;
-                        load.name = info.name;
+                        load.name = DownloadInfoUtil.getLeagalFileName(info.name);//避免多级目录,非法字符,文件过长等情况
+                        //load.name = load.name;//避免多级目录,非法字符,文件过长等情况
                         if(load.status == DownloadInfo.STATUS_DOWNLOADING){
                             StatusUtil.Status status = StatusUtil.getStatus(info.url, load.dir, load.name);
                             if( status == StatusUtil.Status.RUNNING
@@ -196,22 +201,24 @@ public class MyDownloader {
                         }
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.createTime = System.currentTimeMillis();
-                        try {
+                        toUpdate.add(load);
+                        /*try {
                             DownloadInfoUtil.getDao().update(load);
                         }catch (Throwable throwable){
                             throwable.printStackTrace();
-                        }
+                        }*/
 
                     }
                     try {
-                        startDownload(load);
+                        toDownload.add(load);
+                        //startDownload(load);
                         toShow.add(load);
                     }catch (Throwable throwable){
                         throwable.printStackTrace();
                     }
 
                 }
-               /* try {
+                try {
                     DownloadInfoUtil.getDao().updateInTx(toUpdate);
                 }catch (Throwable throwable){
                     throwable.printStackTrace();
@@ -220,22 +227,23 @@ public class MyDownloader {
                     DownloadInfoUtil.getDao().insertInTx(toAdd);
                 }catch (Throwable throwable){
                     throwable.printStackTrace();
-                }*/
+                }
 
                 //开始下载
-                /*toAdd.addAll(toUpdate);
-                for (DownloadInfo info : toAdd) {
+                for (DownloadInfo info : toDownload) {
                     try {
                         startDownload(info);
                     }catch (Throwable throwable){
                         throwable.printStackTrace();
                     }
-                }*/
+                }
                 return toShow;
             }
 
             @Override
             public void onSuccess(List<DownloadInfo> result) {
+                LogUtils.w("批量下载开始,更新数据库耗时(s):",(System.currentTimeMillis() - start)/1000f);
+                dialog.dismiss();
                 new DownloadList().showList(ActivityUtils.getTopActivity(),result);
             }
 
