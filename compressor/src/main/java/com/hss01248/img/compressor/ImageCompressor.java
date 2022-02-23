@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss01248.avif.AvifEncoder;
+import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.quality.Magick;
 
@@ -23,6 +24,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 
 
 /**
@@ -67,10 +72,34 @@ public class ImageCompressor {
         }else {
            //删除jpg/png原图
             if(deleteOriginalIfAvifSuccess){
-                in.delete();
+                deleteFile(in);
             }
             return file;
         }
+    }
+
+   public static void deleteFile(File file){
+       FileDeleteUtil.deleteImage(file.getAbsolutePath(), false, new Observer<Boolean>() {
+           @Override
+           public void onSubscribe(@NonNull Disposable d) {
+
+           }
+
+           @Override
+           public void onNext(@NonNull Boolean aBoolean) {
+            LogUtils.i("文件删除结果",aBoolean,file.getAbsolutePath());
+           }
+
+           @Override
+           public void onError(@NonNull Throwable e) {
+               LogUtils.i("文件删除结果",e);
+           }
+
+           @Override
+           public void onComplete() {
+
+           }
+       });
     }
 
     /**
@@ -199,7 +228,7 @@ public class ImageCompressor {
                             }
                         });
                         if(copy){
-                            file2.delete();
+                            deleteFile(file2);
                             return file;
                         }else {
                             LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,则使用带tmp的文件作为最终文件: "+file2);
@@ -218,13 +247,13 @@ public class ImageCompressor {
                 //扩展名变了,返回新路径,并确认是否要删除原文件
                 LogUtils.w("扩展名变了,返回新路径,并确认是否要删除原文件: "+ file2);
                 if(deleteOriginalIfNotSameSuffix){
-                    file.delete();
+                    deleteFile(file);
                 }
                 return file2;
             }
         }else {
             //LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
-            file2.delete();
+            deleteFile(file2);
             return file;
         }
     }
@@ -266,7 +295,7 @@ public class ImageCompressor {
             //如果压缩后的图比压缩前还大,那么就不压缩,返回原图
             if(file.length() < outFile.length()){
                 LogUtils.w(outFile.getAbsolutePath()+"  file.length() < outFile.length(), ignore");
-                outFile.delete();
+                deleteFile(outFile);
                 success = false;
             }else {
                 success = true;
