@@ -57,8 +57,8 @@ dependencies {
     //api 'org.greenrobot:greendao:3.3.0' // add library
     //api 'io.github.yuweiguocn:GreenDaoUpgradeHelper:v2.2.1'
 
-    api 'com.github.hss01248.StartActivityResult:transactivity:1.1.2'
-    api 'com.github.hss01248.StartActivityResult:activityresult:1.1.2'
+    api 'com.github.hss01248.StartActivityResult:transactivity:1.1.4'
+    api 'com.github.hss01248.StartActivityResult:activityresult:1.1.4'
 
     api 'com.liulishuo.filedownloader:library:1.7.7'
 

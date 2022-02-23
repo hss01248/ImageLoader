@@ -1,3 +1,5 @@
+include ':fileOperation'
+include ':MediaStoreApi'
 include ':avif'
 include ':compressor'
 include ':xxspiders'

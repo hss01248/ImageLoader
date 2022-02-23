@@ -19,6 +19,13 @@
         android:layout_height="match_parent">
 
         <Button
+            android:text="选图->删除图片文件->适配"
+            android:onClick="deleteFile"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:text="加载url"
             android:onClick="loadUrl"
             android:textAllCaps="false"
