@@ -194,10 +194,16 @@ public class ImageCompressor {
     }
 
 
-
+    /**
+     * 策略: png压缩为jpg,不更改后缀名
+     * @param filePath
+     * @param quality
+     * @param deleteOriginalIfNotSameSuffix
+     * @return
+     */
     public static File compressOriginalToJpg(String filePath, int quality, boolean deleteOriginalIfNotSameSuffix){
         File file = new File(filePath);
-        File dir = file.getParentFile();
+        File dir = Utils.getApp().getExternalFilesDir("compressTmp");
         //区分png,jpg
         String name = file.getName();
         boolean sameSuffix = false;
@@ -207,49 +213,44 @@ public class ImageCompressor {
             name = name+".jpg";
         }
         File file2 = null;
+        //todo 要采用应用私有目录为工作目录,避免权限问题,以及miui警告的图片删除问题
         if(sameSuffix){
-             file2 = new File(dir, "tmp-"+file.getName());
+             file2 = new File(dir, file.getName());
         }else {
-             file2 = new File(dir, name);
+             //file2 = new File(dir, name);
+            file2 = new File(dir, file.getName());
         }
 
 
         boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
         if(compress) {
-            if(sameSuffix){
-                boolean renameTo = file2.renameTo(file); //垃圾api,只能同扩展名处理. 自动删除file2,变成file1. 等效于
-                if(!renameTo){
-                    LogUtils.w("同jpg扩展名时,renameTo失败,使用fileCopy: "+ file2);
-                    try {
-                        boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
-                            @Override
-                            public boolean onReplace(File srcFile, File destFile) {
-                                return true;
-                            }
-                        });
-                        if(copy){
-                            deleteFile(file2);
-                            return file;
-                        }else {
-                            LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,则使用带tmp的文件作为最终文件: "+file2);
-                            return file2;
+            boolean renameTo = file2.renameTo(file); //垃圾api,只能同扩展名处理. 自动删除file2,变成file1. 等效于
+            if(!renameTo){
+                LogUtils.w("同jpg扩展名时,renameTo失败,使用fileCopy: "+ file2);
+                try {
+                    boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
+                        @Override
+                        public boolean onReplace(File srcFile, File destFile) {
+                            return true;
                         }
-                    }catch (Throwable throwable){
-                        LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
-                        LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,还tm抛异常, 则使用带tmp的文件作为最终文件: "+file2);
-                        return file2;
+                    });
+                    if(copy){
+                        deleteFile(file2);
+                        return file;
+                    }else {
+                        deleteFile(file2);
+                        LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,则使用原文件: "+file2);
+                        return file;
                     }
-                }else {
-                    //成功,且文件名不变.
+                }catch (Throwable throwable){
+                    deleteFile(file2);
+                    LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
+                    LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,还tm抛异常, 则使用原文件作为最终文件: "+file2);
                     return file;
                 }
             }else {
-                //扩展名变了,返回新路径,并确认是否要删除原文件
-                LogUtils.w("扩展名变了,返回新路径,并确认是否要删除原文件: "+ file2);
-                if(deleteOriginalIfNotSameSuffix){
-                    deleteFile(file);
-                }
-                return file2;
+                //成功,且文件名不变.
+                return file;
             }
         }else {
             //LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
@@ -267,7 +268,7 @@ public class ImageCompressor {
     public static boolean compressOringinal(String srcPath,int quality,String outPath){
         File file = new File(srcPath);
         if(!shouldCompress(file,true)){
-            LogUtils.d(outPath+",no need to compress");
+            LogUtils.d(srcPath+",no need to compress");
             return false;
         }
 
