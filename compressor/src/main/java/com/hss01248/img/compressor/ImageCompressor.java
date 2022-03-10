@@ -37,7 +37,7 @@ import io.reactivex.disposables.Disposable;
  */
 public class ImageCompressor {
 
-    public static int targetJpgQuality = 80;
+    public static int targetJpgQuality = 85;
     public static boolean compressToAvif = false;
 
     public static File compress(String filePath, boolean deleteOriginalIfAvifSuccess, boolean noAvifOver2k){
@@ -51,7 +51,7 @@ public class ImageCompressor {
             return in;
         }
         if(!compressToAvif){
-            return compressOriginalToJpg(filePath,targetJpgQuality,deleteOriginalIfAvifSuccess);
+            return compressOriginalToJpg(filePath,targetJpgQuality);
         }
         if(noAvifOver2k){
             int[] wh = getImageWidthHeight(filePath);
@@ -59,7 +59,7 @@ public class ImageCompressor {
                 //一千万像素以上,则不使用avif,使用jpg压缩
                 //2k
                 LogUtils.i("分辨率大于2k,使用jpg压缩,不使用avif,避免过多耗时,以及大图查看的不便: ",filePath);
-                File out =  compressOriginalToJpg(filePath,targetJpgQuality,deleteOriginalIfAvifSuccess);
+                File out =  compressOriginalToJpg(filePath,targetJpgQuality);
                 return out;
             }
         }
@@ -67,7 +67,7 @@ public class ImageCompressor {
 
         if(file.getAbsolutePath().equals(filePath)){
             //没有压缩. 否则后缀名变了
-            File out =  compressOriginalToJpg(filePath,targetJpgQuality,deleteOriginalIfAvifSuccess);
+            File out =  compressOriginalToJpg(filePath,targetJpgQuality);
             return out;
         }else {
            //删除jpg/png原图
@@ -127,9 +127,10 @@ public class ImageCompressor {
         || path.endsWith(".JPG")
                 || path.endsWith(".JPEG")
         || path.endsWith(".png")
-                || path.endsWith(".PNG")
-                || path.endsWith(".webp")
-                || path.endsWith(".WEBP");
+                || path.endsWith(".PNG");
+        // || path.endsWith(".webp")
+       //  || path.endsWith(".tif")
+         //                || path.endsWith(".WEBP")
     }
 
     public interface Callback{
@@ -198,10 +199,9 @@ public class ImageCompressor {
      * 策略: png压缩为jpg,不更改后缀名
      * @param filePath
      * @param quality
-     * @param deleteOriginalIfNotSameSuffix
      * @return
      */
-    public static File compressOriginalToJpg(String filePath, int quality, boolean deleteOriginalIfNotSameSuffix){
+    public static File compressOriginalToJpg(String filePath, int quality){
         File file = new File(filePath);
         File dir = Utils.getApp().getExternalFilesDir("compressTmp");
         //区分png,jpg
@@ -373,7 +373,7 @@ public class ImageCompressor {
             return resizedBitmap;
     }
 
-    static boolean shouldCompress(File pathname,boolean checkQuality) {
+   public static boolean shouldCompress(File pathname,boolean checkQuality) {
         if(!pathname.exists()){
             LogUtils.w("source file not exist: "+pathname);
             return false;
@@ -386,11 +386,11 @@ public class ImageCompressor {
         }
         String suffix = name.substring(idx+1);
         boolean isJpg = suffix.equalsIgnoreCase("jpg")
-                || suffix.equalsIgnoreCase("jpeg");
+                || suffix.equalsIgnoreCase("jpeg") || suffix.equalsIgnoreCase("png");
         if(!isJpg){
-            if(suffix.equalsIgnoreCase("png")){
+            /*if(suffix.equalsIgnoreCase("png")){
                 return true;
-            }
+            }*/
             if(suffix.equalsIgnoreCase("gif") || suffix.equalsIgnoreCase("webp")){
                 return false;
             }
@@ -399,10 +399,9 @@ public class ImageCompressor {
         if(!checkQuality){
             return true;
         }
-
         int quality = getQuality(pathname.getAbsolutePath());
         //LogUtils.d("quality:"+quality +":"+pathname.getAbsolutePath());
-        return  (quality ==  0) ||  (quality > getQuality());
+        return  (quality ==  0) ||  (quality > getQuality()+4);
     }
 
     static int getQuality() {
