@@ -73,7 +73,7 @@ public class DownloadInfoUtil {
          if(name.contains(".")){
              suffix = name.substring(name.lastIndexOf("."));
          }
-
+        name = name.replaceAll(" ","_").replaceAll("\\+","_");
          name = name.substring(0,name.length() - suffix.length() -1);
 
          int maxLenght = 240- suffix.length() -2;
