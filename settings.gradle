@@ -1,3 +1,4 @@
+include ':frescoGlideBridge'
 include ':fileOperation'
 include ':MediaStoreApi'
 include ':avif'
