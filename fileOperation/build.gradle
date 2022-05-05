@@ -40,4 +40,5 @@ dependencies {
     api 'com.blankj:utilcodex:1.30.0'
     api 'com.github.hss01248.metadata:metadata:1.1.6'
     api 'io.reactivex.rxjava2:rxjava:2.2.0'
+    api 'com.github.hss01248.HttpUtil2:openuri:3.0.5'
 }

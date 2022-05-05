@@ -2,6 +2,7 @@ package com.hss01248.fileoperation;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.RecoverableSecurityException;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -26,8 +27,11 @@ import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss01248.activityresult.ActivityResultListener;
 import com.hss01248.activityresult.StartActivityUtil;
+import com.hss01248.openuri.OpenUri;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observer;
 
@@ -143,6 +147,55 @@ public class FileDeleteUtil {
             }
             return;
         }
+        //先请求权限,再删除
+        try {
+            List<Uri> uris = new ArrayList<>();
+            uris.add(OpenUri.fromFile(Utils.getApp(),new File(path)));
+            PendingIntent deleteRequest = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                deleteRequest = MediaStore.createDeleteRequest(Utils.getApp().getContentResolver(), uris);
+            }
+
+            PendingIntent finalDeleteRequest = deleteRequest;
+            StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), null, new ActivityResultListener() {
+                @Override
+                public boolean onInterceptStartIntent(@NonNull Fragment fragment, @Nullable Intent intent, int requestCode) {
+                    try {
+                       /* ActivityUtils.getTopActivity().startIntentSenderForResult(
+                                exception.getUserAction().getActionIntent().getIntentSender(),
+                                requestCode,
+                                null,
+                                0, 0, 0, null);*/
+                        fragment.startIntentSenderForResult(finalDeleteRequest.getIntentSender(), requestCode, null, 0, 0, 0, null);
+                    } catch (IntentSender.SendIntentException e) {
+                        LogUtils.w(e);
+                        callBack.onError(e);
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                    if(resultCode == Activity.RESULT_OK){
+                        callBack.onNext(true);
+                    }else {
+                        callBack.onNext(false);
+                    }
+                }
+
+                @Override
+                public void onActivityNotFound(Throwable e) {
+                    LogUtils.w(e);
+                    callBack.onError(e);
+                }
+            });
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        //原文链接：https://blog.csdn.net/zjuter/article/details/121670823
 
 
         //Android10及以上,使用MediaStore操作.
