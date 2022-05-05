@@ -735,6 +735,7 @@ public class ImageListView extends FrameLayout {
             DownloadUrls info = new DownloadUrls();
             info.url = LargeImageViewer.getBigImageUrl(url);
             info.name = name;
+
             info.dir = downloadDir;
             list.add(info);
         }
