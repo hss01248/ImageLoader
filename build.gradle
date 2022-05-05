@@ -2,7 +2,7 @@
 
 buildscript {
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote3.gradle'
-    apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
+    //apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/depsLastestChecker.gradle'
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/uploadAllTask.gradle'
 
@@ -31,7 +31,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-       // jcenter()
+        jcenter()
         mavenCentral()
         mavenLocal()
         maven { url "https://jitpack.io" }

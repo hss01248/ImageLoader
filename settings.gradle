@@ -1,3 +1,5 @@
+include ':avif-decoder-demo'
+include ':avif-decoder'
 include ':frescoGlideBridge'
 include ':fileOperation'
 include ':MediaStoreApi'
