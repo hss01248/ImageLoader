@@ -100,13 +100,13 @@ dependencies {
 
 }
 
-apply plugin: 'bugly'
+/*apply plugin: 'bugly'
 
 bugly {
     debug = true
     appId = '7ac352d904' // 注册时分配的App ID
     appKey = '4f7a08bf-1fa1-453f-870d-da59f0131c02' // 注册时分配的App Key
-}
+}*/
 
 configurations.all {
 
