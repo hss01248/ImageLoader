@@ -154,6 +154,7 @@ public class FileDeleteUtil {
             PendingIntent deleteRequest = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 deleteRequest = MediaStore.createDeleteRequest(Utils.getApp().getContentResolver(), uris);
+                // java.lang.IllegalArgumentException: All requested items must be referenced by specific ID
             }
 
             PendingIntent finalDeleteRequest = deleteRequest;
