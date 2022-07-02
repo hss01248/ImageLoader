@@ -1,21 +1,29 @@
 package com.hss01248.webviewspider.basewebview;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.os.EnvironmentCompat;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss.downloader.DownloadUrls;
 import com.hss.downloader.MyDownloader;
 import com.hss.downloader.download.DownloadInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,8 +90,43 @@ public class WebviewDownlader implements DownloadListener {
         DownloadUrls info = new DownloadUrls();
         info.url = url;
         info.name = name;
-        info.dir = Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        info.dir = subDir(getRightDir(),url);//Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         downloadInfos.add(info);
         MyDownloader.download(downloadInfos);
+    }
+
+    private String subDir(String rightDir, String url) {
+        Uri uri = Uri.parse(url);
+        File dir = new File(rightDir,uri.getHost());
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        return dir.getAbsolutePath();
+    }
+
+    private String getRightDir() {
+        //File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+      /*  File file = new File(directory,"tmp001.txt");
+        if(file.canWrite() && file.canRead()){
+
+        }else {
+
+        }*/
+
+        if(PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE) || Environment.isExternalStorageManager()){
+            File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File dir = new File(directory, AppUtils.getAppName());
+            if(!dir.exists()){
+                boolean mkdirs = dir.mkdirs();
+                if(mkdirs){
+                    return dir.getAbsolutePath();
+                }
+            }else {
+                return dir.getAbsolutePath();
+            }
+        }
+
+        return Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
     }
 }
