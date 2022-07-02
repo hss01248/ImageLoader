@@ -23,8 +23,6 @@ import com.hss.downloader.BuildConfig;
 import com.hss.downloader.DownloadList;
 import com.hss.downloader.ILargeImagesViewer;
 import com.hss.downloader.MyDownloader;
-import com.hss01248.analytics_umeng.UmengUtil;
-import com.hss01248.bugly.XReporter;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 
@@ -86,7 +84,7 @@ public class BaseApp extends MultiDexApplication {
             @Override
             public void report(Object o) {
                 if(o instanceof Throwable){
-                    XReporter.reportException((Throwable) o);
+                    //XReporter.reportException((Throwable) o);
                 }
             }
         });
@@ -99,9 +97,9 @@ public class BaseApp extends MultiDexApplication {
 
 
         DBAspect.addDB(getFile("imgdownload.db"));
-        XReporter.init(this,"7ac352d904",true);
+        //XReporter.init(this,"7ac352d904",true);
         //4f7a08bf-1fa1-453f-870d-da59f0131c02
-        UmengUtil.init(this,"6163f5bbac9567566e91bb94","bugly",1,"", BuildConfig.DEBUG);
+        //UmengUtil.init(this,"6163f5bbac9567566e91bb94","bugly",1,"", BuildConfig.DEBUG);
         NotifyUtil.init(this);
         DownloadList.setLargeImagesViewer(new ILargeImagesViewer() {
             @Override
