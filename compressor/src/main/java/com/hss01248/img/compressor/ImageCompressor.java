@@ -11,7 +11,7 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.CloseUtils;
-import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
@@ -19,7 +19,6 @@ import com.hss01248.avif.AvifEncoder;
 import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.FileTypeUtil;
-import com.hss01248.media.metadata.MetaDataUtil;
 import com.hss01248.media.metadata.quality.Magick;
 
 import java.io.File;
@@ -277,12 +276,14 @@ public class ImageCompressor {
             if(!renameTo){*/
                 LogUtils.w("不同jpg扩展名时,不能renameTo,使用fileCopy: "+ file2);
                 try {
-                    boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
+                    //todo 文件覆盖也会被miui警告,去tmd-->因为内部调用了file.delete()
+                  /*  boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
                         @Override
                         public boolean onReplace(File srcFile, File destFile) {
                             return true;
                         }
-                    });
+           w        });*/
+                    boolean copy = FileIOUtils.writeFileFromIS(file, new FileInputStream(file2));
                     if(copy){
                         deleteFile(file2);
                         return file;
