@@ -155,42 +155,41 @@ public class FileDeleteUtil {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 deleteRequest = MediaStore.createDeleteRequest(Utils.getApp().getContentResolver(), uris);
                 // java.lang.IllegalArgumentException: All requested items must be referenced by specific ID
-            }
-
-            PendingIntent finalDeleteRequest = deleteRequest;
-            StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), null, new ActivityResultListener() {
-                @Override
-                public boolean onInterceptStartIntent(@NonNull Fragment fragment, @Nullable Intent intent, int requestCode) {
-                    try {
+                PendingIntent finalDeleteRequest = deleteRequest;
+                StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), null, new ActivityResultListener() {
+                    @Override
+                    public boolean onInterceptStartIntent(@NonNull Fragment fragment, @Nullable Intent intent, int requestCode) {
+                        try {
                        /* ActivityUtils.getTopActivity().startIntentSenderForResult(
                                 exception.getUserAction().getActionIntent().getIntentSender(),
                                 requestCode,
                                 null,
                                 0, 0, 0, null);*/
-                        fragment.startIntentSenderForResult(finalDeleteRequest.getIntentSender(), requestCode, null, 0, 0, 0, null);
-                    } catch (IntentSender.SendIntentException e) {
+                            fragment.startIntentSenderForResult(finalDeleteRequest.getIntentSender(), requestCode, null, 0, 0, 0, null);
+                        } catch (IntentSender.SendIntentException e) {
+                            LogUtils.w(e);
+                            callBack.onError(e);
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                        if(resultCode == Activity.RESULT_OK){
+                            callBack.onNext(true);
+                        }else {
+                            callBack.onNext(false);
+                        }
+                    }
+
+                    @Override
+                    public void onActivityNotFound(Throwable e) {
                         LogUtils.w(e);
                         callBack.onError(e);
                     }
-                    return true;
-                }
-
-                @Override
-                public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-                    if(resultCode == Activity.RESULT_OK){
-                        callBack.onNext(true);
-                    }else {
-                        callBack.onNext(false);
-                    }
-                }
-
-                @Override
-                public void onActivityNotFound(Throwable e) {
-                    LogUtils.w(e);
-                    callBack.onError(e);
-                }
-            });
-            return;
+                });
+                return;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
