@@ -1,12 +1,8 @@
 package com.hss01248.bigimageviewpager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -14,7 +10,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +26,6 @@ import com.hss01248.bigimageviewpager.databinding.ItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.databinding.StateItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
 import com.hss01248.pagestate.PageStateConfig;
-import com.hss01248.pagestate.PageStateManager;
 import com.hss01248.pagestate.StatefulFrameLayout;
 import com.shizhefei.view.largeimage.factory.InputStreamBitmapDecoderFactory;
 
@@ -75,6 +69,12 @@ public class MyLargeImageView extends FrameLayout {
 
     boolean showScale = true;
 
+    public void setDarkMode(boolean darkMode) {
+        this.darkMode = darkMode;
+    }
+
+    boolean darkMode = true;
+
 
     public MyLargeImageView(@NonNull Context context) {
         super(context);
@@ -103,7 +103,7 @@ public class MyLargeImageView extends FrameLayout {
 
             @Override
             public boolean darkMode() {
-                return true;
+                return darkMode;
             }
         });
         ivHelper = largeImgBinding.ivGlideHelper;
