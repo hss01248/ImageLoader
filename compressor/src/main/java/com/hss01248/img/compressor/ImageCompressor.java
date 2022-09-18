@@ -4,23 +4,26 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.CloseUtils;
-import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss01248.avif.AvifEncoder;
 import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.media.metadata.FileTypeUtil;
 import com.hss01248.media.metadata.quality.Magick;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
@@ -47,9 +50,12 @@ public class ImageCompressor {
         if(!in.exists()){
             return in;
         }
-        if(!isImagesToCompress(filePath)){
+        if(!isImagesToCompress(filePath,targetJpgQuality)){
+            LogUtils.v("无需压缩",filePath);
             return in;
         }
+        //jpg质量判断
+
         if(!compressToAvif){
             return compressOriginalToJpg(filePath,targetJpgQuality);
         }
@@ -79,6 +85,10 @@ public class ImageCompressor {
     }
 
    public static void deleteFile(File file){
+        if(file.getAbsolutePath().contains(Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getParentFile().getAbsolutePath())){
+            file.delete();
+            return;
+        }
        FileDeleteUtil.deleteImage(file.getAbsolutePath(), false, new Observer<Boolean>() {
            @Override
            public void onSubscribe(@NonNull Disposable d) {
@@ -108,7 +118,7 @@ public class ImageCompressor {
      * @return
      */
     static int[] getImageWidthHeight(String path) {
-        if(path.endsWith(".avif") || !isImagesToCompress(path)){
+        if(path.endsWith(".avif") || !isImagesToCompress(path,targetJpgQuality)){
             return new int[]{-1,-1};
         }
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -121,14 +131,46 @@ public class ImageCompressor {
         return new int[]{options.outWidth, options.outHeight};
     }
 
-     static boolean isImagesToCompress(String path) {
-        return path.endsWith(".jpg")
+     public static boolean isImagesToCompress(String path,int targetJpgQuality) {
+        boolean isImage =  path.endsWith(".jpg")
                 || path.endsWith(".jpeg")
         || path.endsWith(".JPG")
                 || path.endsWith(".JPEG")
         || path.endsWith(".png")
                 || path.endsWith(".PNG");
-        // || path.endsWith(".webp")
+        File file = new File(path);
+        if(!file.exists()){
+            return false;
+        }
+        if(!isImage){
+            return false;
+        }
+         String type = FileTypeUtil.getType(file);
+        if("jpg".equals(type)){
+            try {
+                FileInputStream inputStream =  new FileInputStream(file);
+                int quality = new Magick().getJPEGImageQuality(inputStream);
+                CloseUtils.closeIO(inputStream);
+                LogUtils.v("jpg压缩判断","预期:"+targetJpgQuality+",实际:"+quality,path);
+                if(quality == 0){
+                    //大概率是mezjpeg压缩的-比如头条的图片. 不再压缩
+                    return false;
+                }else {
+                    if(quality > targetJpgQuality){
+                        return true;
+                    }else {
+                        return false;
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return true;
+            }
+        }else {
+            return true;
+        }
+
+         // || path.endsWith(".webp")
        //  || path.endsWith(".tif")
          //                || path.endsWith(".WEBP")
     }
@@ -153,6 +195,7 @@ public class ImageCompressor {
         }
         ProgressDialog finalDialog = dialog;
 
+        long originalSize = new File(filePath).length();
         ThreadUtils.Task<File> task = new ThreadUtils.Task<File>() {
             @Override
             public File doInBackground() throws Throwable {
@@ -165,7 +208,8 @@ public class ImageCompressor {
                 if(finalDialog != null){
                     finalDialog.dismiss();
                 }
-                boolean notCompressed = filePath.equals(result.getAbsolutePath()) && result.length() == new File(filePath).length();
+                //filePath.equals(result.getAbsolutePath()) &&
+                boolean notCompressed =  result.length() == originalSize;
                 callback.onResult(result,!notCompressed);
 
 
@@ -202,64 +246,67 @@ public class ImageCompressor {
      * @return
      */
     public static File compressOriginalToJpg(String filePath, int quality){
-        synchronized (filePath){
-            File file = new File(filePath);
-            File dir = Utils.getApp().getExternalFilesDir("compressTmp");
-            //区分png,jpg
-            String name = file.getName();
-            boolean sameSuffix = false;
-            if(name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".JPG") || name.endsWith(".JPEG")){
-                sameSuffix = true;
-            }else {
-                name = name+".jpg";
-            }
-            File file2 = null;
-            //todo 要采用应用私有目录为工作目录,避免权限问题,以及miui警告的图片删除问题
-            if(sameSuffix){
-                file2 = new File(dir, file.getName());
-            }else {
-                //file2 = new File(dir, name);
-                file2 = new File(dir, file.getName());
-            }
+        File file = new File(filePath);
+        File dir = Utils.getApp().getExternalFilesDir("compressTmp");
+        //区分png,jpg
+        String name = file.getName();
+        boolean sameSuffix = false;
+       /* if(name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".JPG") || name.endsWith(".JPEG")){
+            sameSuffix = true;
 
-
-            boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
-            if(compress) {
-                boolean renameTo = file2.renameTo(file); //垃圾api,只能同扩展名处理. 自动删除file2,变成file1. 等效于
-                if(!renameTo){
-                    LogUtils.w("同jpg扩展名时,renameTo失败,使用fileCopy: "+ file2);
-                    try {
-                        boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
-                            @Override
-                            public boolean onReplace(File srcFile, File destFile) {
-                                return true;
-                            }
-                        });
-                        if(copy){
-                            deleteFile(file2);
-                            return file;
-                        }else {
-                            deleteFile(file2);
-                            LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,则使用原文件: "+file2);
-                            return file;
-                        }
-                    }catch (Throwable throwable){
-                        deleteFile(file2);
-                        LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
-                        LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,还tm抛异常, 则使用原文件作为最终文件: "+file2);
-                        return file;
-                    }
-                }else {
-                    //成功,且文件名不变.
-                    return file;
-                }
-            }else {
-                //LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
-                deleteFile(file2);
-                return file;
-            }
+        }else {
+            name = name+".jpg";
+        }*/
+        name = name+".tmp";
+        File file2 = null;
+        //todo 要采用应用私有目录为工作目录,避免权限问题,以及miui警告的图片删除问题
+        //todo 还要采用非图片后缀名,避免miui警告问题. miui他妈的管的真多
+        if(sameSuffix){
+             file2 = new File(dir, file.getName());
+        }else {
+             //file2 = new File(dir, name);
+            file2 = new File(dir, name);
         }
 
+
+        boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
+        if(compress) {
+            //todo renameTo - 垃圾api,只能同扩展名处理. 自动删除file2,变成file1.
+         /*   boolean renameTo = file2.renameTo(file);
+            if(!renameTo){*/
+                LogUtils.w("不同jpg扩展名时,不能renameTo,使用fileCopy: "+ file2);
+                try {
+                    //todo 文件覆盖也会被miui警告,去tmd-->因为内部调用了file.delete()
+                  /*  boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
+                        @Override
+                        public boolean onReplace(File srcFile, File destFile) {
+                            return true;
+                        }
+           w        });*/
+                    boolean copy = FileIOUtils.writeFileFromIS(file, new FileInputStream(file2));
+                    if(copy){
+                        deleteFile(file2);
+                        return file;
+                    }else {
+                        deleteFile(file2);
+                        LogUtils.w("fileCopy也失败,则使用原文件: "+file2);
+                        return file;
+                    }
+                }catch (Throwable throwable){
+                    deleteFile(file2);
+                    LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
+                    LogUtils.w("fileCopy也失败,还tm抛异常, 则使用原文件作为最终文件: "+file2);
+                    return file;
+                }
+           /* }else {
+                //成功,且文件名不变.
+                return file;
+            }*/
+        }else {
+            LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
+            deleteFile(file2);
+            return file;
+        }
     }
     /**
      *
@@ -348,7 +395,7 @@ public class ImageCompressor {
 
             if(success){
                 try {
-                    if(exifMap == null){
+                    if(exifMap != null && !exifMap.isEmpty()){
                         ExifUtil.writeExif(exifMap,outPath);
                     }
                     return true;

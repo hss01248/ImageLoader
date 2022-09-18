@@ -10,7 +10,7 @@ buildscript {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.ImageLoader'
-        versionCode = '3.3.3.00'
+        versionCode = '3.3.3.01'
         isPublisToLocal=true
 
     }

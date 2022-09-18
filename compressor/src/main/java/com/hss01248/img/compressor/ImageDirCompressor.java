@@ -83,7 +83,7 @@ public class ImageDirCompressor {
                     @Override
                     public boolean accept(File dir, String name) {
                         count[0]++;
-                        return ImageCompressor.isImagesToCompress(name);
+                        return ImageCompressor.isImagesToCompress(name,ImageCompressor.targetJpgQuality);
                     }
                 });
                 if(files == null || files.length ==0){

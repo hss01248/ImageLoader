@@ -30,6 +30,20 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+repositories {
+    google()
+    jcenter()
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+    /* maven {
+         url "http://dl.bintray.com/piasy/maven"
+     }*/
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    //maven { url 'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository' }
+    // maven { url 'https://raw.githubusercontent.com/link-u/AndroidGlideAvifDecoder/master/repository' }
+    maven { url 'https://cdn.jsdelivr.net/gh/link-u/AndroidGlideAvifDecoder@master/repository' }
+
+}
 
 dependencies {
 
@@ -54,5 +68,6 @@ dependencies {
 
     api 'androidx.viewpager:viewpager:1.0.0'
     api 'com.github.hss01248.metadata:metadata:1.1.2'
+    // maven { url 'https://cdn.jsdelivr.net/gh/link-u/AndroidGlideAvifDecoder@master/repository' }
     api 'jp.co.link_u.library.glideavif:glideavif:0.8.1'
 }

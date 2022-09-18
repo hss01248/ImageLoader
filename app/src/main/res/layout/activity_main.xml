@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Button
-            android:text="加载file或者选择文件夹"
+            android:text="加载file或者选择文件夹->并压缩图片"
             android:onClick="loadFile"
             android:textAllCaps="false"
             android:layout_width="match_parent"
