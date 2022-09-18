@@ -43,83 +43,84 @@ public class ImageCompressor {
     public static int targetJpgQuality = 85;
     public static boolean compressToAvif = false;
 
-    public static File compress(String filePath, boolean deleteOriginalIfAvifSuccess, boolean noAvifOver2k){
+    public static File compress(String filePath, boolean deleteOriginalIfAvifSuccess, boolean noAvifOver2k) {
         AvifEncoder.init(Utils.getApp());
         File in = new File(filePath);
         //太大的图,使用jpg,不使用avif. 否则压缩,解析都太过耗时.
-        if(!in.exists()){
+        if (!in.exists()) {
             return in;
         }
-        if(!isImagesToCompress(filePath,targetJpgQuality)){
-            LogUtils.v("无需压缩",filePath);
+        if (!isImagesToCompress(filePath, targetJpgQuality)) {
+            LogUtils.v("无需压缩", filePath);
             return in;
         }
         //jpg质量判断
 
-        if(!compressToAvif){
-            return compressOriginalToJpg(filePath,targetJpgQuality);
+        if (!compressToAvif) {
+            return compressOriginalToJpg(filePath, targetJpgQuality);
         }
-        if(noAvifOver2k){
+        if (noAvifOver2k) {
             int[] wh = getImageWidthHeight(filePath);
-            if(wh[0] * wh[1] > 10000000){
+            if (wh[0] * wh[1] > 10000000) {
                 //一千万像素以上,则不使用avif,使用jpg压缩
                 //2k
-                LogUtils.i("分辨率大于2k,使用jpg压缩,不使用avif,避免过多耗时,以及大图查看的不便: ",filePath);
-                File out =  compressOriginalToJpg(filePath,targetJpgQuality);
+                LogUtils.i("分辨率大于2k,使用jpg压缩,不使用avif,避免过多耗时,以及大图查看的不便: ", filePath);
+                File out = compressOriginalToJpg(filePath, targetJpgQuality);
                 return out;
             }
         }
         File file = AvifEncoder.encodeOneFile(filePath);
 
-        if(file.getAbsolutePath().equals(filePath)){
+        if (file.getAbsolutePath().equals(filePath)) {
             //没有压缩. 否则后缀名变了
-            File out =  compressOriginalToJpg(filePath,targetJpgQuality);
+            File out = compressOriginalToJpg(filePath, targetJpgQuality);
             return out;
-        }else {
-           //删除jpg/png原图
-            if(deleteOriginalIfAvifSuccess){
+        } else {
+            //删除jpg/png原图
+            if (deleteOriginalIfAvifSuccess) {
                 deleteFile(in);
             }
             return file;
         }
     }
 
-   public static void deleteFile(File file){
-        if(file.getAbsolutePath().contains(Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getParentFile().getAbsolutePath())){
+    public static void deleteFile(File file) {
+        if (file.getAbsolutePath().contains(Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getParentFile().getAbsolutePath())) {
             file.delete();
             return;
         }
-       FileDeleteUtil.deleteImage(file.getAbsolutePath(), false, new Observer<Boolean>() {
-           @Override
-           public void onSubscribe(@NonNull Disposable d) {
+        FileDeleteUtil.deleteImage(file.getAbsolutePath(), false, new Observer<Boolean>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
 
-           }
+            }
 
-           @Override
-           public void onNext(@NonNull Boolean aBoolean) {
-            LogUtils.i("文件删除结果",aBoolean,file.getAbsolutePath());
-           }
+            @Override
+            public void onNext(@NonNull Boolean aBoolean) {
+                LogUtils.i("文件删除结果", aBoolean, file.getAbsolutePath());
+            }
 
-           @Override
-           public void onError(@NonNull Throwable e) {
-               LogUtils.i("文件删除结果",e);
-           }
+            @Override
+            public void onError(@NonNull Throwable e) {
+                LogUtils.i("文件删除结果", e);
+            }
 
-           @Override
-           public void onComplete() {
+            @Override
+            public void onComplete() {
 
-           }
-       });
+            }
+        });
     }
 
     /**
      * 非常耗时
+     *
      * @param path
      * @return
      */
     static int[] getImageWidthHeight(String path) {
-        if(path.endsWith(".avif") || !isImagesToCompress(path,targetJpgQuality)){
-            return new int[]{-1,-1};
+        if (path.endsWith(".avif") || !isImagesToCompress(path, targetJpgQuality)) {
+            return new int[]{-1, -1};
         }
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -131,34 +132,34 @@ public class ImageCompressor {
         return new int[]{options.outWidth, options.outHeight};
     }
 
-     public static boolean isImagesToCompress(String path,int targetJpgQuality) {
-        boolean isImage =  path.endsWith(".jpg")
+    public static boolean isImagesToCompress(String path, int targetJpgQuality) {
+        boolean isImage = path.endsWith(".jpg")
                 || path.endsWith(".jpeg")
-        || path.endsWith(".JPG")
+                || path.endsWith(".JPG")
                 || path.endsWith(".JPEG")
-        || path.endsWith(".png")
+                || path.endsWith(".png")
                 || path.endsWith(".PNG");
         File file = new File(path);
-        if(!file.exists()){
+        if (!file.exists()) {
             return false;
         }
-        if(!isImage){
+        if (!isImage) {
             return false;
         }
-         String type = FileTypeUtil.getType(file);
-        if("jpg".equals(type)){
+        String type = FileTypeUtil.getType(file);
+        if ("jpg".equals(type)) {
             try {
-                FileInputStream inputStream =  new FileInputStream(file);
+                FileInputStream inputStream = new FileInputStream(file);
                 int quality = new Magick().getJPEGImageQuality(inputStream);
                 CloseUtils.closeIO(inputStream);
-                LogUtils.v("jpg压缩判断","预期:"+targetJpgQuality+",实际:"+quality,path);
-                if(quality == 0){
+                LogUtils.v("jpg压缩判断", "预期:" + targetJpgQuality + ",实际:" + quality, path);
+                if (quality == 0) {
                     //大概率是mezjpeg压缩的-比如头条的图片. 不再压缩
                     return false;
-                }else {
-                    if(quality > targetJpgQuality){
+                } else {
+                    if (quality > targetJpgQuality) {
                         return true;
-                    }else {
+                    } else {
                         return false;
                     }
                 }
@@ -166,30 +167,27 @@ public class ImageCompressor {
                 e.printStackTrace();
                 return true;
             }
-        }else {
+        } else {
             return true;
         }
 
-         // || path.endsWith(".webp")
-       //  || path.endsWith(".tif")
-         //                || path.endsWith(".WEBP")
+        // || path.endsWith(".webp")
+        //  || path.endsWith(".tif")
+        //                || path.endsWith(".WEBP")
     }
 
-    public interface Callback{
-        void onResult(File file,boolean hasCompressed);
+    public interface Callback {
+        void onResult(File file, boolean hasCompressed);
 
-       default void onFailed(Throwable throwable){
-           throwable.printStackTrace();
-       }
+        default void onFailed(Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
 
-
-
-
-    public static void compressAsync(String filePath, boolean deleteOriginalIfSuccessAndSuffixChanged, boolean noAvifOver2k, boolean withLoadingDialog, Callback callback){
+    public static void compressAsync(String filePath, boolean deleteOriginalIfSuccessAndSuffixChanged, boolean noAvifOver2k, boolean withLoadingDialog, Callback callback) {
         ProgressDialog dialog = null;
-        if(withLoadingDialog){
+        if (withLoadingDialog) {
             dialog = new ProgressDialog(ActivityUtils.getTopActivity());
             dialog.setMessage("图片压缩中...");
         }
@@ -199,18 +197,18 @@ public class ImageCompressor {
         ThreadUtils.Task<File> task = new ThreadUtils.Task<File>() {
             @Override
             public File doInBackground() throws Throwable {
-                File file = compress(filePath, deleteOriginalIfSuccessAndSuffixChanged,noAvifOver2k);
+                File file = compress(filePath, deleteOriginalIfSuccessAndSuffixChanged, noAvifOver2k);
                 return file;
             }
 
             @Override
             public void onSuccess(File result) {
-                if(finalDialog != null){
+                if (finalDialog != null) {
                     finalDialog.dismiss();
                 }
                 //filePath.equals(result.getAbsolutePath()) &&
-                boolean notCompressed =  result.length() == originalSize;
-                callback.onResult(result,!notCompressed);
+                boolean notCompressed = result.length() == originalSize;
+                callback.onResult(result, !notCompressed);
 
 
             }
@@ -222,17 +220,17 @@ public class ImageCompressor {
 
             @Override
             public void onFail(Throwable t) {
-                if(finalDialog != null){
+                if (finalDialog != null) {
                     finalDialog.dismiss();
                 }
                 callback.onFailed(t);
 
             }
         };
-        if(compressToAvif){
+        if (compressToAvif) {
             //avif只能单线程压缩
             ThreadUtils.executeBySingle(task);
-        }else {
+        } else {
             ThreadUtils.executeByIo(task);
         }
 
@@ -241,40 +239,42 @@ public class ImageCompressor {
 
     /**
      * 策略: png压缩为jpg,不更改后缀名
+     *
      * @param filePath
      * @param quality
      * @return
      */
-    public static File compressOriginalToJpg(String filePath, int quality){
-        File file = new File(filePath);
-        File dir = Utils.getApp().getExternalFilesDir("compressTmp");
-        //区分png,jpg
-        String name = file.getName();
-        boolean sameSuffix = false;
+    public static File compressOriginalToJpg(String filePath, int quality) {
+        synchronized (filePath) {
+            File file = new File(filePath);
+            File dir = Utils.getApp().getExternalFilesDir("compressTmp");
+            //区分png,jpg
+            String name = file.getName();
+            boolean sameSuffix = false;
        /* if(name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".JPG") || name.endsWith(".JPEG")){
             sameSuffix = true;
 
         }else {
             name = name+".jpg";
         }*/
-        name = name+".tmp";
-        File file2 = null;
-        //todo 要采用应用私有目录为工作目录,避免权限问题,以及miui警告的图片删除问题
-        //todo 还要采用非图片后缀名,避免miui警告问题. miui他妈的管的真多
-        if(sameSuffix){
-             file2 = new File(dir, file.getName());
-        }else {
-             //file2 = new File(dir, name);
-            file2 = new File(dir, name);
-        }
+            name = name + ".tmp";
+            File file2 = null;
+            //todo 要采用应用私有目录为工作目录,避免权限问题,以及miui警告的图片删除问题
+            //todo 还要采用非图片后缀名,避免miui警告问题. miui他妈的管的真多
+            if (sameSuffix) {
+                file2 = new File(dir, file.getName());
+            } else {
+                //file2 = new File(dir, name);
+                file2 = new File(dir, name);
+            }
 
 
-        boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
-        if(compress) {
-            //todo renameTo - 垃圾api,只能同扩展名处理. 自动删除file2,变成file1.
+            boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality, file2.getAbsolutePath());
+            if (compress) {
+                //todo renameTo - 垃圾api,只能同扩展名处理. 自动删除file2,变成file1.
          /*   boolean renameTo = file2.renameTo(file);
             if(!renameTo){*/
-                LogUtils.w("不同jpg扩展名时,不能renameTo,使用fileCopy: "+ file2);
+                LogUtils.w("不同jpg扩展名时,不能renameTo,使用fileCopy: " + file2);
                 try {
                     //todo 文件覆盖也会被miui警告,去tmd-->因为内部调用了file.delete()
                   /*  boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
@@ -284,85 +284,87 @@ public class ImageCompressor {
                         }
            w        });*/
                     boolean copy = FileIOUtils.writeFileFromIS(file, new FileInputStream(file2));
-                    if(copy){
+                    if (copy) {
                         deleteFile(file2);
                         return file;
-                    }else {
+                    } else {
                         deleteFile(file2);
-                        LogUtils.w("fileCopy也失败,则使用原文件: "+file2);
+                        LogUtils.w("fileCopy也失败,则使用原文件: " + file2);
                         return file;
                     }
-                }catch (Throwable throwable){
+                } catch (Throwable throwable) {
                     deleteFile(file2);
-                    LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
-                    LogUtils.w("fileCopy也失败,还tm抛异常, 则使用原文件作为最终文件: "+file2);
+                    LogUtils.w("copy failed:2 " + throwable.getClass().getSimpleName() + "," + throwable.getMessage());
+                    LogUtils.w("fileCopy也失败,还tm抛异常, 则使用原文件作为最终文件: " + file2);
                     return file;
                 }
            /* }else {
                 //成功,且文件名不变.
                 return file;
             }*/
-        }else {
-            LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
-            deleteFile(file2);
-            return file;
+            } else {
+                LogUtils.d("文件无需压缩或压缩失败,则返回原文件: " + file);
+                deleteFile(file2);
+                return file;
+            }
         }
+
     }
+
     /**
-     *
      * @param srcPath
      * @param quality
      * @param outPath
      * @return 代表是否执行了压缩
      */
-    public static boolean compressOringinal(String srcPath,int quality,String outPath){
+    public static boolean compressOringinal(String srcPath, int quality, String outPath) {
         File file = new File(srcPath);
-        if(!shouldCompress(file,true)){
-            LogUtils.d(srcPath+",no need to compress");
+        if (!shouldCompress(file, true)) {
+            LogUtils.d(srcPath + ",no need to compress");
             return false;
         }
 
         //todo 过大的图,resize到1600w像素,仿照谷歌.
         Bitmap bitmap = null;
         try {
-             bitmap = BitmapFactory.decodeFile(srcPath);
-        }catch (Throwable throwable){
-            LogUtils.w(srcPath+" , decode bitmap failed:"+throwable.getMessage());
+            bitmap = BitmapFactory.decodeFile(srcPath);
+        } catch (Throwable throwable) {
+            LogUtils.w(srcPath + " , decode bitmap failed:" + throwable.getMessage());
         }
 
-        if(bitmap == null){
+        if (bitmap == null) {
             return false;
         }
-        boolean success =  false;
+        boolean success = false;
         File outFile = new File(outPath);
         try {
-            success = compressOringinal2(srcPath,quality,outPath);
-        }catch (Throwable throwable){
+            success = compressOringinal2(srcPath, quality, outPath);
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
             //success = compressByAndroid(bitmap,quality,outPath);
         }
 
-        if(success && outFile.exists() && outFile.length()> 50){
+        if (success && outFile.exists() && outFile.length() > 50) {
             //如果压缩后的图比压缩前还大,那么就不压缩,返回原图
-            if(file.length() < outFile.length()){
-                LogUtils.w(outFile.getAbsolutePath()+"  file.length() < outFile.length(), ignore");
+            if (file.length() < outFile.length()) {
+                LogUtils.w(outFile.getAbsolutePath() + "  file.length() < outFile.length(), ignore");
                 deleteFile(outFile);
                 success = false;
-            }else {
+            } else {
                 success = true;
             }
 
-        }else {
-            LogUtils.w(outFile.getAbsolutePath()+"  compress progress fail:",success,outFile.exists(),outFile.length());
+        } else {
+            LogUtils.w(outFile.getAbsolutePath() + "  compress progress fail:", success, outFile.exists(), outFile.length());
             success = false;
         }
 
         //回写exif信息
-        if(success){
+        if (success) {
             try {
-                ExifUtil.writeExif(ExifUtil.readExif(srcPath),outPath);
+                ExifUtil.writeExif(ExifUtil.readExif(srcPath), outPath);
             } catch (Throwable e) {
-                LogUtils.w(outPath+",write exif failed:"+e.getMessage());
+                LogUtils.w(outPath + ",write exif failed:" + e.getMessage());
                 e.printStackTrace();
             }
             return true;
@@ -378,80 +380,81 @@ public class ImageCompressor {
 
             ExifInterface exifInterface = new ExifInterface(absolutePath);
             int oritation = exifInterface.getRotationDegrees();
-            Map<String, String> exifMap =  ExifUtil.readExif(absolutePath);;
-            if(oritation != 0){
+            Map<String, String> exifMap = ExifUtil.readExif(absolutePath);
+            ;
+            if (oritation != 0) {
                 try {
-                    bitmap =   rotaingImageView(oritation,bitmap);
-                    exifMap.put(ExifInterface.TAG_ORIENTATION,"0");
-                }catch (Throwable throwable){
+                    bitmap = rotaingImageView(oritation, bitmap);
+                    exifMap.put(ExifInterface.TAG_ORIENTATION, "0");
+                } catch (Throwable throwable) {
                     throwable.printStackTrace();
                     LogUtils.w("compress fail when rotate");
                 }
             }
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            boolean success =  bitmap.compress(Bitmap.CompressFormat.JPEG,quality,fileOutputStream);
-            success =  success && file.exists() && file.length() > 50;
+            boolean success = bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fileOutputStream);
+            success = success && file.exists() && file.length() > 50;
             CloseUtils.closeIO(fileOutputStream);
 
-            if(success){
+            if (success) {
                 try {
-                    if(exifMap != null && !exifMap.isEmpty()){
-                        ExifUtil.writeExif(exifMap,outPath);
+                    if (exifMap != null && !exifMap.isEmpty()) {
+                        ExifUtil.writeExif(exifMap, outPath);
                     }
                     return true;
                 } catch (Throwable e) {
-                    LogUtils.w(outPath+",write exif failed:"+e.getMessage());
+                    LogUtils.w(outPath + ",write exif failed:" + e.getMessage());
                     e.printStackTrace();
                 }
             }
             return false;
 
         } catch (Throwable e) {
-            LogUtils.w(outPath,"compress fail by e",e.getClass().getSimpleName(),e.getMessage());
+            LogUtils.w(outPath, "compress fail by e", e.getClass().getSimpleName(), e.getMessage());
             return false;
         }
     }
 
     //旋转图片
 
-     static Bitmap rotaingImageView(int degree, Bitmap bitmap) { //angle 旋转的角度  bitmap需要旋转的图片
+    static Bitmap rotaingImageView(int degree, Bitmap bitmap) { //angle 旋转的角度  bitmap需要旋转的图片
 
-            Matrix matrix = new Matrix();
-            matrix.postRotate(degree);
-            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                    bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            return resizedBitmap;
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        return resizedBitmap;
     }
 
-   public static boolean shouldCompress(File pathname,boolean checkQuality) {
-        if(!pathname.exists()){
-            LogUtils.w("source file not exist: "+pathname);
+    public static boolean shouldCompress(File pathname, boolean checkQuality) {
+        if (!pathname.exists()) {
+            LogUtils.w("source file not exist: " + pathname);
             return false;
         }
 
         String name = pathname.getName();
         int idx = name.lastIndexOf(".");
-        if(idx <0 || idx >= name.length()-1){
+        if (idx < 0 || idx >= name.length() - 1) {
             return false;
         }
-        String suffix = name.substring(idx+1);
+        String suffix = name.substring(idx + 1);
         boolean isJpg = suffix.equalsIgnoreCase("jpg")
                 || suffix.equalsIgnoreCase("jpeg") || suffix.equalsIgnoreCase("png");
-        if(!isJpg){
+        if (!isJpg) {
             /*if(suffix.equalsIgnoreCase("png")){
                 return true;
             }*/
-            if(suffix.equalsIgnoreCase("gif") || suffix.equalsIgnoreCase("webp")){
+            if (suffix.equalsIgnoreCase("gif") || suffix.equalsIgnoreCase("webp")) {
                 return false;
             }
             return false;
         }
-        if(!checkQuality){
+        if (!checkQuality) {
             return true;
         }
         int quality = getQuality(pathname.getAbsolutePath());
         //LogUtils.d("quality:"+quality +":"+pathname.getAbsolutePath());
-        return  (quality ==  0) ||  (quality > getQuality()+4);
+        return (quality == 0) || (quality > getQuality() + 4);
     }
 
     static int getQuality() {
@@ -466,15 +469,15 @@ public class ImageCompressor {
         if (!file.exists()) {
             return 0;
         }
-        FileInputStream inputStream  = null;
+        FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
             return new Magick().getJPEGImageQuality(inputStream);
         } catch (Throwable e) {
             e.printStackTrace();
             return 0;
-        }finally {
-            if(inputStream != null){
+        } finally {
+            if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
