@@ -202,61 +202,64 @@ public class ImageCompressor {
      * @return
      */
     public static File compressOriginalToJpg(String filePath, int quality){
-        File file = new File(filePath);
-        File dir = Utils.getApp().getExternalFilesDir("compressTmp");
-        //区分png,jpg
-        String name = file.getName();
-        boolean sameSuffix = false;
-        if(name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".JPG") || name.endsWith(".JPEG")){
-            sameSuffix = true;
-        }else {
-            name = name+".jpg";
-        }
-        File file2 = null;
-        //todo 要采用应用私有目录为工作目录,避免权限问题,以及miui警告的图片删除问题
-        if(sameSuffix){
-             file2 = new File(dir, file.getName());
-        }else {
-             //file2 = new File(dir, name);
-            file2 = new File(dir, file.getName());
-        }
+        synchronized (filePath){
+            File file = new File(filePath);
+            File dir = Utils.getApp().getExternalFilesDir("compressTmp");
+            //区分png,jpg
+            String name = file.getName();
+            boolean sameSuffix = false;
+            if(name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".JPG") || name.endsWith(".JPEG")){
+                sameSuffix = true;
+            }else {
+                name = name+".jpg";
+            }
+            File file2 = null;
+            //todo 要采用应用私有目录为工作目录,避免权限问题,以及miui警告的图片删除问题
+            if(sameSuffix){
+                file2 = new File(dir, file.getName());
+            }else {
+                //file2 = new File(dir, name);
+                file2 = new File(dir, file.getName());
+            }
 
 
-        boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
-        if(compress) {
-            boolean renameTo = file2.renameTo(file); //垃圾api,只能同扩展名处理. 自动删除file2,变成file1. 等效于
-            if(!renameTo){
-                LogUtils.w("同jpg扩展名时,renameTo失败,使用fileCopy: "+ file2);
-                try {
-                    boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
-                        @Override
-                        public boolean onReplace(File srcFile, File destFile) {
-                            return true;
+            boolean compress = ImageCompressor.compressOringinal(file.getAbsolutePath(), quality,file2.getAbsolutePath());
+            if(compress) {
+                boolean renameTo = file2.renameTo(file); //垃圾api,只能同扩展名处理. 自动删除file2,变成file1. 等效于
+                if(!renameTo){
+                    LogUtils.w("同jpg扩展名时,renameTo失败,使用fileCopy: "+ file2);
+                    try {
+                        boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
+                            @Override
+                            public boolean onReplace(File srcFile, File destFile) {
+                                return true;
+                            }
+                        });
+                        if(copy){
+                            deleteFile(file2);
+                            return file;
+                        }else {
+                            deleteFile(file2);
+                            LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,则使用原文件: "+file2);
+                            return file;
                         }
-                    });
-                    if(copy){
+                    }catch (Throwable throwable){
                         deleteFile(file2);
-                        return file;
-                    }else {
-                        deleteFile(file2);
-                        LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,则使用原文件: "+file2);
+                        LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
+                        LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,还tm抛异常, 则使用原文件作为最终文件: "+file2);
                         return file;
                     }
-                }catch (Throwable throwable){
-                    deleteFile(file2);
-                    LogUtils.w("copy failed:2 "+throwable.getClass().getSimpleName()+","+throwable.getMessage());
-                    LogUtils.w("同jpg扩展名时,renameTo失败,fileCopy也失败,还tm抛异常, 则使用原文件作为最终文件: "+file2);
+                }else {
+                    //成功,且文件名不变.
                     return file;
                 }
             }else {
-                //成功,且文件名不变.
+                //LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
+                deleteFile(file2);
                 return file;
             }
-        }else {
-            //LogUtils.d("文件无需压缩或压缩失败,则返回原文件: "+ file);
-            deleteFile(file2);
-            return file;
         }
+
     }
     /**
      *
