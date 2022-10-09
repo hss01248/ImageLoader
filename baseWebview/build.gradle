@@ -45,7 +45,7 @@ dependencies {
     api 'com.github.hss01248:UI:0.0.1'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     api group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-
+    implementation "com.github.hss01248.HttpUtil2:openuri:3.1.2"
     //api 'org.jsoup:jsoup:1.11.2'
     api 'com.blankj:utilcodex:1.30.6'
 }

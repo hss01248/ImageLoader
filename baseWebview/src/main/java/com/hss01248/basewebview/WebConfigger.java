@@ -12,7 +12,7 @@ public class WebConfigger {
         return init;
     }
 
-    static WebviewInit init;
+    static WebviewInit init = new DefaultWebConfig();
 
     public static void init(WebviewInit init){
         WebConfigger.init = init;
