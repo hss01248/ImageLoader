@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.webkit.ValueCallback;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.hss01248.webviewspider.basewebview.WebPageInfo;
+import com.hss01248.basewebview.WebPageInfo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;

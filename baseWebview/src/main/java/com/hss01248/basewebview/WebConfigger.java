@@ -1,18 +1,10 @@
-package com.hss01248.webviewspider.basewebview;
+package com.hss01248.basewebview;
 
-import android.content.Context;
 import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
-import com.blankj.utilcode.util.NetworkUtils;
-
-import uk.co.alt236.webviewdebug.DebugWebChromeClient;
-import uk.co.alt236.webviewdebug.DebugWebViewClient;
 
 public class WebConfigger {
 

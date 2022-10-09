@@ -3,9 +3,8 @@ package com.hss01248.webviewspider.spider;
 import android.content.Context;
 import android.webkit.ValueCallback;
 
-import com.hss01248.webviewspider.basewebview.WebPageInfo;
+import com.hss01248.basewebview.WebPageInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface IHtmlParser {

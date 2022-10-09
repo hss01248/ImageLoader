@@ -6,6 +6,5 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <application>
         <activity android:name=".SpiderWebviewActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:screenOrientation="portrait"/>
-        <activity android:name=".basewebview.BaseWebviewActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 </manifest>

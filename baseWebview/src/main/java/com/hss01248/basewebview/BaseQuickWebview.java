@@ -1,4 +1,4 @@
-package com.hss01248.webviewspider.basewebview;
+package com.hss01248.basewebview;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,11 +16,8 @@ import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,12 +27,10 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
-
 import com.blankj.utilcode.util.ToastUtils;
+import com.hss01248.basewebview.databinding.TitlebarForWebviewBinding;
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.PageStateManager;
-import com.hss01248.webviewspider.R;
-import com.hss01248.webviewspider.databinding.TitlebarForWebviewBinding;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.AgentWebUIControllerImplBase;
 import com.just.agentweb.WebViewClient;

@@ -1,4 +1,4 @@
-package com.hss01248.webviewspider.basewebview;
+package com.hss01248.basewebview;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +17,6 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.activityresult.StartActivityUtil;
 import com.hss01248.activityresult.TheActivityListener;
-import com.hss01248.webviewspider.R;
 
 public class JsCreateNewWinImpl {
 

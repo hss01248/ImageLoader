@@ -1,4 +1,4 @@
-package com.hss01248.webviewspider.basewebview;
+package com.hss01248.basewebview;
 
 import android.app.Activity;
 import android.content.Context;
