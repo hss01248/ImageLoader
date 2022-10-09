@@ -58,8 +58,8 @@ public class WebConfigger {
         }
         //mWebSettings.setTextZoom(100);
         //设置自适应屏幕，两者合用
-        mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
-        mWebSettings.setUseWideViewPort(true); //将图片调整到适合webView的大小
+        //mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
+       // mWebSettings.setUseWideViewPort(true); //将图片调整到适合webView的大小
 
         mWebSettings.setNeedInitialFocus(true); //当webView调用requestFocus时为webView设置节点
 

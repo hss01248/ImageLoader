@@ -26,7 +26,7 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:text="加载url"
+            android:text="webview加载url"
             android:onClick="loadUrl"
             android:textAllCaps="false"
             android:layout_width="match_parent"
