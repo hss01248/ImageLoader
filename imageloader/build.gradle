@@ -56,7 +56,7 @@ dependencies {
     }
     api 'com.blankj:utilcodex:1.30.6'
 
-    api('it.sephiroth.android.exif:library:+') {
+    api('it.sephiroth.android.exif:library:1.0.1') {
         exclude group: 'commons-io'
     }
     //implementation 'org.apache.commons:commons-compress:1.11'
