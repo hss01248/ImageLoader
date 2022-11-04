@@ -1,18 +1,10 @@
-package com.hss01248.webviewspider.basewebview;
+package com.hss01248.basewebview;
 
-import android.content.Context;
 import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
-import com.blankj.utilcode.util.NetworkUtils;
-
-import uk.co.alt236.webviewdebug.DebugWebChromeClient;
-import uk.co.alt236.webviewdebug.DebugWebViewClient;
 
 public class WebConfigger {
 
@@ -20,7 +12,7 @@ public class WebConfigger {
         return init;
     }
 
-    static WebviewInit init;
+    static WebviewInit init = new DefaultWebConfig();
 
     public static void init(WebviewInit init){
         WebConfigger.init = init;
@@ -66,8 +58,8 @@ public class WebConfigger {
         }
         //mWebSettings.setTextZoom(100);
         //设置自适应屏幕，两者合用
-        mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
-        mWebSettings.setUseWideViewPort(true); //将图片调整到适合webView的大小
+        //mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
+       // mWebSettings.setUseWideViewPort(true); //将图片调整到适合webView的大小
 
         mWebSettings.setNeedInitialFocus(true); //当webView调用requestFocus时为webView设置节点
 

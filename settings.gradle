@@ -14,3 +14,4 @@ include ':bigimgdemo'
 include ':bigimageviewpager'//include ':bigimage'
 include ':app', ':imageloader',  ':glidev4', ':glidebase', ':imagelist'
 
+include ':baseWebview'

@@ -19,10 +19,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.hss01248.basewebview.BaseQuickWebview;
+import com.hss01248.basewebview.ISetWebviewHolder;
 import com.hss01248.ui.pop.list.PopList;
-import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
-import com.hss01248.webviewspider.basewebview.BaseWebviewActivity;
-import com.hss01248.webviewspider.basewebview.ISetWebviewHolder;
 import com.hss01248.webviewspider.spider.BaiduImageParser;
 import com.hss01248.webviewspider.spider.GoogleImageParser;
 import com.hss01248.webviewspider.spider.IHtmlParser;

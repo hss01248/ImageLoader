@@ -3,14 +3,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 31
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 30
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -33,27 +30,22 @@ android {
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    testImplementation 'junit:junit:4.+'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.0'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-   // api 'com.github.Justson.AgentWeb:agentweb-core:v4.1.9-androidx' // (必选)
-   // api 'com.github.hss01248:PageStateManager:3.0.5'
+    api 'com.github.Justson.AgentWeb:agentweb-core:v4.1.9-androidx' // (必选)
+    api 'com.github.hss01248:PageStateManager:3.0.5'
     api "androidx.lifecycle:lifecycle-common-java8:2.1.0"
-   // api 'com.github.skyNet2017:webviewdebug:1.2.2-from117'
+    implementation "com.github.hss01248.StartActivityResult:activityresult:1.1.6"
+    api 'com.github.skyNet2017:webviewdebug:1.2.2-from117'
     //api 'com.github.getActivity:TitleBar:9.2'
     api 'com.github.hss01248:UI:0.0.1'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     api group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-
-    api 'org.jsoup:jsoup:1.11.2'
+    implementation "com.github.hss01248.HttpUtil2:openuri:3.1.2"
+    //api 'org.jsoup:jsoup:1.11.2'
     api 'com.blankj:utilcodex:1.30.6'
-    api project(':imagelist')
-    api project(':baseWebview')
-
-
-    //implementation 'com.github.Justson.AgentWeb:agentweb-filechooser:v4.1.9-androidx' // (可选)
-    //api 'com.github.Justson:Downloader:v4.1.9-androidx' // (可选)
 }

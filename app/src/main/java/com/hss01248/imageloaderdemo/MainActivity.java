@@ -2,27 +2,14 @@ package com.hss01248.imageloaderdemo;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.RecoverableSecurityException;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,23 +17,21 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.ActivityUtils;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
-
 import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
 import com.bumptech.glide.Glide;
-
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
-
-import com.hss01248.activityresult.ActivityResultListener;
-import com.hss01248.activityresult.StartActivityUtil;
+import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
@@ -65,7 +50,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -297,7 +281,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void loadUrl(View view) {
-        ImageLoader.with(this)
+        BaseWebviewActivity.start(this,"https://www.hss01248.tech/mapsdemo2022.html");
+       /* ImageLoader.with(this)
                 .load("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
                 // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
                 // .res(R.drawable.thegif)
@@ -305,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 .loadingDefault()
                 //.widthHeight(250, 150)
                 //.asCircle(R.color.colorAccent)
-                .into(ivUrl);
+                .into(ivUrl);*/
     }
 
     public void loadFile(View view) {

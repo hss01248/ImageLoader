@@ -1,4 +1,4 @@
-package com.hss01248.webviewspider.basewebview;
+package com.hss01248.basewebview;
 
 import android.Manifest;
 import android.app.Activity;
@@ -11,7 +11,6 @@ import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.os.EnvironmentCompat;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
@@ -19,15 +18,13 @@ import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.Utils;
-import com.hss.downloader.DownloadUrls;
-import com.hss.downloader.MyDownloader;
-import com.hss.downloader.download.DownloadInfo;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WebviewDownlader implements DownloadListener {
+
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
         LogUtils.i(url,userAgent,contentDisposition,mimetype,contentLength);
@@ -86,13 +83,17 @@ public class WebviewDownlader implements DownloadListener {
     }
 
     private void doDownload(String url, String name) {
-        List<DownloadUrls> downloadInfos = new ArrayList<>();
+
+        String dir = subDir(getRightDir(),url);
+        //Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        WebConfigger.getInit().getIDownloader().doDownload(url, name,dir);
+       /* List<DownloadUrls> downloadInfos = new ArrayList<>();
         DownloadUrls info = new DownloadUrls();
         info.url = url;
         info.name = name;
         info.dir = subDir(getRightDir(),url);//Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         downloadInfos.add(info);
-        MyDownloader.download(downloadInfos);
+        MyDownloader.download(downloadInfos);*/
     }
 
     private String subDir(String rightDir, String url) {

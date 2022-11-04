@@ -1,11 +1,8 @@
 package com.hss01248.imageloaderdemo;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.StrictMode;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -13,19 +10,19 @@ import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.elvishew.xlog.XLog;
-import com.github.piasy.biv.BigImageViewer;
-import com.github.piasy.biv.view.BigImageView;
 import com.hjq.permissions.XXPermissions;
-import com.hss.downloader.BuildConfig;
 import com.hss.downloader.DownloadList;
+import com.hss.downloader.DownloadUrls;
 import com.hss.downloader.ILargeImagesViewer;
 import com.hss.downloader.MyDownloader;
+import com.hss01248.basewebview.BaseWebviewActivity;
+import com.hss01248.basewebview.IDownloader;
+import com.hss01248.basewebview.WebConfigger;
+import com.hss01248.basewebview.WebviewInit;
 import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
-
 import com.hss01248.dokit.IDokitConfig;
 import com.hss01248.dokit.MyDokit;
 import com.hss01248.flipper.DBAspect;
@@ -34,19 +31,15 @@ import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.LoadInterceptor;
-
 import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
-import com.hss01248.webviewspider.basewebview.BaseWebviewActivity;
-import com.hss01248.webviewspider.basewebview.WebConfigger;
-import com.hss01248.webviewspider.basewebview.WebviewInit;
-
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +85,22 @@ public class BaseApp extends MultiDexApplication {
             @Override
             public Class html5ActivityClass() {
                 return BaseWebviewActivity.class;
+            }
+
+            @Override
+            public IDownloader getIDownloader() {
+                return new IDownloader() {
+                    @Override
+                    public void doDownload(String url, String name,String dir) {
+                        List<DownloadUrls> downloadInfos = new ArrayList<>();
+                        DownloadUrls info = new DownloadUrls();
+                        info.url = url;
+                        info.name = name;
+                        info.dir = dir;//Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+                        downloadInfos.add(info);
+                        MyDownloader.download(downloadInfos);
+                    }
+                };
             }
         });
 

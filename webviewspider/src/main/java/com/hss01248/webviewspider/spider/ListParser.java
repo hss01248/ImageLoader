@@ -8,11 +8,10 @@ import android.webkit.ValueCallback;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
-import com.hss01248.webviewspider.basewebview.BaseQuickWebview;
-import com.hss01248.webviewspider.basewebview.WebPageInfo;
+import com.hss01248.basewebview.BaseQuickWebview;
+import com.hss01248.basewebview.WebPageInfo;
 
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.Random;
 
 public class ListParser {
 
-   public static void parseListAndDetail(Context context, WebPageInfo listWebPageInfo,IHtmlParser htmlParser, ValueCallback<ListToDetailImgsInfo> callback, ValueCallback<String> progressCallback){
+   public static void parseListAndDetail(Context context, WebPageInfo listWebPageInfo, IHtmlParser htmlParser, ValueCallback<ListToDetailImgsInfo> callback, ValueCallback<String> progressCallback){
        ListToDetailImgsInfo listToDetailImgsInfo = new ListToDetailImgsInfo();
        listToDetailImgsInfo.listUrl = listWebPageInfo.url;
 

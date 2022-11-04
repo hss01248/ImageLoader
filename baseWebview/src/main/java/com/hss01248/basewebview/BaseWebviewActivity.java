@@ -1,16 +1,11 @@
-package com.hss01248.webviewspider.basewebview;
+package com.hss01248.basewebview;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.blankj.utilcode.util.ScreenUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.hss01248.webviewspider.R;
 
 
 public class BaseWebviewActivity extends AppCompatActivity implements ISetWebviewHolder{

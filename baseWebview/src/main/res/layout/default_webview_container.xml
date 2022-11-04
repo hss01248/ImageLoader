@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.hss01248.webviewspider.basewebview.BaseQuickWebview
+    <com.hss01248.basewebview.BaseQuickWebview
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
         android:id="@+id/root_ll"
         android:layout_height="match_parent">
-    </com.hss01248.webviewspider.basewebview.BaseQuickWebview>
+    </com.hss01248.basewebview.BaseQuickWebview>
 
 </RelativeLayout>

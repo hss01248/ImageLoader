@@ -22,12 +22,21 @@
 [![](https://jitpack.io/v/hss01248/ImageLoader.svg)](https://jitpack.io/#hss01248/ImageLoader)
 
 ```
-com.github.hss01248.ImageLoader:imagelist:3.1.0
-com.github.hss01248.ImageLoader:glidev4:3.1.0
-com.github.hss01248.ImageLoader:imageloader:3.1.0
-com.github.hss01248.ImageLoader:glidebase:3.1.0
-com.github.hss01248.ImageLoader:webviewspider:3.1.0
-com.github.hss01248.ImageLoader:bigimageviewpager:3.1.0
+com.github.hss01248.ImageLoader:MediaStoreApi:3.4.7
+com.github.hss01248.ImageLoader:imageloader:3.4.7
+com.github.hss01248.ImageLoader:avif:3.4.7
+com.github.hss01248.ImageLoader:compressor:3.4.7
+com.github.hss01248.ImageLoader:fileOperation:3.4.7
+com.github.hss01248.ImageLoader:frescoGlideBridge:3.4.7
+com.github.hss01248.ImageLoader:avif-decoder:3.4.7
+com.github.hss01248.ImageLoader:downloader:3.4.7
+com.github.hss01248.ImageLoader:imageDebugger:3.4.7
+com.github.hss01248.ImageLoader:baseWebview:3.4.7
+com.github.hss01248.ImageLoader:glidebase:3.4.7
+com.github.hss01248.ImageLoader:bigimageviewpager:3.4.7
+com.github.hss01248.ImageLoader:webviewspider:3.4.7
+com.github.hss01248.ImageLoader:glidev4:3.4.7
+com.github.hss01248.ImageLoader:imagelist:3.4.7
 ```
 
 > 一条龙地支持fresco和glide
