@@ -3,6 +3,7 @@ package com.hss01248.basewebview;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.basewebview.databinding.TitlebarForWebviewBinding;
@@ -111,6 +113,10 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         initWebView();
     }
 
+    public TitlebarForWebviewBinding getTitleBar() {
+        return titleBar;
+    }
+
     TitlebarForWebviewBinding titleBar;
     private void initTitlebar(Context context) {
 
@@ -122,10 +128,18 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                 app:leftTitle="返回"
                 app:rightTitle="设置"
                 app:title="夜间模式的标题栏" />*/
+
         Activity activity = WebDebugger.getActivityFromContext(context);
+        BarUtils.setStatusBarColor(activity, Color.WHITE);
+        BarUtils.setStatusBarLightMode(activity,true);
         titleBar = TitlebarForWebviewBinding.inflate(activity.getLayoutInflater(),this,false);
 
+
         addView(titleBar.getRoot());
+       /* LinearLayout.LayoutParams layoutParams = (LayoutParams) titleBar.getRoot().getLayoutParams();
+        layoutParams.topMargin = BarUtils.getStatusBarHeight();
+        titleBar.getRoot().setLayoutParams(layoutParams);*/
+
         titleBar.ivBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -357,6 +371,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     public void onReceivedTitle(WebView view, String title) {
                         super.onReceivedTitle(view, title);
                         titleBar.tvTitle.setText(title);
+                        titleBar.tvTitle.requestFocus();
                         currentTitle = title;
                         info.title = title;
                     }
