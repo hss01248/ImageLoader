@@ -2,10 +2,14 @@ package com.hss01248.basewebview;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.blankj.utilcode.util.LogUtils;
 
 
 public class BaseWebviewActivity extends AppCompatActivity implements ISetWebviewHolder{
@@ -35,6 +39,12 @@ public class BaseWebviewActivity extends AppCompatActivity implements ISetWebvie
 
     protected  void initWebview2(BaseQuickWebview quickWebview) {
 
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LogUtils.w(newConfig);
     }
 
     @Override

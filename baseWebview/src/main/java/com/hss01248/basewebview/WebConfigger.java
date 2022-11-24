@@ -1,10 +1,14 @@
 package com.hss01248.basewebview;
 
+import static com.blankj.utilcode.util.ProcessUtils.getCurrentProcessName;
+
 import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
+import com.blankj.utilcode.util.Utils;
 
 public class WebConfigger {
 
@@ -50,10 +54,15 @@ public class WebConfigger {
         //支持获取手势焦点，输入用户名、密码或其他
         webView.requestFocusFromTouch();
 
+        mWebSettings.setMediaPlaybackRequiresUserGesture(false);//SDK>18 是否支持手势控制网页媒体，比如视频的全屏
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+           // mWebSettings.setSafeBrowsingEnabled(false);// 是否开启安全模式
+        }
 
         mWebSettings.setSupportZoom(true);//不支持缩放
         mWebSettings.setBuiltInZoomControls(false);
-        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
         }
         //mWebSettings.setTextZoom(100);
@@ -102,6 +111,16 @@ public class WebConfigger {
         mWebSettings.setAppCachePath(appCachePath);
         //html中的_bank标签就是新建窗口打开，有时会打不开，需要加以下
         //然后 复写 WebChromeClient的onCreateWindow方法
+
+        //因为Android P 行为变更，多进程 webView 不能使用同一个目录，需要为不同进程 webView 设置不同目录。为不同进程设置不同的目录即可解决问题
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            boolean isMainProcess = Utils.getApp().getPackageName().equals(getCurrentProcessName());
+            if (!isMainProcess) {
+                WebView.setDataDirectorySuffix("any-folder-name");
+            }
+        }
+
+
 
         // for remote debug
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

@@ -30,4 +30,23 @@ public class MainActivity extends AppCompatActivity {
     public void jsInputFile2(View view) {
         BaseWebviewActivity.start(this,"https://test-ec-mall.xxx.com/jstest/input_test.html");
     }
+
+    public void jsPop(View view) {
+        BaseWebviewActivity.start(this,"https://www.runoob.com/js/js-popup.html");
+    }
+
+    public void playVideo(View view) {
+        BaseWebviewActivity.start(this,"https://www.runoob.com/tags/tag-video.html");
+    }
+
+    public void windowHistory(View view) {
+        BaseWebviewActivity.start(this,"https://www.runoob.com/js/js-window-history.html");
+    }
+    public void windowLocation(View view) {
+        BaseWebviewActivity.start(this,"https://www.runoob.com/js/js-window-location.html");
+    }
+
+    public void windowOpen(View view) {
+        BaseWebviewActivity.start(this,"https://www.w3schools.com/jsref/met_win_close.asp");
+    }
 }

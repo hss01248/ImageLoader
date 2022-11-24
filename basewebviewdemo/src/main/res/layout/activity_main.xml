@@ -40,6 +40,36 @@
             android:text="js-input-file2"
             android:onClick="jsInputFile2"
             android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="js-pop"
+            android:onClick="jsPop"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="play video"
+            android:onClick="playVideo"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="dom-window-history"
+            android:onClick="windowHistory"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="dom-window-location"
+            android:onClick="windowLocation"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="dom-window-open-close"
+            android:onClick="windowOpen"
+            android:layout_height="wrap_content"/>
 
 
     </com.google.android.flexbox.FlexboxLayout>

@@ -1,12 +1,16 @@
 package com.hss01248.basewebview.dom;
 
 import android.Manifest;
+import android.location.Location;
 import android.webkit.GeolocationPermissions;
 
 import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
+import com.blankj.utilcode.util.Utils;
+import com.hss01248.location.LocationUtil;
+import com.hss01248.location.MyLocationCallback;
 import com.hss01248.permission.MyPermissions;
 import com.just.agentweb.MiddlewareWebChromeBase;
 
@@ -28,7 +32,31 @@ public class GeoLocationImpl extends MiddlewareWebChromeBase {
     @Override
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         //super.onGeolocationPermissionsShowPrompt(origin, callback);
-        MyPermissions.setCanAcceptOnlyCoarseLocationPermission(true);
+
+        LocationUtil.getLocation(Utils.getApp(), false, 10000,
+                false, true, new MyLocationCallback() {
+            @Override
+            public boolean configJustAskPermissionAndSwitch() {
+                return true;
+            }
+
+            @Override
+            public boolean configAcceptOnlyCoarseLocationPermission() {
+                return true;
+            }
+
+            @Override
+            public void onSuccess(Location location, String msg) {
+                //注意个函数，第二个参数就是是否同意定位权限，第三个是是否希望内核记住
+                callback.invoke(origin,true,false);
+            }
+
+            @Override
+            public void onFailed(int type, String msg, boolean isFailBeforeReallyRequest) {
+                callback.invoke(origin,false,false);
+            }
+        });
+       /* MyPermissions.setCanAcceptOnlyCoarseLocationPermission(true);
         MyPermissions.requestByMostEffort(false, true, new PermissionUtils.FullCallback() {
             @Override
             public void onGranted(@NonNull List<String> granted) {
@@ -46,7 +74,7 @@ public class GeoLocationImpl extends MiddlewareWebChromeBase {
                     callback.invoke(origin,false,false);
                 }
             }
-        }, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION);
+        }, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION);*/
 
 
     }

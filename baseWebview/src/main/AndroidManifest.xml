@@ -4,7 +4,7 @@
 
     <application>
         <activity android:name=".BaseWebviewActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 </manifest>
