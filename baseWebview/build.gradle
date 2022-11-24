@@ -48,4 +48,6 @@ dependencies {
     implementation "com.github.hss01248.HttpUtil2:openuri:3.1.2"
     //api 'org.jsoup:jsoup:1.11.2'
     api 'com.blankj:utilcodex:1.30.6'
+    api "com.github.hss01248.MyPermission:location:2.2.2"
+
 }

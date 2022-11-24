@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:flexDirection="row"
+        app:flexWrap="wrap"
+        app:justifyContent="space_between"
+        app:alignItems="stretch"
+        app:alignContent="stretch">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="geoLocation"
+            android:onClick="geoLocation"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="window.showOpenFilePicker-image"
+            android:onClick="showOpenFilePicker"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="js-input-file"
+            android:onClick="jsInputFile"
+            android:layout_height="wrap_content"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:text="js-input-file2"
+            android:onClick="jsInputFile2"
+            android:layout_height="wrap_content"/>
+
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+</ScrollView>

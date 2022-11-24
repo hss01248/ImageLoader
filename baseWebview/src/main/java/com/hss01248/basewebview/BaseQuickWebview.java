@@ -31,6 +31,8 @@ import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.basewebview.databinding.TitlebarForWebviewBinding;
+import com.hss01248.basewebview.dom.FileChooseImpl;
+import com.hss01248.basewebview.dom.GeoLocationImpl;
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.PageStateManager;
 import com.just.agentweb.AgentWeb;
@@ -386,6 +388,8 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         jsCreateNewWin.onCloseWindow(window);
                     }*/
                 })
+                .useMiddlewareWebChrome(new GeoLocationImpl())
+                .useMiddlewareWebChrome(new FileChooseImpl())
               // .setMainFrameErrorView(R.layout.pager_error,R.id.error_btn_retry)
                 //.setMainFrameErrorView(errorLayout)
                 .createAgentWeb()//

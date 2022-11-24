@@ -52,7 +52,7 @@ public class WebConfigger {
 
 
         mWebSettings.setSupportZoom(true);//不支持缩放
-        mWebSettings.setBuiltInZoomControls(true);
+        mWebSettings.setBuiltInZoomControls(false);
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
         }
