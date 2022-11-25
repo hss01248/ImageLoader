@@ -28,7 +28,9 @@ public class JsPopImpl extends MiddlewareWebChromeBase {
         return super.onJsPrompt(view, url, message, defaultValue, result);
     }
 
-   /* @Override
+   /*
+   //// 显示一个对话框让用户选择是否离开当前页面
+   @Override
     public boolean onJsBeforeUnload(WebView view, String url, String message, JsResult result) {
         return super.onJsBeforeUnload(view, url, message, result);
     }

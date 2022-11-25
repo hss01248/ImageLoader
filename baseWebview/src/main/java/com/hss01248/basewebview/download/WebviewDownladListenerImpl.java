@@ -1,7 +1,6 @@
-package com.hss01248.basewebview;
+package com.hss01248.basewebview.download;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -18,12 +17,11 @@ import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.Utils;
+import com.hss01248.basewebview.WebConfigger;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-public class WebviewDownlader implements DownloadListener {
+public class WebviewDownladListenerImpl implements DownloadListener {
 
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
@@ -115,7 +113,9 @@ public class WebviewDownlader implements DownloadListener {
 
         }*/
 
-        if(PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE) || Environment.isExternalStorageManager()){
+
+        if(PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                || ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) && Environment.isExternalStorageManager())){
             File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File dir = new File(directory, AppUtils.getAppName());
             if(!dir.exists()){
@@ -127,6 +127,7 @@ public class WebviewDownlader implements DownloadListener {
                 return dir.getAbsolutePath();
             }
         }
+
 
         return Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
     }

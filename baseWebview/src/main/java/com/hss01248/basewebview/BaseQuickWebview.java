@@ -8,6 +8,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -32,8 +33,8 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.basewebview.databinding.TitlebarForWebviewBinding;
 import com.hss01248.basewebview.dom.FileChooseImpl;
-import com.hss01248.basewebview.dom.GeoLocationImpl;
-import com.hss01248.basewebview.dom.VideoFullScreenImpl;
+import com.hss01248.basewebview.dom.JsCreateNewWinImpl;
+import com.hss01248.basewebview.dom.JsPermissionImpl;
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.PageStateManager;
 import com.just.agentweb.AgentWeb;
@@ -278,7 +279,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 
     PageStateManager stateManager;
 
-    JsCreateNewWinImpl jsCreateNewWin = new JsCreateNewWinImpl();
+    public JsCreateNewWinImpl jsCreateNewWin = new JsCreateNewWinImpl();
 
     private void initWebView() {
         preAgentWeb = AgentWeb.with((Activity) getContext())//传入Activity or Fragment
@@ -379,7 +380,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         info.title = title;
                     }
 
-                   /* @Override
+                    @Override
                     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
                         return jsCreateNewWin.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
                     }
@@ -387,11 +388,12 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     @Override
                     public void onCloseWindow(WebView window) {
                         jsCreateNewWin.onCloseWindow(window);
-                    }*/
+                    }
                 })
-                .useMiddlewareWebChrome(new GeoLocationImpl())
+                .useMiddlewareWebChrome(new JsPermissionImpl())
                 .useMiddlewareWebChrome(new FileChooseImpl())
-                .useMiddlewareWebChrome(new VideoFullScreenImpl())
+                //.useMiddlewareWebChrome(new JsNewWindowImpl())
+                //.useMiddlewareWebChrome(new VideoFullScreenImpl())
               // .setMainFrameErrorView(R.layout.pager_error,R.id.error_btn_retry)
                 //.setMainFrameErrorView(errorLayout)
                 .createAgentWeb()//

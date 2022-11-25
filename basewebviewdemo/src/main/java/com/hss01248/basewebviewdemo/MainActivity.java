@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void windowOpen(View view) {
-        BaseWebviewActivity.start(this,"https://www.w3schools.com/jsref/met_win_close.asp");
+        //BaseWebviewActivity.start(this,"https://www.w3schools.com/jsref/met_win_close.asp");
+        BaseWebviewActivity.start(this,"https://test-ec-mall.xxxx.com/jstest/index.html");
     }
 }

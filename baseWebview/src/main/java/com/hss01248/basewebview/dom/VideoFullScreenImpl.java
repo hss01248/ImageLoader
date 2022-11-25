@@ -84,4 +84,17 @@ public class VideoFullScreenImpl extends MiddlewareWebChromeBase {
 
 
     }
+
+
+    // <video /> 控件在未播放时，会展示为一张海报图，HTML中可通过它的'poster'属性来指定。
+// 如果未指定'poster'属性，则通过此方法提供一个默认的海报图。
+/*    public Bitmap getDefaultVideoPoster() {
+    return null;
+    }
+
+// 当全屏的视频正在缓冲时，此方法返回一个占位视图(比如旋转的菊花)。
+    public View getVideoLoadingProgressView() {
+    return null;
+    }*/
+
 }

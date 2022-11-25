@@ -9,6 +9,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.blankj.utilcode.util.Utils;
+import com.hss01248.basewebview.dom.JsCreateNewWinImpl;
+import com.hss01248.basewebview.download.WebviewDownladListenerImpl;
 
 public class WebConfigger {
 
@@ -31,7 +33,7 @@ public class WebConfigger {
     }
 
     private static void setDownloader(WebView webView) {
-        webView.setDownloadListener(new WebviewDownlader());
+        webView.setDownloadListener(new WebviewDownladListenerImpl());
     }
 
     public static void syncCookie(WebView webView, String url) {
@@ -59,9 +61,11 @@ public class WebConfigger {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
            // mWebSettings.setSafeBrowsingEnabled(false);// 是否开启安全模式
         }
+        JsCreateNewWinImpl.enableMultipulWindow(webView,true);
 
-        mWebSettings.setSupportZoom(true);//不支持缩放
-        mWebSettings.setBuiltInZoomControls(false);
+        mWebSettings.setSupportZoom(true);//支持缩放
+        mWebSettings.setBuiltInZoomControls(true);
+        mWebSettings.setDisplayZoomControls(false);//但是不显示丑陋的缩放按钮
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
         }

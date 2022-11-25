@@ -1,4 +1,4 @@
-package com.hss01248.basewebview;
+package com.hss01248.basewebview.dom;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,10 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.activityresult.StartActivityUtil;
 import com.hss01248.activityresult.TheActivityListener;
+import com.hss01248.basewebview.BaseQuickWebview;
+import com.hss01248.basewebview.ISetWebviewHolder;
+import com.hss01248.basewebview.R;
+import com.hss01248.basewebview.WebConfigger;
 
 public class JsCreateNewWinImpl {
 
@@ -41,7 +45,7 @@ public class JsCreateNewWinImpl {
     }
 
     private void onCreateWindow2(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-        Intent intent = new Intent(ActivityUtils.getTopActivity(),WebConfigger.getInit().html5ActivityClass());
+        Intent intent = new Intent(ActivityUtils.getTopActivity(), WebConfigger.getInit().html5ActivityClass());
         intent.putExtra(ISetWebviewHolder.setWebviewHolderByOutSide,true);
         StartActivityUtil.startActivity(ActivityUtils.getTopActivity(),
                 WebConfigger.getInit().html5ActivityClass(),intent,
@@ -70,6 +74,7 @@ public class JsCreateNewWinImpl {
 
 
                             //给新打开的webview响应closewindow用
+                            //quickWebview.jsCreateNewWin = JsCreateNewWinImpl.this;
                             quickWebview.jsCreateNewWin.activity = activity;
                         }
                     }
