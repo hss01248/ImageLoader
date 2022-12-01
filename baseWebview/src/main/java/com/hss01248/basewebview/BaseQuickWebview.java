@@ -58,6 +58,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     AgentWeb mAgentWeb;
     long delayAfterOnFinish;
     AgentWeb.PreAgentWeb preAgentWeb;
+    IShowRightMenus showRightMenus;
 
     public WebView getWebView() {
         return webView;
@@ -138,8 +139,9 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         BarUtils.setStatusBarLightMode(activity,true);
         titleBar = TitlebarForWebviewBinding.inflate(activity.getLayoutInflater(),this,false);
 
-
+        titleBar.getRoot().setPadding(0,BarUtils.getStatusBarHeight(),0,0);
         addView(titleBar.getRoot());
+
        /* LinearLayout.LayoutParams layoutParams = (LayoutParams) titleBar.getRoot().getLayoutParams();
         layoutParams.topMargin = BarUtils.getStatusBarHeight();
         titleBar.getRoot().setLayoutParams(layoutParams);*/
@@ -169,7 +171,12 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     }
 
     protected void showMenu() {
-        ToastUtils.showLong("show menu");
+        if(showRightMenus != null){
+            showRightMenus.showMenus(webView,this);
+        }else {
+            ToastUtils.showLong("show menu");
+        }
+
 
     }
 
