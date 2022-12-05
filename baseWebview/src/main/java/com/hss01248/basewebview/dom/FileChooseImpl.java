@@ -16,9 +16,21 @@ import androidx.annotation.RequiresApi;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
-import com.hss01248.activityresult.ActivityResultListener;
-import com.hss01248.activityresult.StartActivityUtil;
+import com.hss.utils.enhance.api.MyCommonCallback;
+
+import com.hss01248.media.pick.CaptureAudioUtil;
+import com.hss01248.media.pick.CaptureImageUtil;
+import com.hss01248.media.pick.CaptureVideoUtil;
+import com.hss01248.media.pick.MediaPickOrCaptureUtil;
+import com.hss01248.media.pick.MediaPickUtil;
+import com.hss01248.media.pick.MimeTypeUtil;
+
 import com.just.agentweb.MiddlewareWebChromeBase;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnSelectListener;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * @Despciption
@@ -52,85 +64,178 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                 "getFilenameHint-"+fileChooserParams.getFilenameHint(),
                 fileChooserParams.getAcceptTypes(),
                 "isCaptureEnabled-"+fileChooserParams.isCaptureEnabled(),
+                //Use getAcceptTypes to determine suitable capture devices.  caputure="user" 前置摄像头,但传不过来
                 intent0);
-        String mimeType = buildMimeType(fileChooserParams.getAcceptTypes());
-        LogUtils.d(mimeType);
-       /* if(fileChooserParams.isCaptureEnabled()){
-
-        }*/
-
-
-        Intent intent = intent0;
-        if(mimeType.contains("video/") || mimeType.contains("image/") || mimeType.contains("audio/")){
-            intent = new Intent();
-            //intent.setType("video/*;image/*");//同时选择视频和图片
-            intent.setType(mimeType);//
-            //intent.setAction(Intent.ACTION_GET_CONTENT);
-            //打开方式有两种action，1.ACTION_PICK；2.ACTION_GET_CONTENT 区分大意为：
-            // ACTION_PICK 为打开特定数据一个列表来供用户挑选，其中数据为现有的数据。而 ACTION_GET_CONTENT 区别在于它允许用户创建一个之前并不存在的数据。
-            intent.setAction(Intent.ACTION_PICK);
-        }
-
-        //startActivityForResult(Intent.createChooser(intent,"选择图像..."), PICK_IMAGE_REQUEST);
-        //FragmentManager: Activity result delivered for unknown Fragment
-        PackageManager manager = Utils.getApp().getPackageManager();
-        if (manager.queryIntentActivities(intent, 0).size() <= 0) {
-            //这个action比ACTION_GET_CONTENT多了过滤器的功能,所以优先用这个
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType(mimeType);
-            //Intent { act=android.intent.action.GET_CONTENT cat=[android.intent.category.OPENABLE] typ=image/png }
-        }
-
-
-
-        //ThreadUtils.getMainHandler()
-        StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), intent, new ActivityResultListener() {
-            @Override
-            public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-                LogUtils.i(data);
-                if(resultCode == Activity.RESULT_OK){
-                    if(data != null && data.getData() != null){
-                        //如果是图片,就先压缩一遍
-                        Uri[] uris = new Uri[1];
-                        uris[0] = data.getData();
-                        filePathCallback.onReceiveValue(uris);
-                        return;
+        String[] washMimeTypes = MimeTypeUtil.washMimeType(fileChooserParams.getAcceptTypes());
+        LogUtils.d(washMimeTypes);
+        if(fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE){
+            MediaPickUtil.pickMultiFiles(new MyCommonCallback<List<Uri>>() {
+                @Override
+                public void onSuccess(List<Uri> uris) {
+                    Uri[] uris1 = new Uri[uris.size()];
+                    for (int i = 0; i < uris.size(); i++) {
+                        uris1[i] = uris.get(i);
                     }
+                    filePathCallback.onReceiveValue(uris1);
                 }
-                filePathCallback.onReceiveValue(null);
-            }
+            });
+            return true;
+        }
 
-            @Override
-            public void onActivityNotFound(Throwable e) {
-                LogUtils.w(e);
-                filePathCallback.onReceiveValue(null);
+        if(isOnlyImage(washMimeTypes)){
+            if(fileChooserParams.isCaptureEnabled()){
+                CaptureImageUtil.takePicture(false,new MyCommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        Uri[] uris1 = {Uri.fromFile(new File(s))};
+                        filePathCallback.onReceiveValue(uris1);
+                    }
+                });
+            }else {
+                MediaPickOrCaptureUtil.pickImageOrTakePhoto(false,new MyCommonCallback<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri[] uris1 = {uri};
+                        filePathCallback.onReceiveValue(uris1);
+                    }
+                });
             }
-        });
+            return true;
+        }
+
+        if(isOnlyVideo(washMimeTypes)){
+            if(fileChooserParams.isCaptureEnabled()){
+                CaptureVideoUtil.startVideoCapture(false,30,1024*1024*1024,new MyCommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        Uri[] uris1 = {Uri.fromFile(new File(s))};
+                        filePathCallback.onReceiveValue(uris1);
+                    }
+                });
+            }else {
+                MediaPickOrCaptureUtil.pickOrRecordVideo(false,30,new MyCommonCallback<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri[] uris1 = {uri};
+                        filePathCallback.onReceiveValue(uris1);
+                    }
+                });
+            }
+            return true;
+        }
+        if(isOnlyVideoOrImage(washMimeTypes)){
+            if(fileChooserParams.isCaptureEnabled()){
+                new XPopup.Builder(ActivityUtils.getTopActivity())
+                        .asBottomList("请选择", new String[]{"拍照", "录制视频"},
+                                new OnSelectListener() {
+                                    @Override
+                                    public void onSelect(int position, String text) {
+                                        if(position ==1){
+                                            CaptureVideoUtil.startVideoCapture(false,30,1024*1024*1024,new MyCommonCallback<String>() {
+                                                @Override
+                                                public void onSuccess(String s) {
+                                                    Uri[] uris1 = {Uri.fromFile(new File(s))};
+                                                    filePathCallback.onReceiveValue(uris1);
+                                                }
+
+                                                @Override
+                                                public void onError(String code, String msg, @Nullable Throwable throwable) {
+                                                   // callback.onError(code, msg, throwable);
+                                                }
+                                            });
+                                        }else if(position ==0){
+                                            CaptureImageUtil.takePicture(false,new MyCommonCallback<String>() {
+                                                @Override
+                                                public void onSuccess(String s) {
+                                                    Uri[] uris1 = {Uri.fromFile(new File(s))};
+                                                    filePathCallback.onReceiveValue(uris1);
+                                                }
+                                            });
+                                        }
+                                    }
+                                })
+                        .show();
+            }else {
+                MediaPickOrCaptureUtil.pickOrCaptureImageOrVideo(true,30, new MyCommonCallback<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri[] uris1 = {uri};
+                        filePathCallback.onReceiveValue(uris1);
+                    }
+                });
+            }
+            return true;
+        }
+
+        if(isOnlyAudio(washMimeTypes)){
+            if(fileChooserParams.isCaptureEnabled()){
+                CaptureAudioUtil.startRecord(new MyCommonCallback<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri[] uris1 = {uri};
+                        filePathCallback.onReceiveValue(uris1);
+                    }
+                });
+            }else {
+                MediaPickOrCaptureUtil.pickOrRecordAudio(new MyCommonCallback<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Uri[] uris1 = {uri};
+                        filePathCallback.onReceiveValue(uris1);
+                    }
+                });
+            }
+            return true;
+        }
+
+
+
+        MediaPickUtil.pickOne(new MyCommonCallback<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Uri[] uris1 = {uri};
+                filePathCallback.onReceiveValue(uris1);
+            }
+        },washMimeTypes);
+
+
         return true;
     }
 
-    private String buildMimeType(String[] acceptTypes) {
-        if(acceptTypes == null || acceptTypes .length ==0){
-            return "*/*";
-        }
-        StringBuilder str = new StringBuilder();
-        for (int i = 0; i < acceptTypes.length; i++) {
-            String type = acceptTypes[i];
-            if(type.startsWith(".")){
-                //兼容带.号 的type
-                type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(type.substring(1));
-            }
-            str.append(type);
-            if(i != acceptTypes.length-1){
-                str.append(",");
+    private boolean isOnlyImage(String[] washMimeTypes) {
+        for (String washMimeType : washMimeTypes) {
+            if(!washMimeType.startsWith("image")){
+                return false;
             }
         }
-        String st =  str.toString();
-        if(TextUtils.isEmpty(st)){
-            return "*/*";
-        }
-        return st;
+        return true;
     }
+
+    private boolean isOnlyVideo(String[] washMimeTypes) {
+        for (String washMimeType : washMimeTypes) {
+            if(!washMimeType.startsWith("video")){
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean isOnlyAudio(String[] washMimeTypes) {
+        for (String washMimeType : washMimeTypes) {
+            if(!washMimeType.startsWith("audio")){
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean isOnlyVideoOrImage(String[] washMimeTypes) {
+        for (String washMimeType : washMimeTypes) {
+            if(!washMimeType.startsWith("video") && !washMimeType.startsWith("image")){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 
 }

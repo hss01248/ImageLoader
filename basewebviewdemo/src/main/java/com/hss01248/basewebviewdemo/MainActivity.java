@@ -27,8 +27,11 @@ public class MainActivity extends AppCompatActivity {
         BaseWebviewActivity.start(this,"https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/Input/file");
     }
 
-    public void jsInputFile2(View view) {
-        BaseWebviewActivity.start(this,"https://test-ec-mall.xxx.com/jstest/input_test.html");
+    public void jstest(View view) {
+        BaseWebviewActivity.start(this,"https://test-ec-mall.xxxx.com/jstest/input_test.html");
+    }
+    public void jsInputFile3(View view) {
+        BaseWebviewActivity.start(this,"https://web.dev/read-files/");
     }
 
     public void jsPop(View view) {
@@ -37,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void playVideo(View view) {
         BaseWebviewActivity.start(this,"https://www.runoob.com/tags/tag-video.html");
+    }
+    public void getUserMedia(View view) {
+        //https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/getUserMedia
+        BaseWebviewActivity.start(this,"https://webrtc.github.io/samples/src/content/getusermedia/gum/");
     }
 
     public void windowHistory(View view) {
@@ -49,5 +56,14 @@ public class MainActivity extends AppCompatActivity {
     public void windowOpen(View view) {
         //BaseWebviewActivity.start(this,"https://www.w3schools.com/jsref/met_win_close.asp");
         BaseWebviewActivity.start(this,"https://test-ec-mall.xxxx.com/jstest/index.html");
+    }
+
+    public void recordAudio(View view) {
+        //https://juejin.cn/post/6844903621599952909
+        BaseWebviewActivity.start(this,"https://xiangyuecn.github.io/Recorder/");
+    }
+
+    public void jsInputFileCapture(View view) {
+        BaseWebviewActivity.start(this,"https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/capture");
     }
 }
