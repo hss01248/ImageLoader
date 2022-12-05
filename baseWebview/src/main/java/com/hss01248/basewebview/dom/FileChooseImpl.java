@@ -48,7 +48,7 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
     /**
      * <input type="file" id="file1" accept="image/*,.pdf" capture="camera" @change="changePic" multiple="true"/>
      * @param webView
-     * @param filePathCallback
+     * @param filePathCallback  error时必须有回调,否则无法再次点击
      * @param fileChooserParams
      * @return
      */
@@ -78,6 +78,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                     }
                     filePathCallback.onReceiveValue(uris1);
                 }
+                @Override
+                public void onError(String code, String msg, @Nullable Throwable throwable) {
+                    MyCommonCallback.super.onError(code, msg, throwable);
+                    filePathCallback.onReceiveValue(null);
+                }
             });
             return true;
         }
@@ -90,6 +95,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                         Uri[] uris1 = {Uri.fromFile(new File(s))};
                         filePathCallback.onReceiveValue(uris1);
                     }
+                    @Override
+                    public void onError(String code, String msg, @Nullable Throwable throwable) {
+                        MyCommonCallback.super.onError(code, msg, throwable);
+                        filePathCallback.onReceiveValue(null);
+                    }
                 });
             }else {
                 MediaPickOrCaptureUtil.pickImageOrTakePhoto(false,new MyCommonCallback<Uri>() {
@@ -97,6 +107,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                     public void onSuccess(Uri uri) {
                         Uri[] uris1 = {uri};
                         filePathCallback.onReceiveValue(uris1);
+                    }
+                    @Override
+                    public void onError(String code, String msg, @Nullable Throwable throwable) {
+                        MyCommonCallback.super.onError(code, msg, throwable);
+                        filePathCallback.onReceiveValue(null);
                     }
                 });
             }
@@ -111,6 +126,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                         Uri[] uris1 = {Uri.fromFile(new File(s))};
                         filePathCallback.onReceiveValue(uris1);
                     }
+                    @Override
+                    public void onError(String code, String msg, @Nullable Throwable throwable) {
+                        MyCommonCallback.super.onError(code, msg, throwable);
+                        filePathCallback.onReceiveValue(null);
+                    }
                 });
             }else {
                 MediaPickOrCaptureUtil.pickOrRecordVideo(false,30,new MyCommonCallback<Uri>() {
@@ -118,6 +138,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                     public void onSuccess(Uri uri) {
                         Uri[] uris1 = {uri};
                         filePathCallback.onReceiveValue(uris1);
+                    }
+                    @Override
+                    public void onError(String code, String msg, @Nullable Throwable throwable) {
+                        MyCommonCallback.super.onError(code, msg, throwable);
+                        filePathCallback.onReceiveValue(null);
                     }
                 });
             }
@@ -140,7 +165,8 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
 
                                                 @Override
                                                 public void onError(String code, String msg, @Nullable Throwable throwable) {
-                                                   // callback.onError(code, msg, throwable);
+                                                    MyCommonCallback.super.onError(code, msg, throwable);
+                                                    filePathCallback.onReceiveValue(null);
                                                 }
                                             });
                                         }else if(position ==0){
@@ -149,6 +175,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                                                 public void onSuccess(String s) {
                                                     Uri[] uris1 = {Uri.fromFile(new File(s))};
                                                     filePathCallback.onReceiveValue(uris1);
+                                                }
+                                                @Override
+                                                public void onError(String code, String msg, @Nullable Throwable throwable) {
+                                                    MyCommonCallback.super.onError(code, msg, throwable);
+                                                    filePathCallback.onReceiveValue(null);
                                                 }
                                             });
                                         }
@@ -161,6 +192,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                     public void onSuccess(Uri uri) {
                         Uri[] uris1 = {uri};
                         filePathCallback.onReceiveValue(uris1);
+                    }
+                    @Override
+                    public void onError(String code, String msg, @Nullable Throwable throwable) {
+                        MyCommonCallback.super.onError(code, msg, throwable);
+                        filePathCallback.onReceiveValue(null);
                     }
                 });
             }
@@ -175,6 +211,12 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                         Uri[] uris1 = {uri};
                         filePathCallback.onReceiveValue(uris1);
                     }
+
+                    @Override
+                    public void onError(String code, String msg, @Nullable Throwable throwable) {
+                        MyCommonCallback.super.onError(code, msg, throwable);
+                        filePathCallback.onReceiveValue(null);
+                    }
                 });
             }else {
                 MediaPickOrCaptureUtil.pickOrRecordAudio(new MyCommonCallback<Uri>() {
@@ -182,6 +224,11 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
                     public void onSuccess(Uri uri) {
                         Uri[] uris1 = {uri};
                         filePathCallback.onReceiveValue(uris1);
+                    }
+                    @Override
+                    public void onError(String code, String msg, @Nullable Throwable throwable) {
+                        MyCommonCallback.super.onError(code, msg, throwable);
+                        filePathCallback.onReceiveValue(null);
                     }
                 });
             }
@@ -195,6 +242,12 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
             public void onSuccess(Uri uri) {
                 Uri[] uris1 = {uri};
                 filePathCallback.onReceiveValue(uris1);
+            }
+
+            @Override
+            public void onError(String code, String msg, @Nullable Throwable throwable) {
+                MyCommonCallback.super.onError(code, msg, throwable);
+                filePathCallback.onReceiveValue(null);
             }
         },washMimeTypes);
 
