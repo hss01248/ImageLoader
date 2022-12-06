@@ -15,9 +15,11 @@ import androidx.annotation.RequiresApi;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss.utils.enhance.api.MyCommonCallback;
 
+import com.hss01248.basewebview.R;
 import com.hss01248.media.pick.CaptureAudioUtil;
 import com.hss01248.media.pick.CaptureImageUtil;
 import com.hss01248.media.pick.CaptureVideoUtil;
@@ -151,7 +153,9 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
         if(isOnlyVideoOrImage(washMimeTypes)){
             if(fileChooserParams.isCaptureEnabled()){
                 new XPopup.Builder(ActivityUtils.getTopActivity())
-                        .asBottomList("请选择", new String[]{"拍照", "录制视频"},
+                        .asBottomList(StringUtils.getString(R.string.meida_pick_please_choose),
+                                new String[]{StringUtils.getString(R.string.meida_pick_take_photo),
+                                        StringUtils.getString(R.string.meida_pick_record_video)},
                                 new OnSelectListener() {
                                     @Override
                                     public void onSelect(int position, String text) {
