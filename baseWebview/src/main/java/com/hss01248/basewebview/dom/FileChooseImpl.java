@@ -1,35 +1,27 @@
 package com.hss01248.basewebview.dom;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.text.TextUtils;
-import android.webkit.MimeTypeMap;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.Utils;
 import com.hss.utils.enhance.api.MyCommonCallback;
-
 import com.hss01248.basewebview.R;
+import com.hss01248.iwidget.SingleChooseDialogImpl;
+import com.hss01248.iwidget.SingleChooseDialogListener;
 import com.hss01248.media.pick.CaptureAudioUtil;
 import com.hss01248.media.pick.CaptureImageUtil;
 import com.hss01248.media.pick.CaptureVideoUtil;
 import com.hss01248.media.pick.MediaPickOrCaptureUtil;
 import com.hss01248.media.pick.MediaPickUtil;
 import com.hss01248.media.pick.MimeTypeUtil;
-
 import com.just.agentweb.MiddlewareWebChromeBase;
-import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.io.File;
 import java.util.List;
@@ -152,44 +144,50 @@ public class FileChooseImpl extends MiddlewareWebChromeBase {
         }
         if(isOnlyVideoOrImage(washMimeTypes)){
             if(fileChooserParams.isCaptureEnabled()){
-                new XPopup.Builder(ActivityUtils.getTopActivity())
-                        .asBottomList(StringUtils.getString(R.string.meida_pick_please_choose),
-                                new String[]{StringUtils.getString(R.string.meida_pick_take_photo),
-                                        StringUtils.getString(R.string.meida_pick_record_video)},
-                                new OnSelectListener() {
-                                    @Override
-                                    public void onSelect(int position, String text) {
-                                        if(position ==1){
-                                            CaptureVideoUtil.startVideoCapture(false,30,1024*1024*1024,new MyCommonCallback<String>() {
-                                                @Override
-                                                public void onSuccess(String s) {
-                                                    Uri[] uris1 = {Uri.fromFile(new File(s))};
-                                                    filePathCallback.onReceiveValue(uris1);
-                                                }
-
-                                                @Override
-                                                public void onError(String code, String msg, @Nullable Throwable throwable) {
-                                                    MyCommonCallback.super.onError(code, msg, throwable);
-                                                    filePathCallback.onReceiveValue(null);
-                                                }
-                                            });
-                                        }else if(position ==0){
-                                            CaptureImageUtil.takePicture(false,new MyCommonCallback<String>() {
-                                                @Override
-                                                public void onSuccess(String s) {
-                                                    Uri[] uris1 = {Uri.fromFile(new File(s))};
-                                                    filePathCallback.onReceiveValue(uris1);
-                                                }
-                                                @Override
-                                                public void onError(String code, String msg, @Nullable Throwable throwable) {
-                                                    MyCommonCallback.super.onError(code, msg, throwable);
-                                                    filePathCallback.onReceiveValue(null);
-                                                }
-                                            });
+                new SingleChooseDialogImpl().showAtBottom(
+                        StringUtils.getString(R.string.meida_pick_please_choose),
+                        new String[]{StringUtils.getString(R.string.meida_pick_take_photo),
+                                StringUtils.getString(R.string.meida_pick_record_video)},
+                        new SingleChooseDialogListener() {
+                            @Override
+                            public void onItemClicked(int position, CharSequence text) {
+                                if(position ==1){
+                                    CaptureVideoUtil.startVideoCapture(false,30,1024*1024*1024,new MyCommonCallback<String>() {
+                                        @Override
+                                        public void onSuccess(String s) {
+                                            Uri[] uris1 = {Uri.fromFile(new File(s))};
+                                            filePathCallback.onReceiveValue(uris1);
                                         }
-                                    }
-                                })
-                        .show();
+
+                                        @Override
+                                        public void onError(String code, String msg, @Nullable Throwable throwable) {
+                                            MyCommonCallback.super.onError(code, msg, throwable);
+                                            filePathCallback.onReceiveValue(null);
+                                        }
+                                    });
+                                }else if(position ==0){
+                                    CaptureImageUtil.takePicture(false,new MyCommonCallback<String>() {
+                                        @Override
+                                        public void onSuccess(String s) {
+                                            Uri[] uris1 = {Uri.fromFile(new File(s))};
+                                            filePathCallback.onReceiveValue(uris1);
+                                        }
+                                        @Override
+                                        public void onError(String code, String msg, @Nullable Throwable throwable) {
+                                            MyCommonCallback.super.onError(code, msg, throwable);
+                                            filePathCallback.onReceiveValue(null);
+                                        }
+                                    });
+                                }
+                            }
+                            @Override
+                            public void onCancel(boolean fromBackPressed, boolean fromOutsideClick, boolean fromCancelButton) {
+                                SingleChooseDialogListener.super.onCancel(fromBackPressed, fromOutsideClick, fromCancelButton);
+                               // callback.onError(StringUtils.getString(R.string.meida_pick_canceled));
+                                filePathCallback.onReceiveValue(null);
+                            }
+                        }
+                );
             }else {
                 MediaPickOrCaptureUtil.pickOrCaptureImageOrVideo(true,30, new MyCommonCallback<Uri>() {
                     @Override
