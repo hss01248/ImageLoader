@@ -69,6 +69,8 @@ public class WebConfigger {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView,true);
         }
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
         //mWebSettings.setTextZoom(100);
         //设置自适应屏幕，两者合用
         //mWebSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小

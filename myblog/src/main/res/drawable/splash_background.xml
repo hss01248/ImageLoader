@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+    <!--<item android:drawable="@color/splash_color_bg"/>-->
+    <!-- 启动页适配提供两种方案  
+    
+     方案一 : 使用.9图进行适配
+         
+     方案二 : 使用层叠图的方式适配 (如使用bitmap标签,再使用.9图会失效)
+     
+     这里选用了.9图的方式适配,如果选用方案二,需要UI切两张图,一张logo,一张图案,
+     底图也用上面的纯色背景,然后使用layer-list的层叠特性进行适配(最终效果和.9类似).
+     
+     两种方案都必须考虑冷启动的情形.
+         
+                                                    @author daixiaogang
+    -->
+
+    <item android:drawable="@drawable/page_splash" android:gravity="fill"/>
+
+</layer-list>
