@@ -313,6 +313,13 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     }
                 })
                 .setWebViewClient(new WebViewClient(){
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                        //return new OkhttpProxyForWebview().shouldInterceptRequest(view,request);
+                        return  super.shouldInterceptRequest(view, request);
+                    }
+
                     @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
                         super.onPageStarted(view, url, favicon);
