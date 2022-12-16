@@ -50,5 +50,7 @@ dependencies {
     api 'com.blankj:utilcodex:1.30.6'
     api "com.github.hss01248.MyPermission:location:2.2.4"
     api 'com.github.hss01248.utilcodeEnhance:media:1.0.9'
+    //implementation project(path: ':writeintercept')
+    //':writeintercept'
 
 }

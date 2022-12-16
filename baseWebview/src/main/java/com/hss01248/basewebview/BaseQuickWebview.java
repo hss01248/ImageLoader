@@ -58,6 +58,11 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     AgentWeb mAgentWeb;
     long delayAfterOnFinish;
     AgentWeb.PreAgentWeb preAgentWeb;
+
+    public void setShowRightMenus(IShowRightMenus showRightMenus) {
+        this.showRightMenus = showRightMenus;
+    }
+
     IShowRightMenus showRightMenus;
 
     public WebView getWebView() {

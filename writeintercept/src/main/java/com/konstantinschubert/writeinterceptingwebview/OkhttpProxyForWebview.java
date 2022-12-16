@@ -1,4 +1,4 @@
-package com.hss01248.basewebview;
+package com.konstantinschubert.writeinterceptingwebview;
 
 import android.os.Build;
 import android.text.TextUtils;
@@ -46,6 +46,25 @@ public class OkhttpProxyForWebview {
         //body
         //https://github.com/KonstantinSchubert/request_data_webviewclient
         //webResourceRequest.
+        if(webResourceRequest instanceof WriteHandlingWebResourceRequest){
+            WriteHandlingWebResourceRequest request = (WriteHandlingWebResourceRequest) webResourceRequest;
+            String ajaxData = request.getAjaxData();
+            if(ajaxData == null){
+               // if()
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         if(client == null){
             client =  initDefaultClient();
         }

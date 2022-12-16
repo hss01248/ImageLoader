@@ -1,0 +1,26 @@
+<script language="JavaScript">
+
+    function generateRandom() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+
+
+    // This only works if `open` and `send` are called in a synchronous way
+    // That is, after calling `open`, there must be no other call to `open` or
+    // `send` from another place of the code until the matching `send` is called.
+    requestID = null;
+    XMLHttpRequest.prototype.reallyOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+        requestID = generateRandom()
+        var signed_url = url + "AJAXINTERCEPT" + requestID;
+        this.reallyOpen(method, signed_url , async, user, password);
+    };
+    XMLHttpRequest.prototype.reallySend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function(body) {
+        interception.customAjax(requestID, body);
+        this.reallySend(body);
+    };
+
+</script>

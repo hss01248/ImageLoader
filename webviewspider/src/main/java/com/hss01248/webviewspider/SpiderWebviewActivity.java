@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.ValueCallback;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -21,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hss01248.basewebview.BaseQuickWebview;
 import com.hss01248.basewebview.ISetWebviewHolder;
+import com.hss01248.basewebview.IShowRightMenus;
+import com.hss01248.basewebview.WebviewInit;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.spider.BaiduImageParser;
 import com.hss01248.webviewspider.spider.GoogleImageParser;
@@ -106,12 +109,21 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
         }
         quickWebview.loadUrl(url);
 
-        button.setOnClickListener(new View.OnClickListener() {
+       /* button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showMenu();
             }
+        });*/
+
+        quickWebview.setShowRightMenus(new IShowRightMenus() {
+            @Override
+            public void showMenus(WebView view, BaseQuickWebview quickWebview) {
+                showMenu();
+            }
         });
+
+
 
     }
 
