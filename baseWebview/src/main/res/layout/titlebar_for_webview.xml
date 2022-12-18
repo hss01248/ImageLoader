@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
     <RelativeLayout
 
-        android:layout_width="match_parent" android:layout_height="56dp">
+        android:layout_width="match_parent" android:layout_height="45dp">
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="40dp"
