@@ -197,9 +197,9 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_bigpic: {
-                /*Intent intent = new Intent(this,BigImageActy.class);
-                startActivity(intent);*/
-                FrescoFaceCropActivity.launch(this);
+                Intent intent = new Intent(this,BigImageActy.class);
+                startActivity(intent);
+                //FrescoFaceCropActivity.launch(this);
             }
 
             break;

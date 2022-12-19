@@ -25,30 +25,30 @@
 package com.hss01248.glidev4.big;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.github.piasy.biv.event.CacheHitEvent;
 import com.github.piasy.biv.event.ErrorEvent;
 import com.github.piasy.biv.loader.BigLoader;
 import com.github.piasy.biv.view.BigImageView;
+import com.google.gson.Gson;
 import com.hss01248.glidev4.R;
-
+import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.media.metadata.MetaDataUtil;
+import com.hss01248.media.metadata.MetaInfo;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import okhttp3.OkHttpClient;
 
@@ -88,14 +88,19 @@ public final class GlideBigLoader implements BigLoader {
                             .load(new ProgressableGlideUrl(finalUrl))
                             .submit().get();
                     if (resource.exists() && resource.isFile() && resource.length() > 100) {
-                        Log.i("glide onResourceReady", "onResourceReady  --" + resource.getAbsolutePath());
+                        LogUtils.i("glide onResourceReady", "onResourceReady  --" + resource.getAbsolutePath());
                         EventBus.getDefault().post(new CacheHitEvent(resource, finalUrl));
+                        if(GlobalConfig.debug){
+                            MetaInfo metaData2 = MetaDataUtil.getMetaData2(Uri.fromFile(resource));
+                            LogUtils.json(new Gson().newBuilder().setPrettyPrinting().create().toJson(metaData2));
+                        }
+
                     } else {
-                        Log.w(" glide onloadfailed", "onLoadFailed  --" + finalUrl);
+                        LogUtils.w(" glide onloadfailed", "onLoadFailed  --" + finalUrl);
                         EventBus.getDefault().post(new ErrorEvent(finalUrl));
                     }
                 } catch (Throwable throwable) {
-                    throwable.printStackTrace();
+                    LogUtils.w(finalUrl,throwable);
                     EventBus.getDefault().post(new ErrorEvent(finalUrl));
 
                 }

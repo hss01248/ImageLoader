@@ -61,6 +61,18 @@ com.github.hss01248.ImageLoader:imagelist:3.4.7
 
 
 
+
+
+# 优化缓存文件大小
+
+ 图片下载完成后,给它压缩成webp,然后替换调原缓存文件, 小尺寸的图也换成webp
+
+
+
+
+
+
+
 ### 更新日志
 
 https://github.com/hss01248/ImageLoader/blob/master/LOG.md

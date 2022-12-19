@@ -12,24 +12,20 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.renderscript.RSRuntimeException;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
-import com.blankj.utilcode.util.UriUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
@@ -44,22 +40,20 @@ import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
-
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.load.resource.gif.GifOptions;
 import com.bumptech.glide.request.RequestListener;
-
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
-
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.signature.EmptySignature;
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
 import com.github.piasy.biv.BigImageViewer;
-
+import com.google.gson.Gson;
+import com.hss01248.glidebase.drawable.AutoRotateDrawable;
 import com.hss01248.glidev4.big.GlideBigLoader;
 import com.hss01248.glidev4.big.ProgressableGlideUrl;
 import com.hss01248.image.ImageLoader;
@@ -68,24 +62,22 @@ import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.ShapeMode;
 import com.hss01248.image.config.SingleConfig;
-import com.hss01248.glidebase.drawable.AutoRotateDrawable;
 import com.hss01248.image.interfaces.FileGetter;
 import com.hss01248.image.interfaces.ILoader;
 import com.hss01248.image.utils.ThreadPoolFactory;
 import com.hss01248.imagedebugger.IImageSource;
 import com.hss01248.imagedebugger.IImgLocalPathGetter;
 import com.hss01248.imagedebugger.ImageViewDebugger;
+import com.hss01248.media.metadata.MetaDataUtil;
+import com.hss01248.media.metadata.MetaInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -123,6 +115,7 @@ public class Glide4Loader extends ILoader {
 
     @Override
     public void requestAsBitmap(final SingleConfig config) {
+        config.setBitmapListener(new CompressGlideCacheToWebPWrapListener(config));
         RequestManager requestManager = Glide.with(config.getContext());
         int width = config.getWidth();
         int height = config.getHeight();
@@ -158,7 +151,7 @@ public class Glide4Loader extends ILoader {
 
     @Override
     public void requestForNormalDiaplay(final SingleConfig config) {
-
+        config.setBitmapListener(new CompressGlideCacheToWebPWrapListener(config));
          RequestBuilder builder = getDrawableTypeRequest(config, null);
 
         if (builder == null) {
@@ -228,7 +221,6 @@ public class Glide4Loader extends ILoader {
                                                 gifDrawable2.getIntrinsicWidth(), gifDrawable2.getIntrinsicHeight());
                                     }
                                 } catch (Throwable e) {
-                                    e.printStackTrace();
                                     if (config.getErrorResId() > 0) {
                                         imageView.setScaleType(MyUtil.getScaleTypeForImageView(config.getErrorScaleType(), false));
                                         imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(config.getErrorResId()));
@@ -880,7 +872,29 @@ public class Glide4Loader extends ILoader {
                             .load(new ProgressableGlideUrl(url))
                             .submit().get();
                     if (resource.exists() && resource.isFile() && resource.length() > 50) {
-                        Log.i("glide onResourceReady", "onResourceReady  --" + resource.getAbsolutePath());
+                        Log.i("glide onResourceReady", "onResourceReady2  --" + resource.getAbsolutePath());
+                        if(GlobalConfig.debug){
+                            MetaInfo metaData2 = MetaDataUtil.getMetaData2(Uri.fromFile(resource));
+                            LogUtils.json(new Gson().newBuilder().setPrettyPrinting().create().toJson(metaData2));
+                          /*  LubanUtil.init(Utils.getApp(),true,null);
+                            //todo bug: jpg质量在75以下不转webp, webp重复压缩
+                            File file1 = Luban.with(Utils.getApp())
+                                    .ignoreBy(30)
+                                    .targetQuality(75)
+                                    .targetFormat(Bitmap.CompressFormat.WEBP)
+                                    .keepExif(true)
+                                    .noResize(true)
+                                    .setTargetDir(resource.getParent())
+                                    .get(resource.getAbsolutePath());
+                            FileUtils.copy(file1, resource, new FileUtils.OnReplaceListener() {
+                                @Override
+                                public boolean onReplace(File srcFile, File destFile) {
+                                    return true;
+                                }
+                            });
+                            LogUtils.json(new Gson().newBuilder().setPrettyPrinting().create().toJson(metaData2));*/
+                        }
+
                         final int[] wh = MyUtil.getImageWidthHeight(resource.getAbsolutePath());
                         MyUtil.runOnUIThread(new Runnable() {
                             @Override

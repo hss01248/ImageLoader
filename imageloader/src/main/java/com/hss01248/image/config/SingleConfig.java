@@ -1,18 +1,17 @@
 package com.hss01248.image.config;
 
 import android.app.Activity;
-
-import com.github.piasy.biv.view.BigImageView;
-import com.hss01248.image.MyUtil;
-import com.hss01248.image.R;
-import com.hss01248.image.interfaces.ImageListener;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.github.piasy.biv.view.BigImageView;
+import com.hss01248.image.MyUtil;
+import com.hss01248.image.R;
+import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.image.interfaces.LoadInterceptor;
 import com.hss01248.image.utils.ContextUtil;
 
@@ -283,6 +282,7 @@ public class SingleConfig {
                     GlobalConfig.getLoader().debug(this);
                 }
                 if (interceptor != null && interceptor.intercept(this)) {
+                    LogUtils.w("intercept by interceptor: "+interceptor.toString()+", "+ getSourceString());
                     return;
                 }
 
@@ -293,6 +293,8 @@ public class SingleConfig {
                 } else {
                     GlobalConfig.getLoader().requestForNormalDiaplay(this);
                 }
+            }else {
+                LogUtils.w("ConfigChecker.check(this) failed: "+ getSourceString());
             }
         } catch (Throwable e) {
             if (GlobalConfig.getExceptionHandler() != null) {
