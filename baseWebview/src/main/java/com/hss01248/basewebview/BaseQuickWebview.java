@@ -340,6 +340,11 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                         }
                     }
 
+                    /**
+                     * onReceivedHttpError+main frame后,也会走到onPageFinished
+                     * @param view
+                     * @param url
+                     */
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
