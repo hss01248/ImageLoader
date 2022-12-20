@@ -2,6 +2,8 @@ package com.hss01248.basewebview.menus;
 
 import android.webkit.WebView;
 
+import com.blankj.utilcode.util.ActivityUtils;
+import com.hss.utils.enhance.intent.ShareUtils;
 import com.hss01248.basewebview.BaseQuickWebview;
 import com.hss01248.basewebview.IShowRightMenus;
 import com.hss01248.iwidget.singlechoose.SingleChooseDialogImpl;
@@ -20,7 +22,7 @@ public class DefaultMenus implements IShowRightMenus {
     @Override
     public void showMenus(WebView view, BaseQuickWebview quickWebview) {
 
-        String[] items = {"扫码"};
+        String[] items = {"扫码","收藏当前网页","查看收藏","分享"};
         new SingleChooseDialogImpl()
                 .showInPopMenu(quickWebview.getTitleBar().ivMenu, -1,
                         items,
@@ -34,6 +36,10 @@ public class DefaultMenus implements IShowRightMenus {
                                             quickWebview.loadUrl(s);
                                         }
                                     });
+                                }else if(position == 3){
+                                    ShareUtils.shareMsg(ActivityUtils.getTopActivity(),"分享到",
+                                            "网页分享: "+ quickWebview.getCurrentTitle(),
+                                            quickWebview.getCurrentUrl(), null);
                                 }
                             }
                         });
