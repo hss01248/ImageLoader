@@ -50,6 +50,8 @@ dependencies {
     api 'com.blankj:utilcodex:1.30.6'
     api "com.github.hss01248.MyPermission:location:2.2.4"
     api 'com.github.hss01248.utilcodeEnhance:media:1.0.9'
+     api 'com.github.hss01248.utilcodeEnhance:qr-scan:1.1.3'
+    api 'com.github.hss01248.utilcodeEnhance:iwidget:1.1.3'
     //implementation project(path: ':writeintercept')
     //':writeintercept'
 

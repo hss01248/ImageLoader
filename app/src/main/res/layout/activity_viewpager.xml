@@ -18,7 +18,7 @@
         android:id="@+id/index"
         android:text="999"
 
-        android:textColor="@color/bg_white"
+        android:textColor="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

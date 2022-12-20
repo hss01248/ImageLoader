@@ -35,6 +35,7 @@ import com.hss01248.basewebview.databinding.TitlebarForWebviewBinding;
 import com.hss01248.basewebview.dom.FileChooseImpl;
 import com.hss01248.basewebview.dom.JsCreateNewWinImpl;
 import com.hss01248.basewebview.dom.JsPermissionImpl;
+import com.hss01248.basewebview.menus.DefaultMenus;
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.PageStateManager;
 import com.just.agentweb.AgentWeb;
@@ -63,7 +64,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         this.showRightMenus = showRightMenus;
     }
 
-    IShowRightMenus showRightMenus;
+    IShowRightMenus showRightMenus = new DefaultMenus();
 
     public WebView getWebView() {
         return webView;
@@ -355,6 +356,11 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                                 });
                             }
                         },delayAfterOnFinish);
+                        if("about:blank".equals(url)){
+                            if(stateManager != null){
+                                stateManager.showError("not url : \n"+originalUrl );
+                            }
+                        }
 
                     }
                     @Override
@@ -443,7 +449,9 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 
 
 
+    String originalUrl = "";
     private void go(String url){
+        originalUrl = url;
         info.url = url;
         WebConfigger.syncCookie(webView,url);
         if(mAgentWeb == null){

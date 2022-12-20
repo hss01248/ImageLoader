@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         ImageLoader.with(this)
                 .widthHeight(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
-                .rectRoundCorner(5, R.color.bg_white);
+                .rectRoundCorner(5, R.color.white);
         //.into(ivFile);
 
         ImageLoader.with(this)

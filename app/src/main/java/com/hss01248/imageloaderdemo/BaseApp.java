@@ -21,7 +21,6 @@ import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.basewebview.IDownloader;
 import com.hss01248.basewebview.WebConfigger;
 import com.hss01248.basewebview.WebviewInit;
-import com.hss01248.dialog.MyActyManager;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dokit.IDokitConfig;
 import com.hss01248.dokit.MyDokit;
@@ -232,7 +231,7 @@ public class BaseApp extends MultiDexApplication {
 
             @Override
             public void onActivityResumed(Activity activity) {
-                MyActyManager.getInstance().setCurrentActivity(activity);
+
 
             }
 
