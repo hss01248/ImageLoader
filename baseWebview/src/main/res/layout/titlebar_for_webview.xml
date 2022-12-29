@@ -4,52 +4,72 @@
     android:layout_width="match_parent"
     android:background="#ffffff"
     android:elevation="3dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:layout_height="wrap_content">
     <RelativeLayout
+        android:id="@+id/rl_only_view"
+        android:layout_width="0dp"
+        android:visibility="visible"
+        android:layout_weight="1"
+        android:layout_height="45dp">
 
-        android:layout_width="match_parent" android:layout_height="45dp">
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="40dp"
-            android:src="@drawable/comm_title_back"
-            android:scaleType="centerInside"
+            android:layout_width="25dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="25dp"
             android:layout_centerVertical="true"
-            android:layout_height="40dp"/>
+            android:scaleType="centerInside"
+            android:src="@drawable/comm_title_back" />
 
         <ImageView
             android:id="@+id/iv_close"
             android:layout_width="40dp"
+            android:visibility="gone"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_back"
             android:src="@drawable/icon_close"
             android:scaleType="centerInside"
             android:layout_height="40dp"/>
-        <TextView
+
+        <EditText
             android:id="@+id/tv_title"
-            android:textColor="#333333"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginLeft="90dp"
-            android:layout_marginRight="50dp"
-            android:gravity="left"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/iv_close"
+            android:background="@drawable/bg_button_normal_trans"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/iv_right_refresh"
+            android:ellipsize="end"
+            android:focusable="true"
+            android:imeOptions="actionSearch"
+            android:focusableInTouchMode="true"
+            android:gravity="left"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
         <ImageView
-            android:id="@+id/iv_menu"
-            android:layout_width="40dp"
-            android:src="@drawable/icon_menu_webview"
-            android:scaleType="fitCenter"
+            android:id="@+id/iv_right_refresh"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_height="40dp"/>
-
-
+            android:layout_marginRight="5dp"
+            android:src="@drawable/icon_refresh_webpage" />
 
     </RelativeLayout>
+    <ImageView
+        android:id="@+id/iv_menu"
+        android:layout_width="40dp"
+        android:src="@drawable/icon_menu_webview"
+        android:scaleType="fitCenter"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_height="40dp"/>
 </LinearLayout>

@@ -1,16 +1,14 @@
 package com.hss01248.bigimgdemo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-import com.hss01248.bigimageviewpager.MyLargeImageView;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.hss01248.imagelist.album.ImageListView;
-import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewAlbum(View view) {
         ImageListView view1 = new ImageListView(MainActivity.this);
-        ImageMediaCenterUtil.showViewAsDialog(view1);
-        view1.showAllAlbums();
+       // ImageMediaCenterUtil.showViewAsDialog(view1);
+       // view1.showAllAlbums();
 
     }
 }

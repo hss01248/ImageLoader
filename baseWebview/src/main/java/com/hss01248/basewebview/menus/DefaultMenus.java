@@ -22,7 +22,7 @@ public class DefaultMenus implements IShowRightMenus {
     @Override
     public void showMenus(WebView view, BaseQuickWebview quickWebview) {
 
-        String[] items = {"扫码","收藏当前网页","查看收藏","分享"};
+        String[] items = {"扫码","收藏当前网页","查看收藏","分享","切换为全功能浏览器模式"};
         new SingleChooseDialogImpl()
                 .showInPopMenu(quickWebview.getTitleBar().ivMenu, -1,
                         items,
@@ -36,7 +36,10 @@ public class DefaultMenus implements IShowRightMenus {
                                             quickWebview.loadUrl(s);
                                         }
                                     });
-                                }else if(position == 3){
+                                }else if(position ==4){
+                                    quickWebview.getTitlebarHolder().setFullWebBrowserMode(true);
+                                }
+                                else if(position == 3){
                                     ShareUtils.shareMsg(ActivityUtils.getTopActivity(),"分享到",
                                             "网页分享: "+ quickWebview.getCurrentTitle(),
                                             quickWebview.getCurrentUrl(), null);

@@ -19,6 +19,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -27,7 +28,6 @@ import androidx.annotation.RequiresApi;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -129,50 +129,25 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     }
 
     TitlebarForWebviewBinding titleBar;
-    private void initTitlebar(Context context) {
 
-        /*<com.hjq.bar.TitleBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:barStyle="night"
-                app:leftTitle="返回"
-                app:rightTitle="设置"
-                app:title="夜间模式的标题栏" />*/
+    public WebViewTitlebarHolder getTitlebarHolder() {
+        return titlebarHolder;
+    }
+
+    WebViewTitlebarHolder titlebarHolder;
+    private void initTitlebar(Context context) {
 
         Activity activity = WebDebugger.getActivityFromContext(context);
         BarUtils.setStatusBarColor(activity, Color.WHITE);
         BarUtils.setStatusBarLightMode(activity,true);
-        titleBar = TitlebarForWebviewBinding.inflate(activity.getLayoutInflater(),this,false);
 
+        titlebarHolder = new WebViewTitlebarHolder(this);
+        titleBar = titlebarHolder.binding;
         titleBar.getRoot().setPadding(0,BarUtils.getStatusBarHeight(),0,0);
+
         addView(titleBar.getRoot());
 
-       /* LinearLayout.LayoutParams layoutParams = (LayoutParams) titleBar.getRoot().getLayoutParams();
-        layoutParams.topMargin = BarUtils.getStatusBarHeight();
-        titleBar.getRoot().setLayoutParams(layoutParams);*/
-
-        titleBar.ivBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean b = onBackPressed();
-                if(!b){
-                    ActivityUtils.getTopActivity().finish();
-                }
-            }
-        });
-        titleBar.ivClose.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityUtils.getTopActivity().finish();
-            }
-        });
-        titleBar.ivMenu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMenu();
-            }
-        });
+        titlebarHolder.assignDataAndEventReal(this);
 
     }
 
@@ -182,8 +157,6 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
         }else {
             ToastUtils.showLong("show menu");
         }
-
-
     }
 
     public void getSource(ValueCallback<String> valueCallback){
@@ -405,9 +378,19 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     public void onReceivedTitle(WebView view, String title) {
                         super.onReceivedTitle(view, title);
                         titleBar.tvTitle.setText(title);
-                        titleBar.tvTitle.requestFocus();
+                       // titleBar.tvTitle.requestFocus();
                         currentTitle = title;
                         info.title = title;
+                    }
+
+                    @Override
+                    public void onReceivedIcon(WebView view, Bitmap icon) {
+                        super.onReceivedIcon(view, icon);
+                        if(titlebarHolder.isFullWebBrowserMode){
+                            titleBar.ivBack.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                            titleBar.ivBack.setImageBitmap(icon);
+                        }
+
                     }
 
                     @Override
