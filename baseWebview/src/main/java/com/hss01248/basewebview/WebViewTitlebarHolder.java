@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.hss.utils.enhance.viewholder.MyViewHolder;
 import com.hss01248.basewebview.databinding.TitlebarForWebviewBinding;
 import com.hss01248.toast.MyToast;
@@ -73,18 +74,43 @@ public class WebViewTitlebarHolder extends MyViewHolder<TitlebarForWebviewBindin
                     quickWebview.getWebView().reload();
                 }
             });
-      /*      binding.tvTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            binding.tvTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     showIconToClear(hasFocus);
+                    if(hasFocus){
+                        //showIconToClear(true);
+                        //内容切换为真实网址
+                        if(!TextUtils.isEmpty(quickWebview.getCurrentUrl())){
+                            binding.tvTitle.setText(quickWebview.getCurrentUrl());
+                             binding.tvTitle.setSelection(quickWebview.getCurrentUrl().length());
+                        }
+                    }else {
+                        if(!TextUtils.isEmpty(quickWebview.getCurrentTitle())){
+                            binding.tvTitle.setText(quickWebview.getCurrentTitle());
+                        }
+                    }
                 }
-            });*/
+            });
             binding.tvTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     showIconToClear(true);
+                    //内容切换为真实网址
+                    if(!TextUtils.isEmpty(quickWebview.getCurrentUrl())){
+                       // binding.tvTitle.setText(quickWebview.getCurrentUrl());
+                       // binding.tvTitle.setSelection(quickWebview.getCurrentUrl().length());
+                    }
                 }
             });
+
+            ThreadUtils.getMainHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.ivMenu.requestFocus();
+                }
+            },1000);
+
 
             binding.tvTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -94,17 +120,9 @@ public class WebViewTitlebarHolder extends MyViewHolder<TitlebarForWebviewBindin
                        if(TextUtils.isEmpty(str)){
                            return false;
                        }
-                       if(str.startsWith("http")){
-                           quickWebview.loadUrl(str);
-                           KeyboardUtils.hideSoftInput(binding.tvTitle);
-                           showIconToClear(false);
-                           return true;
-                       }
-                       //调用百度/谷歌搜索
-                        String url = "https://www.baidu.com/s?wd="+str;
-                       quickWebview.loadUrl(url);
-                        showIconToClear(false);
+                        quickWebview.loadUrl(str);
                         KeyboardUtils.hideSoftInput(binding.tvTitle);
+                        showIconToClear(false);
                         return true;
                     }
                     return false;

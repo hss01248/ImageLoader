@@ -258,7 +258,13 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
     }
 
     public void loadUrl(String url){
-        go(url);
+        if(url.startsWith("http")){
+            go(url);
+        }else {
+            //调用百度/谷歌搜索
+            String url2 = "https://www.baidu.com/s?wd="+url;
+            go(url2);
+        }
     }
 
 
