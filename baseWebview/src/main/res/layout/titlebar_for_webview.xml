@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#ffffff"
     android:elevation="3dp"
-    android:gravity="center_vertical"
+    android:paddingTop="24dp"
     android:orientation="horizontal"
     android:layout_height="wrap_content">
     <RelativeLayout
@@ -33,31 +33,58 @@
             android:scaleType="centerInside"
             android:layout_height="40dp"/>
 
-        <EditText
-            android:id="@+id/tv_title"
-            android:layout_toRightOf="@id/iv_close"
-            android:background="@drawable/bg_button_normal_trans"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_close"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_toLeftOf="@id/iv_right_refresh"
-            android:ellipsize="end"
-            android:focusable="true"
-            android:imeOptions="actionSearch"
-            android:focusableInTouchMode="true"
-            android:gravity="left"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
-            android:textColor="#333333"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
+
+            <com.marquee.dingrui.marqueeviewlib.MarqueeView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:marqueeview_repet_type="repet_continuous"
+                app:marqueeview_text_size="15"
+                app:marqueeview_text_speed="2" />
+         <!--   <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:textStyle="bold" />-->
+            <EditText
+                android:visibility="gone"
+                android:padding="3dp"
+                android:id="@+id/et_title"
+                android:background="@drawable/bg_button_normal_trans"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:focusable="true"
+                android:imeOptions="actionSearch"
+                android:focusableInTouchMode="true"
+                android:gravity="left"
+                android:singleLine="true"
+                android:textColor="#333333"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
 
         <ImageView
             android:id="@+id/iv_right_refresh"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
@@ -69,6 +96,7 @@
         android:layout_width="40dp"
         android:src="@drawable/icon_menu_webview"
         android:scaleType="fitCenter"
+        android:layout_gravity="center_vertical"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_height="40dp"/>

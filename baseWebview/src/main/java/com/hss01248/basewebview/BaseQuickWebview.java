@@ -383,8 +383,9 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     @Override
                     public void onReceivedTitle(WebView view, String title) {
                         super.onReceivedTitle(view, title);
-                        titleBar.tvTitle.setText(title);
-                       // titleBar.tvTitle.requestFocus();
+                        //titleBar.tvTitle.setText(title);
+                        titleBar.tvTitle.setContent(title);
+                        //titleBar.tvTitle.requestFocus();
                         currentTitle = title;
                         info.title = title;
                     }

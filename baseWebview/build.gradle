@@ -52,6 +52,7 @@ dependencies {
     api 'com.github.hss01248.utilcodeEnhance:media:1.0.9'
      api 'com.github.hss01248.utilcodeEnhance:qr-scan:1.1.3'
     api 'com.github.hss01248.utilcodeEnhance:iwidget:1.1.3'
+    api 'com.github.385841539:MarqueeView:1.0.0'
     //implementation project(path: ':writeintercept')
     //':writeintercept'
 
