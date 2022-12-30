@@ -42,14 +42,14 @@
             android:layout_toLeftOf="@id/iv_right_refresh"
             android:layout_height="wrap_content">
 
-            <com.marquee.dingrui.marqueeviewlib.MarqueeView
+      <!--      <com.marquee.dingrui.marqueeviewlib.MarqueeView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:marqueeview_repet_type="repet_continuous"
                 app:marqueeview_text_size="15"
-                app:marqueeview_text_speed="2" />
-         <!--   <TextView
+                app:marqueeview_text_speed="2" />-->
+            <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:singleLine="true"
                 android:textColor="#333333"
                 android:textSize="16sp"
-                android:textStyle="bold" />-->
+                android:textStyle="bold" />
             <EditText
                 android:visibility="gone"
                 android:padding="3dp"

@@ -174,7 +174,7 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
 /*
         Dialog dialog = new Dialog(context);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setContentView(quickWebview);
+        dialog.setTextView(quickWebview);
         dialog.show();
         WindowManager.LayoutParams attributes = dialog.getWindow().getAttributes();
         attributes.height = ScreenUtils.getAppScreenHeight()/2;
@@ -384,8 +384,8 @@ public class BaseQuickWebview extends LinearLayout implements DefaultLifecycleOb
                     public void onReceivedTitle(WebView view, String title) {
                         super.onReceivedTitle(view, title);
                         //titleBar.tvTitle.setText(title);
-                        titleBar.tvTitle.setContent(title);
-                        //titleBar.tvTitle.requestFocus();
+                        titleBar.tvTitle.setText(title);
+                        titleBar.tvTitle.requestFocus();
                         currentTitle = title;
                         info.title = title;
                     }

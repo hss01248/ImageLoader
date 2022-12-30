@@ -145,7 +145,7 @@ public class WebViewTitlebarHolder extends MyViewHolder<TitlebarForWebviewBindin
             }
         }else {
             if(!TextUtils.isEmpty(quickWebview.getCurrentTitle())){
-                binding.tvTitle.setContent(quickWebview.getCurrentTitle());
+                binding.tvTitle.setText(quickWebview.getCurrentTitle());
             }
         }
     }
