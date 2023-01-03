@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void jstest(View view) {
-        BaseWebviewActivity.start(this,"https://test-ec-mall.akulaku.com/jstest/input_test.html");
+        BaseWebviewActivity.start(this,"https://test-ec-mall.xxx.com/jstest/input_test.html");
     }
     public void jsInputFile3(View view) {
         BaseWebviewActivity.start(this,"https://web.dev/read-files/");
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void windowOpen(View view) {
         //BaseWebviewActivity.start(this,"https://www.w3schools.com/jsref/met_win_close.asp");
-        BaseWebviewActivity.start(this,"https://test-ec-mall.akulaku.com/jstest/index.html");
+        BaseWebviewActivity.start(this,"https://test-ec-mall.xxx.com/jstest/index.html");
     }
 
     public void recordAudio(View view) {
