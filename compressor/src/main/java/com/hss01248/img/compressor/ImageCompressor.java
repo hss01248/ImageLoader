@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.CloseUtils;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -26,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.Observer;
@@ -42,6 +44,8 @@ public class ImageCompressor {
 
     public static int targetJpgQuality = 85;
     public static boolean compressToAvif = false;
+    public static boolean compressToWebp = false;
+    public static int targetWebpQuality = 75;
 
     public static File compress(String filePath, boolean deleteOriginalIfAvifSuccess, boolean noAvifOver2k) {
         AvifEncoder.init(Utils.getApp());
@@ -283,10 +287,19 @@ public class ImageCompressor {
                             return true;
                         }
            w        });*/
-                    boolean copy = FileIOUtils.writeFileFromIS(file, new FileInputStream(file2));
+                    File targetFile = file;
+                    if(compressToWebp){
+                        targetFile = new File(file.getParentFile(),file.getName().substring(0,file.getName().lastIndexOf("."))+".webp");
+                    }
+                    boolean copy = FileIOUtils.writeFileFromIS(targetFile, new FileInputStream(file2));
                     if (copy) {
                         deleteFile(file2);
-                        return file;
+                        if(targetFile != file){
+                            //return targetFile;
+                            LogUtils.w("fileCopy成功,删除原文件: " + file.getAbsolutePath());
+                            //deleteFile(file);
+                        }
+                        return targetFile;
                     } else {
                         deleteFile(file2);
                         LogUtils.w("fileCopy也失败,则使用原文件: " + file2);
@@ -358,18 +371,7 @@ public class ImageCompressor {
             LogUtils.w(outFile.getAbsolutePath() + "  compress progress fail:", success, outFile.exists(), outFile.length());
             success = false;
         }
-
-        //回写exif信息
-        if (success) {
-            try {
-                ExifUtil.writeExif(ExifUtil.readExif(srcPath), outPath);
-            } catch (Throwable e) {
-                LogUtils.w(outPath + ",write exif failed:" + e.getMessage());
-                e.printStackTrace();
-            }
-            return true;
-        }
-        return false;
+        return success;
     }
 
 
@@ -392,15 +394,31 @@ public class ImageCompressor {
                 }
             }
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            boolean success = bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fileOutputStream);
+            boolean success = bitmap.compress(compressToWebp ? Bitmap.CompressFormat.WEBP: Bitmap.CompressFormat.JPEG,
+                    compressToWebp ? targetWebpQuality : quality,
+                    fileOutputStream);
             success = success && file.exists() && file.length() > 50;
             CloseUtils.closeIO(fileOutputStream);
 
             if (success) {
                 try {
                     if (exifMap != null && !exifMap.isEmpty()) {
-                        ExifUtil.writeExif(exifMap, outPath);
+                    }else {
+                        exifMap = new HashMap<>();
                     }
+
+                    String text = exifMap.get(ExifInterface.TAG_SOFTWARE);
+                    String tail = "jpg-q-"+targetJpgQuality;
+                    if(compressToWebp){
+                        tail = "webp-q-"+targetWebpQuality;
+                    }
+                    if(TextUtils.isEmpty(text)){
+                        text = AppUtils.getAppName()+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                    }else {
+                        text = text + "/"+AppUtils.getAppName()+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                    }
+                    exifMap.put(ExifInterface.TAG_SOFTWARE,text);
+                    ExifUtil.writeExif(exifMap, outPath);
                     return true;
                 } catch (Throwable e) {
                     LogUtils.w(outPath + ",write exif failed:" + e.getMessage());

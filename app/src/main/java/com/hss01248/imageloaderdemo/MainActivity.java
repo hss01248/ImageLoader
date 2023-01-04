@@ -294,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadFile(View view) {
+        ImageCompressor.compressToWebp = true;
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
             public void onSuccess(String path) {
