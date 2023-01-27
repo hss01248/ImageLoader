@@ -24,6 +24,7 @@ import com.hss01248.basewebview.BaseQuickWebview;
 import com.hss01248.basewebview.ISetWebviewHolder;
 import com.hss01248.basewebview.IShowRightMenus;
 import com.hss01248.basewebview.WebviewInit;
+import com.hss01248.iwidget.singlechoose.ISingleChooseItem;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.spider.BaiduImageParser;
 import com.hss01248.webviewspider.spider.GoogleImageParser;
@@ -108,46 +109,74 @@ public class SpiderWebviewActivity extends AppCompatActivity implements ISetWebv
             quickWebview.getWebView().getSettings().setUserAgentString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36");
         }
         quickWebview.loadUrl(url);
-
-       /* button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMenu();
-            }
-        });*/
-
-        quickWebview.setShowRightMenus(new IShowRightMenus() {
-            @Override
-            public void showMenus(WebView view, BaseQuickWebview quickWebview) {
-                showMenu();
-            }
-        });
-
-
-
+        addMenu();
     }
 
-    private void showMenu() {
-        List<String> menus = new ArrayList<>();
-        menus.add("显示html源码");
-        menus.add("展示当前页面所有图片");
-        menus.add("当前为分页list,爬取list内所有页面的图片并直接下载");
-        menus.add("显示图片文件夹");
-        PopList.showPop(this, -1, button, menus, new PopList.OnItemClickListener() {
-            @Override
-            public void onClick(int position, String str) {
-                if(position == 0){
-                    showSource();
-                }else if(position == 1){
-                    parseUrlsAndShow();
-                }else if(position == 2){
-                    parseListUrlsAndShow();
-                }else if(position == 3){
-                    if(iShowUrls != null){
-                        iShowUrls.showFolder(SpiderWebviewActivity.this, new File(Environment.getExternalStorageDirectory(),"0spider").getAbsolutePath());
-                    }
-                }
+    private void addMenu() {
 
+        quickWebview.addRightMenus(new IShowRightMenus() {
+            @Override
+            public List<ISingleChooseItem<BaseQuickWebview>> addMenus(BaseQuickWebview quickWebview) {
+                List<ISingleChooseItem<BaseQuickWebview>> menus = new ArrayList<>();
+                menus.add(new ISingleChooseItem<BaseQuickWebview>() {
+                    @Override
+                    public String text() {
+                        return "显示html源码";
+                    }
+
+                    @Override
+                    public void onItemClicked(int position, BaseQuickWebview bean) {
+                        showSource();
+                    }
+                });
+                menus.add(new ISingleChooseItem<BaseQuickWebview>() {
+                    @Override
+                    public String text() {
+                        return "显示html源码";
+                    }
+
+                    @Override
+                    public void onItemClicked(int position, BaseQuickWebview bean) {
+                        showSource();
+                    }
+                });
+                menus.add(new ISingleChooseItem<BaseQuickWebview>() {
+                    @Override
+                    public String text() {
+                        return "展示当前页面所有图片";
+                    }
+
+                    @Override
+                    public void onItemClicked(int position, BaseQuickWebview bean) {
+                        parseUrlsAndShow();
+                    }
+                });
+                menus.add(new ISingleChooseItem<BaseQuickWebview>() {
+                    @Override
+                    public String text() {
+                        return "当前为分页list,爬取list内所有页面的图片并直接下载";
+                    }
+
+                    @Override
+                    public void onItemClicked(int position, BaseQuickWebview bean) {
+                        parseListUrlsAndShow();
+                    }
+                });
+                menus.add(new ISingleChooseItem<BaseQuickWebview>() {
+                    @Override
+                    public String text() {
+                        return "显示图片文件夹";
+                    }
+
+                    @Override
+                    public void onItemClicked(int position, BaseQuickWebview bean) {
+                        if(iShowUrls != null){
+                            iShowUrls.showFolder(SpiderWebviewActivity.this, new File(Environment.getExternalStorageDirectory(),"0spider").getAbsolutePath());
+                        }
+                    }
+                });
+
+                return menus;
             }
         });
     }
