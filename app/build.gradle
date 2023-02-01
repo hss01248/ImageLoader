@@ -122,3 +122,6 @@ configurations.all {
 }
 
 
+configurations {
+    all*.exclude group: 'com.github.hss01248.ImageLoader'
+}

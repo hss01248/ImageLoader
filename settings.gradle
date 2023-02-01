@@ -18,4 +18,4 @@ include ':app', ':imageloader',  ':glidev4', ':glidebase', ':imagelist'
 //include ':basewebviewdemo'
 
 include ':myblog'
-include ':writeintercept'
+

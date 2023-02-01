@@ -38,3 +38,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     api 'com.github.hss01248.utilcodeEnhance:baseWebview:1.2.1'
 }
+
+configurations {
+    all*.exclude group: 'com.github.hss01248.ImageLoader'
+}

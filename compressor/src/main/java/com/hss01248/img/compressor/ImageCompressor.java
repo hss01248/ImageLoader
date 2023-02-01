@@ -16,7 +16,6 @@ import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
-import com.hss01248.avif.AvifEncoder;
 import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.FileTypeUtil;
@@ -48,7 +47,7 @@ public class ImageCompressor {
     public static int targetWebpQuality = 75;
 
     public static File compress(String filePath, boolean deleteOriginalIfAvifSuccess, boolean noAvifOver2k) {
-        AvifEncoder.init(Utils.getApp());
+        //AvifEncoder.init(Utils.getApp());
         File in = new File(filePath);
         //太大的图,使用jpg,不使用avif. 否则压缩,解析都太过耗时.
         if (!in.exists()) {
@@ -73,7 +72,7 @@ public class ImageCompressor {
                 return out;
             }
         }
-        File file = AvifEncoder.encodeOneFile(filePath);
+       /* File file = AvifEncoder.encodeOneFile(filePath);
 
         if (file.getAbsolutePath().equals(filePath)) {
             //没有压缩. 否则后缀名变了
@@ -85,7 +84,8 @@ public class ImageCompressor {
                 deleteFile(in);
             }
             return file;
-        }
+        }*/
+        return new File(filePath);
     }
 
     public static void deleteFile(File file) {
