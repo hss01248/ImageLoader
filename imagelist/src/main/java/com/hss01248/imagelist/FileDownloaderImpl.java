@@ -1,11 +1,15 @@
 package com.hss01248.imagelist;
 
+import androidx.annotation.Nullable;
+
 import com.blankj.utilcode.util.Utils;
 import com.hss.downloader.IDownload;
 import com.hss.downloader.IDownloadCallback;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloader;
+
+import java.util.Map;
 
 public class FileDownloaderImpl implements IDownload {
 
@@ -14,9 +18,15 @@ public class FileDownloaderImpl implements IDownload {
     }
 
     @Override
-    public void download(String url, String filePath, IDownloadCallback callback) {
-        FileDownloader.getImpl().create(url)
-                .setPath(filePath)
+    public void download(String url, @Nullable String filePath, @Nullable Map<String, String> headers, IDownloadCallback callback) {
+        BaseDownloadTask task = FileDownloader.getImpl().create(url)
+                .setPath(filePath);
+        if (headers != null && !headers.isEmpty()) {
+            for (String s : headers.keySet()) {
+                task.addHeader(s, headers.get(s));
+            }
+        }
+        task
                 .setListener(new FileDownloadListener() {
                     @Override
                     protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
@@ -25,12 +35,12 @@ public class FileDownloaderImpl implements IDownload {
 
                     @Override
                     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        callback.progress(url,soFarBytes,totalBytes);
+                        callback.progress(url, soFarBytes, totalBytes);
                     }
 
                     @Override
                     protected void completed(BaseDownloadTask task) {
-                       callback.onSuccess(url);
+                        callback.onSuccess(url);
 
                     }
 
@@ -41,7 +51,7 @@ public class FileDownloaderImpl implements IDownload {
 
                     @Override
                     protected void error(BaseDownloadTask task, Throwable e) {
-                        callback.onFail(url,e.getMessage(),e);
+                        callback.onFail(url, e.getMessage(), e);
                     }
 
                     @Override

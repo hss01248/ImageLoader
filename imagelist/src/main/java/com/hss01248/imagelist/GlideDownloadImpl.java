@@ -1,6 +1,7 @@
 package com.hss01248.imagelist;
 
-import com.blankj.utilcode.util.FileIOUtils;
+import androidx.annotation.NonNull;
+
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.load.engine.GlideException;
@@ -10,6 +11,7 @@ import com.hss01248.image.ImageLoader;
 import com.hss01248.image.interfaces.FileGetter;
 
 import java.io.File;
+import java.util.Map;
 
 import me.jessyan.progressmanager.ProgressListener;
 import me.jessyan.progressmanager.ProgressManager;
@@ -17,7 +19,7 @@ import me.jessyan.progressmanager.body.ProgressInfo;
 
 public class GlideDownloadImpl implements IDownload {
     @Override
-    public void download(String url, String filePath, IDownloadCallback callback) {
+    public void download(String url, @NonNull String filePath, @NonNull Map<String,String> headers, IDownloadCallback callback) {
         ImageLoader.getActualLoader().download(url, new FileGetter() {
             @Override
             public void onSuccess(File file, int width, int height) {

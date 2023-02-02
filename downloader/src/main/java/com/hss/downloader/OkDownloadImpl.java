@@ -14,6 +14,7 @@ import com.liulishuo.okdownload.core.listener.DownloadListener1;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 
 import java.io.File;
+import java.util.Map;
 
 public class OkDownloadImpl implements IDownload{
 
@@ -59,7 +60,7 @@ public class OkDownloadImpl implements IDownload{
     }
 
     @Override
-    public void download(String url, String filePath, IDownloadCallback callback) {
+    public void download(String url, @NonNull String filePath, @NonNull Map<String,String> headers, IDownloadCallback callback) {
         File file = new File(filePath);
         DownloadTask task = new DownloadTask.Builder(url, file.getParentFile().getAbsolutePath(),file.getName())
                 // the minimal interval millisecond for callback progress
@@ -67,6 +68,7 @@ public class OkDownloadImpl implements IDownload{
                 .setConnectionCount(1)
                 // do re-download even if the task has already been completed in the past.
                 .setPassIfAlreadyCompleted(true)
+                //.setHeaderMapFields(headers)
                 .build();
 
         task.enqueue(new DownloadListener1() {
