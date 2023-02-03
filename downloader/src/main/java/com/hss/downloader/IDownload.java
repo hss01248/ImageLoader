@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
-
+import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 
 import java.io.File;
@@ -21,6 +21,15 @@ public interface IDownload {
 
     void download(String url, @NonNull String filePath, @NonNull Map<String,String> headers, IDownloadCallback callback);
 
+    /**
+     * 解决问题:
+     * 文件名过长
+     * 同一个文件夹下文件数量过大: 大于1000
+     * @param url
+     * @param filePath
+     * @param headers
+     * @param callback
+     */
    default void prepareDownload(String url, @NonNull String filePath, @NonNull Map<String,String> headers, IDownloadCallback callback){
        DownloadInfo load = DownloadInfoUtil.getDao().load(url);
        if(load != null ){
