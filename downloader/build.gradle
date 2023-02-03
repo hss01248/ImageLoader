@@ -70,7 +70,7 @@ dependencies {
 
 apply plugin: 'org.greenrobot.greendao'
 greendao {
-    schemaVersion 4  //我们的数据库的版本号  当数据库升级的时候可以在这里改版本
+    schemaVersion 5  //我们的数据库的版本号  当数据库升级的时候可以在这里改版本
     daoPackage 'com.hss.downloader.download.db'  //自动生成的DaoMaster、DaoSession、Dao的包名  根据自己想放的位置改变即可
     targetGenDir 'src/main/java'  //自动生成的DaoMaster、DaoSession、Dao的路径
 }

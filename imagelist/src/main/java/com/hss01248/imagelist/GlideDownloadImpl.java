@@ -38,7 +38,7 @@ public class GlideDownloadImpl implements IDownload {
 
                     @Override
                     public void onSuccess(File result) {
-                        callback.onSuccess(url);
+                        callback.onSuccess(url,filePath);
                     }
 
                     @Override
@@ -62,13 +62,13 @@ public class GlideDownloadImpl implements IDownload {
                         e = exception.getRootCauses().get(0);
                     }
                 }
-                callback.onFail(url,e.getMessage(),e);
+                callback.onFail(url,filePath,e.getMessage(),e);
 
             }
 
             @Override
             public void onStart() {
-                callback.onStart(url);
+                callback.onStart(url,filePath);
             }
 
             @Override
@@ -80,7 +80,7 @@ public class GlideDownloadImpl implements IDownload {
             @Override
             public void onProgress(ProgressInfo progressInfo) {
                 try {
-                    callback.progress(url,progressInfo.getCurrentbytes(),progressInfo.getContentLength());
+                    callback.progress(url,filePath,progressInfo.getCurrentbytes(),progressInfo.getContentLength());
                     //tvProgress.setText(progressInfo.getPercent()+"% , speed: "+(progressInfo.getSpeed()/1024/8)+"KB/s");
                 }catch (Throwable throwable){
                     throwable.printStackTrace();

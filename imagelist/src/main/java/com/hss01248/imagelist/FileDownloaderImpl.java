@@ -30,17 +30,17 @@ public class FileDownloaderImpl implements IDownload {
                 .setListener(new FileDownloadListener() {
                     @Override
                     protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        callback.onStart(url);
+                        callback.onStart(url,filePath);
                     }
 
                     @Override
                     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        callback.progress(url, soFarBytes, totalBytes);
+                        callback.progress(url, filePath,soFarBytes, totalBytes);
                     }
 
                     @Override
                     protected void completed(BaseDownloadTask task) {
-                        callback.onSuccess(url);
+                        callback.onSuccess(url,filePath);
 
                     }
 
@@ -51,7 +51,7 @@ public class FileDownloaderImpl implements IDownload {
 
                     @Override
                     protected void error(BaseDownloadTask task, Throwable e) {
-                        callback.onFail(url, e.getMessage(), e);
+                        callback.onFail(url,filePath, e.getMessage(), e);
                     }
 
                     @Override

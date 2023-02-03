@@ -74,7 +74,7 @@ public class OkDownloadImpl implements IDownload{
         task.enqueue(new DownloadListener1() {
             @Override
             public void taskStart(@NonNull DownloadTask task, @NonNull Listener1Assist.Listener1Model model) {
-                callback.onStart(url);
+                callback.onStart(url,filePath);
             }
 
             @Override
@@ -89,20 +89,20 @@ public class OkDownloadImpl implements IDownload{
 
             @Override
             public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
-                callback.progress(url,currentOffset,totalLength);
+                callback.progress(url,filePath,currentOffset,totalLength);
             }
 
             @Override
             public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull Listener1Assist.Listener1Model model) {
                 if(cause.equals(EndCause.COMPLETED)){
-                    callback.onSuccess(url);
+                    callback.onSuccess(url,filePath);
                 }else {
                     String des = cause.name();
                     if(realCause != null){
                         realCause.printStackTrace();
                         des = des+","+cause.getClass().getSimpleName()+" "+realCause.getMessage();
                     }
-                  callback.onFail(url,des,realCause);
+                  callback.onFail(url,filePath,des,realCause);
                 }
             }
         });

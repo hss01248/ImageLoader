@@ -11,6 +11,8 @@ import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 
+import com.hss.downloader.download.DownloadInfoUtil;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,12 +21,41 @@ public interface IDownload {
 
     void download(String url, @NonNull String filePath, @NonNull Map<String,String> headers, IDownloadCallback callback);
 
+   default void prepareDownload(String url, @NonNull String filePath, @NonNull Map<String,String> headers, IDownloadCallback callback){
+       DownloadInfo load = DownloadInfoUtil.getDao().load(url);
+       if(load != null ){
+           load.updateTime = System.currentTimeMillis();
+           if(load.downloadSuccess()){
+               File file = new File(load.filePath);
+               if(file.exists() ){
+                   DownloadInfoUtil.getDao().update(load);
+                   callback.onSuccess(url,load.filePath);
+                   return;
+               }
+           }else {
+               DownloadInfoUtil.getDao().update(load);
+           }
+       }else {
+           load = new DownloadInfo();
+           load.createTime = System.currentTimeMillis();
+           load.updateTime = System.currentTimeMillis();
+           load.status = DownloadInfo.STATUS_ORIGINAL;
+           load.url = url;
+           load.filePath = filePath;
+           load.name = filePath.substring(filePath.lastIndexOf("/")+1);
+           load.dir = filePath.substring(0,filePath.lastIndexOf("/"));
+           DownloadInfoUtil.getDao().insert(load);
+       }
+       download(url, filePath, headers, callback);
+   }
+
     default void download(String url, @NonNull String filePath,  IDownloadCallback callback){
         download(url,filePath,new HashMap<>(),callback);
     }
 
     default void download(String url, @NonNull File dir,  IDownloadCallback callback){
       String  fileName = URLUtil.guessFileName(url,"","");
+        fileName = DownloadInfoUtil.getLeagalFileName(fileName);
         download(url,new File(dir,fileName).getAbsolutePath(),new HashMap<>(),callback);
     }
 
@@ -32,6 +63,7 @@ public interface IDownload {
         if(TextUtils.isEmpty(fileName)){
             fileName = URLUtil.guessFileName(url,"","");
         }
+        fileName = DownloadInfoUtil.getLeagalFileName(fileName);
         String path = new File(getSaveDir(),fileName).getAbsolutePath();
         download(url,path,callback);
     }

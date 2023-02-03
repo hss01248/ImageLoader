@@ -32,6 +32,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         public final static Property ErrMsg = new Property(5, String.class, "errMsg", false, "ERR_MSG");
         public final static Property TotalLength = new Property(6, long.class, "totalLength", false, "TOTAL_LENGTH");
         public final static Property CreateTime = new Property(7, long.class, "createTime", false, "CREATE_TIME");
+        public final static Property UpdateTime = new Property(8, long.class, "updateTime", false, "UPDATE_TIME");
     }
 
 
@@ -54,7 +55,13 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
                 "\"DIR\" TEXT," + // 4: dir
                 "\"ERR_MSG\" TEXT," + // 5: errMsg
                 "\"TOTAL_LENGTH\" INTEGER NOT NULL ," + // 6: totalLength
-                "\"CREATE_TIME\" INTEGER NOT NULL );"); // 7: createTime
+                "\"CREATE_TIME\" INTEGER NOT NULL ," + // 7: createTime
+                "\"UPDATE_TIME\" INTEGER NOT NULL );"); // 8: updateTime
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "IDX_DOWNLOAD_INFO_FILE_PATH ON \"DOWNLOAD_INFO\"" +
+                " (\"FILE_PATH\" ASC);");
+        db.execSQL("CREATE INDEX " + constraint + "IDX_DOWNLOAD_INFO_UPDATE_TIME ON \"DOWNLOAD_INFO\"" +
+                " (\"UPDATE_TIME\" ASC);");
     }
 
     /** Drops the underlying database table. */
@@ -94,6 +101,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         }
         stmt.bindLong(7, entity.getTotalLength());
         stmt.bindLong(8, entity.getCreateTime());
+        stmt.bindLong(9, entity.getUpdateTime());
     }
 
     @Override
@@ -127,6 +135,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         }
         stmt.bindLong(7, entity.getTotalLength());
         stmt.bindLong(8, entity.getCreateTime());
+        stmt.bindLong(9, entity.getUpdateTime());
     }
 
     @Override
@@ -144,7 +153,8 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // dir
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // errMsg
             cursor.getLong(offset + 6), // totalLength
-            cursor.getLong(offset + 7) // createTime
+            cursor.getLong(offset + 7), // createTime
+            cursor.getLong(offset + 8) // updateTime
         );
         return entity;
     }
@@ -159,6 +169,7 @@ public class DownloadInfoDao extends AbstractDao<DownloadInfo, String> {
         entity.setErrMsg(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setTotalLength(cursor.getLong(offset + 6));
         entity.setCreateTime(cursor.getLong(offset + 7));
+        entity.setUpdateTime(cursor.getLong(offset + 8));
      }
     
     @Override

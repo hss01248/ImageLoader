@@ -268,7 +268,7 @@ public class MyDownloader {
          }
          download.download(info.url, info.dir + "/" + info.name, new IDownloadCallback() {
              @Override
-             public void onStart(String url) {
+             public void onStart(String url,String realPath) {
                  runOnBack(new Runnable(){
 
                      @Override
@@ -281,7 +281,7 @@ public class MyDownloader {
              }
 
              @Override
-             public void onSuccess(String url) {
+             public void onSuccess(String url,String realPath) {
 
                  info.status = DownloadInfo.STATUS_SUCCESS;
                  try {
@@ -296,7 +296,7 @@ public class MyDownloader {
              }
 
              @Override
-             public void progress(String url, long currentOffset, long totalLength) {
+             public void progress(String url,String realPath, long currentOffset, long totalLength) {
                  info.currentOffset = currentOffset;
                  info.totalLength = totalLength;
                  info.status = currentOffset == totalLength ? DownloadInfo.STATUS_SUCCESS : DownloadInfo.STATUS_DOWNLOADING;
@@ -304,7 +304,7 @@ public class MyDownloader {
              }
 
              @Override
-             public void onFail(String url, String msg, Throwable throwable) {
+             public void onFail(String url,String realPath, String msg, Throwable throwable) {
                  //File name too long
                  LogUtils.w(url,info.name,info.name.length(),info.name.getBytes().length,info.dir + "/" + info.name,throwable);
 

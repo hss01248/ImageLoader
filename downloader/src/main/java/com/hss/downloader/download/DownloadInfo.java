@@ -4,6 +4,7 @@ import androidx.annotation.Keep;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Keep
@@ -16,43 +17,15 @@ public class DownloadInfo {
     public static final int STATUS_DOWNLOADING = 2;
     @Id
     public String url;
-
-    @Deprecated
+    @Index
     public String filePath;
     /**
      * 成功: 1 下载中 0 下载失败 -1, 初始状态 -2
      */
     public int status = 0;
 
-    /**
-     * 文件名
-     */
-    public String name;
-
-    public String dir;
-    public String errMsg;
-    public long totalLength;
-    public long createTime = System.currentTimeMillis();
-
-    public transient boolean selected;
-    public transient boolean isInSelectMode;
-    public transient long currentOffset;
-    public transient boolean isCompressing;
-
-    @Generated(hash = 691565714)
-    public DownloadInfo(String url, String filePath, int status, String name,
-            String dir, String errMsg, long totalLength, long createTime) {
-        this.url = url;
-        this.filePath = filePath;
-        this.status = status;
-        this.name = name;
-        this.dir = dir;
-        this.errMsg = errMsg;
-        this.totalLength = totalLength;
-        this.createTime = createTime;
-    }
-    @Generated(hash = 327086747)
-    public DownloadInfo() {
+    public  boolean downloadSuccess(){
+        return status == STATUS_SUCCESS;
     }
     public String getUrl() {
         return this.url;
@@ -66,24 +39,6 @@ public class DownloadInfo {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
-
-    @Override
-    public String toString() {
-        return "DownloadInfo{" +
-                "url='" + url + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", status=" + status +
-                ", name='" + name + '\'' +
-                ", dir='" + dir + '\'' +
-                ", errMsg='" + errMsg + '\'' +
-                ", totalLength=" + totalLength +
-                ", createTime=" + createTime +
-                ", selected=" + selected +
-                ", isInSelectMode=" + isInSelectMode +
-                ", currentOffset=" + currentOffset +
-                '}';
-    }
-
     public int getStatus() {
         return this.status;
     }
@@ -120,4 +75,48 @@ public class DownloadInfo {
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
+    public long getUpdateTime() {
+        return this.updateTime;
+    }
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+    /**
+     * 文件名
+     */
+    public String name;
+
+    public String dir;
+    public String errMsg;
+    public long totalLength;
+    public long createTime ;
+
+    @Index
+    public long updateTime ;
+
+    public transient boolean selected;
+    public transient boolean isInSelectMode;
+    public transient long currentOffset;
+    public transient boolean isCompressing;
+
+    @Generated(hash = 1249356660)
+    public DownloadInfo(String url, String filePath, int status, String name,
+            String dir, String errMsg, long totalLength, long createTime,
+            long updateTime) {
+        this.url = url;
+        this.filePath = filePath;
+        this.status = status;
+        this.name = name;
+        this.dir = dir;
+        this.errMsg = errMsg;
+        this.totalLength = totalLength;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
+    @Generated(hash = 327086747)
+    public DownloadInfo() {
+    }
+
+
+
 }
