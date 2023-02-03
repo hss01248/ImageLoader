@@ -13,7 +13,7 @@ import com.hss.downloader.download.db.DaoSession;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.hss.downloader.download.db.SubFolderCountDao;
 
-import java.util.List;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +73,8 @@ public class DownloadInfoUtil {
          if(name.contains(".")){
              suffix = name.substring(name.lastIndexOf("."));
          }
+         name = URLDecoder.decode(name);
+
         name = name.replaceAll(" ","_").replaceAll("\\+","_");
          name = name.substring(0,name.length() - suffix.length() -1);
 

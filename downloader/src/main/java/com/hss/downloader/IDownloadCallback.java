@@ -4,6 +4,17 @@ package com.hss.downloader;
 
 public interface IDownloadCallback {
 
+
+    /**
+     *
+     * @param url
+     * @param realPath
+     * @return 是否要真的发起下载
+     */
+    default boolean onBefore(String url,String realPath){
+        return true;
+    }
+
     void onStart(String url,String realPath);
 
     void onSuccess(String url,String realPath);
