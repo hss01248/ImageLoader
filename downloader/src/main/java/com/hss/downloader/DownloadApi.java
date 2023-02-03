@@ -7,7 +7,6 @@ import android.webkit.URLUtil;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
-import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 
 import java.io.File;
@@ -52,7 +51,7 @@ public class DownloadApi {
     }
 
     private IDownloadCallback callback;
-   public static IDownload downlodImpl = new OkDownloadImpl();
+   public static IDownload2 downlodImpl = new DownloadImplByFileDownloader();
 
     public DownloadApi setDir(String dir) {
         this.dir = dir;
@@ -72,7 +71,7 @@ public class DownloadApi {
     public void callback(IDownloadCallback callback) {
         this.callback = new DownloadCallbackDbWrapper(callback);
         if(beforStart()){
-            downlodImpl.download(url,dir+name,headers,callback);
+            downlodImpl.download(this);
         }
     }
 
@@ -85,34 +84,6 @@ public class DownloadApi {
         dir = determinDir(dir);
 
         return callback.onBefore(url,getRealPath());
-    }
-
-    private boolean shouldReallyUpdateByCheckDB() {
-        DownloadInfo load = DownloadInfoUtil.getDao().load(url);
-        if(load != null ){
-            load.updateTime = System.currentTimeMillis();
-            if(load.downloadSuccess()){
-                File file = new File(load.filePath);
-                if(file.exists() ){
-                    DownloadInfoUtil.getDao().update(load);
-                    callback.onSuccess(url,load.filePath);
-                    return false;
-                }
-            }else {
-                DownloadInfoUtil.getDao().update(load);
-            }
-        }else {
-            load = new DownloadInfo();
-            load.createTime = System.currentTimeMillis();
-            load.updateTime = System.currentTimeMillis();
-            load.status = DownloadInfo.STATUS_ORIGINAL;
-            load.url = url;
-            load.filePath = dir+ File.pathSeparator+name;
-            load.name = name;
-            load.dir = dir;
-            DownloadInfoUtil.getDao().insert(load);
-        }
-        return true;
     }
 
     public static String determinDir(String dir ) {
