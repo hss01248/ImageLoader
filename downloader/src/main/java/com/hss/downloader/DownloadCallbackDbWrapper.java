@@ -3,6 +3,7 @@ package com.hss.downloader;
 import com.blankj.utilcode.util.LogUtils;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
+import com.hss01248.img.compressor.ImageCompressor;
 
 import java.io.File;
 
@@ -58,29 +59,43 @@ public class DownloadCallbackDbWrapper implements IDownloadCallback{
 
     @Override
     public void onSuccess(String url, String realPath) {
-        callback.onSuccess(url, realPath);
+        //压缩图片
+        File compress = ImageCompressor.compress(realPath, false, false);
+        if(!compress.exists()){
+            LogUtils.w("file not exist after compress");
+        }
+        callback.onSuccess(url, compress.getAbsolutePath());
         DownloadInfo load = DownloadInfoUtil.getDao().load(url);
         if(load == null){
             LogUtils.w("download info in db == null , "+ url);
-            return;
+        }else {
+            load.status = DownloadInfo.STATUS_SUCCESS;
+            DownloadInfoUtil.getDao().update(load);
         }
-        load.status = DownloadInfo.STATUS_SUCCESS;
-        DownloadInfoUtil.getDao().update(load);
-        //File file = new File(realPath);
-        //压缩图片
-
-        //if(file.exists())
     }
 
-    static long lastTime = 0;
+     long lastTime = 0;
     @Override
     public void progress(String url, String realPath, long currentOffset, long totalLength) {
-        callback.progress(url, realPath, currentOffset, totalLength);
-
-        if(System.currentTimeMillis() - lastTime < 1000){
-            //每秒更新一下数据库
+        if(currentOffset == totalLength){
+            callback.progress(url, realPath, currentOffset, totalLength);
+            DownloadInfo load = DownloadInfoUtil.getDao().load(url);
+            if(load == null){
+                LogUtils.w("download info in db == null , "+ url);
+                return;
+            }
+            load.status = DownloadInfo.STATUS_SUCCESS;
+            load.currentOffset = currentOffset;
+            load.totalLength = totalLength;
+            DownloadInfoUtil.getDao().update(load);
             return;
         }
+        if(System.currentTimeMillis() - lastTime < 1000){
+            //每秒更新一次进度
+            return;
+        }
+        callback.progress(url, realPath, currentOffset, totalLength);
+
         lastTime = System.currentTimeMillis();
         DownloadInfo load = DownloadInfoUtil.getDao().load(url);
         if(load == null){
