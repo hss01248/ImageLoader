@@ -70,6 +70,7 @@ public class DownloadCallbackDbWrapper implements IDownloadCallback{
             LogUtils.w("download info in db == null , "+ url);
         }else {
             load.status = DownloadInfo.STATUS_SUCCESS;
+            load.filePath = realPath;
             DownloadInfoUtil.getDao().update(load);
         }
     }

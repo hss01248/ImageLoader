@@ -24,6 +24,7 @@ public class DownloadApi {
     private String url;
     private String dir;
     private String name;
+    private boolean noChangeDir;
     private Map<String,String> headers = new HashMap<>();
 
     public String getUrl() {
@@ -57,14 +58,19 @@ public class DownloadApi {
         this.dir = dir;
         return this;
     }
+    public DownloadApi setDirForce(String dir) {
+        this.dir = dir;
+        noChangeDir = true;
+        return this;
+    }
 
     public DownloadApi setName(String name) {
         this.name = name;
         return this;
     }
 
-    public DownloadApi setHeaders(Map<String, String> headers) {
-        this.headers = headers;
+    public DownloadApi addHeader(String key,String val) {
+        this.headers.put(key, val);
         return this;
     }
 
@@ -81,8 +87,9 @@ public class DownloadApi {
         }
         name = DownloadInfoUtil.getLeagalFileName(name);
 
-        dir = determinDir(dir);
-
+        if(!noChangeDir){
+            dir = determinDir(dir);
+        }
         return callback.onBefore(url,getRealPath());
     }
 
