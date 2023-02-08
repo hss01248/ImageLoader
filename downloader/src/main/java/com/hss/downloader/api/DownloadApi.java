@@ -9,6 +9,9 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss.downloader.IDownloadCallback;
+import com.hss.downloader.callback.DefaultUIDownloadCallback;
+import com.hss.downloader.callback.DownloadCallbackDbDecorator;
+import com.hss.downloader.callback.ExeOnMainDownloadCallback;
 import com.hss.downloader.download.DownloadInfoUtil;
 
 import java.io.File;
@@ -27,6 +30,20 @@ public class DownloadApi {
     private String dir;
     private String name;
     private boolean noChangeDir;
+
+    public DownloadApi setShowDefaultLoadingAndToast(boolean showDefaultLoadingAndToast) {
+        this.showDefaultLoadingAndToast = showDefaultLoadingAndToast;
+        return this;
+    }
+
+    private boolean showDefaultLoadingAndToast = false;
+
+    public DownloadApi setNeedCheckDbBeforeStart(boolean needCheckDbBeforeStart) {
+        this.needCheckDbBeforeStart = needCheckDbBeforeStart;
+        return this;
+    }
+
+    private boolean needCheckDbBeforeStart = true;
 
     public boolean isForceReDownload() {
         return forceReDownload;
@@ -87,12 +104,24 @@ public class DownloadApi {
     }
 
     public void callback(IDownloadCallback callback) {
-        this.callback = new DownloadCallbackDbDecorator(callback);
-        // 优化判断逻辑: 判断一个文件是否下载过,是否强制下载
-        callback.onBefore(url,getRealPath(),forceReDownload);
+        if(showDefaultLoadingAndToast){
+            this.callback = new DownloadCallbackDbDecorator(new ExeOnMainDownloadCallback(new DefaultUIDownloadCallback(callback)));
+        }else {
+            this.callback = new DownloadCallbackDbDecorator(this.callback);
+        }
+
+
+
         ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<File>() {
             @Override
             public File doInBackground() throws Throwable {
+                beforStart();
+                callback.onBefore(url,getRealPath(),forceReDownload);
+                if(!needCheckDbBeforeStart){
+                    //批量下载的,在list api里批量判断
+                    return null;
+                }
+                // 优化判断逻辑: 判断一个文件是否下载过,是否强制下载
                 return DownloadCallbackDbDecorator.shouldStartRealDownload(url,getRealPath(),forceReDownload);
             }
 
@@ -122,8 +151,6 @@ public class DownloadApi {
         if(!noChangeDir){
             dir = determinDir(dir);
         }
-
-         callback.onBefore(url,getRealPath(), forceReDownload);
         return true;
     }
 
