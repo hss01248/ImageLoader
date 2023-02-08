@@ -5,14 +5,9 @@ package com.hss.downloader;
 public interface IDownloadCallback {
 
 
-    /**
-     *
-     * @param url
-     * @param realPath
-     * @return 是否要真的发起下载
-     */
-    default boolean onBefore(String url,String realPath){
-        return true;
+
+    default void onBefore(String url, String realPath, boolean forceRedownload){
+
     }
 
    default void onStart(String url,String realPath){
@@ -21,7 +16,7 @@ public interface IDownloadCallback {
 
     void onSuccess(String url,String realPath);
 
-  default   void progress(String url,String realPath ,long currentOffset, long totalLength){
+  default   void onProgress(String url, String realPath , long currentOffset, long totalLength){
 
   }
 

@@ -296,7 +296,7 @@ public class MyDownloader {
              }
 
              @Override
-             public void progress(String url,String realPath, long currentOffset, long totalLength) {
+             public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
                  info.currentOffset = currentOffset;
                  info.totalLength = totalLength;
                  info.status = currentOffset == totalLength ? DownloadInfo.STATUS_SUCCESS : DownloadInfo.STATUS_DOWNLOADING;

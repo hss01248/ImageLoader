@@ -35,7 +35,7 @@ public class FileDownloaderImpl implements IDownload {
 
                     @Override
                     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        callback.progress(url, filePath,soFarBytes, totalBytes);
+                        callback.onProgress(url, filePath,soFarBytes, totalBytes);
                     }
 
                     @Override

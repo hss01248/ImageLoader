@@ -1,4 +1,4 @@
-package com.hss.downloader;
+package com.hss.downloader.api;
 
 import android.os.Environment;
 import android.text.TextUtils;
@@ -6,7 +6,9 @@ import android.webkit.URLUtil;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
+import com.hss.downloader.IDownloadCallback;
 import com.hss.downloader.download.DownloadInfoUtil;
 
 import java.io.File;
@@ -25,6 +27,16 @@ public class DownloadApi {
     private String dir;
     private String name;
     private boolean noChangeDir;
+
+    public boolean isForceReDownload() {
+        return forceReDownload;
+    }
+
+    public void setForceReDownload(boolean forceReDownload) {
+        this.forceReDownload = forceReDownload;
+    }
+
+    private boolean forceReDownload;
     private Map<String,String> headers = new HashMap<>();
 
     public String getUrl() {
@@ -75,10 +87,30 @@ public class DownloadApi {
     }
 
     public void callback(IDownloadCallback callback) {
-        this.callback = new DownloadCallbackDbWrapper(callback);
-        if(beforStart()){
-            downlodImpl.download(this);
-        }
+        this.callback = new DownloadCallbackDbDecorator(callback);
+        // 优化判断逻辑: 判断一个文件是否下载过,是否强制下载
+        callback.onBefore(url,getRealPath(),forceReDownload);
+        ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<File>() {
+            @Override
+            public File doInBackground() throws Throwable {
+                return DownloadCallbackDbDecorator.shouldStartRealDownload(url,getRealPath(),forceReDownload);
+            }
+
+            @Override
+            public void onSuccess(File result) {
+                if(result == null){
+                    downlodImpl.download(DownloadApi.this);
+                }else {
+                    callback.onSuccess(url,result.getAbsolutePath());
+                }
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+                super.onFail(t);
+                callback.onFail(url,getRealPath(),t.getMessage(),t);
+            }
+        });
     }
 
     private boolean beforStart() {
@@ -90,7 +122,9 @@ public class DownloadApi {
         if(!noChangeDir){
             dir = determinDir(dir);
         }
-        return callback.onBefore(url,getRealPath());
+
+         callback.onBefore(url,getRealPath(), forceReDownload);
+        return true;
     }
 
     public static String determinDir(String dir ) {

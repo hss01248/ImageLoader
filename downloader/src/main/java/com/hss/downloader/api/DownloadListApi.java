@@ -1,4 +1,4 @@
-package com.hss.downloader;
+package com.hss.downloader.api;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.hss.downloader;
+package com.hss.downloader.api;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
@@ -11,7 +11,7 @@ import com.liulishuo.filedownloader.FileDownloader;
  * @Date 03/02/2023 18:49
  * @Version 1.0
  */
-public class DownloadImplByFileDownloader implements IDownload2{
+public class DownloadImplByFileDownloader implements IDownload2 {
     @Override
     public void download(DownloadApi api) {
         String filePath = api.getRealPath();
@@ -31,7 +31,7 @@ public class DownloadImplByFileDownloader implements IDownload2{
 
                     @Override
                     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        api.getCallback().progress(api.getUrl(), filePath,soFarBytes, totalBytes);
+                        api.getCallback().onProgress(api.getUrl(), filePath,soFarBytes, totalBytes);
                     }
 
                     @Override
