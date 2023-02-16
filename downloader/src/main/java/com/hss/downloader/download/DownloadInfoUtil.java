@@ -69,6 +69,9 @@ public class DownloadInfoUtil {
              return "name-empty";
          }
         name = checkFileName(name);
+         while (name.endsWith(".")){
+             name = name.substring(0,name.length()-1);
+         }
          String suffix = "";
          if(name.contains(".")){
              suffix = name.substring(name.lastIndexOf("."));

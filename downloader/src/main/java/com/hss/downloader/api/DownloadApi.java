@@ -151,6 +151,23 @@ public class DownloadApi {
         if(!noChangeDir){
             dir = determinDir(dir);
         }
+        //解决同个文件夹下文件name重名问题:
+        File file = new File(dir,name);
+        if(file.exists()){
+            String end = "bin";
+            String realName = name;
+            if(name.contains(".")){
+                end = name.substring(name.lastIndexOf(".")+1);
+                realName = name.substring(0,name.lastIndexOf("."));
+            }
+            for (int i = 0; i < 50; i++) {
+                file = new File(dir,realName+"-"+i+"."+end);
+                if(!file.exists()){
+                    name = file.getName();
+                    break;
+                }
+            }
+        }
         return true;
     }
 
