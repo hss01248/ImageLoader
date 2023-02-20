@@ -2,4 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hss01248.bigimageviewpager">
 
+    <application>
+        <activity android:name=".pano.MyPanoActivity" android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+    </application>
 </manifest>

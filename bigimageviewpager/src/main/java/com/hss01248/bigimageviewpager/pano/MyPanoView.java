@@ -1,4 +1,4 @@
-package com.hss01248.bigimageviewpager;
+package com.hss01248.bigimageviewpager.pano;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,6 +16,7 @@ import androidx.lifecycle.LifecycleOwner;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.vr.sdk.widgets.pano.VrPanoramaEventListener;
 import com.google.vr.sdk.widgets.pano.VrPanoramaView;
+import com.hss01248.bigimageviewpager.LifecycleObjectUtil2;
 import com.hss01248.media.metadata.ExifUtil;
 
 import java.util.Map;

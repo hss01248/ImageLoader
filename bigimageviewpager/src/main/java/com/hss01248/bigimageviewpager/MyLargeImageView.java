@@ -3,7 +3,7 @@ package com.hss01248.bigimageviewpager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -11,10 +11,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +25,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hss01248.bigimageviewpager.databinding.ItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.databinding.StateItemLargeImgBinding;
+import com.hss01248.bigimageviewpager.pano.MyPanoActivity;
+import com.hss01248.bigimageviewpager.pano.MyPanoView;
 import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
 import com.hss01248.pagestate.PageStateConfig;
 import com.hss01248.pagestate.StatefulFrameLayout;
@@ -77,6 +77,7 @@ public class MyLargeImageView extends FrameLayout {
 
     public void setDarkMode(boolean darkMode) {
         this.darkMode = darkMode;
+        largeImgBinding.getRoot().setBackgroundColor(darkMode? Color.BLACK:Color.WHITE);
     }
 
     boolean darkMode = true;
@@ -112,6 +113,7 @@ public class MyLargeImageView extends FrameLayout {
                 return darkMode;
             }
         });
+        largeImgBinding.getRoot().setBackgroundColor(darkMode? Color.BLACK:Color.WHITE);
         ivHelper = largeImgBinding.ivGlideHelper;
         tvScale = largeImgBinding.tvScale;
         jpgView = largeImgBinding.ivLarge;
@@ -139,8 +141,9 @@ public class MyLargeImageView extends FrameLayout {
         largeImgBinding.ivGo360.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewAsPano = true;
-                reload();
+                //viewAsPano = true;
+                //reload();
+                MyPanoActivity.start(info.localPathOrUri);
             }
         });
 
@@ -341,7 +344,7 @@ public class MyLargeImageView extends FrameLayout {
             }
 
             //判断是否为360全景图
-            if(MyPanoView.isPanoramaImage(uri) || viewAsPano){
+/*            if(MyPanoView.isPanoramaImage(uri) || viewAsPano){
                 if(panoView == null){
                     panoView = new MyPanoView(getContext());
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -377,7 +380,7 @@ public class MyLargeImageView extends FrameLayout {
                             }
                         });
                 return;
-            }
+            }*/
             jpgView.setVisibility(VISIBLE);
             if(panoView != null){
                 panoView.setVisibility(GONE);
