@@ -3,6 +3,7 @@ package com.hss01248.bigimageviewpager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -10,8 +11,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import java.io.FileInputStream;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -41,6 +45,8 @@ import io.reactivex.schedulers.Schedulers;
 public class MyLargeImageView extends FrameLayout {
     MyGifPhotoView gifView;
     MyLargeJpgView jpgView;
+    MyPanoView panoView;
+    boolean viewAsPano;
     ImageView ivHelper;
     TextView tvScale;
 
@@ -128,6 +134,13 @@ public class MyLargeImageView extends FrameLayout {
             public void onScaleChanged(int percent, float scale) {
                 if(showScale)
                 tvScale.setText(percent+"%");
+            }
+        });
+        largeImgBinding.ivGo360.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewAsPano = true;
+                reload();
             }
         });
 
@@ -273,7 +286,11 @@ public class MyLargeImageView extends FrameLayout {
         info.localPathOrUri = uri;
         if (uri.contains(".gif") || isGif) {
             gifView.setVisibility(VISIBLE);
+            largeImgBinding.ivGo360.setVisibility(GONE);
             jpgView.setVisibility(GONE);
+            if(panoView != null){
+                panoView.setVisibility(GONE);
+            }
             if (uri.startsWith("content://") || uri.startsWith("file://")) {
                 gifView.setImageURI(Uri.parse(uri));
             } else {
@@ -282,7 +299,11 @@ public class MyLargeImageView extends FrameLayout {
             stateManager.showContent();
         } else {
             gifView.setVisibility(GONE);
+            if(panoView != null){
+                panoView.setVisibility(GONE);
+            }
             jpgView.setVisibility(VISIBLE);
+            largeImgBinding.ivGo360.setVisibility(VISIBLE);
 
             //兼容avif格式
             if(uri.endsWith(".avif")){
@@ -319,9 +340,50 @@ public class MyLargeImageView extends FrameLayout {
                 return;
             }
 
+            //判断是否为360全景图
+            if(MyPanoView.isPanoramaImage(uri) || viewAsPano){
+                if(panoView == null){
+                    panoView = new MyPanoView(getContext());
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT);
+                    panoView.setLayoutParams(params);
+                    stateBinding.itemLargeImg.getRoot().addView(panoView,2);
+                }
+                largeImgBinding.ivGo360.setVisibility(GONE);
+                jpgView.setVisibility(GONE);
+                panoView.setVisibility(VISIBLE);
+                Disposable subscribe = Observable.just(uri)
+                        .subscribeOn(Schedulers.io())
+                        .map(new Function<String, Bitmap>() {
+                            @Override
+                            public Bitmap apply(String uri) throws Exception {
+                                if (uri.startsWith("content://") || uri.startsWith("file://")) {
+                                    return BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(Uri.parse(uri)));
+                                }
+                                return BitmapFactory.decodeStream(new FileInputStream(new File(uri)));
+                            }
+                        }).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Bitmap>() {
+                            @Override
+                            public void accept(Bitmap bitmap) throws Exception {
+                                panoView.loadBitmap(bitmap);
+                                stateManager.showContent();
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                info.throwable = throwable;
+                                stateManager.showError(throwable.getMessage());
+                            }
+                        });
+                return;
+            }
+            jpgView.setVisibility(VISIBLE);
+            if(panoView != null){
+                panoView.setVisibility(GONE);
+            }
 
-
-            Observable.just(uri)
+            Disposable subscribe = Observable.just(uri)
                     .subscribeOn(Schedulers.io())
                     .map(new Function<String, InputStreamBitmapDecoderFactory>() {
                         @Override
@@ -338,6 +400,7 @@ public class MyLargeImageView extends FrameLayout {
                     .subscribe(new Consumer<InputStreamBitmapDecoderFactory>() {
                         @Override
                         public void accept(InputStreamBitmapDecoderFactory inputStreamBitmapDecoderFactory) throws Exception {
+
                             jpgView.setImage(inputStreamBitmapDecoderFactory);
                             stateManager.showContent();
                         }
@@ -346,11 +409,10 @@ public class MyLargeImageView extends FrameLayout {
                         public void accept(Throwable throwable) throws Exception {
                             throwable.printStackTrace();
                             //toastMsg(throwable.getMessage());
-                           info.throwable = throwable;
+                            info.throwable = throwable;
                             stateManager.showError(throwable.getMessage());
                         }
-                    })
-            ;
+                    });
         }
     }
 

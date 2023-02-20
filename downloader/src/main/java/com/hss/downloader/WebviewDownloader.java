@@ -6,6 +6,7 @@ import android.webkit.URLUtil;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.hss.downloader.api.DownloadApi;
+import com.hss.downloader.callback.DefaultSilentDownloadCallback;
 
 /**
  * @author: Administrator

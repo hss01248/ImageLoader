@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,12 +28,15 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.gson.Gson;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
 import com.hss01248.basewebview.BaseWebviewActivity;
+import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.fileoperation.FileDeleteUtil;
+import com.hss01248.fullscreendialog.FullScreenDialog;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
@@ -41,6 +45,7 @@ import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.img.compressor.ImageCompressor;
 import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
+import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
@@ -50,6 +55,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -444,6 +450,65 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void pickImage360(View view) {
+        ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
+            @Override
+            public void onSuccess(String path) {
+               /* File file = new File(path);
+                boolean delete = file.delete();
+                ToastUtils.showLong("是否删除成功:"+ delete);*/
+                //即使是true,也会被小米系统拦截
+                showInfo(path);
+
+                //FullScreenDialog dialog = new FullScreenDialog(MainActivity.this);
+
+                //dialog.setContentView();
+
+            }
+
+            @Override
+            public void onFail(String path, String msg) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
+    //当所述待选择图片的宽度大于或等于1000像素点，且所述待选择图片的宽高比大于或等于2:1，且所述待选择图片的宽高比小于4:1，则判断为所述待选择图片为360度全景图片。
+    private void showInfo(String path) {
+        String exifStr = ExifUtil.getExifStr(path);
+        FullScreenDialog dialog = new FullScreenDialog(MainActivity.this);
+
+        Map<String, String> map = ExifUtil.readExif(path);
+        //dialog.setContentView();
+        //LogUtils.iTag("exif",map.get("Xmp"));
+        LogUtils.iTag("isPanoramaImage",isPanoramaImage(path),path);
+        LogUtils.json(new Gson().newBuilder().setPrettyPrinting().create().toJson(map));
+
+
+        MyLargeImageView largeImageView = new MyLargeImageView(MainActivity.this);
+
+
+        dialog.setContentView(largeImageView);
+        dialog.show();
+        largeImageView.loadUri(path);
+    }
+
+    public static boolean isPanoramaImage(String path){
+        Map<String, String> map = ExifUtil.readExif(path);
+        String xml = map.get("Xmp");
+        if(!TextUtils.isEmpty(xml) ){
+            if(xml.contains("GPano:UsePanoramaViewer")){
+                return true;
+            }
+        }
+        return false;
     }
 
 

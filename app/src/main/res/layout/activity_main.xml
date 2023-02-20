@@ -39,6 +39,13 @@
             android:layout_height="wrap_content" />
 
         <Button
+            android:text="选图-360全景图test"
+            android:onClick="pickImage360"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:id="@+id/btn_album"
             android:layout_margin="10dp"
             android:text="浏览系统相册"
