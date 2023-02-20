@@ -51,6 +51,7 @@ public class MyPanoView extends RelativeLayout implements DefaultLifecycleObserv
         mVrPanoramaView.setInfoButtonEnabled(false); //设置隐藏最左边信息的按钮
         mVrPanoramaView.setStereoModeButtonEnabled(false); //设置隐藏立体模型的按钮
         mVrPanoramaView.setEventListener(new ActivityEventListener()); //设置监听
+        mVrPanoramaView.setFlingingEnabled(true);
 
         //设置为跟随手移动,而不是传感器
         mVrPanoramaView.setTouchTrackingEnabled(true);
