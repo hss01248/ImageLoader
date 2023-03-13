@@ -153,6 +153,10 @@ public class ImageCompressor {
         String type = FileTypeUtil.getType(file);
         if ("jpg".equals(type)) {
             try {
+                if(isPanoramaImage(file.getAbsolutePath())){
+                    LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
+                    return false;
+                }
                 FileInputStream inputStream = new FileInputStream(file);
                 int quality = new Magick().getJPEGImageQuality(inputStream);
                 CloseUtils.closeIO(inputStream);
@@ -178,6 +182,17 @@ public class ImageCompressor {
         // || path.endsWith(".webp")
         //  || path.endsWith(".tif")
         //                || path.endsWith(".WEBP")
+    }
+
+    public static boolean isPanoramaImage(String path){
+        Map<String, String> map = ExifUtil.readExif(path);
+        String xml = map.get("Xmp");
+        if(!TextUtils.isEmpty(xml) ){
+            if(xml.contains("GPano:UsePanoramaViewer")){
+                return true;
+            }
+        }
+        return false;
     }
 
     public interface Callback {
