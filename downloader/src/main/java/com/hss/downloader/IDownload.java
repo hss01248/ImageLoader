@@ -63,14 +63,43 @@ public interface IDownload {
     }
 
     default void download(String url, @NonNull File dir,  IDownloadCallback callback){
-      String  fileName = URLUtil.guessFileName(url,"","");
+      String  fileName = getFileName(url);
         fileName = DownloadInfoUtil.getLeagalFileName(fileName);
         download(url,new File(dir,fileName).getAbsolutePath(),new HashMap<>(),callback);
     }
 
+    static String getFileName(String url,String contentDisposition, String mimetype){
+        String  fileName = URLUtil.guessFileName(url,contentDisposition,mimetype);
+        String suffix = "";
+        if(fileName.endsWith(".bin") ){
+            suffix = genExt(url);
+            if(!TextUtils.isEmpty(suffix)){
+                fileName = fileName.substring(0,fileName.length()-3)+suffix;
+            }
+        }
+        return fileName;
+    }
+    static String getFileName(String url){
+        return getFileName(url,"","");
+    }
+
+    static String genExt(String url) {
+        if(url.contains("?")){
+            url = url.substring(0,url.indexOf("?"));
+        }
+        if(url.contains("/")&& !url.endsWith("/")){
+            url = url.substring(url.lastIndexOf("/")+1);
+            if(url.contains(".")){
+                url = url.substring(url.lastIndexOf(".")+1);
+                return url;
+            }
+        }
+        return "";
+    }
+
     default void download(String url,  IDownloadCallback callback,@Nullable String fileName){
         if(TextUtils.isEmpty(fileName)){
-            fileName = URLUtil.guessFileName(url,"","");
+            fileName =  getFileName(url);;
         }
         fileName = DownloadInfoUtil.getLeagalFileName(fileName);
         String path = new File(getSaveDir(),fileName).getAbsolutePath();

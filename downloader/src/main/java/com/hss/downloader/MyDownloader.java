@@ -168,6 +168,7 @@ public class MyDownloader {
                 List<DownloadInfo> toDownload = new ArrayList<>();
                 for (DownloadUrls info : urls) {
                     DownloadInfo load = DownloadInfoUtil.getDao().load(info.url);
+                    // 允许重复下载
                     if(load != null && load.status == DownloadInfo.STATUS_SUCCESS){
                         toShow.add(load);
                         continue;
@@ -177,7 +178,7 @@ public class MyDownloader {
                         load.url = info.url;
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.dir = info.dir;
-                        load.name = DownloadInfoUtil.getLeagalFileName(info.name);//避免多级目录,非法字符,文件过长等情况
+                        load.name = DownloadInfoUtil.getLeagalFileName(info.dir,info.name);//避免多级目录,非法字符,文件过长等情况
                         load.createTime = System.currentTimeMillis();
                         //兼具去重功能  功能优先于性能
                         toAdd.add(load);
@@ -189,7 +190,7 @@ public class MyDownloader {
                         }*/
                     }else {
                         load.dir = info.dir;
-                        load.name = DownloadInfoUtil.getLeagalFileName(info.name);//避免多级目录,非法字符,文件过长等情况
+                        load.name = DownloadInfoUtil.getLeagalFileName(info.dir,info.name);//避免多级目录,非法字符,文件过长等情况
                         //load.name = load.name;//避免多级目录,非法字符,文件过长等情况
                         if(load.status == DownloadInfo.STATUS_DOWNLOADING){
                             StatusUtil.Status status = StatusUtil.getStatus(info.url, load.dir, load.name);

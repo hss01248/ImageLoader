@@ -13,6 +13,7 @@ import com.hss.downloader.download.db.DaoSession;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.hss.downloader.download.db.SubFolderCountDao;
 
+import java.io.File;
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +65,12 @@ public class DownloadInfoUtil {
         return daoSession;
     }
 
+    /**
+     * 请使用getLeagalFileName(String dir,String name),能够对同名文件重命名
+     * @param name
+     * @return
+     */
+    @Deprecated
     public static String getLeagalFileName(String name){
          if(TextUtils.isEmpty(name)){
              return "name-empty";
@@ -91,6 +98,44 @@ public class DownloadInfoUtil {
         }
        name = name + suffix;
         return name;
+    }
+
+    public static String getLeagalFileName(String dir,String name){
+        if(TextUtils.isEmpty(name)){
+            return "name-empty";
+        }
+        name = checkFileName(name);
+        while (name.endsWith(".")){
+            name = name.substring(0,name.length()-1);
+        }
+        String suffix = "";
+        if(name.contains(".")){
+            suffix = name.substring(name.lastIndexOf("."));
+        }
+        name = URLDecoder.decode(name);
+
+        name = name.replaceAll(" ","_").replaceAll("\\+","_");
+        name = name.substring(0,name.length() - suffix.length() -1);
+
+        int maxLenght = 240- suffix.length() -2;
+        //   //处理文件长度太长的情况
+        //            //Linux文件名的长度限制是255个字节
+        //            //windows下完全限定文件名必须少于260个字节，目录名必须小于248个字节。
+        while (name.getBytes().length> maxLenght ){
+            name = name.substring(0,name.length()-2);
+            LogUtils.w("缩短文件名",name);
+        }
+       String  finalName = name + suffix;
+        if(new File(dir,finalName).exists()){
+            for (int i = 1; i < 50; i++) {
+                String  finalName2 = name+"("+i+")" + suffix;
+                if(!new File(dir,finalName2).exists()){
+                    return finalName2;
+                }
+            }
+        }
+
+        return finalName;
     }
     static final Pattern pattern =  Pattern.compile("[\\s\\\\/:\\*\\?\\\"<>\\|]");
     /**

@@ -17,7 +17,7 @@ public class WebviewDownloader implements DownloadListener {
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
         LogUtils.i(url,userAgent,contentDisposition,mimetype,contentLength);
-        String name = URLUtil.guessFileName(url,contentDisposition,mimetype);
+        String name = IDownload.getFileName(url,contentDisposition,mimetype);
         //contentDisposition:  attachment; filename="redditsave.com_p0dqho9nqh891.gif"
         if(!TextUtils.isEmpty(contentDisposition)){
             if(contentDisposition.contains(";")){
