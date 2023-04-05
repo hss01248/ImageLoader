@@ -161,7 +161,7 @@ public class DownloadApi {
                 end = name.substring(name.lastIndexOf(".")+1);
                 realName = name.substring(0,name.lastIndexOf("."));
             }
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < Integer.MAX_VALUE; i++) {
                 file = new File(dir,realName+"-"+i+"."+end);
                 if(!file.exists()){
                     name = file.getName();
