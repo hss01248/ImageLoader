@@ -5,6 +5,7 @@ buildscript {
     //apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/depsLastestChecker.gradle'
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/uploadAllTask.gradle'
+    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/dev/z_config/git_branch_info.gradle'
 
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
