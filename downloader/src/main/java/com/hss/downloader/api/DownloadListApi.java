@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.webkit.URLUtil;
 
 import com.blankj.utilcode.util.ThreadUtils;
+import com.hss.downloader.IDownload;
 import com.hss.downloader.callback.DefaultSilentDownloadCallback;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
@@ -73,7 +74,7 @@ public class DownloadListApi {
                         DownloadInfoUtil.getDao().update(load);
                         continue;
                     }
-                    String name = URLUtil.guessFileName(url,"","");
+                    String name = IDownload.getFileName(url);
                     if(TextUtils.isEmpty(commonFileNamePrefix)){
                         name = commonFileNamePrefix+"_";
                     }

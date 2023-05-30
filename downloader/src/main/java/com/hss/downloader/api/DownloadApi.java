@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
+import com.hss.downloader.IDownload;
 import com.hss.downloader.IDownloadCallback;
 import com.hss.downloader.callback.DefaultUIDownloadCallback;
 import com.hss.downloader.callback.DownloadCallbackDbDecorator;
@@ -144,7 +145,7 @@ public class DownloadApi {
 
     private boolean beforStart() {
         if(TextUtils.isEmpty(name)){
-            name = URLUtil.guessFileName(url,"","");
+            name = IDownload.getFileName(url);
         }
         name = DownloadInfoUtil.getLeagalFileName(name);
 
@@ -160,7 +161,7 @@ public class DownloadApi {
                 end = name.substring(name.lastIndexOf(".")+1);
                 realName = name.substring(0,name.lastIndexOf("."));
             }
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < Integer.MAX_VALUE; i++) {
                 file = new File(dir,realName+"-"+i+"."+end);
                 if(!file.exists()){
                     name = file.getName();
