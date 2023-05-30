@@ -31,7 +31,7 @@
         <activity android:name=".RecycleViewActy" />
         <activity android:name=".ConfigAllActy" />
         <activity android:name=".ScaleTypeActy" />
-        <activity android:name=".FrescoFaceCropActivity" />
+
 
         <!--<provider
             android:name="androidx.startup.InitializationProvider"

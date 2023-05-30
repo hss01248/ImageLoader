@@ -319,17 +319,11 @@ public class MainActivity extends AppCompatActivity {
 
                 //TurboCompressor.compressOriginal(path,70);
                 File file = ImageCompressor.compress(path,false,false);
-               /* ImageLoader.with(MainActivity.this)
-                        .file(file.getAbsolutePath())
-                        // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
-                        // .res(R.drawable.thegif)
-                        // .placeHolder(R.mipmap.ic_launcher, false)
-                        //.widthHeight(250, 150)
-                        //.asCircle(R.color.colorAccent)
-                        .into(ivUrl);*/
-               /* Glide.with(MainActivity.this)
-                        .load(file)
-                        .into(ivUrl);*/
+
+                File endecrypt = XorUtil.endecrypt(798, file, false);
+                LogUtils.i("out put file: "+endecrypt.getAbsolutePath());
+                ///storage/emulated/0/images/enx-cp-20230529_200844.jpg  花费15s.
+
 
                 LogUtils.i("image compress result: "+file.getAbsolutePath());
                 Glide.with(MainActivity.this)
