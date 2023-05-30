@@ -191,6 +191,10 @@ public class ImageCompressor {
             if(xml.contains("GPano:UsePanoramaViewer")){
                 return true;
             }
+            if(xml.contains("MotionPhoto")){
+                return true;
+            }
+            //MotionPhoto
         }
         return false;
     }
@@ -434,6 +438,10 @@ public class ImageCompressor {
                     }
                     exifMap.put(ExifInterface.TAG_SOFTWARE,text);
                     ExifUtil.writeExif(exifMap, outPath);
+                    /*if(AppUtils.isAppDebug()){
+                        ExifUtil.readJpgTail(absolutePath);
+                    }*/
+                    //ExifUtil.copyMotionPhotoJpegTail(absolutePath,outPath);
                     return true;
                 } catch (Throwable e) {
                     LogUtils.w(outPath + ",write exif failed:" + e.getMessage());

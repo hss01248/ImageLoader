@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadFile(View view) {
-        ImageCompressor.compressToWebp = true;
+        ImageCompressor.compressToWebp = false;
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
             public void onSuccess(String path) {
@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                         .load(file)
                         .into(ivUrl);*/
 
-                LogUtils.i("avif compress result: "+file.getAbsolutePath());
+                LogUtils.i("image compress result: "+file.getAbsolutePath());
                 Glide.with(MainActivity.this)
                         .asBitmap()
                         .load(file)
