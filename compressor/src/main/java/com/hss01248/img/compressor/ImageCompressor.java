@@ -136,6 +136,10 @@ public class ImageCompressor {
         return new int[]{options.outWidth, options.outHeight};
     }
 
+    public static boolean shouldCompress(File pathname, boolean checkQuality) {
+        return isImagesToCompress(pathname.getAbsolutePath(), getQuality());
+    }
+
     public static boolean isImagesToCompress(String path, int targetJpgQuality) {
         boolean isImage = path.endsWith(".jpg")
                 || path.endsWith(".jpeg")
@@ -154,7 +158,6 @@ public class ImageCompressor {
         if ("jpg".equals(type)) {
             try {
                 if(isPanoramaImage(file.getAbsolutePath())){
-                    LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
                     return false;
                 }
                 FileInputStream inputStream = new FileInputStream(file);
@@ -189,9 +192,11 @@ public class ImageCompressor {
         String xml = map.get("Xmp");
         if(!TextUtils.isEmpty(xml) ){
             if(xml.contains("GPano:UsePanoramaViewer")){
+                LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
                 return true;
             }
             if(xml.contains("MotionPhoto")){
+                LogUtils.i("根据exif特征识别出为MotionPhoto,不进行压缩");
                 return true;
             }
             //MotionPhoto
@@ -467,36 +472,7 @@ public class ImageCompressor {
         return resizedBitmap;
     }
 
-    public static boolean shouldCompress(File pathname, boolean checkQuality) {
-        if (!pathname.exists()) {
-            LogUtils.w("source file not exist: " + pathname);
-            return false;
-        }
 
-        String name = pathname.getName();
-        int idx = name.lastIndexOf(".");
-        if (idx < 0 || idx >= name.length() - 1) {
-            return false;
-        }
-        String suffix = name.substring(idx + 1);
-        boolean isJpg = suffix.equalsIgnoreCase("jpg")
-                || suffix.equalsIgnoreCase("jpeg") || suffix.equalsIgnoreCase("png");
-        if (!isJpg) {
-            /*if(suffix.equalsIgnoreCase("png")){
-                return true;
-            }*/
-            if (suffix.equalsIgnoreCase("gif") || suffix.equalsIgnoreCase("webp")) {
-                return false;
-            }
-            return false;
-        }
-        if (!checkQuality) {
-            return true;
-        }
-        int quality = getQuality(pathname.getAbsolutePath());
-        //LogUtils.d("quality:"+quality +":"+pathname.getAbsolutePath());
-        return (quality == 0) || (quality > getQuality() + 4);
-    }
 
     static int getQuality() {
         return targetJpgQuality;
