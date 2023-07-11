@@ -59,15 +59,22 @@ public class MyPanoActivity extends AppCompatActivity {
                 .map(new Function<String, Bitmap>() {
                     @Override
                     public Bitmap apply(String uri) throws Exception {
+                        Bitmap bitmap = null;
                         if (uri.startsWith("content://") || uri.startsWith("file://")) {
-                            return BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(uri)));
+                            bitmap =  BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(uri)));
+                        }else {
+                            bitmap =  BitmapFactory.decodeStream(new FileInputStream(new File(uri)));
                         }
-                        return BitmapFactory.decodeStream(new FileInputStream(new File(uri)));
+                        //放大两倍,然保存为临时文件:
+                        //Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap,bitmap.getWidth()*2,bitmap.getHeight()*2,true);
+                        //bitmap.recycle();
+                        return bitmap;
                     }
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Bitmap>() {
                     @Override
                     public void accept(Bitmap bitmap) throws Exception {
+
                         panoView.loadBitmap(bitmap);
                     }
                 }, new Consumer<Throwable>() {

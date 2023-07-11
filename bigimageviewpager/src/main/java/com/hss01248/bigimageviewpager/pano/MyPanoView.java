@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.vr.sdk.widgets.pano.VrPanoramaEventListener;
 import com.google.vr.sdk.widgets.pano.VrPanoramaView;
@@ -72,6 +73,12 @@ public class MyPanoView extends RelativeLayout implements DefaultLifecycleObserv
 
     public void loadBitmap(Bitmap bitmap){
         mVrPanoramaView.loadImageFromBitmap(bitmap, paNormalOptions);
+        //mVrPanoramaView.resumeRendering();
+    }
+
+    public void loadFile(String path){
+        byte[] bytes = FileIOUtils.readFile2BytesByChannel(path);
+        mVrPanoramaView.loadImageFromByteArray(bytes, paNormalOptions);
         //mVrPanoramaView.resumeRendering();
     }
 

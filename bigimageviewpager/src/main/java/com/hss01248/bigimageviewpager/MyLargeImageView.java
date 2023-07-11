@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,20 +21,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hss01248.bigimageviewpager.databinding.ItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.databinding.StateItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.pano.MyPanoActivity;
-import com.hss01248.bigimageviewpager.pano.MyPanoView;
 import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
-import com.hss01248.pagestate.PageStateConfig;
-import com.hss01248.pagestate.StatefulFrameLayout;
+import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.viewstate.StatefulLayout;
+import com.hss01248.viewstate.ViewStateConfig;
 import com.shizhefei.view.largeimage.factory.InputStreamBitmapDecoderFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -45,15 +49,14 @@ import io.reactivex.schedulers.Schedulers;
 public class MyLargeImageView extends FrameLayout {
     MyGifPhotoView gifView;
     MyLargeJpgView jpgView;
-    MyPanoView panoView;
-    boolean viewAsPano;
+
     ImageView ivHelper;
     TextView tvScale;
 
     StateItemLargeImgBinding stateBinding;
     ItemLargeImgBinding largeImgBinding;
 
-    StatefulFrameLayout stateManager;
+    StatefulLayout stateManager;
     LargeImageInfo info = new LargeImageInfo();
 
     public float getMaxScaleRatio() {
@@ -97,22 +100,15 @@ public class MyLargeImageView extends FrameLayout {
         stateBinding = StateItemLargeImgBinding.inflate(LayoutInflater.from(context),this,true);
         largeImgBinding = stateBinding.itemLargeImg;
         stateManager = stateBinding.stateLayout;
-        stateBinding.stateLayout.init(new PageStateConfig() {
-            @Override
-            public void onRetry(View retryView) {
-                reload();
-            }
-
-            @Override
-            public boolean isFirstStateLoading() {
-                return false;
-            }
-
-            @Override
-            public boolean darkMode() {
-                return darkMode;
-            }
-        });
+        stateBinding.stateLayout.setConfig(
+                ViewStateConfig.newBuilder(ViewStateConfig.getGlobalConfig())
+                        .errorClick(new Runnable() {
+                    @Override
+                    public void run() {
+                        reload();
+                    }
+                }).darkMode(true)
+                        .build());
         largeImgBinding.getRoot().setBackgroundColor(darkMode? Color.BLACK:Color.WHITE);
         ivHelper = largeImgBinding.ivGlideHelper;
         tvScale = largeImgBinding.tvScale;
@@ -219,7 +215,7 @@ public class MyLargeImageView extends FrameLayout {
 
             @Override
             public void onProgress(int progress) {
-                stateManager.showLoading(progress);
+                stateManager.showLoading(progress+"%");
             }
 
             @Override
@@ -227,7 +223,7 @@ public class MyLargeImageView extends FrameLayout {
 
                 if (throwable != null) {
                     info.throwable = throwable;
-                    throwable.printStackTrace();
+                    LogUtils.w(throwable);
                     //toastMsg(throwable.getMessage());
                     stateManager.showError(throwable.getMessage());
                 } else {
@@ -291,9 +287,7 @@ public class MyLargeImageView extends FrameLayout {
             gifView.setVisibility(VISIBLE);
             largeImgBinding.ivGo360.setVisibility(GONE);
             jpgView.setVisibility(GONE);
-            if(panoView != null){
-                panoView.setVisibility(GONE);
-            }
+
             if (uri.startsWith("content://") || uri.startsWith("file://")) {
                 gifView.setImageURI(Uri.parse(uri));
             } else {
@@ -302,11 +296,9 @@ public class MyLargeImageView extends FrameLayout {
             stateManager.showContent();
         } else {
             gifView.setVisibility(GONE);
-            if(panoView != null){
-                panoView.setVisibility(GONE);
-            }
             jpgView.setVisibility(VISIBLE);
-            largeImgBinding.ivGo360.setVisibility(VISIBLE);
+
+
 
             //兼容avif格式
             if(uri.endsWith(".avif")){
@@ -335,62 +327,35 @@ public class MyLargeImageView extends FrameLayout {
                                 Log.w("avif","large image load failed:"+uri);
                                 info.throwable = new Throwable("load avif faild");
                                 stateManager.showError(errorDrawable+" - load avif failed:\n"+uri+"\n"+new File(uri).exists());
-
-                               /* jpgView.setImageDrawable(new BitmapDrawable(BitmapFactory.decodeFile(uri.replace(".avif",".jpg"))));
-                                stateManager.showContent();*/
                             }
                         });
                 return;
             }
 
             //判断是否为360全景图
-/*            if(MyPanoView.isPanoramaImage(uri) || viewAsPano){
-                if(panoView == null){
-                    panoView = new MyPanoView(getContext());
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT);
-                    panoView.setLayoutParams(params);
-                    stateBinding.itemLargeImg.getRoot().addView(panoView,2);
-                }
-                largeImgBinding.ivGo360.setVisibility(GONE);
-                jpgView.setVisibility(GONE);
-                panoView.setVisibility(VISIBLE);
-                Disposable subscribe = Observable.just(uri)
-                        .subscribeOn(Schedulers.io())
-                        .map(new Function<String, Bitmap>() {
-                            @Override
-                            public Bitmap apply(String uri) throws Exception {
-                                if (uri.startsWith("content://") || uri.startsWith("file://")) {
-                                    return BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(Uri.parse(uri)));
-                                }
-                                return BitmapFactory.decodeStream(new FileInputStream(new File(uri)));
-                            }
-                        }).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Bitmap>() {
-                            @Override
-                            public void accept(Bitmap bitmap) throws Exception {
-                                panoView.loadBitmap(bitmap);
-                                stateManager.showContent();
-                            }
-                        }, new Consumer<Throwable>() {
-                            @Override
-                            public void accept(Throwable throwable) throws Exception {
-                                info.throwable = throwable;
-                                stateManager.showError(throwable.getMessage());
-                            }
-                        });
-                return;
-            }*/
+
             jpgView.setVisibility(VISIBLE);
-            if(panoView != null){
-                panoView.setVisibility(GONE);
-            }
 
             Disposable subscribe = Observable.just(uri)
                     .subscribeOn(Schedulers.io())
                     .map(new Function<String, InputStreamBitmapDecoderFactory>() {
                         @Override
                         public InputStreamBitmapDecoderFactory apply(String uri) throws Exception {
+                            if(isPanoramaImage(info.localPathOrUri)){
+                                ThreadUtils.getMainHandler().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        largeImgBinding.ivGo360.setVisibility(VISIBLE);
+                                    }
+                                });
+                            }else {
+                                ThreadUtils.getMainHandler().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        largeImgBinding.ivGo360.setVisibility(GONE);
+                                    }
+                                });
+                            }
                             if (uri.startsWith("content://") || uri.startsWith("file://")) {
                                 return new InputStreamBitmapDecoderFactory(
                                         getContext().getContentResolver().openInputStream(Uri.parse(uri)));
@@ -419,5 +384,20 @@ public class MyLargeImageView extends FrameLayout {
         }
     }
 
-
+    public static boolean isPanoramaImage(String path){
+        Map<String, String> map = ExifUtil.readExif(path);
+        String xml = map.get("Xmp");
+        if(!TextUtils.isEmpty(xml) ){
+            if(xml.contains("GPano:UsePanoramaViewer")){
+                LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
+                return true;
+            }
+            if(xml.contains("MotionPhoto")){
+                LogUtils.i("根据exif特征识别出为MotionPhoto,不进行压缩");
+                return true;
+            }
+            //MotionPhoto
+        }
+        return false;
+    }
 }
