@@ -44,6 +44,8 @@ public class MyPanoView extends RelativeLayout implements DefaultLifecycleObserv
         init2();
     }
 
+
+
     private void init2() {
         mVrPanoramaView = new VrPanoramaView(getContext());
         paNormalOptions = new VrPanoramaView.Options();
@@ -70,6 +72,8 @@ public class MyPanoView extends RelativeLayout implements DefaultLifecycleObserv
 
         // mVrPanoramaView.loadImageFromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.andes), paNormalOptions);
     }
+
+
 
     public void loadBitmap(Bitmap bitmap){
         mVrPanoramaView.loadImageFromBitmap(bitmap, paNormalOptions);
