@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.vr.sdk.widgets.pano.ExtendVrPanoramaView;
 import com.google.vr.sdk.widgets.pano.VrPanoramaEventListener;
 import com.google.vr.sdk.widgets.pano.VrPanoramaView;
 import com.hss01248.bigimageviewpager.LifecycleObjectUtil2;
@@ -47,7 +48,7 @@ public class MyPanoView extends RelativeLayout implements DefaultLifecycleObserv
 
 
     private void init2() {
-        mVrPanoramaView = new VrPanoramaView(getContext());
+        mVrPanoramaView = new ExtendVrPanoramaView(getContext());
         paNormalOptions = new VrPanoramaView.Options();
         paNormalOptions.inputType = VrPanoramaView.Options.TYPE_MONO;
         mVrPanoramaView.setFullscreenButtonEnabled (false); //隐藏全屏模式按钮
@@ -59,6 +60,8 @@ public class MyPanoView extends RelativeLayout implements DefaultLifecycleObserv
         //设置为跟随手移动,而不是传感器
         mVrPanoramaView.setTouchTrackingEnabled(true);
         mVrPanoramaView.setPureTouchTracking(true);
+
+        //mVrPanoramaView.setVerticalFadingEdgeEnabled(true);
 
         LifecycleOwner lifecycleOwnerFromObj = LifecycleObjectUtil2.getLifecycleOwnerFromObj(getContext());
         if(lifecycleOwnerFromObj !=  null){

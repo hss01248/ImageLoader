@@ -22,6 +22,6 @@ public class ExtendVrPanoramaView extends VrPanoramaView {
 
     @Override
     protected VrPanoramaRenderer createRenderer(Context context, VrWidgetRenderer.GLThreadScheduler glThreadScheduler, float xMetersPerPixel, float yMetersPerPixel) {
-        return super.createRenderer(context, glThreadScheduler, xMetersPerPixel*0.5f, yMetersPerPixel*0.5f);
+        return super.createRenderer(context, glThreadScheduler, xMetersPerPixel*5f, yMetersPerPixel*5f);
     }
 }
