@@ -70,6 +70,7 @@ public class MyPanoView extends RelativeLayout implements DefaultLifecycleObserv
         addView(mVrPanoramaView);
 
 
+       // GestureViewBinder.bind(getContext(), this, mVrPanoramaView).setFullGroup(true);//不起作用
         // mVrPanoramaView.loadImageFromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.andes), paNormalOptions);
     }
 
