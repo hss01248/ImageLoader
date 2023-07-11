@@ -66,7 +66,7 @@ public class MyPanoActivity extends AppCompatActivity {
                             bitmap =  BitmapFactory.decodeStream(new FileInputStream(new File(uri)));
                         }
                         //放大两倍,然保存为临时文件:
-                        //Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap,bitmap.getWidth()*2,bitmap.getHeight()*2,true);
+                        //Bitmap bitmap1 = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth()*0.5f), (int) (bitmap.getHeight()*0.5f),true);
                         //bitmap.recycle();
                         return bitmap;
                     }
