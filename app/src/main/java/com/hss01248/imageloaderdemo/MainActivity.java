@@ -130,12 +130,9 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> datas = new ArrayList<>();
 
-        ImageLoader.with(this)
-                .url("https://pic1.zhimg.com/v2-7868c606d6ddddbdd56f0872e514925c_b.jpg")
-                // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
-                // .res(R.drawable.thegif)
-                .placeHolder(R.mipmap.ic_launcher, false)
-                .widthHeight(250, 150);
+
+                //.widthHeight(250, 150)
+        ;
                 //.asCircle(R.color.colorAccent).into(ivUrl);
         //.blur(40)
                 /*.asBitmap(new SingleConfig.BitmapListener() {
@@ -503,6 +500,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    public void loadUrl2(View view) {
+        ImageLoader.with(this)
+                .url("http://kodo.hss01248.tech/testimg/tmp-splash_stars.jpeg")
+                // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
+                // .res(R.drawable.thegif)
+                .defaultErrorRes(true)
+                .placeHolder(R.mipmap.ic_launcher, false)
+                .into(ivUrl);
     }
 
 

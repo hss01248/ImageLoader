@@ -2,30 +2,19 @@ package com.hss01248.imageloaderdemo;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.engine.cache.DiskCache;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.AppGlideModule;
-
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-
-import jp.co.link_u.library.glideavif.AvifDecoderFromByteBuffer;
-import me.jessyan.progressmanager.ProgressManager;
-import okhttp3.OkHttpClient;
 
 @GlideModule
 public class GMylideApp extends AppGlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
+        LogUtils.w("in app: applyOptions");
         //设置缓存到外部存储器
         //builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context));
         long memoryCacheSizeBytes = 1024L * 1024 * 1024 * 2; // 2G
@@ -36,13 +25,13 @@ public class GMylideApp extends AppGlideModule {
         builder.setDiskCache(new InternalCacheDiskCacheFactory(context, DiskCache.Factory.DEFAULT_DISK_CACHE_DIR, memoryCacheSizeBytes));
     }
 
-    @Override
-    public void registerComponents(Context context, Glide glide, Registry registry) {
-        LogUtils.w("in app: registerComponents");
+    //@Override
+   // public void registerComponents(Context context, Glide glide, Registry registry) {
+       // LogUtils.w("in app: registerComponents");
         //registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory());
-        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getInstance()
+       /* registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getInstance()
                 .with(new OkHttpClient.Builder()).build()));
-        registry.prepend(ByteBuffer.class, Bitmap.class,new AvifDecoderFromByteBuffer());
+        registry.prepend(ByteBuffer.class, Bitmap.class,new AvifDecoderFromByteBuffer());*/
                        // .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)).build()));
-    }
+    //}
 }

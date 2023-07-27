@@ -1,22 +1,16 @@
 package com.hss01248.glidev4.config;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import android.graphics.Bitmap;
-import android.os.Build;
-import android.util.Log;
-
 import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.cache.DiskCache;
-import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.LibraryGlideModule;
 import com.hss01248.image.config.GlobalConfig;
@@ -38,7 +32,6 @@ import javax.net.ssl.X509TrustManager;
 import jp.co.link_u.library.glideavif.AvifDecoderFromByteBuffer;
 import me.jessyan.progressmanager.ProgressManager;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by Administrator on 2017/5/2 0002.
@@ -47,20 +40,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public class GlideModelConfig extends LibraryGlideModule {
 
 
-
-    /* @Override
-     public void applyOptions(Context context, GlideBuilder builder) {
-         builder.setLogLevel(Log.DEBUG);
-         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.N ) {
-             builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
-         }else {
-             builder.setDecodeFormat(DecodeFormat.PREFER_RGB_565);
-         }//解决rgb565部分手机上出现绿色问题
-
-         final UncaughtThrowableStrategy myUncaughtThrowableStrategy = new ...
-    builder.setDiskCacheExecutor(newDiskCacheExecutor(myUncaughtThrowableStrategy));
-    builder.setResizeExecutor(newSourceExecutor(myUncaughtThrowableStrategy));
-    }*/
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide,
                                    @NonNull Registry registry) {
@@ -75,7 +54,7 @@ public class GlideModelConfig extends LibraryGlideModule {
         }
 
         builder
-                //.addNetworkInterceptor(new ProgressInterceptor())
+                .addNetworkInterceptor(new ModifyResponseBodyInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS);

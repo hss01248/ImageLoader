@@ -54,6 +54,14 @@
             android:layout_height="wrap_content" />
 
         <Button
+            android:onClick="loadUrl2"
+            android:layout_margin="10dp"
+            android:text="加载一个url"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:onClick="goWebSpider"
             android:layout_margin="10dp"
             android:text="webview爬取urls并加载"
