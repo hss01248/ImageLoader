@@ -512,6 +512,36 @@ public class MainActivity extends AppCompatActivity {
                 .into(ivUrl);
     }
 
+    public void loadFile2(String path) {
+        ImageLoader.with(this)
+                .file(path)
+                //.url("http://kodo.hss01248.tech/testimg/tmp-splash_stars.jpeg")
+                // .url("http://img.yxbao.com/news/image/201703/13/7bda462477.gif")
+                // .res(R.drawable.thegif)
+                .defaultErrorRes(true)
+                .placeHolder(R.mipmap.ic_launcher, false)
+                .into(ivUrl);
+    }
+
+    public void loadFile3(View view) {
+        ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
+            @Override
+            public void onSuccess(String path) {
+                loadFile2( path);
+            }
+
+            @Override
+            public void onFail(String path, String msg) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
 
 
     /*Intent intent = new Intent(this,BigImageActy.class);

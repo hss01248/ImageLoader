@@ -20,7 +20,7 @@ import okio.Okio;
  */
 public class ModifyResponseBodyInterceptor implements Interceptor {
 
-    static byte dataToAdd = 0x66;
+   public static byte dataToAdd = 0x66;
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request()) ;
@@ -40,7 +40,7 @@ public class ModifyResponseBodyInterceptor implements Interceptor {
             return response;
         }
 
-        inputStream.mark(2);
+        //inputStream.mark(2);
         //mark(10)，那么在read()10个以内的字符时，reset（）操作后可以重新读取已经读出的数据，如果已经读取的数据超过10个，那reset()操作后，就不能正确读取以前的数据了
 
         //LogUtils.w("文件长度-->"+body.contentLength()+", inputStream.available():"

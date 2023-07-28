@@ -15,6 +15,7 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.LibraryGlideModule;
 import com.hss01248.image.config.GlobalConfig;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.KeyManagementException;
@@ -61,8 +62,39 @@ public class GlideModelConfig extends LibraryGlideModule {
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(ProgressManager.getInstance()
                 .with(builder).build()));
         registry.prepend(ByteBuffer.class, Bitmap.class,new AvifDecoderFromByteBuffer());
+
+        registry.replace(File.class, InputStream.class, new MyStreamFactory());
         Log.i("glide", "registerComponents---");
 
+
+        //file:
+        // .append(File.class, ByteBuffer.class, new ByteBufferFileLoader.Factory())
+        //        .append(File.class, InputStream.class, new FileLoader.StreamFactory())
+        //        .append(File.class, File.class, new FileDecoder())
+        //        .append(File.class, ParcelFileDescriptor.class, new FileLoader.FileDescriptorFactory())
+        //        // Compilation with Gradle requires the type to be specified for UnitModelLoader here.
+        //        .append(File.class, File.class, UnitModelLoader.Factory.<File>getInstance())
+
+        // .append(String.class, ParcelFileDescriptor.class, new StringLoader.FileDescriptorFactory())
+        //  .append(
+        //            Uri.class,
+        //            ParcelFileDescriptor.class,
+        //            new AssetUriLoader.FileDescriptorFactory(context.getAssets()))
+
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        //      registry.append(
+        //          Uri.class, InputStream.class, new QMediaStoreUriLoader.InputStreamFactory(context));
+        //      registry.append(
+        //          Uri.class,
+        //          ParcelFileDescriptor.class,
+        //          new QMediaStoreUriLoader.FileDescriptorFactory(context));
+        //    }
+        //    registry
+        //        .append(Uri.class, InputStream.class, new UriLoader.StreamFactory(contentResolver))
+        //        .append(
+        //            Uri.class,
+        //            ParcelFileDescriptor.class,
+        //            new UriLoader.FileDescriptorFactory(contentResolver))
     }
 
 

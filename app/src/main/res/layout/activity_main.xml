@@ -116,6 +116,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <Button
+            android:onClick="loadFile3"
+            android:text="选择图片文件并加载"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
 
         <ImageView
             android:id="@+id/iv_url"

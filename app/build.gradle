@@ -92,9 +92,11 @@ dependencies {
 
     //debugImplementation 'com.github.hss01248.flipperUtil:oom:1.2.3'
     api 'jp.co.link_u.library.glideavif:glideavif:0.8.1'
+    api 'com.github.bumptech.glide:glide:4.11.0'
     configurations.all {
         resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.12.0'
         resolutionStrategy.force 'com.squareup.okio:okio:1.15.0'
+        resolutionStrategy.force 'com.github.bumptech.glide:glide:4.11.0'
     }
 
 
