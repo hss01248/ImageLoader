@@ -1,5 +1,7 @@
 package com.hss01248.glide.aop.file;
 
+import android.graphics.BitmapRegionDecoder;
+
 import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.glide.aop.net.ModifyResponseBodyInterceptor;
 import com.hss01248.logforaop.LogMethodAspect;
@@ -31,6 +33,24 @@ public class GlideLoadFileAspect {
 
     private File mapFile(File file) {
         return AddByteUtil.createTmpOriginalFile(file.getAbsolutePath());
+    }
+
+    @Around("execution(* com.shizhefei.view.largeimage.factory.FileBitmapDecoderFactory.made())")
+    public Object fileBitmapDecoderFactory(ProceedingJoinPoint joinPoint) throws Throwable {
+        // return BitmapRegionDecoder.newInstance(path, false);
+        return joinPoint.proceed(joinPoint.getArgs());
+    }
+
+    @Around("execution(* com.shizhefei.view.largeimage.factory.InputStreamBitmapDecoderFactory.made())")
+    public Object inputStreamBitmapDecoderFactory(ProceedingJoinPoint joinPoint) throws Throwable {
+        //return BitmapRegionDecoder.newInstance(inputStream, false);
+        return joinPoint.proceed(joinPoint.getArgs());
+    }
+
+    @Around("execution(* pl.droidsonroids.gif.InputSource.FileSource.open())")
+    public Object largeGif(ProceedingJoinPoint joinPoint) throws Throwable {
+        //return new GifInfoHandle(mPath); 改成stream
+        return joinPoint.proceed(joinPoint.getArgs());
     }
 
     @Around("execution(* com.bumptech.glide.util.ByteBufferUtil.fromFile(..))")

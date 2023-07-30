@@ -1,1 +1,2 @@
--keep class com.bumptech.glide.load.model.** { *; }
+-keep class com.shizhefei.view.largeimage.factory.** { *; }
+-keep class com.bumptech.glide.** { *; }
