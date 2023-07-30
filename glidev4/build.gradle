@@ -58,6 +58,7 @@ dependencies {
     implementation 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 
     api project(':imageloader')
+    api project(':glide-aop')
     api project(':glidebase')
     api 'me.jessyan:progressmanager:1.5.0'
     api 'com.squareup.okhttp3:logging-interceptor:3.12.0'
@@ -75,4 +76,7 @@ dependencies {
     //compile 'com.github.songmingwen:glide-4.0-transformations:1.1'
     // If you want to use the GPU Filters
     //compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
+
+
+
 }

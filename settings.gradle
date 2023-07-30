@@ -19,3 +19,4 @@ include ':app', ':imageloader',  ':glidev4', ':glidebase', ':imagelist'
 
 include ':myblog'
 
+include ':glide-aop'

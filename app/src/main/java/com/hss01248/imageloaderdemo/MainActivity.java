@@ -37,6 +37,7 @@ import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.fullscreendialog.FullScreenDialog;
+import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
@@ -527,6 +528,7 @@ public class MainActivity extends AppCompatActivity {
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
             public void onSuccess(String path) {
+                AddByteUtil.addByte(path);
                 loadFile2( path);
             }
 

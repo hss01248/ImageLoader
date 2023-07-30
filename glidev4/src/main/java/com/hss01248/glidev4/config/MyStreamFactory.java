@@ -2,6 +2,7 @@ package com.hss01248.glidev4.config;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.load.model.FileLoader;
+import com.hss01248.glide.aop.net.ModifyResponseBodyInterceptor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

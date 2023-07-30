@@ -251,7 +251,7 @@ public class SingleConfig {
 
 
     public String getSourceString() {
-        Log.d("source", sourceString + "  ->>>>");
+        //Log.d("source", sourceString + "  ->>>>");
         return sourceString;
     }
 
