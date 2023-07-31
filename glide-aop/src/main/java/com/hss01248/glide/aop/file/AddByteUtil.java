@@ -13,6 +13,7 @@ import java.nio.channels.FileChannel;
 public class AddByteUtil {
     // 要添加的字节数据
     static  byte dataToAdd = 0x66;
+    static  boolean useFileChannel = false;
 
     public static String addByte(String filePath){
 
@@ -30,27 +31,54 @@ public class AddByteUtil {
                 System.out.println("已经是加密文件了: "+ file.getAbsolutePath());
                 return filePath;
             }
-            raf.seek(0);
-            FileChannel channel = raf.getChannel();
-            // 读取原始数据
-            ByteBuffer buffer = ByteBuffer.allocate((int) file.length());
-            channel.read(buffer);
-            buffer.flip();
-            // 创建新的ByteBuffer来添加数据
-            ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() + 1);
-            // 在开头添加一个字节
-            newBuffer.put(dataToAdd);
-            // 将原始数据写入新的ByteBuffer
-            newBuffer.put(buffer);
-            // 切换新的ByteBuffer为读模式
-            newBuffer.flip();
-            // 清空文件内容
-            channel.truncate(0);
-            // 将新的ByteBuffer写入文件
-            channel.write(newBuffer);
-            // 关闭通道和文件
-            channel.close();
-            raf.close();
+            if(useFileChannel){
+                raf.seek(0);
+                FileChannel channel = raf.getChannel();
+                // 读取原始数据
+                ByteBuffer buffer = ByteBuffer.allocate((int) file.length());
+                channel.read(buffer);
+                buffer.flip();
+                // 创建新的ByteBuffer来添加数据
+                ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() + 1);
+                // 在开头添加一个字节
+                newBuffer.put(dataToAdd);
+                // 将原始数据写入新的ByteBuffer
+                newBuffer.put(buffer);
+                // 切换新的ByteBuffer为读模式
+                newBuffer.flip();
+                // 清空文件内容
+                channel.truncate(0);
+                // 将新的ByteBuffer写入文件
+                channel.write(newBuffer);
+                // 关闭通道和文件
+                channel.close();
+                raf.close();
+            }else {
+                raf.close();
+                byte[] bytes = new byte[]{(byte) dataToAdd};
+                File file1 = new File(file.getParentFile(),file.getName()+".1");
+                filePath = file1.getAbsolutePath();
+                if(!file1.exists()){
+                    file1.createNewFile();
+                }
+                InputStream inputStream = new FileInputStream(file);
+                ByteArrayInputStream inputStream1 = new ByteArrayInputStream(bytes);
+                SequenceInputStream newInputStream = new SequenceInputStream(inputStream1,inputStream);
+
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file1));
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+
+                while ((bytesRead = newInputStream.read(buffer)) != -1) {
+                    bos.write(buffer, 0, bytesRead);
+                }
+                bos.flush();
+
+                newInputStream.close();
+                bos.close();
+            }
+
             System.out.println("添加字节成功, cost: "+(System.currentTimeMillis() - startTime)
                     +"ms, filesize: "+ file.length()+"b,original file size : "+originalFileSize+",new size: "+file.length());
         return filePath;
