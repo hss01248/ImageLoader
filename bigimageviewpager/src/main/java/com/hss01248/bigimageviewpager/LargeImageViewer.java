@@ -23,7 +23,7 @@ public class LargeImageViewer {
     public static void showInDialog(String path){
         LogUtils.d("path to load: "+ path);
         FullScreenDialog dialog = new FullScreenDialog(ActivityUtils.getTopActivity());
-        MyLargeImageView largeImageView = new MyLargeImageView(ActivityUtils.getTopActivity());
+        MyLargeImageViewBySubSamplingView largeImageView = new MyLargeImageViewBySubSamplingView(ActivityUtils.getTopActivity());
         dialog.setContentView(largeImageView);
         dialog.show();
         largeImageView.loadUri(path);
