@@ -42,4 +42,5 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     api group: 'com.github.bumptech.glide', name: 'okhttp3-integration', version: '4.11.0'
     api 'com.blankj:utilcodex:1.30.6'
+    api 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 }

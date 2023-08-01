@@ -30,13 +30,14 @@ import com.hss01248.bigimageviewpager.databinding.ItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.databinding.StateItemLargeImgBinding;
 import com.hss01248.bigimageviewpager.pano.MyPanoActivity;
 import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
+import com.hss01248.glide.aop.file.AddByteUtil;
+import com.hss01248.glide.aop.file.ReadFileUtil;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.viewstate.StatefulLayout;
 import com.hss01248.viewstate.ViewStateConfig;
 import com.shizhefei.view.largeimage.factory.InputStreamBitmapDecoderFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -291,7 +292,8 @@ public class MyLargeImageView extends FrameLayout {
             if (uri.startsWith("content://") || uri.startsWith("file://")) {
                 gifView.setImageURI(Uri.parse(uri));
             } else {
-                gifView.setImageURI(Uri.fromFile(new File(uri)));
+                File tmpOriginalFile = AddByteUtil.createTmpOriginalFile(uri);
+                gifView.setImageURI(Uri.fromFile(tmpOriginalFile));
             }
             stateManager.showContent();
         } else {
@@ -301,12 +303,13 @@ public class MyLargeImageView extends FrameLayout {
 
 
             //兼容avif格式
-            if(uri.endsWith(".avif")){
+            if(uri.contains(".avif")){
+                File tmpOriginalFile = AddByteUtil.createTmpOriginalFile(uri);
                 //todo 如何获取avif图片的宽高
                 stateManager.showLoading();
                 Glide.with(getContext())
                         .asBitmap()
-                        .load(new File(uri))
+                        .load(tmpOriginalFile)
                         //.override(w,h)
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
@@ -324,9 +327,9 @@ public class MyLargeImageView extends FrameLayout {
 
                             @Override
                             public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                                Log.w("avif","large image load failed:"+uri);
+                                Log.w("avif","large image load failed:"+tmpOriginalFile);
                                 info.throwable = new Throwable("load avif faild");
-                                stateManager.showError(errorDrawable+" - load avif failed:\n"+uri+"\n"+new File(uri).exists());
+                                stateManager.showError(errorDrawable+" - load avif failed:\n"+tmpOriginalFile+"\n"+tmpOriginalFile.exists());
                             }
                         });
                 return;
@@ -357,12 +360,24 @@ public class MyLargeImageView extends FrameLayout {
                                 });
                             }
                             if (uri.startsWith("content://") || uri.startsWith("file://")) {
-                                return new InputStreamBitmapDecoderFactory(
-                                        getContext().getContentResolver().openInputStream(Uri.parse(uri)));
+                                try {
+                                    return new InputStreamBitmapDecoderFactory(
+                                            ReadFileUtil.read(getContext().getContentResolver().openInputStream(Uri.parse(uri))));
+                                } catch (Throwable e) {
+                                    throw new RuntimeException(e);
+                                }
                             } else if (uri.startsWith("/storage/")) {
-                                return new InputStreamBitmapDecoderFactory(new FileInputStream(new File(uri)));
+                                try {
+                                    return new InputStreamBitmapDecoderFactory(ReadFileUtil.read(new File(uri)));
+                                } catch (Throwable e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
-                            return new InputStreamBitmapDecoderFactory(new FileInputStream(new File(uri)));
+                            try {
+                                return new InputStreamBitmapDecoderFactory(ReadFileUtil.read(new File(uri)));
+                            } catch (Throwable e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<InputStreamBitmapDecoderFactory>() {

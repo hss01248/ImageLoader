@@ -4,12 +4,14 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.hss01248.fullscreendialog.FullScreenDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,14 @@ public class LargeImageViewer {
 
 
 
+    public static void showInDialog(String path){
+        LogUtils.d("path to load: "+ path);
+        FullScreenDialog dialog = new FullScreenDialog(ActivityUtils.getTopActivity());
+        MyLargeImageView largeImageView = new MyLargeImageView(ActivityUtils.getTopActivity());
+        dialog.setContentView(largeImageView);
+        dialog.show();
+        largeImageView.loadUri(path);
+    }
 
     public static ViewPager showBig(final Context context,MyViewPager viewPager, final List<String> uris0, int position) {
         if(viewPager == null){

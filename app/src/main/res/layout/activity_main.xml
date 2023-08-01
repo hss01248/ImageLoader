@@ -123,6 +123,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <Button
+            android:onClick="hideDir"
+            android:text="选择一个文件夹,并隐藏它"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
 
         <ImageView
             android:id="@+id/iv_url"

@@ -34,10 +34,12 @@ import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
 import com.hss01248.basewebview.BaseWebviewActivity;
+import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.fullscreendialog.FullScreenDialog;
 import com.hss01248.glide.aop.file.AddByteUtil;
+import com.hss01248.glide.aop.file.DirOperationUtil;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
@@ -53,6 +55,7 @@ import com.hss01248.webviewspider.SpiderWebviewActivity;
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -522,14 +525,55 @@ public class MainActivity extends AppCompatActivity {
                 .defaultErrorRes(true)
                 .placeHolder(R.mipmap.ic_launcher, false)
                 .into(ivUrl);
+        ivUrl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //LargeImageViewer.showBig()
+                LargeImageViewer.showInDialog(path);
+
+            }
+        });
     }
 
     public void loadFile3(View view) {
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
             public void onSuccess(String path) {
-                AddByteUtil.addByte(path);
-                loadFile2( path);
+                String s = AddByteUtil.addByte(path);
+                loadFile2( s);
+            }
+
+            @Override
+            public void onFail(String path, String msg) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
+    public void hideDir(View view) {
+        ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
+            @Override
+            public void onSuccess(String path) {
+                File file = new File(path);
+                if(!file.isDirectory()){
+                    ToastUtils.showLong("请选择一个文件夹");
+                    return;
+                }
+                DirOperationUtil.hideDirAndInnerFiles(file);
+                ToastUtils.showLong("然后显示第一张图片");
+                File[] files = file.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        return pathname.getName().contains(".jpg");
+                    }
+                });
+                loadFile2(files[0].getAbsolutePath());
+
             }
 
             @Override

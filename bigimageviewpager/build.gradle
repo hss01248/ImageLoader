@@ -76,4 +76,7 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
 
     api 'com.github.Jarvis-Lau:GestureViewBinder:1.0.3'
+    api "com.github.hss01248.utilcodeEnhance:fullScreenDialog:1.2.1"
+
+    api project(':glide-aop')
 }
