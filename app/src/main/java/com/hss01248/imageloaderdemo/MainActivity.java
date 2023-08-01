@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -22,12 +24,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.google.gson.Gson;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
@@ -90,13 +95,15 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_dir)
     Button btnDir;
 
+    SubsamplingScaleImageView subsamplingScaleImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         // GlideFaceDetector.initialize(this);
-
+        subsamplingScaleImageView = findViewById(R.id.subsampling_iv);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -203,13 +210,7 @@ public class MainActivity extends AppCompatActivity {
             , R.id.btn_album, R.id.btn_dir})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_bigpic: {
-                Intent intent = new Intent(this,BigImageActy.class);
-                startActivity(intent);
-                //FrescoFaceCropActivity.launch(this);
-            }
 
-            break;
             case R.id.btn_album: {
                 /*oid.providers.media.MediaProvider uri content://media/external/images/media from
                 pid=31500, uid=10576 requires android.permission.READ_EXTERNAL_STORAGE, or grantUriPermission()*/
@@ -260,10 +261,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             break;
-            case R.id.btn_fresco:
-                Intent intent = new Intent(this, ConfigAllActy.class);
-                startActivity(intent);
-                break;
             case R.id.btn_scale:
                 Intent intent6 = new Intent(this, ScaleTypeActy.class);
                 startActivity(intent6);
@@ -541,6 +538,58 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(String path) {
                 String s = AddByteUtil.addByte(path);
                 loadFile2( s);
+
+                File tmpOriginalFile = AddByteUtil.createTmpOriginalFile(s);
+                subsamplingScaleImageView.setMaxScale(12);
+                subsamplingScaleImageView.setDebug(AppUtils.isAppDebug());
+                subsamplingScaleImageView.setOnStateChangedListener(new SubsamplingScaleImageView.OnStateChangedListener() {
+                    @Override
+                    public void onScaleChanged(float newScale, int origin) {
+                        LogUtils.d("onScaleChanged",newScale,origin);
+                    }
+
+                    @Override
+                    public void onCenterChanged(PointF newCenter, int origin) {
+                        LogUtils.d("onScaleChanged",newCenter,origin);
+                    }
+                });
+
+                subsamplingScaleImageView.setOnImageEventListener(new SubsamplingScaleImageView.OnImageEventListener() {
+                    @Override
+                    public void onReady() {
+                        LogUtils.d("onReady");
+                    }
+
+                    @Override
+                    public void onImageLoaded() {
+                        LogUtils.d("onImageLoaded");
+                    }
+
+                    @Override
+                    public void onPreviewLoadError(Exception e) {
+                        LogUtils.w("onPreviewLoadError",e);
+                    }
+
+                    @Override
+                    public void onImageLoadError(Exception e) {
+                        LogUtils.w("onImageLoadError",e);
+                    }
+
+                    @Override
+                    public void onTileLoadError(Exception e) {
+                        LogUtils.w("onTileLoadError",e);
+                    }
+
+                    @Override
+                    public void onPreviewReleased() {
+                        LogUtils.d("onPreviewReleased");
+                    }
+                });
+
+
+
+
+                subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(tmpOriginalFile)));
             }
 
             @Override

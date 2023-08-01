@@ -51,10 +51,8 @@ import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.signature.EmptySignature;
 import com.bumptech.glide.util.LruCache;
 import com.bumptech.glide.util.Util;
-import com.github.piasy.biv.BigImageViewer;
 import com.google.gson.Gson;
 import com.hss01248.glidebase.drawable.AutoRotateDrawable;
-import com.hss01248.glidev4.big.GlideBigLoader;
 import com.hss01248.glidev4.big.ProgressableGlideUrl;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
@@ -106,7 +104,7 @@ public class Glide4Loader extends ILoader {
 
         /*Glide.get(context)
                 .setMemoryCategory(MemoryCategory.NORMAL);*/
-        BigImageViewer.initialize(GlideBigLoader.with(context, null));
+        //BigImageViewer.initialize(GlideBigLoader.with(context, null));
         GlobalConfig.cacheFolderName = DiskCache.Factory.DEFAULT_DISK_CACHE_DIR;
         GlobalConfig.cacheMaxSize = DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE / 1024 / 1024;
 

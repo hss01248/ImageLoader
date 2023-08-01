@@ -1,10 +1,7 @@
 package com.hss01248.glidev4.big;
 
-import android.util.Log;
-
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.Headers;
-import com.github.piasy.biv.progress.OkHttpProgressResponseBody;
 
 import java.net.URL;
 
@@ -34,8 +31,8 @@ public class ProgressableGlideUrl extends GlideUrl {
 
     @Override
     public String getCacheKey() {
-        String url = super.getCacheKey().replace(OkHttpProgressResponseBody.KEY_PREGRESS, "");
-        Log.d("getCacheKey", url);
-        return url;
+        //String url = super.getCacheKey().replace(OkHttpProgressResponseBody.KEY_PREGRESS, "");
+        //Log.d("getCacheKey", url);
+        return super.getCacheKey();
     }
 }

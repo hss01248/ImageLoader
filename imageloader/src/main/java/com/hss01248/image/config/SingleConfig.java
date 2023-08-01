@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.github.piasy.biv.view.BigImageView;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.R;
 import com.hss01248.image.interfaces.ImageListener;
@@ -288,9 +286,10 @@ public class SingleConfig {
 
                 if (isAsBitmap()) {
                     GlobalConfig.getLoader().requestAsBitmap(this);
-                } else if (target instanceof BigImageView) {
+                } /*else if (target instanceof BigImageView) {
                     MyUtil.viewBigImage(this);
-                } else {
+                }*/
+                else {
                     GlobalConfig.getLoader().requestForNormalDiaplay(this);
                 }
             }else {

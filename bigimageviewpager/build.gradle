@@ -78,5 +78,9 @@ dependencies {
     api 'com.github.Jarvis-Lau:GestureViewBinder:1.0.3'
     api "com.github.hss01248.utilcodeEnhance:fullScreenDialog:1.2.1"
 
+    api('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
+        exclude group: 'com.android.support'
+    }
+
     api project(':glide-aop')
 }

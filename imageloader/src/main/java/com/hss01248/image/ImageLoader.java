@@ -5,18 +5,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.View;
 
-import com.github.piasy.biv.BigImageViewer;
-import com.hss01248.image.bigimage.RecycleAdapterForBigImage;
-import com.hss01248.image.bigimage2.MyViewPagerAdapter3;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.SingleConfig;
 import com.hss01248.image.interfaces.ILoader;
@@ -123,7 +116,7 @@ public class ImageLoader {
         }*/
 
 
-        if (viewPager.getAdapter() == null) {
+      /*  if (viewPager.getAdapter() == null) {
             PagerAdapter adapter = new MyViewPagerAdapter3(urls);
             viewPager.setAdapter(adapter);
         } else if (viewPager.getAdapter() instanceof MyViewPagerAdapter3) {
@@ -131,13 +124,13 @@ public class ImageLoader {
             adapterForBigImage.changeDatas(urls);
         } else {
             throw new RuntimeException("用于加载大图的viewPager应该专用,其adapter不要自己设置");
-        }
+        }*/
     }
 
     public static void loadBigImages(RecyclerView recyclerView, List<String> urls) {
-        recyclerView.setAdapter(new RecycleAdapterForBigImage(urls));
+       /* recyclerView.setAdapter(new RecycleAdapterForBigImage(urls));
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setItemAnimator(new DefaultItemAnimator());*/
     }
 
     /**
@@ -163,7 +156,7 @@ public class ImageLoader {
         for (int i = 0; i < uris.length; i++) {
             uris[i] = Uri.parse(urls[i]);
         }
-        BigImageViewer.prefetch(uris);
+        //BigImageViewer.prefetch(uris);
     }
 
     public static void trimMemory(int level) {

@@ -1,14 +1,5 @@
 package com.hss01248.image;
 
-import com.blankj.utilcode.util.Utils;
-import com.github.piasy.biv.view.BigImageView;
-import com.hss01248.image.config.GlobalConfig;
-import com.hss01248.image.config.ScaleMode;
-import com.hss01248.image.config.SingleConfig;
-import com.hss01248.image.exif.ExifUtil;
-import com.hss01248.image.interfaces.ImageListener;
-import com.hss01248.image.utils.RoundedCornersTransformation2;
-
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -23,17 +14,21 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.Utils;
+import com.hss01248.image.config.GlobalConfig;
+import com.hss01248.image.config.ScaleMode;
+import com.hss01248.image.config.SingleConfig;
+import com.hss01248.image.exif.ExifUtil;
+import com.hss01248.image.utils.RoundedCornersTransformation2;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.security.KeyManagementException;
@@ -41,9 +36,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -52,8 +44,6 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import it.sephiroth.android.library.exif2.ExifInterface;
-import it.sephiroth.android.library.exif2.ExifTag;
 import okhttp3.OkHttpClient;
 
 
@@ -104,8 +94,7 @@ public class MyUtil {
 
 
     public static void viewBigImage(SingleConfig config) {
-        BigImageView bigImageView = (BigImageView) config.getTarget();
-        bigImageView.showImage(getUsablePath(config));
+
         //bigimageview对缩略图的支持并不好
        /* if(TextUtils.isEmpty(config.getThumbnailUrl())){
             if(!TextUtils.isEmpty(config.getUrl()) && !isCached(config.getUrl() )){

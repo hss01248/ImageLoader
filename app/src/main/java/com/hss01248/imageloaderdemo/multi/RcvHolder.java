@@ -2,29 +2,18 @@ package com.hss01248.imageloaderdemo.multi;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-
-import com.bumptech.glide.Glide;
-
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-
 import com.hss01248.adapter.SuperRvAdapter;
 import com.hss01248.adapter.SuperRvHolder;
-
-import com.hss01248.glidebase.drawable.AutoRotateDrawable;
+import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.config.ScaleMode;
-import com.hss01248.imageloaderdemo.BigImageActy;
 import com.hss01248.imageloaderdemo.R;
 
 import java.util.List;
@@ -154,9 +143,7 @@ public class RcvHolder extends SuperRvHolder<String, Activity> {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, BigImageActy.class);
-                intent.putExtra("url", data);
-                context.startActivity(intent);
+                LargeImageViewer.showInDialog(data);
             }
         });
     }
