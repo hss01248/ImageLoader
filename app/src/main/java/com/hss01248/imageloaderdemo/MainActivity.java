@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -31,7 +30,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.google.gson.Gson;
 import com.hjq.permissions.OnPermissionCallback;
@@ -540,6 +538,13 @@ public class MainActivity extends AppCompatActivity {
                 loadFile2( s);
 
                 File tmpOriginalFile = AddByteUtil.createTmpOriginalFile(s);
+                /*if(path.contains(".avif")){
+                    subsamplingScaleImageView.setBitmapDecoderClass(AvifSubsamplingImageDecoder.class);
+                    subsamplingScaleImageView.setRegionDecoderClass(AvifSubsamplingImageRegionDecoder.class);
+                }else {
+                    subsamplingScaleImageView.setBitmapDecoderClass(SkiaImageDecoder.class);
+                    subsamplingScaleImageView.setRegionDecoderClass(SkiaImageRegionDecoder.class);
+                }*/
                 subsamplingScaleImageView.setMaxScale(12);
                 subsamplingScaleImageView.setDebug(AppUtils.isAppDebug());
                 subsamplingScaleImageView.setOnStateChangedListener(new SubsamplingScaleImageView.OnStateChangedListener() {
@@ -589,7 +594,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(tmpOriginalFile)));
+                //subsamplingScaleImageView.setImage(ImageSource.uri(Uri.fromFile(tmpOriginalFile)));
             }
 
             @Override

@@ -118,8 +118,11 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         jpgView.setOnStateChangedListener(new SubsamplingScaleImageView.OnStateChangedListener() {
             @Override
             public void onScaleChanged(float newScale, int origin) {
-                if(showScale)
-                    tvScale.setText(newScale*100+"%");
+                if(showScale){
+                    String text = String.format("%.1f",newScale*100)+"%";
+                    tvScale.setText(text);
+                }
+
             }
 
             @Override
@@ -131,8 +134,11 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         gifView.setOnScaleChangeListener(new MyLargeJpgView.OnScaleChangeListener() {
             @Override
             public void onScaleChanged(int percent, float scale) {
-                if(showScale)
-                tvScale.setText(percent+"%");
+                if(showScale){
+                    String text = String.format("%.1f",scale*100)+"%";
+                    tvScale.setText(text);
+                }
+
             }
         });
         largeImgBinding.ivGo360.setOnClickListener(new OnClickListener() {
@@ -307,7 +313,11 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
                 // 设置AVIF图片解码器
                 jpgView.setBitmapDecoderClass(AvifSubsamplingImageDecoder.class);
                 jpgView.setRegionDecoderClass(AvifSubsamplingImageRegionDecoder.class);
+
                 jpgView.setImage(ImageSource.uri(Uri.fromFile(tmpOriginalFile)));
+                //jpgView.setImage(ImageSource.bitmap());
+                stateManager.showContent();
+
                 return;
             }
 

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -29,7 +30,12 @@ public class LargeImageViewer {
         largeImageView.loadUri(path);
     }
 
-    public static ViewPager showBig(final Context context,MyViewPager viewPager, final List<String> uris0, int position) {
+
+
+    public static ViewPager showBig(final Context context,
+                                    @Nullable  MyViewPager viewPager,
+                                    final List<String> uris0,
+                                    int position) {
         if(viewPager == null){
             viewPager = new MyViewPager(context);
         }

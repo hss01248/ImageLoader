@@ -81,7 +81,7 @@ dependencies {
     api('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
         exclude group: 'com.android.support'
     }
-    implementation 'com.qcloud.cos:avif:1.1.1'
+    api 'com.qcloud.cos:avif:1.1.1'
 
     api project(':glide-aop')
 }
