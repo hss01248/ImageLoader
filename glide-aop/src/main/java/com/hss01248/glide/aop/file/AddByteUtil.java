@@ -1,5 +1,8 @@
 package com.hss01248.glide.aop.file;
 
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -22,6 +25,7 @@ public class AddByteUtil {
     static  byte dataToAdd = 0x66;
     static  boolean useFileChannel = false;
     //useFileChannel = true: 2011ms  false:1317ms
+    public static final String fileSuffix = ".3";
 
     public static String addByte(String filePath){
 
@@ -37,7 +41,7 @@ public class AddByteUtil {
             int firstByte = raf.read();
             if(dataToAdd == firstByte){
                 raf.close();
-                System.out.println("已经是加密文件了: "+ file.getAbsolutePath());
+               LogUtils.i("已经是加密文件了: "+ file.getAbsolutePath());
                 return filePath;
             }
             if(useFileChannel){
@@ -65,7 +69,8 @@ public class AddByteUtil {
             }else {
                 raf.close();
                 byte[] bytes = new byte[]{(byte) dataToAdd};
-                File file1 = new File(file.getParentFile(),file.getName()+".3");
+                //放到内部cache目录:
+                File file1 = new File(DirOperationUtil.getTmpDir(),file.getName()+fileSuffix);
                 filePath = file1.getAbsolutePath();
                 if(!file1.exists()){
                     file1.createNewFile();
@@ -85,15 +90,29 @@ public class AddByteUtil {
 
                 newInputStream.close();
                 bos.close();
-                file.delete();
+                //会触发系统拦截,所以要覆盖原文件,不要删除.
+                //file.delete();
                 newFileSize = file1.length();
+                boolean copy = FileUtils.copy(file1, file, new FileUtils.OnReplaceListener() {
+                    @Override
+                    public boolean onReplace(File srcFile, File destFile) {
+                        return true;
+                    }
+                });
+                if(copy){
+                    file1.delete();
+                    filePath = file.getAbsolutePath();
+                }else {
+                    LogUtils.w("文件拷贝失败",file1);
+                }
+
             }
 
-            System.out.println("添加字节成功, cost: "+(System.currentTimeMillis() - startTime)
+            LogUtils.d("添加字节成功, cost: "+(System.currentTimeMillis() - startTime)
                     +"ms, original file size : "+originalFileSize+",new size: "+newFileSize+", path: "+filePath);
             return filePath;
         } catch (Throwable e) {
-            e.printStackTrace();
+            LogUtils.w(e);
             return filePath;
         }
     }

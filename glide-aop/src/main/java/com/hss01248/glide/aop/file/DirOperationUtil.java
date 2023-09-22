@@ -18,7 +18,7 @@ public class DirOperationUtil {
 
 
     public static File getTmpDir(){
-        File dir =  Utils.getApp().getExternalFilesDir(DirOperationUtil.tmpDir);
+        File dir =  new File(Utils.getApp().getExternalCacheDir(),DirOperationUtil.tmpDir);
         if(!dir.exists()){
             dir.mkdirs();
         }
