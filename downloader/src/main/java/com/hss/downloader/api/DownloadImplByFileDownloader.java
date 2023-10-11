@@ -22,6 +22,8 @@ public class DownloadImplByFileDownloader implements IDownload2 {
                 task.addHeader(s, api.getHeaders().get(s));
             }
         }
+        task.addHeader(
+                "User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36");
         task
                 .setListener(new FileDownloadListener() {
                     @Override
