@@ -12,6 +12,7 @@ import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.event.DownloadResultEvent;
 
 import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss.utils.enhance.foregroundservice.CommonProgressService;
 import com.hss01248.img.compressor.ImageCompressor;
 import com.liulishuo.okdownload.StatusUtil;
 
@@ -243,9 +244,15 @@ public class MyDownloader {
 
             @Override
             public void onSuccess(List<DownloadInfo> result) {
-                LogUtils.w("批量下载开始,更新数据库耗时(s):",(System.currentTimeMillis() - start)/1000f);
+                LogUtils.i("批量下载开始,更新数据库耗时(s):",(System.currentTimeMillis() - start)/1000f);
                 dialog.dismiss();
-                new DownloadList().showList(ActivityUtils.getTopActivity(),result);
+                CommonProgressService.startS("图片下载中", "图片下载中...", new Runnable() {
+                    @Override
+                    public void run() {
+                        new DownloadList().showList(ActivityUtils.getTopActivity(),result);
+                    }
+                });
+
             }
 
             @Override
@@ -302,6 +309,7 @@ public class MyDownloader {
                  info.totalLength = totalLength;
                  info.status = currentOffset == totalLength ? DownloadInfo.STATUS_SUCCESS : DownloadInfo.STATUS_DOWNLOADING;
                  EventBus.getDefault().post(info);
+
              }
 
              @Override
