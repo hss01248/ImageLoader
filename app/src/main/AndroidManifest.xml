@@ -26,10 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BigImageActy" />
         <activity android:name=".ViewpagerActy" />
         <activity android:name=".RecycleViewActy" />
         <activity android:name=".ScaleTypeActy" />
+        <activity android:name=".download.DownloadDemoActivity" />
 
 
         <!--<provider

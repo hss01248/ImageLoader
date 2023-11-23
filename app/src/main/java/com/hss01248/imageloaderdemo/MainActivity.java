@@ -48,6 +48,7 @@ import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
+import com.hss01248.imageloaderdemo.download.DownloadDemoActivity;
 import com.hss01248.img.compressor.ImageCompressor;
 import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
@@ -640,6 +641,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void downloadDemo(View view) {
+        startActivity(new Intent(this, DownloadDemoActivity.class));
     }
 
 

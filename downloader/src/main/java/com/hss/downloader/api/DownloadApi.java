@@ -2,7 +2,6 @@ package com.hss.downloader.api;
 
 import android.os.Environment;
 import android.text.TextUtils;
-import android.webkit.URLUtil;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -108,7 +107,7 @@ public class DownloadApi {
         if(showDefaultLoadingAndToast){
             this.callback = new DownloadCallbackDbDecorator(new ExeOnMainDownloadCallback(new DefaultUIDownloadCallback(callback)));
         }else {
-            this.callback = new DownloadCallbackDbDecorator(this.callback);
+            this.callback = new DownloadCallbackDbDecorator(callback);
         }
 
 

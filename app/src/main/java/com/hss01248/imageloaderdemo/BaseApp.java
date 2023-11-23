@@ -36,6 +36,7 @@ import com.hss01248.imagelist.album.ImageMediaCenterUtil;
 import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
+import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class BaseApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        FileDownloader.setupOnApplicationOnCreate(this);
         /*StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .detectAll()
                 .penaltyLog()
