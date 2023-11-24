@@ -14,6 +14,7 @@ public class M3u8Downloader {
 
     public static void start(String url){
         DownloadApi.create(url)
+                .setNeedCheckDbBeforeStart(true)
                 .callback(new DefaultUIDownloadCallback(new DefaultSilentDownloadCallback(){
                     @Override
                     public void onSuccess(String url, String realPath) {

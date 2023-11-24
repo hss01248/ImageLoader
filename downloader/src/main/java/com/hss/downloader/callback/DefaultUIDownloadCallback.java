@@ -41,13 +41,13 @@ public class DefaultUIDownloadCallback implements IDownloadCallback {
     public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
         String msg = "文件下载中:"+url+"\n-->\n"+realPath+"\n";
         msg += ConvertUtils.byte2FitMemorySize(currentOffset,1)+"/"+ConvertUtils.byte2FitMemorySize(totalLength,1);
-        dialog.setMessage(msg);
+        if (dialog != null)dialog.setMessage(msg);
         callback.onProgress(url, realPath, currentOffset, totalLength);
     }
 
     @Override
     public void onSuccess(String url, String realPath) {
-        dialog.dismiss();
+        if (dialog != null) dialog.dismiss();
         ToastUtils.showLong("文件下载成功\n"+url+"\n-->\n"+realPath);
         callback.onSuccess(url, realPath);
     }
@@ -55,7 +55,7 @@ public class DefaultUIDownloadCallback implements IDownloadCallback {
 
     @Override
     public void onFail(String url, String realPath, String msg, Throwable throwable) {
-        dialog.dismiss();
+        if (dialog != null)dialog.dismiss();
         ToastUtils.showLong("文件下载失败:\n"+msg+"\n"+url+"\n-->\n"+realPath);
         callback.onFail(url, realPath, msg, throwable);
     }

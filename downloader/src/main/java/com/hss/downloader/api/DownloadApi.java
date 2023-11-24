@@ -69,7 +69,7 @@ public class DownloadApi {
     }
 
     public String getRealPath() {
-        return (dir+File.pathSeparator+name).replace(File.pathSeparator+File.pathSeparator,File.pathSeparator);
+        return (dir+"/"+name).replace("//","/");
     }
 
     public Map<String, String> getHeaders() {
@@ -116,13 +116,15 @@ public class DownloadApi {
             @Override
             public File doInBackground() throws Throwable {
                 beforStart();
-                callback.onBefore(url,getRealPath(),forceReDownload);
+                String path = getRealPath();
+                LogUtils.d("prepare to download",path);
+                callback.onBefore(url,path,forceReDownload);
                 if(!needCheckDbBeforeStart){
                     //批量下载的,在list api里批量判断
                     return null;
                 }
                 // 优化判断逻辑: 判断一个文件是否下载过,是否强制下载
-                return DownloadCallbackDbDecorator.shouldStartRealDownload(url,getRealPath(),forceReDownload);
+                return DownloadCallbackDbDecorator.shouldStartRealDownload(url,path,forceReDownload);
             }
 
             @Override
