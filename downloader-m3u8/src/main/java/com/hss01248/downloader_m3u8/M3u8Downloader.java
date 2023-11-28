@@ -38,7 +38,7 @@ public class M3u8Downloader {
 
     public static void start(List<String> adPaths,String name,String url){
         DownloadApi.create(url)
-                .setNeedCheckDbBeforeStart(true)
+                .setNeedCheckDbBeforeStart(false)
                 .callback(new DefaultUIDownloadCallback(new DefaultSilentDownloadCallback(){
                     @Override
                     public void onSuccess(String url, String realPath) {
@@ -125,6 +125,7 @@ public class M3u8Downloader {
                 }
                 if(mediaSegment.uri().startsWith("https")){
                     //本身是https开头,就不用拼接了
+                    segments.add(mediaSegment);
                     continue out;
                 }
             }
@@ -150,17 +151,23 @@ public class M3u8Downloader {
                 .playlistType(playlist.playlistType())
                 //.iFramesOnly()
                 .build();
-        //写到文件中
-        String s = parser.writePlaylistAsString(playlist2);
+
 
 
         File file = new File(realPath);
         File dir = new File(file.getParentFile(),name);
         dir.mkdirs();
+        //todo 以路径为key,判定是否为同一个文件
         File newFile = new File(dir,name+"-"+file.getName());
         if(newFile.exists()){
-            //读取,继续之前未完成的下载
+            //读取,继续之前未完成的下载: 新的远程url替换掉之前的url:
+
+
+
+
         }else {
+            //写到文件中
+            String s = parser.writePlaylistAsString(playlist2);
             boolean b = FileIOUtils.writeFileFromString(newFile, s);
             if(b){
                 //file.delete();
