@@ -1,12 +1,12 @@
 package com.hss01248.downloader_m3u8;
 
+import android.os.Environment;
+import android.text.TextUtils;
+import android.webkit.URLUtil;
+
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.hss.downloader.api.DownloadApi;
-import com.hss.downloader.callback.DefaultSilentDownloadCallback;
-import com.hss.downloader.callback.DefaultUIDownloadCallback;
 import com.hss01248.downloader_m3u8.m3u8.M3U8;
 import com.hss01248.downloader_m3u8.m3u8.M3U8Utils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
@@ -36,35 +36,110 @@ public class M3u8Downloader {
     static final String dirName = "m3u8Content";
 
 
-    public static void start(List<String> adPaths,String name,String url){
-        DownloadApi.create(url)
-                .setNeedCheckDbBeforeStart(false)
-                .callback(new DefaultUIDownloadCallback(new DefaultSilentDownloadCallback(){
-                    @Override
-                    public void onSuccess(String url, String realPath) {
-                        super.onSuccess(url, realPath);
-                        ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<Object>() {
+    /**
+     * 暂时只支持下载纯list,不支持下载main(包含二级m3u8)
+     * 默认都是视频
+     * 需要先请求管理外部存储权限
+     * @param adPaths
+     * @param name
+     * @param url
+     */
+    public static void start(List<String> adPaths,String subDirName,String name,String url){
+        String fileName = URLUtil.guessFileName(url, "", "");
+       String fileNameRemote = name+"-"+fileName;
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), AppUtils.getAppName());
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        if(!TextUtils.isEmpty(subDirName)){
+            dir = new File(dir,subDirName);
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+        }
+        File m3u8FileRemote = new File(dir,fileNameRemote);
+
+        File finalDir = dir;
+        FileDownloader.getImpl()
+                        .create(url)
+                        .setPath(m3u8FileRemote.getAbsolutePath(),false)
+                        .setListener(new FileDownloadSampleListener(){
                             @Override
-                            public Object doInBackground() throws Throwable {
-                                try {
-                                    //parseM3u8MainFile(url,realPath);
-                                    //parseM3u8MainFile2(url,realPath);
-                                    parseM3u8ListFile(adPaths,name,url,realPath);
-                                } catch (Throwable e) {
-                                    LogUtils.w(url,realPath,e);
-                                    ToastUtils.showLong("下载失败: "+e.getMessage());
+                            protected void completed(BaseDownloadTask task) {
+                                super.completed(task);
+                                MediaPlaylist remoteList = parseMediaPlayList(m3u8FileRemote);
+                                if(remoteList == null){
+                                    return;
                                 }
-                                return null;
+                                remoteList = wash(remoteList,url,adPaths);
+                                File m3u8FileLocal = new File(finalDir,name+"-local-"+fileName);
+                                if(m3u8FileLocal.exists()){
+                                    MediaPlaylist localList = parseMediaPlayList(m3u8FileLocal);
+                                    if(localList != null){
+                                        if(localList.mediaSegments().size() != remoteList.mediaSegments().size()){
+                                            LogUtils.w("本地和远程mediaSegments长度不一致!!!");
+                                        }
+                                        //更新localList:
+                                        List<MediaSegment> segments = new ArrayList<>(localList.mediaSegments().size());
+                                        int i = -1;
+                                        for (MediaSegment mediaSegment : localList.mediaSegments()) {
+                                            i++;
+                                            if(mediaSegment.uri().startsWith("/storage/emulated/")){
+                                                segments.add(mediaSegment);
+                                            }else {
+                                                //远程url更新为新的
+                                                if(i< remoteList.mediaSegments().size()){
+                                                    segments.add(remoteList.mediaSegments().get(i));
+                                                }else {
+                                                    segments.add(mediaSegment);
+                                                }
+
+                                            }
+                                        }
+                                        //locallist写到文件中
+                                        localList = MediaPlaylist.builder()
+                                                .from(localList)
+                                                .mediaSegments(segments)
+                                                .build();
+                                      boolean success =   writeList(localList,m3u8FileLocal);
+                                      if(!success){
+                                          LogUtils.w("本地写m3u8 file失败: ",m3u8FileLocal);
+                                      }
+                                        downloadSegments(name,remoteList,m3u8FileLocal);
+                                      return;
+                                      /*if(success){
+                                          return;
+                                      }*/
+                                    }
+                                }
+                                //remotelist写到localFile中
+                                writeList(remoteList,m3u8FileLocal);
+                                downloadSegments(name,remoteList,m3u8FileLocal);
+
                             }
 
                             @Override
-                            public void onSuccess(Object result) {
-
+                            protected void error(BaseDownloadTask task, Throwable e) {
+                                super.error(task, e);
                             }
-                        });
+                        }).start();
+    }
 
-                    }
-                }));
+    private static boolean writeList(MediaPlaylist localList, File m3u8FileLocal) {
+        MediaPlaylistParser parser = new MediaPlaylistParser();
+        String s = parser.writePlaylistAsString(localList);
+        return FileIOUtils.writeFileFromString(m3u8FileLocal, s);
+    }
+
+    private static MediaPlaylist parseMediaPlayList(File file){
+        try{
+            MediaPlaylistParser parser = new MediaPlaylistParser();
+            MediaPlaylist playlist = parser.readPlaylist(file.getAbsolutePath());
+            return  playlist;
+        }catch (Throwable throwable){
+            LogUtils.w(throwable,file);
+            return  null;
+        }
     }
 
     private static void parseM3u8MainFile(String url, String realPath) throws Throwable{
@@ -99,6 +174,47 @@ public class M3u8Downloader {
     private static void parseM3u8MainFile2(String url, String realPath) throws Throwable{
         M3U8 m3U8 = M3U8Utils.parseLocalM3U8File(new File(realPath));
         LogUtils.d(m3U8);
+    }
+
+    private static MediaPlaylist wash(MediaPlaylist playlist,String url,List<String> adPaths){
+        String preffix = url;
+        if(preffix.contains("?")){
+            preffix = preffix.substring(0,preffix.indexOf("?"));
+        }
+        preffix = preffix.substring(0,preffix.lastIndexOf("/")+1);
+        List<MediaSegment> segments = new ArrayList<>();
+        out: for (MediaSegment mediaSegment : playlist.mediaSegments()) {
+            //LogUtils.d(mediaSegment.duration(),mediaSegment.uri(),mediaSegment.segmentKey());
+
+            for (String adPath : adPaths) {
+                if(mediaSegment.uri().contains(adPath)){
+                    //过滤广告
+                    continue out;
+                }
+                if(mediaSegment.uri().startsWith("https")){
+                    //本身是https开头,就不用拼接了
+                    segments.add(mediaSegment);
+                    continue out;
+                }
+            }
+            MediaSegment build = MediaSegment.builder()
+                    .duration(mediaSegment.duration())
+                    //更新path:
+                    .uri(preffix + mediaSegment.uri())
+                    .build();
+            segments.add(build);
+        }
+        if(segments.isEmpty()){
+            LogUtils.w("没有需要覆写的uri,拷贝文件就行");
+
+        }else {
+
+        }
+        MediaPlaylist playlist2 = MediaPlaylist.builder()
+                .from(playlist)
+                .mediaSegments(segments)
+                .build();
+        return  playlist2;
     }
 
     private static void parseM3u8ListFile(List<String> adPaths,String name,String url, String realPath) throws Throwable{
@@ -142,14 +258,9 @@ public class M3u8Downloader {
         }else {
 
         }
-        // 辣鸡无比的api设计,还得自己拷贝一遍
         MediaPlaylist playlist2 = MediaPlaylist.builder()
-                .addAllMediaSegments(segments)
-                .addAllComments(playlist.comments())
-                .addAllPartialSegments(playlist.partialSegments())
-                .targetDuration(playlist.targetDuration())
-                .playlistType(playlist.playlistType())
-                //.iFramesOnly()
+                .from(playlist)
+                .mediaSegments(segments)
                 .build();
 
 
@@ -173,16 +284,18 @@ public class M3u8Downloader {
                 //file.delete();
             }
         }
-
-
-        File subDir = new File(dir,dirName);
-        subDir.mkdirs();
         //下载每个分片
+        downloadSegments(name, playlist,  newFile);
 
+// Write playlist to standard out
+       // System.out.println(parser.writePlaylistAsString(updated));
+    }
 
-        List<MediaSegment> segments2 = new ArrayList<>(segments);
-
-
+    private static void downloadSegments(String name,  MediaPlaylist playlist, File m3u8FileLocal) {
+        List<MediaSegment> segments = playlist.mediaSegments();
+        File subDir = new File(m3u8FileLocal.getParentFile(),dirName);
+        subDir.mkdirs();
+        MediaPlaylistParser parser = new MediaPlaylistParser();
         int i = -1;
         for (MediaSegment segment : segments) {
             i++;
@@ -194,7 +307,6 @@ public class M3u8Downloader {
             path = name +"-"+i+"-"+path;
             File file1 = new File(subDir,path);
             int finalI = i;
-            MediaPlaylist finalPlaylist = playlist;
             FileDownloader.getImpl()
                     .create(segment.uri())
                     .setPath(file1.getAbsolutePath(),false)
@@ -204,32 +316,19 @@ public class M3u8Downloader {
                         @Override
                         protected void completed(BaseDownloadTask task) {
                             super.completed(task);
+
                             MediaSegment build = MediaSegment.builder()
-                                    .duration(segment.duration())
-                                    //更新path:
-                                    //.uri(preffix + mediaSegment.uri())
+                                    .from(segment)
                                     .uri(file1.getAbsolutePath())
                                     .build();
-                            segments2.remove(finalI);
-                            segments2.add(finalI,build);
+                            segments.set(finalI, build);
                             //每下载完一个,就更新一次文件
-                            //辣鸡api设计: io.lindstrom:m3u8-parser
-
-
-
-                            MediaPlaylist playlist2 = MediaPlaylist.builder()
-                                    .addAllMediaSegments(segments2)
-                                    .addAllComments(finalPlaylist.comments())
-                                    .addAllPartialSegments(finalPlaylist.partialSegments())
-                                    .targetDuration(finalPlaylist.targetDuration())
-                                    .playlistType(finalPlaylist.playlistType())
-                                    //.iFramesOnly()
-                                    .build();
-                            //写到文件中
-                            String s = parser.writePlaylistAsString(playlist2);
-                            FileIOUtils.writeFileFromString(newFile, s);
+                            String s = parser.writePlaylistAsString(playlist);
+                            boolean b = FileIOUtils.writeFileFromString(m3u8FileLocal, s);
                             LogUtils.d("下载成功一个ts,更新到m3u8文件中",file1.getAbsolutePath());
-
+                            if(!b){
+                                LogUtils.d("下载成功一个ts,更新到m3u8文件中--> m3u8更新失败",file1.getAbsolutePath());
+                            }
                         }
 
                         @Override
@@ -240,9 +339,6 @@ public class M3u8Downloader {
                     }).start();
 
         }
-        LogUtils.d("所有文件下载成功",dir.getAbsolutePath());
-
-// Write playlist to standard out
-       // System.out.println(parser.writePlaylistAsString(updated));
+        LogUtils.d("所有文件下载成功", m3u8FileLocal.getAbsolutePath());
     }
 }

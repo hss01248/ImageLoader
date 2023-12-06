@@ -27,14 +27,14 @@ public class DownloadDemoActivity extends AppCompatActivity {
     }
 
     public void m3u8(View view) {
-        String name = "电影-武神赵子龙";
-        String url = "https://ydd.yqk88.com/m3u8/share/385379/385501/20230926/182722/1080/index.m3u8?sign=f9ab5b3778d0b66eedbaedfef4eac271&t=1701084004";
+        String name = "动漫-浪客剑心第一集";
+        String url = "https://vip.ffzy-online6.com/20231121/21873_abbe0da9/index.m3u8";
         // DownloadUtil.startDownload("游戏测试视频4","http://videoconverter.vivo.com.cn/201706/655_1498479540118.mp4.main.m3u8");
         //String url = "https://ydd.yqk88.com/m3u82/share/11939/615501/20231031/060132/360/index.m3u8?sign=1f95631fff0a0adcded151a7d0015607&t=1701083053";
 
         List<String> adPaths = new ArrayList<>();
         //video2/slice/hls/1697917950041/25
         adPaths.add("video2/slice/hls/");
-        M3u8Downloader.start(adPaths,name,url);
+        M3u8Downloader.start(adPaths,"动漫-浪客剑心",name,url);
     }
 }
