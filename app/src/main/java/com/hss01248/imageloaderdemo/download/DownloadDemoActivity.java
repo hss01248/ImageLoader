@@ -10,6 +10,7 @@ import com.hss01248.downloader_m3u8.M3u8Downloader;
 import com.hss01248.imageloaderdemo.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -35,6 +36,6 @@ public class DownloadDemoActivity extends AppCompatActivity {
         List<String> adPaths = new ArrayList<>();
         //video2/slice/hls/1697917950041/25
         adPaths.add("video2/slice/hls/");
-        M3u8Downloader.start(adPaths,"动漫-浪客剑心",name,url);
+        M3u8Downloader.start(adPaths,"动漫-浪客剑心",name,url,new HashMap<>());
     }
 }
