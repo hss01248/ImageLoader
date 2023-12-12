@@ -236,7 +236,7 @@ public class MyDownloader {
                     try {
                         startDownload(info);
                     }catch (Throwable throwable){
-                        throwable.printStackTrace();
+                        LogUtils.w(info.url,throwable);
                     }
                 }
                 return toShow;
@@ -262,7 +262,9 @@ public class MyDownloader {
 
             @Override
             public void onFail(Throwable t) {
-                t.printStackTrace();
+                LogUtils.w(t);
+                dialog.dismiss();
+                ToastUtils.showLong(t.getClass().getSimpleName()+"\n"+t.getMessage());
 
             }
         });

@@ -112,8 +112,11 @@ public class DownloadInfoUtil {
         if(name.contains(".")){
             suffix = name.substring(name.lastIndexOf("."));
         }
-        name = URLDecoder.decode(name);
-
+        try{
+            name = URLDecoder.decode(name);
+        }catch (Throwable throwable){
+            LogUtils.w(name,throwable);
+        }
         name = name.replaceAll(" ","_").replaceAll("\\+","_");
         name = name.substring(0,name.length() - suffix.length() -1);
 
