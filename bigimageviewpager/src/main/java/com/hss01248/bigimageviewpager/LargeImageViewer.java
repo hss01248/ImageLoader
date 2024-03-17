@@ -44,6 +44,8 @@ public class LargeImageViewer {
         uris.addAll(uris0);
         // ImageLoader.loadBigImages(viewPager, urls);
         PagerAdapter pagerAdapter = new PagerAdapter() {
+            List<View> cacheList = new ArrayList<>();
+
             @Override
             public int getCount() {
                 return uris.size();
@@ -57,7 +59,12 @@ public class LargeImageViewer {
             @NonNull
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
-                MyLargeImageView imageView = new MyLargeImageView(context);
+                MyLargeImageView imageView = null;
+                if(cacheList.isEmpty()){
+                    imageView = new MyLargeImageView(context);
+                }else {
+                    imageView = (MyLargeImageView) cacheList.remove(0);
+                }
                 String url = uris.get(position);
                 url = getBigImageUrl(url);
                 imageView.loadUri(url);
@@ -68,8 +75,11 @@ public class LargeImageViewer {
             @Override
             public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
                 container.removeView((View) object);
+                cacheList.add((View)object);
             }
         };
+
+        //todo 另外,最终activity destory时,手动回收view里的bitmap
 
         viewPager.setAdapter(pagerAdapter);
         pagerAdapter.notifyDataSetChanged();

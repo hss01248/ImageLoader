@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 apply from: "${rootProject.rootDir}/function.gradle"
 android {
 
-    compileSdkVersion 30
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.hss01248.imageloaderdemo"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -85,7 +85,7 @@ dependencies {
     compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 
     compile 'org.raphets:roundimageview:1.2.0'
-    implementation('com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9')
+    implementation('com.github.skyNet2017.Luban:dataForPhotoSelet:3.2.9')
     implementation project(path: ':webviewspider')
    // implementation project(path: ':spiders')
     implementation 'com.github.getActivity:XXPermissions:11.6'//请求存储权限

@@ -6,6 +6,8 @@
 -dontwarn okio.**
 -keep class okio.**{*;}
 
+-keep class me.jessyan.progressmanager.**{*;}
+
 
 -keep class com.bumptech.glide.** { *; }
 -keepclassmembers class com.bumptech.glide.** { *; }

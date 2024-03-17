@@ -10,7 +10,11 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ReflectUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.disklrucache.DiskLruCache;
@@ -36,7 +40,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,27 +65,55 @@ public class UrlLoader {
 
     public static void download(Context context, ImageView ivHelper,String url,LoadListener listener){
 
-
-        ProgressManager.getInstance().addResponseListener(url, new ProgressListener() {
+        //todo 这里有内存泄漏
+        // ProgressManager.getInstance().addResponseListener(url, new ProgressListener() {
+        ProgressListener listener1 = new ProgressListener() {
             @Override
             public void onProgress(ProgressInfo progressInfo) {
                 try {
                     listener.onProgress(progressInfo.getPercent());
                     //tvProgress.setText(progressInfo.getPercent()+"% , speed: "+(progressInfo.getSpeed()/1024/8)+"KB/s");
                 }catch (Throwable throwable){
-                    throwable.printStackTrace();
+                    LogUtils.w(throwable,url);
                 }
             }
 
             @Override
             public void onError(long id, Exception e) {
                 if(e != null){
-                    e.printStackTrace();
+                    LogUtils.w(e,url);
                 }
             }
-        });
+        };
+        ProgressManager.getInstance().addResponseListener(url, listener1);
         loadGlideByView(context,url,listener,ivHelper);
 
+        LifecycleOwner lifecycleOwner = LifecycleObjectUtil2.getLifecycleOwnerFromObj(context);
+        if(lifecycleOwner ==null){
+            LogUtils.w("can not get lifecycleOwner");
+            return;
+        }
+
+        lifecycleOwner.getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            @Override
+            public void onDestroy(@NonNull LifecycleOwner owner) {
+                DefaultLifecycleObserver.super.onDestroy(owner);
+                //ProgressManager.getInstance().remove(url, listener1);
+                try {
+                    Map<String, List<ProgressListener>> mResponseListeners =
+                            ReflectUtils.reflect(ProgressManager.getInstance())
+                            .field("mResponseListeners")
+                            .get();
+                    List<ProgressListener> progressListeners = mResponseListeners.get(url);
+                    progressListeners.clear();
+                    LogUtils.w("清除mResponseListeners,避免内存泄漏");
+                }catch (Throwable throwable){
+                    LogUtils.w(throwable);
+                }
+
+
+            }
+        });
 
 
 

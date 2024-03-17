@@ -1,9 +1,11 @@
 package com.hss01248.imageloaderdemo;
 
-import android.app.Activity;
+
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -27,7 +29,7 @@ import java.util.List;
  * Created by huangshuisheng on 2017/9/28.
  */
 
-public class RecycleViewActy extends Activity {
+public class RecycleViewActy extends AppCompatActivity {
 
     RecyclerView recyclerView;
     SuperRvAdapter adapter;
@@ -49,10 +51,16 @@ public class RecycleViewActy extends Activity {
 
         datas = new ArrayList<>();
         addDatas();
-        ImageLoaderDebugTool.warnBigBitmapInCurrentViewTree(recyclerView);
+       // ImageLoaderDebugTool.warnBigBitmapInCurrentViewTree(recyclerView);
 
 
         adapter = new SuperRvAdapter(this) {
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+                super.onBindViewHolder((SuperRvHolder) holder,position);
+            }
+
             @Override
             protected SuperRvHolder generateCoustomViewHolder(ViewGroup viewGroup, int i) {
                 return new RcvHolder(

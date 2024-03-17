@@ -213,6 +213,8 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
     private void loadUrl(String url) {
 
         stateManager.showLoading();
+
+        //todo 这里有内存泄漏
         UrlLoader.download(getContext(), ivHelper, url, new UrlLoader.LoadListener() {
             @Override
             public void onLoad(String path) {
@@ -227,20 +229,16 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
 
             @Override
             public void onFail(Throwable throwable) {
-
                 if (throwable != null) {
                     info.throwable = throwable;
-                    LogUtils.w(throwable);
+                    LogUtils.w(throwable,url);
                     //toastMsg(throwable.getMessage());
                     stateManager.showError(throwable.getMessage());
                 } else {
                     //toastMsg("fail download");
                     info.throwable = new Throwable("fail download");
                     stateManager.showError("fail download");
-
                 }
-
-
             }
         });
 
