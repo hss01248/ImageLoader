@@ -88,6 +88,7 @@ public class UrlLoader {
         ProgressManager.getInstance().addResponseListener(url, listener1);
         loadGlideByView(context,url,listener,ivHelper);
 
+        //通过Lifecycle ondestory时主动移除引用来解决内存泄漏
         LifecycleOwner lifecycleOwner = LifecycleObjectUtil2.getLifecycleOwnerFromObj(context);
         if(lifecycleOwner ==null){
             LogUtils.w("can not get lifecycleOwner");
@@ -110,62 +111,8 @@ public class UrlLoader {
                 }catch (Throwable throwable){
                     LogUtils.w(throwable);
                 }
-
-
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-       /* service.execute(new Runnable() {
-            @Override
-            public void run() {
-                boolean cached = isCached(context, url);
-                if(cached){
-                    getFromCache(context,url,null,listener);
-                }else {
-                    ProgressManager.getInstance().addResponseListener(url, new ProgressListener() {
-                        @Override
-                        public void onProgress(ProgressInfo progressInfo) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        listener.onProgress(progressInfo.getPercent());
-                                        //tvProgress.setText(progressInfo.getPercent()+"% , speed: "+(progressInfo.getSpeed()/1024/8)+"KB/s");
-                                    }catch (Throwable throwable){
-                                        throwable.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onError(long id, Exception e) {
-                            if(e != null){
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadGlideByView(context,url,listener,ivHelper);
-                        }
-                    });
-                }
-            }
-        });*/
     }
 
     /**
