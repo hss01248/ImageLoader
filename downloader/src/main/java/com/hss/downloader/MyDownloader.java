@@ -246,7 +246,7 @@ public class MyDownloader {
             public void onSuccess(List<DownloadInfo> result) {
                 LogUtils.i("批量下载开始,更新数据库耗时(s):",(System.currentTimeMillis() - start)/1000f);
                 dialog.dismiss();
-                CommonProgressService.startS("图片下载中", "图片下载中...", new Runnable() {
+                CommonProgressService.startS("图片下载中", "图片下载中...", 0,new Runnable() {
                     @Override
                     public void run() {
                         new DownloadList().showList(ActivityUtils.getTopActivity(),result);

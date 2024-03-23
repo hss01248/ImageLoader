@@ -51,8 +51,8 @@ dependencies {
     api 'org.jsoup:jsoup:1.11.2'
     api 'com.blankj:utilcodex:1.30.6'
     api project(':imagelist')
-    api 'com.github.hss01248.utilcodeEnhance:baseWebview:1.2.1'
-    api 'com.github.hss01248.utilcodeEnhance:iwidget:1.2.1'
+    api 'com.github.hss01248.utilcodeEnhance:baseWebview:1.4.3'
+    api 'com.github.hss01248.utilcodeEnhance:iwidget:1.4.3'
     //api project(':baseWebview')
 
 

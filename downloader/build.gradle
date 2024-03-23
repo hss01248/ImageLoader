@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    api "com.github.hss01248.utilcodeEnhance:lib-base:1.4.0"
+    api "com.github.hss01248.utilcodeEnhance:lib-base:1.4.3"
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     testImplementation 'junit:junit:4.+'

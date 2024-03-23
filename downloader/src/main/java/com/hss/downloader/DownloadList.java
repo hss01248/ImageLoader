@@ -98,7 +98,7 @@ public class DownloadList {
 
         String text = "("+(successCount) +",f-"+(failCount)+")/"+total+",cost:"+ DateUtils.formatElapsedTime((System.currentTimeMillis() - timeStart)/1000);
         binding.tvTotalProgress.setText(text);
-        CommonProgressService.updateProgress(progress, (int) total,"图片下载中","图片下载: "+progress+"/"+total);
+        CommonProgressService.updateProgress(progress, (int) total,"图片下载中","图片下载: "+progress+"/"+total,0);
     }
     DownloadListViewBinding binding;
     long total;

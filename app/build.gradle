@@ -30,6 +30,7 @@ android {
         // Make sure libjsc.so does not packed in APK
         //pickFirst '**/libc++_shared.so'
         //exclude("META-INF/*.kotlin_module")
+        pickFirst '**/META-INF/DEPENDENCIES'
     }
     /*repositories {
         flatDir {
