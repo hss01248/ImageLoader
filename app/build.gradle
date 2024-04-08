@@ -57,39 +57,39 @@ dependencies {
    // compile project(':fresco')
   //  compile project(':glide')
     //compile project(':memory')
-    implementation project(':imagelist')
-    implementation project(':imagelist')
+    api project(':imagelist')
+    api project(':imagelist')
     //compile project(':picasso')
-    implementation project(':glidev4')
+    api project(':glidev4')
 
-    implementation 'com.elvishew:xlog:1.4.0'
-    implementation 'com.github.hss01248:SuperAdapter:2.0.2'
+    api 'com.elvishew:xlog:1.4.0'
+    api 'com.github.hss01248:SuperAdapter:2.0.2'
 
-    implementation 'com.blankj:utilcodex:1.30.0'
-    implementation('com.github.hss01248:Toasty:2.0.4') {
+    api 'com.blankj:utilcodex:1.30.0'
+    api('com.github.hss01248:Toasty:2.0.4') {
         exclude group: 'com.android.support'
     }
-    implementation 'com.facebook.fresco:fresco:1.10.0'
+    api 'com.facebook.fresco:fresco:1.10.0'
     /* compile'com.github.hss01248:PhotoOut:1.0.3'
      compile'com.github.hss01248.PhotoPicker:glide:1.0.8'
      compile'com.github.hss01248.PhotoPicker:fresco:1.0.8'
      compile'com.github.hss01248.PhotoPicker:picasso:1.0.8'*/
-    implementation('com.github.hss01248:DialogUtil:1.1.8') {
+    api('com.github.hss01248:DialogUtil:1.1.8') {
         exclude group: 'com.android.support'
     }
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.makeramen:roundedimageview:2.3.0'
+    api 'androidx.appcompat:appcompat:1.0.0'
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'com.google.android.material:material:1.0.0'
+    api 'com.makeramen:roundedimageview:2.3.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    implementation 'com.joooonho:selectableroundedimageview:1.0.1'
-    implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+    api 'com.joooonho:selectableroundedimageview:1.0.1'
+    api 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 
-    implementation 'org.raphets:roundimageview:1.2.0'
-    implementation('com.github.skyNet2017.Luban:dataForPhotoSelet:3.2.9')
-    implementation project(path: ':webviewspider')
-   // implementation project(path: ':spiders')
-    implementation 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
+    api 'org.raphets:roundimageview:1.2.0'
+    api('com.github.skyNet2017.Luban:dataForPhotoSelet:3.2.9')
+    api project(path: ':webviewspider')
+   // api project(path: ':spiders')
+    api 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
     debugImplementation 'com.glance.guolindev:glance:1.0.0'
 
     //debugImplementation 'com.github.hss01248.flipperUtil:oom:1.2.3'
@@ -100,7 +100,7 @@ dependencies {
         resolutionStrategy.force 'com.squareup.okio:okio:1.15.0'
         resolutionStrategy.force 'com.github.bumptech.glide:glide:4.11.0'
     }
-    implementation('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
+    api('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
         exclude group: 'com.android.support'
     }
 
