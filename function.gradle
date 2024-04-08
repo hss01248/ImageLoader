@@ -3,7 +3,7 @@ class CollectTaskTimeListener implements TaskExecutionListener,BuildListener{
     private def timings = new HashMap<String, Long>() //存储所有task和其所发时间的对应关系
     private def final MIN_COST = 5
 
-    @Override
+    //@Override
     void buildStarted(Gradle gradle) {
     }
 

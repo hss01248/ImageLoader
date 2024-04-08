@@ -647,6 +647,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, DownloadDemoActivity.class));
     }
 
+    public void askManagerMediaPermission(View view) {
+        FileDeleteUtil.checkMwdiaManagerPermission();
+    }
+
 
 
     /*Intent intent = new Intent(this,BigImageActy.class);

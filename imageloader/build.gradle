@@ -32,22 +32,20 @@ android {
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     api 'androidx.exifinterface:exifinterface:1.0.0'
-    testCompile 'junit:junit:4.12'
+    //testCompile 'junit:junit:4.12'
     //compile "com.facebook.fresco:imagepipeline-okhttp3:0.12.0+"
     api 'com.squareup.okhttp3:okhttp:3.12.13'
 
 
 
-    //compile 'commons-io:commons-io:2.5'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile('am.util:viewpager:25.3.0') {
+    //api 'commons-io:commons-io:2.5'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    api('am.util:viewpager:25.3.0') {
         exclude group: 'com.android.support'
     }
     api 'com.blankj:utilcodex:1.30.6'

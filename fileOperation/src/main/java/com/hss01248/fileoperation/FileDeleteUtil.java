@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -58,11 +57,28 @@ import io.reactivex.Observer;
  *
  * 按照请求应用权限中所述的最佳做法，请求 WRITE_EXTERNAL_STORAGE 权限。
  * 使用 MediaStore API 修改或删除媒体文件。
+ *
+ *
+ * https://blog.csdn.net/CHENEY0314/article/details/124216224
+ *
  * @Author hss
  * @Date 23/02/2022 11:23
  * @Version 1.0
  */
 public class FileDeleteUtil {
+
+
+
+
+    // 注意compileSdkVersion和targetSdkVersion均需要 >= 31
+    public static void checkMwdiaManagerPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_MANAGE_MEDIA);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ActivityUtils.getTopActivity().startActivity(intent);
+        }
+    }
+
 
     public static void deleteImage(String path,boolean canHaveUI, Observer<Boolean> callBack) {
         if(TextUtils.isEmpty(path)){
@@ -139,6 +155,7 @@ public class FileDeleteUtil {
         }
         //有权限时,Android10以下,还是直接使用File api:
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+            //
             boolean isSuccess = new File(path).delete();
             if (isSuccess) {
                 callBack.onNext(true);
@@ -215,12 +232,16 @@ public class FileDeleteUtil {
 
                 int count = Utils.getApp().getContentResolver().delete(uri, null, null);
 
+                //todo 在华为手机上依然被拦截
+
+
                 if (count > 0) {
                     callBack.onNext(true);
                 } else {
                     callBack.onNext(false);
                 }
             } else {
+                LogUtils.w("无法使用media store删除,还得用file.delete");
                 boolean isSuccess = new File(path).delete();
                 if (isSuccess) {
                     callBack.onNext(true);

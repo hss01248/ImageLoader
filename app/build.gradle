@@ -44,48 +44,48 @@ dependencies {
     implementation project(path: ':downloader')
     implementation project(path: ':downloader-m3u8')
     implementation project(path: ':fileOperation')
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     //compile 'com.android.support:appcompat-v7:25.0.0'
-    testCompile 'junit:junit:4.12'
-    compile project(path: ':imageloader')
-    compile 'com.jakewharton:butterknife:10.2.0'
+    testImplementation 'junit:junit:4.12'
+    implementation project(path: ':imageloader')
+    implementation 'com.jakewharton:butterknife:10.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
 
    // compile project(':fresco')
   //  compile project(':glide')
     //compile project(':memory')
-    compile project(':imagelist')
-    compile project(':imagelist')
+    implementation project(':imagelist')
+    implementation project(':imagelist')
     //compile project(':picasso')
-    compile project(':glidev4')
+    implementation project(':glidev4')
 
-    compile 'com.elvishew:xlog:1.4.0'
-    compile 'com.github.hss01248:SuperAdapter:2.0.2'
+    implementation 'com.elvishew:xlog:1.4.0'
+    implementation 'com.github.hss01248:SuperAdapter:2.0.2'
 
     implementation 'com.blankj:utilcodex:1.30.0'
-    compile('com.github.hss01248:Toasty:2.0.4') {
+    implementation('com.github.hss01248:Toasty:2.0.4') {
         exclude group: 'com.android.support'
     }
-    compile 'com.facebook.fresco:fresco:1.10.0'
+    implementation 'com.facebook.fresco:fresco:1.10.0'
     /* compile'com.github.hss01248:PhotoOut:1.0.3'
      compile'com.github.hss01248.PhotoPicker:glide:1.0.8'
      compile'com.github.hss01248.PhotoPicker:fresco:1.0.8'
      compile'com.github.hss01248.PhotoPicker:picasso:1.0.8'*/
-    compile('com.github.hss01248:DialogUtil:1.1.8') {
+    implementation('com.github.hss01248:DialogUtil:1.1.8') {
         exclude group: 'com.android.support'
     }
-    compile 'androidx.appcompat:appcompat:1.0.0'
-    compile 'androidx.recyclerview:recyclerview:1.0.0'
-    compile 'com.google.android.material:material:1.0.0'
-    compile 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.makeramen:roundedimageview:2.3.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    compile 'com.joooonho:selectableroundedimageview:1.0.1'
-    compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+    implementation 'com.joooonho:selectableroundedimageview:1.0.1'
+    implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 
-    compile 'org.raphets:roundimageview:1.2.0'
+    implementation 'org.raphets:roundimageview:1.2.0'
     implementation('com.github.skyNet2017.Luban:dataForPhotoSelet:3.2.9')
     implementation project(path: ':webviewspider')
    // implementation project(path: ':spiders')
