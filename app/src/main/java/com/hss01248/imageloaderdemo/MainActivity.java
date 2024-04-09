@@ -648,7 +648,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void askManagerMediaPermission(View view) {
-        FileDeleteUtil.checkMwdiaManagerPermission();
+        FileDeleteUtil.checkMediaManagerPermission();
     }
 
 

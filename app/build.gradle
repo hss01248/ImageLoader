@@ -86,7 +86,7 @@ dependencies {
     api 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 
     api 'org.raphets:roundimageview:1.2.0'
-    api('com.github.skyNet2017.Luban:dataForPhotoSelet:3.2.9')
+    api('com.github.skyNet2017.Luban:dataForPhotoSelet:3.3.0')
     api project(path: ':webviewspider')
    // api project(path: ':spiders')
     api 'com.github.getActivity:XXPermissions:11.6'//请求存储权限

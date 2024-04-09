@@ -33,7 +33,6 @@ import com.hss01248.image.interfaces.LoadInterceptor;
 import com.hss01248.imagelist.album.IViewInit;
 import com.hss01248.imagelist.album.ImageListView;
 import com.hss01248.imagelist.album.ImageMediaCenterUtil;
-import com.hss01248.notifyutil.NotifyUtil;
 import com.hss01248.webviewspider.IShowUrls;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -110,7 +109,7 @@ public class BaseApp extends MultiDexApplication {
         //XReporter.init(this,"7ac352d904",true);
         //4f7a08bf-1fa1-453f-870d-da59f0131c02
         //UmengUtil.init(this,"6163f5bbac9567566e91bb94","bugly",1,"", BuildConfig.DEBUG);
-        NotifyUtil.init(this);
+        //NotifyUtil.init(this);
         DownloadList.setLargeImagesViewer(new ILargeImagesViewer() {
             @Override
             public void showBig(Context context, List<String> uris0, int position) {
