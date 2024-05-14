@@ -666,16 +666,19 @@ public class Glide4Loader extends ILoader {
     private RequestBuilder getDrawableTypeRequest(SingleConfig config, RequestBuilder requestManager) {
         if(requestManager == null){
             String url  = config.getSourceString();
-            if(url.contains("?")){
-                url  = url.substring(0,url.indexOf("?"));
-            }
-            if(url.endsWith(".gif")){
-                // https://s5.gifyu.com
-                requestManager = Glide.with(config.getContext()).asGif();
+            if(!TextUtils.isEmpty(url)){
+                if(url.contains("?")){
+                    url  = url.substring(0,url.indexOf("?"));
+                }
+                if(url.endsWith(".gif")){
+                    // https://s5.gifyu.com
+                    requestManager = Glide.with(config.getContext()).asGif();
+                }else {
+                    requestManager = Glide.with(config.getContext()).asDrawable();
+                }
             }else {
                 requestManager = Glide.with(config.getContext()).asDrawable();
             }
-
         }
 
         RequestBuilder request = null;
