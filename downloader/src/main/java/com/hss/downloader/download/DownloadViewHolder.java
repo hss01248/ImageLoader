@@ -4,8 +4,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -34,11 +37,25 @@ public class DownloadViewHolder extends BaseViewHolder {
         try {
             binding = ItemDownloadUiBinding.bind(itemView);
             EventBus.getDefault().register(this);
+            LifecycleOwner lifecycleOwnerFromObj = LifecycleObjectUtil2.getLifecycleOwnerFromObj(view.getContext());
+            if(lifecycleOwnerFromObj !=null){
+                lifecycleOwnerFromObj.getLifecycle().addObserver(new DefaultLifecycleObserver() {
+                    @Override
+                    public void onDestroy(@NonNull LifecycleOwner owner) {
+                        //DefaultLifecycleObserver.super.onDestroy(owner);
+                        EventBus.getDefault().unregister(DownloadViewHolder.this);
+                        LogUtils.w("EventBus.getDefault().unregister : "+DownloadViewHolder.this);
+                    }
+                });
+            }else {
+                LogUtils.w("getLifecycleOwnerFromObj is null : "+view.getContext());
+            }
         }catch (Throwable throwable){
             throwable.printStackTrace();
         }
     }
 
+//内存泄漏
     public void onViewRecycled() {
         try {
            // EventBus.getDefault().unregister(this);

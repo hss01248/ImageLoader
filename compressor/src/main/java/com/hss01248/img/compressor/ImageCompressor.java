@@ -302,7 +302,7 @@ public class ImageCompressor {
                 //todo renameTo - 垃圾api,只能同扩展名处理. 自动删除file2,变成file1.
          /*   boolean renameTo = file2.renameTo(file);
             if(!renameTo){*/
-                LogUtils.w("不同jpg扩展名时,不能renameTo,使用fileCopy: " + file2);
+                LogUtils.i("不同jpg扩展名时,不能renameTo,使用fileCopy: " + file2);
                 try {
                     //todo 文件覆盖也会被miui警告,去tmd-->因为内部调用了file.delete()
                   /*  boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
