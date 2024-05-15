@@ -2,6 +2,7 @@ package com.hss01248.imageloaderdemo;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,7 +41,6 @@ import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.fileoperation.FileDeleteUtil;
-import com.hss01248.fullscreendialog.FullScreenDialog;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.glide.aop.file.DirOperationUtil;
 import com.hss01248.image.ImageLoader;
@@ -474,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
     //当所述待选择图片的宽度大于或等于1000像素点，且所述待选择图片的宽高比大于或等于2:1，且所述待选择图片的宽高比小于4:1，则判断为所述待选择图片为360度全景图片。
     private void showInfo(String path) {
         String exifStr = ExifUtil.getExifStr(path);
-        FullScreenDialog dialog = new FullScreenDialog(MainActivity.this);
+        Dialog dialog = new Dialog(MainActivity.this);
 
         Map<String, String> map = ExifUtil.readExif(path);
         //dialog.setContentView();

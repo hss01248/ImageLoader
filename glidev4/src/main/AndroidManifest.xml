@@ -11,4 +11,16 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <application>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                tools:node="merge"
+                android:name="com.hss01248.glidev4.Glide4Init"
+                android:value="androidx.startup" />
+        </provider>
+    </application>
 </manifest>
