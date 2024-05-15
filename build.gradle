@@ -35,7 +35,6 @@ allprojects {
         //maven { url 'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository' }
         maven { url 'https://raw.githubusercontent.com/link-u/AndroidGlideAvifDecoder/master/repository' }
        // maven { url 'https://cdn.jsdelivr.net/gh/link-u/AndroidGlideAvifDecoder@master/repository' }
-        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
 
     }
 
