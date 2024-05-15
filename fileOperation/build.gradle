@@ -42,5 +42,5 @@ dependencies {
     api 'io.reactivex.rxjava2:rxjava:2.2.0'
     //api 'com.github.hss01248.utilcodeEnhance:openuri:1.4.4'
     api 'com.github.getActivity:XXPermissions:11.6'
-    api 'com.github.hss01248.MyPermission:ext:2.3.8'
+    api 'com.github.hss01248.MyPermission:ext:2.3.9'
 }
