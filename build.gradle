@@ -27,7 +27,7 @@ buildscript {
 
 allprojects {
     repositories {
-
+        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
        /* maven {
             url "http://dl.bintray.com/piasy/maven"
         }*/
