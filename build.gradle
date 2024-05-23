@@ -2,10 +2,13 @@
 
 buildscript {
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/gradle7_5/remote3.gradle?q=2'
+    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/gradle7_5/z_config/pack.gradle?q=3'
     //apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/dev/deps/depsLastestChecker.gradle'
     //apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/dev/deps/uploadAllTask.gradle'
    // apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/dev/z_config/git_branch_info.gradle'
+
+    //apply from: 'pack.gradle'
 
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
