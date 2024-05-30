@@ -48,7 +48,7 @@ dependencies {
 
     api 'com.github.hss01248:UI:0.0.1'
     api 'com.github.hss01248.utilcodeEnhance:iwidget:1.4.5'
-    api 'com.github.hss01248:DialogUtil:3.0.3'
+    api 'com.github.hss01248:DialogUtil:3.0.4'
     implementation "com.github.hss01248.utilcodeEnhance:fullScreenDialog:1.5.1"
     implementation 'com.github.hss01248:NotifyUtil:1.0.1'
     api 'com.github.princekin-f:EasyFloat:2.0.3'
