@@ -74,7 +74,7 @@ dependencies {
      compile'com.github.hss01248.PhotoPicker:glide:1.0.8'
      compile'com.github.hss01248.PhotoPicker:fresco:1.0.8'
      compile'com.github.hss01248.PhotoPicker:picasso:1.0.8'*/
-    api('com.github.hss01248:DialogUtil:3.0.4') {
+    api('com.github.hss01248:DialogUtil:3.0.5') {
         exclude group: 'com.android.support'
     }
     api 'androidx.appcompat:appcompat:1.0.0'

@@ -70,7 +70,7 @@ dependencies {
     api 'com.github.hss01248.metadata:metadata:1.2.7'
     api 'com.github.skyNet2017.Luban:luban:3.2.7'
     api "androidx.startup:startup-runtime:1.1.0"
-    api 'com.github.hss01248:DialogUtil:3.0.4'
+    api 'com.github.hss01248:DialogUtil:3.0.5'
     //https://github.com/wasabeef/glide-transformations
 //    https://github.com/open-android/Glide-transformations
 
