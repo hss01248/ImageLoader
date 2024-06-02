@@ -40,5 +40,5 @@ dependencies {
     //api project(path: ':avif')
     api project(path: ':fileOperation')
     api 'com.blankj:utilcodex:1.30.6'
-    api 'com.github.hss01248.metadata:metadata:1.2.5'
+    api 'com.github.hss01248.metadata:metadata:1.2.8'
 }

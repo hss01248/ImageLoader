@@ -67,7 +67,7 @@ dependencies {
     api 'jp.co.link_u.library.glideavif:glideavif:0.8.1'
 
     api 'androidx.exifinterface:exifinterface:1.3.7'
-    api 'com.github.hss01248.metadata:metadata:1.2.7'
+    api 'com.github.hss01248.metadata:metadata:1.2.8'
     api 'com.github.skyNet2017.Luban:luban:3.2.7'
     api "androidx.startup:startup-runtime:1.1.0"
     api 'com.github.hss01248:DialogUtil:3.0.5'

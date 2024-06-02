@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.WindowManager;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.hss01248.image.R;
 import com.hss01248.image.interfaces.ILoader;
 import com.hss01248.image.interfaces.ImageLoaderExceptionHandler;
@@ -30,7 +31,7 @@ public class GlobalConfig {
     }
 
     private static Handler mainHandler;
-    public static boolean debug;
+    public static boolean debug = AppUtils.isAppDebug();
 
     public static int getWinHeight() {
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {

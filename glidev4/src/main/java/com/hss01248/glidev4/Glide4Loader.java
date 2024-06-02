@@ -58,6 +58,7 @@ import com.hss01248.image.utils.ThreadPoolFactory;
 import com.hss01248.imagedebugger.IImageSource;
 import com.hss01248.imagedebugger.IImgLocalPathGetter;
 import com.hss01248.imagedebugger.ImageViewDebugger;
+import com.hss01248.media.metadata.FileTypeUtil;
 import com.hss01248.media.metadata.MetaDataUtil;
 import com.hss01248.media.metadata.MetaInfo;
 
@@ -198,6 +199,8 @@ public class Glide4Loader extends ILoader {
                                 if (!config.equals(imageView.getTag(R.drawable.im_item_list_opt))) {
                                     return;
                                 }
+                                String type = FileTypeUtil.getType(resource);
+
                                 pl.droidsonroids.gif.GifDrawable gifDrawable2 = null;
                                 try {
                                     gifDrawable2 = new pl.droidsonroids.gif.GifDrawable(resource);
@@ -418,7 +421,7 @@ public class Glide4Loader extends ILoader {
                 .format(DecodeFormat.PREFER_RGB_565)
                 .set(GifOptions.DECODE_FORMAT, DecodeFormat.DEFAULT)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .skipMemoryCache(GlobalConfig.debug)
+                //.skipMemoryCache(GlobalConfig.debug)
                 .transform(getBitmapTransFormations(config));
         return options;
     }
@@ -544,7 +547,8 @@ public class Glide4Loader extends ILoader {
                 }
                 if (url.endsWith(".gif")) {
                     // https://s5.gifyu.com
-                    requestManager = Glide.with(config.getContext()).asGif();
+                    //requestManager = Glide.with(config.getContext()).asGif();
+                    requestManager = Glide.with(config.getContext()).asDrawable();
                 } else {
                     requestManager = Glide.with(config.getContext()).asDrawable();
                 }

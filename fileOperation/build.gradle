@@ -38,7 +38,7 @@ dependencies {
 
     api 'com.github.hss01248.StartActivityResult:activityresult:1.1.9'
     api 'com.blankj:utilcodex:1.30.0'
-    api 'com.github.hss01248.metadata:metadata:1.1.6'
+    api 'com.github.hss01248.metadata:metadata:1.2.8'
     api 'io.reactivex.rxjava2:rxjava:2.2.0'
     //api 'com.github.hss01248.utilcodeEnhance:openuri:1.4.4'
     api 'com.github.getActivity:XXPermissions:11.6'
