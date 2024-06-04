@@ -37,7 +37,7 @@ import okhttp3.OkHttpClient;
 /**
  * Created by Administrator on 2017/5/2 0002.
  */
-//@GlideModule
+@GlideModule
 public class GlideModelConfig extends LibraryGlideModule {
 
 
