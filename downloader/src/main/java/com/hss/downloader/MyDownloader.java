@@ -12,6 +12,7 @@ import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.event.DownloadResultEvent;
 
 import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss.downloader.list.DownloadRecordListHolder;
 import com.hss.utils.enhance.foregroundservice.CommonProgressService;
 import com.hss01248.img.compressor.ImageCompressor;
 import com.liulishuo.okdownload.StatusUtil;
@@ -111,6 +112,10 @@ public class MyDownloader {
 
     public static void showDownloadPage(){
         new DownloadList().showList(ActivityUtils.getTopActivity(),null);
+    }
+
+    public static void showWholeDownloadPage(){
+        DownloadRecordListHolder.show();
     }
 
     public static void continueDownload(){

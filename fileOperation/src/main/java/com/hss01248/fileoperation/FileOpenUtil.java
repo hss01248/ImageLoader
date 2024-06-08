@@ -7,4 +7,8 @@ package com.hss01248.fileoperation;
  * @Version 1.0
  */
 public class FileOpenUtil {
+
+    public static void open(String pathOrUrl){
+
+    }
 }

@@ -48,6 +48,8 @@ dependencies {
      api 'com.liulishuo.okdownload:sqlite:1.0.7'
     api 'com.liulishuo.okdownload:okhttp:1.0.7'
     api 'com.squareup.okhttp3:okhttp:3.12.12'
+    api "com.github.hss01248.utilcodeEnhance:refresh-loadmore:1.5.7"
+    api "com.github.hss01248.utilcodeEnhance:viewholder:1.5.7"
 
     api 'com.daimajia.numberprogressbar:library:1.4@aar'
 
