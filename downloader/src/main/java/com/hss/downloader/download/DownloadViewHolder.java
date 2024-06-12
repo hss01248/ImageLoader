@@ -90,7 +90,7 @@ public class DownloadViewHolder extends BaseViewHolder {
             binding.tvSize.setText("");
         }
         if(info.createTime > 0){
-            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.createTime),"yyyy-MM-dd"));
+            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.createTime),"yyyy-MM-dd mm:ss"));
         }else {
             binding.tvData.setText("");
         }
@@ -148,7 +148,7 @@ public class DownloadViewHolder extends BaseViewHolder {
             if(info.isCompressing){
                 binding.tvStatusMsg.setText("压缩中");
             }else {
-                binding.tvStatusMsg.setText("下载压缩完成");
+                binding.tvStatusMsg.setText("下载完成");
             }
         }
 
@@ -236,7 +236,7 @@ public class DownloadViewHolder extends BaseViewHolder {
             this.info.currentOffset = info.currentOffset;
         }
         if(info.status == DownloadInfo.STATUS_DOWNLOADING){
-            if(info.currentOffset>0 && info.currentOffset != info.totalLength){
+            if(info.currentOffset>0 && info.currentOffset != info.totalLength && info.totalLength>0){
                 //binding.progressBar.setVisibility(View.VISIBLE);
                 binding.progressBar.setMax((int) info.totalLength);
                 binding.progressBar.setProgress((int) info.currentOffset);
