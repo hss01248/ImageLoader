@@ -1,6 +1,7 @@
 package com.hss.downloader.list;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.utils.enhance.api.MyCommonCallback;
 
@@ -22,13 +23,23 @@ public class LoadDataByHistoryDb implements ILoadData<DownloadInfo> {
 
     @Override
     public void queryData(PagerDto<DownloadInfo> pager, MyCommonCallback<PagerDto<DownloadInfo>> callback) {
-        try {
-            PagerDto<DownloadInfo> browserHistoryInfoPagerDto = DownloadInfoUtil.loadByPager(pager);
-            callback.onSuccess(browserHistoryInfoPagerDto);
-        }catch (Throwable throwable){
-            LogUtils.w(throwable);
-            callback.onError(throwable.getClass().getSimpleName(),throwable.getMessage(),throwable);
-        }
+        ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<PagerDto<DownloadInfo>>() {
+            @Override
+            public PagerDto<DownloadInfo> doInBackground() throws Throwable {
+                return DownloadInfoUtil.loadByPager(pager);
+            }
+
+            @Override
+            public void onSuccess(PagerDto<DownloadInfo> result) {
+                callback.onSuccess(result);
+            }
+
+            @Override
+            public void onFail(Throwable throwable) {
+                super.onFail(throwable);
+                callback.onError(throwable.getClass().getSimpleName(),throwable.getMessage(),throwable);
+            }
+        });
     }
 
     @Override

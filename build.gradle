@@ -13,10 +13,10 @@ buildscript {
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
-        /*groupId='com.github.hss01248.ImageLoader'
-        versionCode = '3.7.9.03'
-        isPublisToLocal=false
-        ignoreModules = "spiders"*/
+        groupId='com.github.hss01248.ImageLoader'
+        versionCode = '3.8.1.00'
+        isPublisToLocal=true
+        ignoreModules = "spiders"
 
         releaseUrl='https://nexus.hss01248.tech/repository/maven-releases/'
         snapshotUrl='https://nexus.hss01248.tech/repository/maven-snapshots/'

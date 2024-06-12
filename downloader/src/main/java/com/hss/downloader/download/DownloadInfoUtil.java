@@ -162,7 +162,7 @@ public class DownloadInfoUtil {
     public static PagerDto<DownloadInfo> loadByPager(PagerDto pagerDto){
         QueryBuilder<DownloadInfo> builder = getDaoSession().getDownloadInfoDao().queryBuilder()
                 //.where(DownloadInfoDao.Properties.IsCollect.eq(isCollect? 1: 0))
-                .orderDesc(DownloadInfoDao.Properties.UpdateTime)
+                .orderDesc(DownloadInfoDao.Properties.CreateTime)
                 .limit(pagerDto.pageSize)
                 .offset((int) pagerDto.offset);
         if(!TextUtils.isEmpty(pagerDto.searchText)){

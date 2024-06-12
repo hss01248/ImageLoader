@@ -90,7 +90,7 @@ public class DownloadViewHolder extends BaseViewHolder {
             binding.tvSize.setText("");
         }
         if(info.createTime > 0){
-            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.createTime),"yyyy-MM-dd mm:ss"));
+            helper.setText(R.id.tv_data, TimeUtils.date2String(new Date(info.createTime),"yyyy-MM-dd HH:mm:ss:SSS"));
         }else {
             binding.tvData.setText("");
         }

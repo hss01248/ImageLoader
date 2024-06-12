@@ -51,7 +51,7 @@ dependencies {
     api "com.github.hss01248.utilcodeEnhance:refresh-loadmore:1.5.7"
     api "com.github.hss01248.utilcodeEnhance:viewholder:1.5.7"
 
-    api 'com.daimajia.numberprogressbar:library:1.4@aar'
+    api 'com.daimajia.numberprogressbar:library:1.4'
 
     api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
     api 'com.noober.floatmenu:common:1.0.4'

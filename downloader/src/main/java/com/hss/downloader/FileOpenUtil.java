@@ -86,8 +86,8 @@ public class FileOpenUtil {
             suffix = filePath.substring(index+1).toLowerCase();
         }
         String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix);
-        if(type ==null || type.endsWith("")){
-            if(filePath.endsWith("jpeg")){
+        if(type ==null || type.equals("")){
+            if(filePath.endsWith("jpeg") ||filePath.equals("jpg")){
                 type = "image/jpeg";
             }else {
                 type = "";

@@ -64,7 +64,7 @@ public class DownloadRecordListHolder extends BaseViewHolder<ContainerHistoryCol
         binding.getRoot().addView(holder.binding.getRoot());
         //binding.getRoot().setPadding(0, BarUtils.getStatusBarHeight(),0,0);
 
-        holder.getLoadMoreRecycleViewHolder().getDto().pageSize = 60;
+        holder.getLoadMoreRecycleViewHolder().getDto().pageSize = 500;
         holder.getLoadMoreRecycleViewHolder().initRecyclerViewDefault();
 
         holder.getLoadMoreRecycleViewHolder().setEmptyMsg("下载记录为空");
