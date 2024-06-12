@@ -60,4 +60,9 @@ public class FileDownloaderImpl implements IDownload {
                     }
                 }).start();
     }
+
+    @Override
+    public void stopDownload(String url) {
+        FileDownloader.getImpl().create(url).pause();
+    }
 }

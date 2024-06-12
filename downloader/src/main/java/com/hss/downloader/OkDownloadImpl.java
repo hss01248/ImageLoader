@@ -107,4 +107,10 @@ public class OkDownloadImpl implements IDownload{
             }
         });
     }
+
+    @Override
+    public void stopDownload(String url) {
+
+        new DownloadTask.Builder(url,"","").build().cancel();
+    }
 }

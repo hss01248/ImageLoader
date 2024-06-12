@@ -81,7 +81,7 @@ public class MyDownloader {
             File file = new File(info.filePath);
             info.name = file.getName();
             info.dir = file.getParentFile().getAbsolutePath();
-            info.filePath = null;
+            info.getFilePath() ;
             if(info.status == DownloadInfo.STATUS_DOWNLOADING){
                 //info.status = DownloadInfo.STATUS_ORIGINAL;
             }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
@@ -185,6 +185,7 @@ public class MyDownloader {
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.dir = info.dir;
                         load.name = DownloadInfoUtil.getLeagalFileName(info.dir,info.name);//避免多级目录,非法字符,文件过长等情况
+                        load.genFilePath();
                         load.createTime = System.currentTimeMillis();
                         //兼具去重功能  功能优先于性能
                         toAdd.add(load);
@@ -197,6 +198,7 @@ public class MyDownloader {
                     }else {
                         load.dir = info.dir;
                         load.name = DownloadInfoUtil.getLeagalFileName(info.dir,info.name);//避免多级目录,非法字符,文件过长等情况
+                        load.genFilePath();
                         //load.name = load.name;//避免多级目录,非法字符,文件过长等情况
                         if(load.status == DownloadInfo.STATUS_DOWNLOADING){
                             StatusUtil.Status status = StatusUtil.getStatus(info.url, load.dir, load.name);
@@ -274,6 +276,12 @@ public class MyDownloader {
             }
         });
 
+    }
+
+    public static void stopDownload(DownloadInfo info) {
+        download.stopDownload(info.url);
+        info.status = DownloadInfo.STATUS_ORIGINAL;
+        EventBus.getDefault().post(info);
     }
 
     public static void startDownload(DownloadInfo info) {
@@ -388,6 +396,7 @@ public class MyDownloader {
                 info.isCompressing = false;
                 info.name = compressed.getName();
                 info.dir = compressed.getParentFile().getAbsolutePath();
+                info.genFilePath();
                 info.totalLength = compressed.length();
                 EventBus.getDefault().post(info);
                 DownloadInfoUtil.getDao().update(info);

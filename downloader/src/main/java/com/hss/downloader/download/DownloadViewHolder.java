@@ -1,7 +1,6 @@
 package com.hss.downloader.download;
 
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
@@ -10,20 +9,23 @@ import androidx.lifecycle.LifecycleOwner;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.hss.downloader.FileOpenUtil;
 import com.hss.downloader.MyDownloader;
 import com.hss.downloader.R;
 import com.hss.downloader.databinding.ItemDownloadUiBinding;
 import com.hss.downloader.event.DialogCloseEvent;
+import com.hss01248.toast.MyToast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class DownloadViewHolder extends BaseViewHolder {
@@ -31,6 +33,7 @@ public class DownloadViewHolder extends BaseViewHolder {
     public DownloadInfo info;
     DownloadViewHolder helper;
     ItemDownloadUiBinding binding;
+    public List<DownloadInfo> datas;
     public DownloadViewHolder(View view) {
         super(view);
         helper = this;
@@ -106,10 +109,10 @@ public class DownloadViewHolder extends BaseViewHolder {
             }
             binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
         }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
-            helper.setText(R.id.tv_status_msg,"等待中");
+            helper.setText(R.id.tv_status_msg,"未开始或等待中");
             helper.setVisible(R.id.progress_bar,false);
-            helper.setText(R.id.tv_download_btn_desc,"暂停");
-            binding.llRight.setVisibility(View.GONE);
+            helper.setText(R.id.tv_download_btn_desc,"开始");
+            binding.llRight.setVisibility(View.VISIBLE);
             binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
 
             if(info.totalLength>0 && info.currentOffset>0){
@@ -155,12 +158,64 @@ public class DownloadViewHolder extends BaseViewHolder {
             public void onClick(View view) {
                 if(info.status  == DownloadInfo.STATUS_FAIL){
                     MyDownloader.startDownload(info);
-                }else if(info.status == DownloadInfo.STATUS_DOWNLOADING || info.status == DownloadInfo.STATUS_ORIGINAL){
-
+                }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
+                    MyDownloader.startDownload(info);
+                }else if(info.status == DownloadInfo.STATUS_DOWNLOADING){
+                    MyDownloader.stopDownload(info);
                 }
 
             }
         });
+        binding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(info.status == DownloadInfo.STATUS_SUCCESS){
+                    if(datas !=null){
+
+                        String mimeType = FileOpenUtil.getMineType2(info.getFilePath());
+                        boolean image = mimeType.contains("image");
+                        boolean video = mimeType.contains("video");
+                        if(image || video){
+                            List<String> paths = new ArrayList<>();
+                            for (DownloadInfo data : datas) {
+                                if(data.status != DownloadInfo.STATUS_FAIL){
+                                    //类型要一致
+                                    if(image){
+                                        if(FileOpenUtil.getMineType2(data.getFilePath()).contains("image")){
+                                            if(data.status == DownloadInfo.STATUS_SUCCESS){
+                                                paths.add(data.getFilePath());
+                                            }else {
+                                                paths.add(data.getUrl());
+                                            }
+                                        }
+                                    }else if(video){
+                                        if(FileOpenUtil.getMineType2(data.getFilePath()).contains("video")){
+                                            if(data.status == DownloadInfo.STATUS_SUCCESS){
+                                                paths.add(data.getFilePath());
+                                            }else {
+                                                paths.add(data.getUrl());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            FileOpenUtil.paths = paths;
+                        }
+                    }
+                    FileOpenUtil.open(info.getFilePath());
+                }else if(info.status  == DownloadInfo.STATUS_FAIL){
+                    //MyDownloader.startDownload(info);
+                    MyToast.show("文件还下载失败,请重试");
+                }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
+                    MyToast.show("文件还没开始下载,现在开始下载");
+                    MyDownloader.startDownload(info);
+                }else if(info.status == DownloadInfo.STATUS_DOWNLOADING){
+                    //MyDownloader.stopDownload(info);
+                    MyToast.show("文件还在下载中");
+                }
+            }
+        });
+
 
     }
 
@@ -188,7 +243,6 @@ public class DownloadViewHolder extends BaseViewHolder {
                 if(binding.tvSize.getText().length() ==0){
                     binding.tvSize.setText(ConvertUtils.byte2FitMemorySize(info.totalLength,2));
                 }
-
                 return;
             }
         }

@@ -95,4 +95,9 @@ public class GlideDownloadImpl implements IDownload {
             }
         });
     }
+
+    @Override
+    public void stopDownload(String url) {
+
+    }
 }

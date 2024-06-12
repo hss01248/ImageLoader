@@ -358,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void goWebSpider(View view) {
         List<String> menus = SpiderWebviewActivity.getSpiders();
+        menus.add("浏览全部下载列表");
         menus.add("浏览下载列表");
         menus.add("修复升级前的数据");
         menus.add("继续下载未完成的图片");
@@ -368,6 +369,8 @@ public class MainActivity extends AppCompatActivity {
                 if(position == menus.size()-1){
                     MyDownloader.continueDownload();
                     //ImgDownloader.downladUrlsInDB(MainActivity.this,new File(SpiderWebviewActivity.getSaveDir("继续下载","")));
+                }else if(position ==  menus.size()-4) {
+                    MyDownloader.showWholeDownloadPage();
                 }else if(position ==  menus.size()-3) {
                     MyDownloader.showDownloadPage();
                 }else if(position == menus.size()-2) {

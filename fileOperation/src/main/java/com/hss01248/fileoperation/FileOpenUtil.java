@@ -6,9 +6,12 @@ package com.hss01248.fileoperation;
  * @Date 23/02/2022 11:47
  * @Version 1.0
  */
+@Deprecated
 public class FileOpenUtil {
 
-    public static void open(String pathOrUrl){
+    public static void open(String filePath){
+
+
 
     }
 }

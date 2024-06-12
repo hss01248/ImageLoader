@@ -21,6 +21,8 @@ public interface IDownload {
 
     void download(String url, @NonNull String filePath, @NonNull Map<String,String> headers, IDownloadCallback callback);
 
+    void stopDownload(String url);
+
     /**
      * 解决问题:
      * 文件名过长

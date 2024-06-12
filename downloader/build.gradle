@@ -61,7 +61,10 @@ dependencies {
     api 'com.blankj:utilcodex:1.30.6'
     api("com.github.bumptech.glide:glide:4.11.0")
     api project(path: ':compressor')
+    api project(path: ':bigimageviewpager')
     api 'com.liulishuo.filedownloader:library:1.7.7'
+
+    api "com.github.hss01248.jenkinsTool2:apkInstaller:1.0.1"
 
     //api 'com.github.hss01248:avif-android:1.0.0'
     api 'org.greenrobot:greendao:3.3.0' // add library

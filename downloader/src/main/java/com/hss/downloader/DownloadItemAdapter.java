@@ -4,14 +4,10 @@ package com.hss.downloader;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.blankj.utilcode.util.ConvertUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadViewHolder;
 
-import java.util.Date;
 import java.util.List;
 
 public class DownloadItemAdapter extends BaseQuickAdapter<DownloadInfo, DownloadViewHolder> {
@@ -30,6 +26,7 @@ public class DownloadItemAdapter extends BaseQuickAdapter<DownloadInfo, Download
     @Override
     protected void convert(@NonNull DownloadViewHolder helper, DownloadInfo info) {
         helper.info = info;
+        helper.datas = this.getData();
         helper.showView(info);
     }
 
