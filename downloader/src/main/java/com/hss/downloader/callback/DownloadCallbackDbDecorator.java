@@ -7,6 +7,8 @@ import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss01248.img.compressor.ImageCompressor;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 
 public class DownloadCallbackDbDecorator implements IDownloadCallback {
@@ -83,6 +85,7 @@ public class DownloadCallbackDbDecorator implements IDownloadCallback {
                 }
                 load.status = DownloadInfo.STATUS_DOWNLOADING;
                 DownloadInfoUtil.getDao().update(load);
+                EventBus.getDefault().post(load);
             }
         });
 
@@ -111,6 +114,7 @@ public class DownloadCallbackDbDecorator implements IDownloadCallback {
                     load.totalLength = compress.length();
                     load.currentOffset = compress.length();
                     DownloadInfoUtil.getDao().update(load);
+                    EventBus.getDefault().post(load);
                 }
             }
         });
@@ -140,6 +144,7 @@ public class DownloadCallbackDbDecorator implements IDownloadCallback {
                 load.currentOffset = currentOffset;
                 load.totalLength = totalLength;
                 DownloadInfoUtil.getDao().update(load);
+                EventBus.getDefault().post(load);
             }
         });
         callback.onProgress(url, realPath, currentOffset, totalLength);
@@ -160,6 +165,7 @@ public class DownloadCallbackDbDecorator implements IDownloadCallback {
                 load.status = DownloadInfo.STATUS_FAIL;
                 load.errMsg = msg;
                 DownloadInfoUtil.getDao().update(load);
+                EventBus.getDefault().post(load);
             }
         });
         callback.onFail(url, realPath, msg, throwable);
