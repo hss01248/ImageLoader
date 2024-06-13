@@ -73,6 +73,8 @@ dependencies {
     def eventbus_version = '3.2.0'
     api "org.greenrobot:eventbus:$eventbus_version"
     annotationProcessor "org.greenrobot:eventbus-annotation-processor:$eventbus_version"
+
+    api 'com.github.hss01248.flipperUtil:network-hooks-auth:1.7.20-dev'
 }
 
 apply plugin: 'org.greenrobot.greendao'
