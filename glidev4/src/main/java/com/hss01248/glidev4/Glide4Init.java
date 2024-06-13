@@ -25,7 +25,7 @@ public class Glide4Init implements Initializer<String> {
             Application application = (Application) context;
 
         }
-        ImageLoader.init(context,250,new Glide4Loader());
+        ImageLoader.init(context,1024,new Glide4Loader());
         return "Glide4Init";
     }
 

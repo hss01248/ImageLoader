@@ -86,7 +86,7 @@ public class GlobalConfig {
     /**
      * lrucache 最大值
      */
-    public static int cacheMaxSize = 150;
+    public static int cacheMaxSize = 1024;
 
     /**
      * 缓存文件夹
