@@ -15,8 +15,10 @@ import com.hss.downloader.R;
 import com.hss.downloader.databinding.ContainerHistoryCollectBinding;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.utils.enhance.viewholder.ContainerActivity;
+import com.hss.utils.enhance.viewholder.ContainerActivity2;
 import com.hss.utils.enhance.viewholder.MyViewHolder;
 import com.hss.utils.enhance.viewholder.mvvm.BaseViewHolder;
+import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.fileoperation.FileOpenUtil;
 import com.hss01248.refresh_loadmore.search.SearchViewHolder;
 import com.hss01248.toast.MyToast;
@@ -41,12 +43,13 @@ public class DownloadRecordListHolder extends BaseViewHolder<ContainerHistoryCol
     }
 
     public static void show(){
-        ContainerActivity.start("downloadList", new Consumer<Pair<ContainerActivity, ActivityCommonContainerBinding>>() {
+        ContainerActivity2.start( new Consumer<Pair<ContainerActivity2, ContainerViewHolderWithTitleBar>>() {
             @Override
-            public void accept(Pair<ContainerActivity, ActivityCommonContainerBinding> pair) throws Exception {
+            public void accept(Pair<ContainerActivity2, ContainerViewHolderWithTitleBar> pair) throws Exception {
                 DownloadRecordListHolder holder1 = new DownloadRecordListHolder(pair.first);
-                pair.second.llRoot.addView(holder1.getRootView());
+                pair.second.getBinding().rlContainer.addView(holder1.getRootView());
                 holder1.init("");
+                pair.second.getBinding().realTitleBar.setTitle("downloadList");
 
             }
         });

@@ -2,6 +2,7 @@ package com.hss01248.bigimageviewpager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.hss.utils.enhance.viewholder.ContainerActivity;
+import com.hss.utils.enhance.viewholder.ContainerActivity2;
+import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.fullscreendialog.FullScreenDialogUtil;
 import com.hss01248.viewholder.databinding.ActivityCommonContainerBinding;
 
@@ -31,26 +34,45 @@ public class LargeImageViewer {
 
 
     public static void showOne(String path){
-        ContainerActivity.start("", new Consumer<Pair<ContainerActivity, ActivityCommonContainerBinding>>() {
+        ContainerActivity2.start(new Consumer<Pair<ContainerActivity2, ContainerViewHolderWithTitleBar>>() {
             @Override
-            public void accept(Pair<ContainerActivity, ActivityCommonContainerBinding> pair) throws Exception {
+            public void accept(Pair<ContainerActivity2, ContainerViewHolderWithTitleBar> pair) throws Exception {
 
                 MyLargeImageViewBySubSamplingView largeImageView = new MyLargeImageViewBySubSamplingView(pair.first);
                 largeImageView.loadUri(path);
-                pair.second.llRoot.setBackgroundColor(Color.BLACK);
-                pair.second.llRoot.addView(largeImageView);
+                pair.second.getBinding().llRoot.setBackgroundColor(Color.BLACK);
+                pair.second.getBinding().rlContainer.addView(largeImageView);
+
+                pair.second.setTitleBarTransplantAndRelative(true);
+                pair.second.getBinding().realTitleBar.setLineDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                String name = path.substring(path.lastIndexOf("/")+1);
+                if(name.contains("?")){
+                    name = name.substring(0,name.indexOf("?"));
+                }
+                pair.second.getBinding().realTitleBar.setTitle(name);
             }
         });
     }
 
     public static void showInBatch(List<String> paths,int position){
 
-        ContainerActivity.start("", new Consumer<Pair<ContainerActivity, ActivityCommonContainerBinding>>() {
+        ContainerActivity2.start(new Consumer<Pair<ContainerActivity2, ContainerViewHolderWithTitleBar>>() {
             @Override
-            public void accept(Pair<ContainerActivity, ActivityCommonContainerBinding> pair) throws Exception {
-                View viewPager = showBig(pair.first,null,paths,position);
-                pair.second.llRoot.setBackgroundColor(Color.BLACK);
-                pair.second.llRoot.addView(viewPager);
+            public void accept(Pair<ContainerActivity2, ContainerViewHolderWithTitleBar> pair) throws Exception {
+
+                MyLargeViewPagerHolder holder = new MyLargeViewPagerHolder(pair.first);
+
+                holder.setContainerViewHolderWithTitleBar(pair.second);
+
+                pair.second.getBinding().rlContainer.addView(holder.getRootView());
+                pair.second.setTitleBarTransplantAndRelative(true);
+                pair.second.getBinding().realTitleBar.setLineDrawable(new ColorDrawable(Color.TRANSPARENT));
+                holder.init(new Pair<>(position,paths));
+
+                //View viewPager = showBig(pair.first,null,paths,position);
+                pair.second.getBinding().llRoot.setBackgroundColor(Color.BLACK);
+                //pair.second.getBinding().rlContainer.addView(viewPager);
             }
         });
     }
@@ -66,6 +88,7 @@ public class LargeImageViewer {
 
 
 
+    @Deprecated
     public static View showBig(final Context context,
                                     @Nullable  MyViewPager viewPager,
                                     final List<String> uris0,
@@ -79,7 +102,7 @@ public class LargeImageViewer {
         TextView textView = new TextView(context);
         textView.setTextColor(Color.WHITE);
         int padding = SizeUtils.dp2px(20);
-        textView.setPadding(padding,padding,padding,padding);
+        textView.setPadding(padding,SizeUtils.dp2px(40),padding,padding);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

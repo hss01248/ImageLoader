@@ -49,7 +49,7 @@ dependencies {
     api 'com.liulishuo.okdownload:okhttp:1.0.7'
     api 'com.squareup.okhttp3:okhttp:3.12.12'
     api "com.github.hss01248.utilcodeEnhance:refresh-loadmore:1.5.7"
-    api "com.github.hss01248.utilcodeEnhance:viewholder:1.6.1.01"
+    api "com.github.hss01248.utilcodeEnhance:viewholder:1.6.1.04"
 
     api 'com.github.skyNet2017.NumberProgressBar:library:1.0.2'
 
