@@ -6,8 +6,6 @@
         <!---->
         <activity android:name=".album.EmptyActivity"
             android:configChanges="orientation|screenSize"
-
-
             android:theme="@style/thetransAppTheme3"/>
     </application>
 </manifest>

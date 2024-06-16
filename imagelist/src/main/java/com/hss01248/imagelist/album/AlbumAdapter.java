@@ -56,7 +56,7 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         helper.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageMediaCenterUtil.showViewAsActivityOrDialog(v.getContext(), true,new IViewInit() {
+                ImageMediaCenterUtil.showViewAsActivity(v.getContext(), new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(activity);

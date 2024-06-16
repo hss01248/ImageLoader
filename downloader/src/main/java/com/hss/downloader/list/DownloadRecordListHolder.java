@@ -14,15 +14,12 @@ import com.hss.downloader.DownloadItemAdapter;
 import com.hss.downloader.R;
 import com.hss.downloader.databinding.ContainerHistoryCollectBinding;
 import com.hss.downloader.download.DownloadInfo;
-import com.hss.utils.enhance.viewholder.ContainerActivity;
 import com.hss.utils.enhance.viewholder.ContainerActivity2;
-import com.hss.utils.enhance.viewholder.MyViewHolder;
 import com.hss.utils.enhance.viewholder.mvvm.BaseViewHolder;
 import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.fileoperation.FileOpenUtil;
 import com.hss01248.refresh_loadmore.search.SearchViewHolder;
 import com.hss01248.toast.MyToast;
-import com.hss01248.viewholder.databinding.ActivityCommonContainerBinding;
 
 
 import java.util.HashMap;
@@ -49,7 +46,7 @@ public class DownloadRecordListHolder extends BaseViewHolder<ContainerHistoryCol
                 DownloadRecordListHolder holder1 = new DownloadRecordListHolder(pair.first);
                 pair.second.getBinding().rlContainer.addView(holder1.getRootView());
                 holder1.init("");
-                pair.second.getBinding().realTitleBar.setTitle("downloadList");
+                pair.second.getBinding().realTitleBar.setVisibility(View.GONE);
 
             }
         });

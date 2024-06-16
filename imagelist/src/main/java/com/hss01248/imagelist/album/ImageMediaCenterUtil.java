@@ -1,38 +1,25 @@
 package com.hss01248.imagelist.album;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.util.Pair;
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ScreenUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.hss01248.activityresult.StartActivityUtil;
-import com.hss01248.activityresult.TheActivityListener;
+import com.hss.utils.enhance.viewholder.ContainerActivity2;
+import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
-import com.hss01248.bigimageviewpager.MyLargeImageView;
-import com.hss01248.bigimageviewpager.MyViewPager;
+import com.hss01248.fullscreendialog.FullScreenDialogUtil;
 import com.hss01248.image.ImageLoader;
 import com.hss01248.image.MyUtil;
 import com.hss01248.image.interfaces.FileGetter;
@@ -43,6 +30,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import io.reactivex.functions.Consumer;
 
 /**
  * time:2019/11/30
@@ -266,17 +255,7 @@ public class ImageMediaCenterUtil {
     }
 
     public static void showBigImag(Context context, List<String> urlsOrPaths, int position) {
-
-       // View view = buildBigIamgeView(context, urlsOrPaths, position);
-       // showViewAsDialog(view);
-
-
-        showViewAsActivityOrDialog(context, false,new IViewInit() {
-            @Override
-            public View init(Activity activity) {
-                return buildBigIamgeView(activity, urlsOrPaths, position);
-            }
-        });
+        LargeImageViewer.showInBatch(urlsOrPaths,position);
     }
 
 
@@ -305,7 +284,17 @@ public class ImageMediaCenterUtil {
 
     public static void showViewAsActivity(Context context, IViewInit init){
 
-        StartActivityUtil.startActivity(MyUtil.getActivityFromContext(context),EmptyActivity.class,null,false,
+        ContainerActivity2.start(new Consumer<Pair<ContainerActivity2, ContainerViewHolderWithTitleBar>>() {
+            @Override
+            public void accept(Pair<ContainerActivity2, ContainerViewHolderWithTitleBar> pair) throws Exception {
+                View view =  init.init(pair.first);
+                pair.second.getBinding().rlContainer.addView(view);
+                pair.second.getBinding().realTitleBar.setVisibility(View.GONE);
+
+            }
+        });
+
+       /* StartActivityUtil.startActivity(MyUtil.getActivityFromContext(context),EmptyActivity.class,null,false,
                 new TheActivityListener<EmptyActivity>(){
                     @Override
                     protected void onActivityCreated(@NonNull EmptyActivity activity, @Nullable Bundle savedInstanceState) {
@@ -328,130 +317,19 @@ public class ImageMediaCenterUtil {
                         }
 
                     }
-                });
+                });*/
     }
 
 
 
     public static void showViewAsDialog(Context context, IViewInit init) {
-        View view = init.init(MyUtil.getActivityFromContext(context));
-        Dialog dialog = new Dialog(view.getContext());
-        dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
-        int height = calHeight();
-        dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, height);//宽高最大- BarUtils.getStatusBarHeight()
-        dialog.show();
-        ImageView ivClose = view.findViewById(R.id.iv_back);
-        if(ivClose != null){
-            ivClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-        }
-        //context不对会导致glide识别生命周期错误,从而不加载
-       /* StartActivityUtil.startActivity(MyUtil.getActivityFromContext(view.getContext()),EmptyActivity.class,null,false,
-                new TheActivityListener<EmptyActivity>(){
-                    @Override
-                    protected void onActivityCreated(@NonNull EmptyActivity activity, @Nullable Bundle savedInstanceState) {
-                        super.onActivityCreated(activity, savedInstanceState);
-                        try {
-                            activity.setContentView(view);
-                        }catch (Throwable throwable){
-                            throwable.printStackTrace();
-                            activity.finish();
-                        }
-
-                    }
-                });*/
-
-
-
-    }
-
-    private static int calHeight() {
-        if(!BarUtils.isNavBarVisible(ActivityUtils.getTopActivity())){
-            return  ScreenUtils.getScreenHeight()- BarUtils.getStatusBarHeight();
-        }
-
-        return ScreenUtils.getScreenHeight()- BarUtils.getNavBarHeight();
+        FullScreenDialogUtil.showFullScreen(init.init(ActivityUtils.getTopActivity()));
     }
 
 
-    private static View buildBigIamgeView(final Context context, final List<String> urls, int position) {
-        View view = View.inflate(context, R.layout.activity_img_big, null);
-        final MyViewPager viewPager = (MyViewPager) view.findViewById(R.id.viewpager);
-        Button fab = view.findViewById(R.id.fbtn);
-        TextView tvTitle = view.findViewById(R.id.tv_title);
-
-        final TextView textView = view.findViewById(R.id.tv_indicator);
-        //ImageLoader.loadBigImages(viewPager, urls);
-        LargeImageViewer.showBig(context,viewPager,urls,position);
-        viewPager.setOnOrientationChangeListener(new MyViewPager.OnOrientationChangeListener() {
-            @Override
-            public void onChage(boolean isLandscape) {
-
-                if(isLandscape){
-                    tvTitle.setVisibility(View.GONE);
-                }else {
-                    tvTitle.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                String text = (position + 1) + " / " + urls.size() + "\n";
-                textView.setText(text);
-                String uri = urls.get(position);
-                tvTitle.setText(uri.substring(uri.lastIndexOf("/")+1));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //showFileInfo(viewPager, urls, context);
-                int position = viewPager.getCurrentItem();
-                View childAt = viewPager.getChildAt(1);
-                LogUtils.w("child at is "+childAt+", "+position);
-                if(childAt instanceof MyLargeImageView){
-                    MyLargeImageView largeImageView = (MyLargeImageView) childAt;
-                    String text = largeImageView.getInfoStr();
-
-                    View view = View.inflate(context, R.layout.html, null);
-                    TextView textView = view.findViewById(R.id.tv_html);
-                    textView.setText(text);
-                    new AlertDialog.Builder(context)
-                            .setView(view)
-                            .create().show();
-                }else {
-                    ToastUtils.showShort("child not MyLargeImageView");
-                }
 
 
 
-            }
-        });
-        viewPager.setCurrentItem(position);
-        String text = (position + 1) + " / " + urls.size() + "\n";
-        textView.setText(text);
-        String uri = urls.get(position);
-        tvTitle.setText(uri.substring(uri.lastIndexOf("/")+1));
-        return view;
-    }
 
     private static void showFileInfo(ViewPager viewPager, List<String> urls, final Context context) {
         int position = viewPager.getCurrentItem();

@@ -3,6 +3,7 @@ package com.hss01248.bigimageviewpager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,9 @@ import androidx.viewpager.widget.ViewPager;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SizeUtils;
-import com.hss.utils.enhance.viewholder.ContainerActivity;
 import com.hss.utils.enhance.viewholder.ContainerActivity2;
 import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.fullscreendialog.FullScreenDialogUtil;
-import com.hss01248.viewholder.databinding.ActivityCommonContainerBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +71,13 @@ public class LargeImageViewer {
 
                 //View viewPager = showBig(pair.first,null,paths,position);
                 pair.second.getBinding().llRoot.setBackgroundColor(Color.BLACK);
+               /* UltimateBarX.navigationBar(pair.first).color(Color.BLACK)
+                        .light(true)
+                        .apply();*/
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    pair.first.getWindow().setNavigationBarColor(Color.BLACK);
+                }
+
                 //pair.second.getBinding().rlContainer.addView(viewPager);
             }
         });

@@ -61,7 +61,7 @@ dependencies {
     api 'com.github.bumptech.glide:annotations:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' //注解处理器
     //api 'com.github.hss01248:PageStateManager:3.0.5'
-    api 'com.github.hss01248.utilcodeEnhance:viewState:1.4.3'
+    api "com.github.hss01248.utilcodeEnhance:viewState:${utilcodeVersion}"
 
     api 'me.jessyan:progressmanager:1.5.0'
     //https://github.com/JessYanCoding/ProgressManager
@@ -74,8 +74,8 @@ dependencies {
 
     api 'com.google.vr:sdk-panowidget:1.180.0'
     api 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
-    api "com.github.hss01248.utilcodeEnhance:fullScreenDialog:1.5.8"
-    api "com.github.hss01248.utilcodeEnhance:viewholder:1.6.1.04"
+    api "com.github.hss01248.utilcodeEnhance:fullScreenDialog:${utilcodeVersion}"
+    api "com.github.hss01248.utilcodeEnhance:viewholder:${utilcodeVersion}"
 
     api 'com.github.Jarvis-Lau:GestureViewBinder:1.0.3'
     //api "com.github.hss01248.utilcodeEnhance:fullScreenDialog:1.4.3"
@@ -84,6 +84,7 @@ dependencies {
         exclude group: 'com.android.support'
     }
     api 'com.qcloud.cos:avif:1.1.1'
+    api 'com.github.warkiz.widget:indicatorseekbar:2.1.2'
 
     api project(':glide-aop')
 }

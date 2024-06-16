@@ -22,6 +22,7 @@ buildscript {
         snapshotUrl='https://nexus.hss01248.tech/repository/maven-snapshots/'
         publicUrl='https://nexus.hss01248.tech/#browse/browse:maven-public:'
 
+        utilcodeVersion='1.6.1.06'
 
     }
 

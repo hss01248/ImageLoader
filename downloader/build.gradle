@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    api "com.github.hss01248.utilcodeEnhance:lib-base:1.5.1"
+    api "com.github.hss01248.utilcodeEnhance:lib-base:${utilcodeVersion}"
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     testImplementation 'junit:junit:4.+'
@@ -48,8 +48,8 @@ dependencies {
      api 'com.liulishuo.okdownload:sqlite:1.0.7'
     api 'com.liulishuo.okdownload:okhttp:1.0.7'
     api 'com.squareup.okhttp3:okhttp:3.12.12'
-    api "com.github.hss01248.utilcodeEnhance:refresh-loadmore:1.5.7"
-    api "com.github.hss01248.utilcodeEnhance:viewholder:1.6.1.04"
+    api "com.github.hss01248.utilcodeEnhance:refresh-loadmore:${utilcodeVersion}"
+    api "com.github.hss01248.utilcodeEnhance:viewholder:${utilcodeVersion}"
 
     api 'com.github.skyNet2017.NumberProgressBar:library:1.0.2'
 

@@ -10,6 +10,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.event.DialogCloseEvent;
 import com.hss.downloader.event.DownloadResultEvent;
 import com.hss.utils.enhance.foregroundservice.CommonProgressService;
+import com.hss01248.fullscreendialog.FullScreenDialogUtil;
 import com.noober.menu.FloatMenu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -364,12 +366,15 @@ public class DownloadList {
     }
     public  void showViewAsDialog(Context context, View view) {
         //View view = init.init(MyUtil.getActivityFromContext(context));
-        Dialog dialog = new Dialog(view.getContext());
+
+        Dialog dialog =  FullScreenDialogUtil.showFullScreen(view);
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+       /* Dialog dialog = new Dialog(view.getContext());
         dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
         int height = calHeight();
         dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, height);//宽高最大- BarUtils.getStatusBarHeight()
-        dialog.show();
+        dialog.show();*/
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -392,14 +397,5 @@ public class DownloadList {
                 }
             }
         });
-        /*ImageView ivClose = view.findViewById(R.id.iv_back);
-        if (ivClose != null) {
-            ivClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-        }*/
     }
 }
