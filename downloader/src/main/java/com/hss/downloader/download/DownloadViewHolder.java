@@ -11,11 +11,12 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.hss.downloader.FileOpenUtil;
 import com.hss.downloader.MyDownloader;
 import com.hss.downloader.R;
 import com.hss.downloader.databinding.ItemDownloadUiBinding;
 import com.hss.downloader.event.DialogCloseEvent;
+import com.hss01248.fileoperation.FileOpenUtil;
+import com.hss01248.fileoperation.FileTypeUtil2;
 import com.hss01248.toast.MyToast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -170,26 +171,22 @@ public class DownloadViewHolder extends BaseViewHolder {
             @Override
             public void onClick(View v) {
                 if(info.status == DownloadInfo.STATUS_SUCCESS){
+                    List<String> paths = new ArrayList<>();
                     if(datas !=null){
-
-                        String mimeType = FileOpenUtil.getMineType2(info.getFilePath());
-                        boolean image = mimeType.contains("image");
-                        boolean video = mimeType.contains("video");
-                        if(image || video){
-                            List<String> paths = new ArrayList<>();
+                        if(FileTypeUtil2.isImage(info.getFilePath()) || FileTypeUtil2.isVideo(info.getFilePath())){
                             for (DownloadInfo data : datas) {
                                 if(data.status != DownloadInfo.STATUS_FAIL){
                                     //类型要一致
-                                    if(image){
-                                        if(FileOpenUtil.getMineType2(data.getFilePath()).contains("image")){
+                                    if(FileTypeUtil2.isImage(info.getFilePath())){
+                                        if(FileTypeUtil2.isImage(data.getFilePath())){
                                             if(data.status == DownloadInfo.STATUS_SUCCESS){
                                                 paths.add(data.getFilePath());
                                             }else {
                                                 paths.add(data.getUrl());
                                             }
                                         }
-                                    }else if(video){
-                                        if(FileOpenUtil.getMineType2(data.getFilePath()).contains("video")){
+                                    }else if(FileTypeUtil2.isVideo(info.getFilePath())){
+                                        if(FileTypeUtil2.isVideo(data.getFilePath())){
                                             if(data.status == DownloadInfo.STATUS_SUCCESS){
                                                 paths.add(data.getFilePath());
                                             }else {
@@ -199,10 +196,9 @@ public class DownloadViewHolder extends BaseViewHolder {
                                     }
                                 }
                             }
-                            FileOpenUtil.paths = paths;
                         }
                     }
-                    FileOpenUtil.open(info.getFilePath());
+                    FileOpenUtil.open(info.getFilePath(),paths);
                 }else if(info.status  == DownloadInfo.STATUS_FAIL){
                     //MyDownloader.startDownload(info);
                     MyToast.show("文件还下载失败,请重试");

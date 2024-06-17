@@ -73,8 +73,9 @@ public class DownloadRecordListHolder extends BaseViewHolder<ContainerHistoryCol
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 DownloadInfo info  = (DownloadInfo) adapter.getData().get(position);
+                //todo 组织
                 MyToast.debug(info.getFilePath());
-                FileOpenUtil.open(info.getFilePath());
+                FileOpenUtil.open(info.getFilePath(),adapter.getData());
             }
         });
     }
