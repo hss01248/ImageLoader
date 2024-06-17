@@ -1,6 +1,8 @@
 package com.hss01248.fileoperation;
 
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -232,7 +234,21 @@ public class FileTypeUtil2 {
     public static boolean isVideo(String name){
         return getTypeIntByFileName(name) == INT_TYPE_VIDEO;
     }
+
+    public static boolean isImageOrVideo(String name){
+        int type = getTypeIntByFileName(name);
+        return  type == INT_TYPE_IMAGE || type == INT_TYPE_VIDEO;
+    }
     public static String getTypeByFileName(String name){
+        if(TextUtils.isEmpty(name)){
+            return TYPE_UNKNOWN;
+        }
+
+        if(name.startsWith("http")){
+            if(name.contains("?")){
+                name = name.substring(0,name.indexOf("?"));
+            }
+        }
         if(name.endsWith(".3")){
             name = name.substring(0,name.length()-2);
         }

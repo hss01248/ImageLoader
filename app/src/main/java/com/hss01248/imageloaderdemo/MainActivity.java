@@ -54,6 +54,7 @@ import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.ui.pop.list.PopList;
+import com.hss01248.viewholder_media.FileTreeViewHolder;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
@@ -652,6 +653,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void askManagerMediaPermission(View view) {
         FileDeleteUtil.checkMediaManagerPermission();
+    }
+
+    public void viewDir(View view) {
+        FileTreeViewHolder.viewDirInActivity(Environment.getExternalStorageDirectory().getAbsolutePath());
     }
 
 

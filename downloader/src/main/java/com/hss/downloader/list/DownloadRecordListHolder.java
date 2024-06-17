@@ -15,10 +15,13 @@ import com.hss.utils.enhance.viewholder.ContainerActivity2;
 import com.hss.utils.enhance.viewholder.mvvm.BaseViewHolder;
 import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.fileoperation.FileOpenUtil;
+import com.hss01248.fileoperation.FileTypeUtil2;
 import com.hss01248.refresh_loadmore.search.SearchViewHolder;
 import com.hss01248.toast.MyToast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.reactivex.functions.Consumer;
 
@@ -72,10 +75,20 @@ public class DownloadRecordListHolder extends BaseViewHolder<ContainerHistoryCol
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                List list = adapter.getData();
                 DownloadInfo info  = (DownloadInfo) adapter.getData().get(position);
-                //todo 组织
+                int type = FileTypeUtil2.getTypeIntByFileName(info.getFilePath());
+                List<String> paths = new ArrayList<>(list.size());
+                if(FileTypeUtil2.isImageOrVideo(info.getFilePath())){
+                    for (Object o : list) {
+                        DownloadInfo info2  = (DownloadInfo) o;
+                        if(FileTypeUtil2.getTypeIntByFileName(info2.getFilePath())==type){
+                            paths.add(info2.getFilePath());
+                        }
+                    }
+                }
                 MyToast.debug(info.getFilePath());
-                FileOpenUtil.open(info.getFilePath(),adapter.getData());
+                FileOpenUtil.open(info.getFilePath(),paths);
             }
         });
     }

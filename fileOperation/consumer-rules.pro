@@ -1,0 +1,2 @@
+-keep class com.hss01248.bigimageviewpager.LargeImageViewer { *; }
+-keep class com.hss01248.media.localvideoplayer.VideoPlayUtil { *; }

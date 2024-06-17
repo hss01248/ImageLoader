@@ -101,6 +101,7 @@ dependencies {
         resolutionStrategy.force 'com.github.bumptech.glide:glide:4.11.0'
     }
     api "com.github.hss01248.utilcodeEnhance:bitmap-saver:${utilcodeVersion}"
+    api "com.github.hss01248.utilcodeEnhance:viewholder-media:${utilcodeVersion}"
     api('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {
         exclude group: 'com.android.support'
     }

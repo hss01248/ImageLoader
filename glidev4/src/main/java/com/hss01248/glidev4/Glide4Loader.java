@@ -732,6 +732,10 @@ public class Glide4Loader extends ILoader {
 
     @Override
     public void getFileFromDiskCache(final String url, final FileGetter getter) {
+        if(TextUtils.isEmpty(url)){
+            getter.onFail(new IOException("url is empty"));
+            return;
+        }
         final File file = new File(url);
         if (file.exists() && file.isFile() && file.length() > 0) {
             int[] wh = MyUtil.getImageWidthHeight(url);

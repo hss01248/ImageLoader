@@ -66,6 +66,15 @@
             android:layout_height="wrap_content" />
 
         <Button
+            android:id="@+id/btn_album"
+            android:layout_margin="10dp"
+            android:text="文件管理"
+            android:onClick="viewDir"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
             android:onClick="loadUrl2"
             android:layout_margin="10dp"
             android:text="加载一个url"

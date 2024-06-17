@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ReflectUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
@@ -28,6 +29,28 @@ public class FileOpenUtil {
 
 
 
+    public static void openBeforeFilter(String filePath,@Nullable List<String> paths){
+        if(paths==null ){
+            paths = new ArrayList<>();
+            open(filePath, paths);
+            return;
+        }
+        if(paths.isEmpty()){
+            open(filePath, paths);
+            return;
+        }
+        int type = FileTypeUtil2.getTypeIntByFileName(filePath);
+        List<String> paths2 = new ArrayList<>(paths.size());
+        if(FileTypeUtil2.isImageOrVideo(filePath)){
+            for (String o : paths) {
+                if(FileTypeUtil2.getTypeIntByFileName(o)==type){
+                    paths2.add(o);
+                }
+            }
+        }
+        open(filePath,paths2);
+
+    }
 
     public static void open(String filePath,@Nullable List<String> paths){
         if(TextUtils.isEmpty(filePath)){
@@ -61,6 +84,7 @@ public class FileOpenUtil {
                         .get();
             }catch (Throwable throwable){
                 ToastUtils.showLong(throwable.getMessage());
+                LogUtils.w(throwable);
             }
         }else if("video".equals(mimeType)){
             //VideoPlayUtil.playList( List<String> sources, int currentPosition)
@@ -70,6 +94,7 @@ public class FileOpenUtil {
                         .get();
             }catch (Throwable throwable){
                 ToastUtils.showLong(throwable.getMessage());
+                LogUtils.w(throwable);
             }
         }else{
             //调用系统intent来打开
