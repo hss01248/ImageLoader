@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 
+@Keep
 public class LargeImageViewer {
 
 

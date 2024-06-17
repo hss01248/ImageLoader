@@ -1,10 +1,7 @@
 package com.hss.downloader.list;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
-
 
 import androidx.core.util.Pair;
 import androidx.lifecycle.LifecycleOwner;
@@ -20,7 +17,6 @@ import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.fileoperation.FileOpenUtil;
 import com.hss01248.refresh_loadmore.search.SearchViewHolder;
 import com.hss01248.toast.MyToast;
-
 
 import java.util.HashMap;
 
@@ -77,7 +73,7 @@ public class DownloadRecordListHolder extends BaseViewHolder<ContainerHistoryCol
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 DownloadInfo info  = (DownloadInfo) adapter.getData().get(position);
-                MyToast.show(info.getFilePath());
+                MyToast.debug(info.getFilePath());
                 FileOpenUtil.open(info.getFilePath());
             }
         });
