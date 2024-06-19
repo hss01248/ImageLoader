@@ -13,7 +13,7 @@ buildscript {
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
-        groupId='com.github.hss01248.ImageLoader'
+       // groupId='com.github.hss01248.ImageLoader'
         versionCode = '3.8.5.01'
         isPublisToLocal=false
         ignoreModules = "spiders"
@@ -22,7 +22,7 @@ buildscript {
         snapshotUrl='https://nexus.hss01248.tech/repository/maven-snapshots/'
         publicUrl='https://nexus.hss01248.tech/#browse/browse:maven-public:'
 
-        utilcodeVersion='1.6.1.07'
+        utilcodeVersion='1.6.1.06'
 
 
     }

@@ -33,6 +33,15 @@ import io.reactivex.functions.Consumer;
 public class LargeImageViewer {
 
 
+    public static void setOnRightMenuClickedListener(OnRightMenuClickedListener onRightMenuClickedListener) {
+        LargeImageViewer.onRightMenuClickedListener = onRightMenuClickedListener;
+    }
+
+    public static OnRightMenuClickedListener getOnRightMenuClickedListener() {
+        return onRightMenuClickedListener;
+    }
+
+    static OnRightMenuClickedListener onRightMenuClickedListener;
 
     public static void showOne(String path){
         ContainerActivity2.start(new Consumer<Pair<ContainerActivity2, ContainerViewHolderWithTitleBar>>() {
@@ -79,6 +88,8 @@ public class LargeImageViewer {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     pair.first.getWindow().setNavigationBarColor(Color.BLACK);
                 }
+
+
 
                 //pair.second.getBinding().rlContainer.addView(viewPager);
             }

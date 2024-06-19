@@ -140,13 +140,15 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
             }
         });
         containerViewHolderWithTitleBar.getBinding().realTitleBar.setTitle("");
-        /*containerViewHolderWithTitleBar.getBinding().realTitleBar.setRightTitle("● ● ●");
-        containerViewHolderWithTitleBar.getBinding().realTitleBar.setRightTitleColor(Color.WHITE);
-        containerViewHolderWithTitleBar.getBinding().realTitleBar.getRightView().setTextSize(10);*/
         containerViewHolderWithTitleBar.showRightMoreIcon(true);
         containerViewHolderWithTitleBar.getBinding().realTitleBar.getRightView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(LargeImageViewer.getOnRightMenuClickedListener()!=null){
+                    LargeImageViewer.getOnRightMenuClickedListener().onClicked(v,
+                            LargeImageViewer.getBigImageUrl(pair.second.get(currentPosition)),
+                            pair.second,currentPosition);
+                }
                 Map<String, String> metaData = MetaDataUtil.getMetaData( LargeImageViewer.getBigImageUrl(pair.second.get(currentPosition)));
                 FullScreenDialogUtil.showMap("meta data",metaData);
             }

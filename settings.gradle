@@ -21,5 +21,4 @@ include ':myblog'
 
 include ':glide-aop'
 include ':downloader-m3u8'
-include ':localvideoplayer'
-//localvideoplayer
+
