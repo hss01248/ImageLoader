@@ -12,15 +12,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.hss.utils.enhance.viewholder.mvvm.BaseViewHolder;
 import com.hss01248.bigimageviewpager.databinding.RlPagerImagsBinding;
-import com.hss01248.fullscreendialog.FullScreenDialogUtil;
-import com.hss01248.media.metadata.MetaDataUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, Pair<Integer, List<String>>> {
     public MyLargeViewPagerHolder(Context context) {
@@ -149,8 +146,8 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
                             LargeImageViewer.getBigImageUrl(pair.second.get(currentPosition)),
                             pair.second,currentPosition);
                 }
-                Map<String, String> metaData = MetaDataUtil.getMetaData( LargeImageViewer.getBigImageUrl(pair.second.get(currentPosition)));
-                FullScreenDialogUtil.showMap("meta data",metaData);
+                /*Map<String, String> metaData = MetaDataUtil.getMetaData( LargeImageViewer.getBigImageUrl(pair.second.get(currentPosition)));
+                FullScreenDialogUtil.showMap("meta data",metaData);*/
             }
         });
 
