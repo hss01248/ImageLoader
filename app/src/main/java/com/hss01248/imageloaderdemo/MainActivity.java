@@ -652,7 +652,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void askManagerMediaPermission(View view) {
-        FileDeleteUtil.checkMediaManagerPermission();
+        FileDeleteUtil.checkMediaManagerPermission(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        },null);
     }
 
     public void viewDir(View view) {
