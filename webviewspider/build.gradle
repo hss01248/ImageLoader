@@ -53,6 +53,7 @@ dependencies {
     api project(':imagelist')
     api "com.github.hss01248.utilcodeEnhance:baseWebview:${utilcodeVersion}"
     api "com.github.hss01248.utilcodeEnhance:iwidget:${utilcodeVersion}"
+    api "com.github.hss01248.flipperUtil:network-hook:1.7.21-dev"
     //api project(':baseWebview')
 
 
