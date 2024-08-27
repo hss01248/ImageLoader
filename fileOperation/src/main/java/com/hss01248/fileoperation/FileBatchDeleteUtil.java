@@ -3,7 +3,6 @@ package com.hss01248.fileoperation;
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.app.RecoverableSecurityException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -36,9 +34,11 @@ import com.hss01248.permission.ext.permissions.ManageMediaPermission;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 /**
  * @Despciption
@@ -71,204 +71,112 @@ import io.reactivex.Observer;
  * @Date 23/02/2022 11:23
  * @Version 1.0
  */
-public class FileDeleteUtil {
+public class FileBatchDeleteUtil {
 
 
 
-    public static  boolean askMediaManagerPermission = true;
 
-    // 注意compileSdkVersion和targetSdkVersion均需要 >= 31
-    public static void checkMediaManagerPermission(Runnable onSuccess,Runnable onDenied) {
-        //<uses-permission android:name="android.permission.MANAGE_MEDIA"/>
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            boolean canManageMedia = MediaStore.canManageMedia(Utils.getApp());
-            if(canManageMedia){
-                LogUtils.i("已经有管理媒体的权限了");
 
-                if (onSuccess !=null) onSuccess.run();
-            }else {
-                LogUtils.i("还没有管理媒体的权限,去申请");
-                Intent intent = new Intent(Settings.ACTION_REQUEST_MANAGE_MEDIA);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), intent,
-                        new ActivityResultListener() {
-                            @Override
-                            public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-                                boolean canManageMedia = MediaStore.canManageMedia(Utils.getApp());
-                                if(canManageMedia){
-                                    if (onSuccess !=null) onSuccess.run();
-                                }else {
-                                    if (onDenied !=null) onDenied.run();
-                                }
-                            }
 
-                            @Override
-                            public void onActivityNotFound(Throwable e) {
-                                if (onDenied !=null) onDenied.run();
-                            }
-                        });
+    public static void deleteImages(List<String> paths, Observer<Boolean> callBack) {
+        Iterator<String> iterator = paths.iterator();
+        while (iterator.hasNext()){
+            String path = iterator.next();
+            if(TextUtils.isEmpty(path)){
+                iterator.remove();
+                continue;
             }
-        }else {
-            LogUtils.i("Android版本小于12,还不需要这个管理媒体的权限");
-            onSuccess.run();
-        }
-    }
-
-
-    public static void deleteImage(String path,boolean canHaveUI, Observer<Boolean> callBack) {
-        if(TextUtils.isEmpty(path)){
-            callBack.onNext(true);
-            return;
-        }
-        File file = new File(path);
-        if(!file.exists()){
-            LogUtils.d("file not exist",path);
-            callBack.onNext(true);
-            return;
+            File file = new File(path);
+            if(!file.exists()){
+                LogUtils.d("file not exist",path);
+                iterator.remove();
+                continue;
+            }
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+                if(!file.canWrite()){
+                    LogUtils.w("Android6以下,系统自定义存储权限没有允许");
+                }
+                boolean isSuccess = file.delete();
+                LogUtils.d("Android6以下,文件删除状态");
+            }
         }
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-            if(!file.canWrite()){
-                LogUtils.w("Android6以下,系统自定义存储权限没有允许");
+            callBack.onNext(true);
+            return;
+        }
+        //申请权限: 读写存储权限 + 高版本的管理媒体权限:
+        askWritePermission(new Observer<Boolean>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
             }
-            boolean isSuccess = file.delete();
-            if (isSuccess) {
-                callBack.onNext(true);
-            } else {
-                callBack.onNext(false);
+
+            @Override
+            public void onNext(Boolean aBoolean) {
+                if(!aBoolean){
+                    callBack.onNext(false);
+                }else {
+                    //进行删除
+                    doDelete(paths,callBack);
+                }
             }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
+    }
+
+    private static void doDelete(List<String> paths, Observer<Boolean> callBack) {
+        //有权限时,Android10以下,还是直接使用File api:
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+        || (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q && Environment.isExternalStorageLegacy())){
+            //
+            for (String path : paths) {
+                boolean isSuccess = new File(path).delete();
+            }
+            callBack.onNext(true);
             return;
         }
 
-        if(!file.canWrite()){
-            //申请权限的模块
-            if(!canHaveUI){
-                callBack.onError(new Exception("no permission"));
-                return;
-            }
-            askWritePermission(path, canHaveUI, callBack);
-            return;
-        }
-        //有权限时,Android10以下,还是直接使用File api:
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
-            //
-            boolean isSuccess = new File(path).delete();
-            if (isSuccess) {
-                callBack.onNext(true);
-            } else {
-                callBack.onNext(false);
-            }
-            return;
-        }
-        //android10以上,通过createDeleteRequest来删除
+
         try {
             List<Uri> uris = new ArrayList<>();
 
-            //这个uri应该是从mediastore查出来的uri,而不是自己通过file构建的:
-            //uris.add(OpenUri.fromFile(Utils.getApp(),new File(path)));
-            ContentResolver resolver = Utils.getApp().getContentResolver();	// 通过context上下文可拿到
+            for (String path : paths) {
+                //这个uri应该是从mediastore查出来的uri,而不是自己通过file构建的:
+                //uris.add(OpenUri.fromFile(Utils.getApp(),new File(path)));
+                ContentResolver resolver = Utils.getApp().getContentResolver();	// 通过context上下文可拿到
 
-            //区分: 图片/视频/音频
-            Cursor cursor = MediaStore.Images.Media.query(resolver,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    new String[]{MediaStore.Images.Media._ID},
-                    MediaStore.Images.Media.DATA + "=?",
-                    new String[]{path}, null);
-            if (null != cursor && cursor.moveToFirst()) {
-                long id = cursor.getLong(0);
-                Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                Uri uri = ContentUris.withAppendedId(contentUri, id);
-                uris.add(uri);
+                //区分: 图片/视频/音频
+                Cursor cursor = MediaStore.Images.Media.query(resolver,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        new String[]{MediaStore.Images.Media._ID},
+                        MediaStore.Images.Media.DATA + "=?",
+                        new String[]{path}, null);
+                if (null != cursor && cursor.moveToFirst()) {
+                    long id = cursor.getLong(0);
+                    Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    Uri uri = ContentUris.withAppendedId(contentUri, id);
+                    uris.add(uri);
+                }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 deleteByMediaDeleteReqeust(callBack, uris);
                 return;
             }
         } catch (Exception e) {
-            LogUtils.w(path,e);
+            LogUtils.w(paths,e);
         }
 
 
-        //原文链接：https://blog.csdn.net/zjuter/article/details/121670823
-
-
-        //Android10-12之间,使用MediaStore操作.
-        //todo 在华为手机上依然被拦截
-        Cursor cursor = MediaStore.Images.Media.query(
-                Utils.getApp().getContentResolver(),
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Images.Media._ID},
-                MediaStore.Images.Media.DATA + "=?",
-                new String[]{path},
-                null);
-
-        try {
-            if (cursor.moveToFirst()) {
-                Long id = cursor.getLong(0);
-                Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                Uri uri = ContentUris.withAppendedId(contentUri, id);
-
-                int count = Utils.getApp().getContentResolver().delete(uri, null, null);
-
-                if (count > 0) {
-                    callBack.onNext(true);
-                } else {
-                    LogUtils.w("无法使用media store删除,还得用file.delete");
-                    boolean isSuccess = new File(path).delete();
-                    if (isSuccess) {
-                        callBack.onNext(true);
-                    } else {
-                        callBack.onNext(false);
-                    }
-                }
-            } else {
-                LogUtils.w("无法使用media store删除,还得用file.delete");
-                boolean isSuccess = new File(path).delete();
-                if (isSuccess) {
-                    callBack.onNext(true);
-                } else {
-                    callBack.onNext(false);
-                }
-            }
-        }catch (Throwable throwable){
-            LogUtils.w(throwable);
-            if (canHaveUI && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && throwable instanceof RecoverableSecurityException) {
-                RecoverableSecurityException exception = (RecoverableSecurityException) throwable;
-
-                StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), null, new ActivityResultListener() {
-                    @Override
-                    public boolean onInterceptStartIntent(@NonNull Fragment fragment, @Nullable Intent intent, int requestCode) {
-                        try {
-                            ActivityUtils.getTopActivity().startIntentSenderForResult(
-                                    exception.getUserAction().getActionIntent().getIntentSender(),
-                                    requestCode,
-                                    null,
-                                    0, 0, 0, null);
-                        } catch (IntentSender.SendIntentException e) {
-                            LogUtils.w(e);
-                            callBack.onError(e);
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-                        if(resultCode == Activity.RESULT_OK){
-                            callBack.onNext(true);
-                        }else {
-                            callBack.onNext(false);
-                        }
-                    }
-
-                    @Override
-                    public void onActivityNotFound(Throwable e) {
-                        LogUtils.w(e);
-                        callBack.onError(e);
-                    }
-                });
-            }else {
-                callBack.onError(throwable);
-            }
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.R)
@@ -286,8 +194,8 @@ public class FileDeleteUtil {
                 callBack.onNext(true);
                 return;
             }
-            if(askMediaManagerPermission){
-                checkMediaManagerPermission(new Runnable() {
+            if(FileDeleteUtil.askMediaManagerPermission){
+                FileDeleteUtil.checkMediaManagerPermission(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -351,7 +259,7 @@ public class FileDeleteUtil {
         });
     }
 
-    private static void askWritePermission(String path, boolean canHaveUI, Observer<Boolean> callBack) {
+    private static void askWritePermission(Observer<Boolean> callBack) {
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
                 || (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q
                 && Environment.isExternalStorageLegacy())){
@@ -361,12 +269,12 @@ public class FileDeleteUtil {
                     .callback(new PermissionUtils.SimpleCallback() {
                         @Override
                         public void onGranted() {
-                            deleteImage(path, canHaveUI, callBack);
+                            callBack.onNext(true);
                         }
 
                         @Override
                         public void onDenied() {
-                            callBack.onError(new Exception("no permission"));
+                            callBack.onNext(false);
                         }
                     }).request();
 
@@ -385,12 +293,12 @@ public class FileDeleteUtil {
                                             new IExtPermissionCallback() {
                                                 @Override
                                                 public void onGranted(String name) {
-                                                    deleteImage(path, canHaveUI, callBack);
+                                                    callBack.onNext(true);
                                                 }
 
                                                 @Override
                                                 public void onDenied(String name) {
-                                                    deleteImage(path, canHaveUI, callBack);
+                                                    callBack.onNext(false);
                                                 }
                                             });
 
@@ -398,13 +306,13 @@ public class FileDeleteUtil {
                                     return;
                                 }
                             }
-                            callBack.onError(new Exception("no permission"));
+                            callBack.onNext(false);
                         }
 
                         @Override
                         public void onDenied(List<String> permissions, boolean never) {
                             OnPermissionCallback.super.onDenied(permissions, never);
-                            callBack.onError(new Exception("no permission"));
+                            callBack.onNext(false);
                         }
                     });
 

@@ -63,7 +63,7 @@ dependencies {
     api project(path: ':compressor')
     api project(path: ':bigimageviewpager')
     api 'com.liulishuo.filedownloader:library:1.7.7'
-
+    api "com.github.skyNet2017.FileDownloader-fork2:okhttp-no-service:2.0.2"
 
 
     //api 'com.github.hss01248:avif-android:1.0.0'
