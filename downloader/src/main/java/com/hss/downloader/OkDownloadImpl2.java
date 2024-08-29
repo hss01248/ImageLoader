@@ -2,7 +2,9 @@ package com.hss.downloader;
 
 import androidx.annotation.NonNull;
 
-import com.liulishuo.filedownloader2.OkhttpDownloadUtil;
+import com.hss01248.download_okhttp.OkhttpDownloadUtil;
+import com.liulishuo.filedownloader2.AndroidDownloader;
+import com.liulishuo.filedownloader2.DownloadCallbackOnMainThreadWrapper;
 
 import java.util.Map;
 
@@ -15,23 +17,24 @@ import java.util.Map;
 public class OkDownloadImpl2 implements IDownload{
     @Override
     public void download(String url, @NonNull String filePath, @NonNull Map<String, String> headers, IDownloadCallback callback) {
-        OkhttpDownloadUtil.downLoad(url, filePath, false, false,
-                false, headers, null, new com.liulishuo.filedownloader2.IDownloadCallback() {
-                    @Override
-                    public void onProgress(String url, String path, long total, long alreadyReceived) {
-                        callback.onProgress(url,path,alreadyReceived,total);
-                    }
+        AndroidDownloader.prepareDownload(url)
+                        .filePath(filePath)
+                        .headers(headers)
+                        .start(new DownloadCallbackOnMainThreadWrapper(new com.hss01248.download_okhttp.IDownloadCallback() {
+                            @Override
+                            public void onSuccess(String url, String path) {
+                                callback.onSuccess(url, path);
+                            }
 
-                    @Override
-            public void onSuccess(String url, String path) {
-                callback.onSuccess(url, path);
-            }
-
-            @Override
-            public void onFailed(String url, String path, String code, String msg, Throwable e) {
-                callback.onFail(url,path,code+" "+msg,e);
-            }
-        });
+                            @Override
+                            public void onFailed(String url, String path, String code, String msg, Throwable e) {
+                                callback.onFail(url,path,code+" "+msg,e);
+                            }
+                            @Override
+                            public void onProgress(String url, String path, long total, long alreadyReceived) {
+                                callback.onProgress(url,path,alreadyReceived,total);
+                            }
+                        }));
     }
 
     @Override
