@@ -62,6 +62,7 @@ dependencies {
     api("com.github.bumptech.glide:glide:4.11.0")
     api project(path: ':compressor')
     api project(path: ':bigimageviewpager')
+     api "com.github.hss01248.media:localvideoplayer:1.0.0"
     api 'com.liulishuo.filedownloader:library:1.7.7'
     //api "com.github.skyNet2017.FileDownloader-fork2:okhttp-no-service:2.0.2"
     api "com.github.hss01248.simple-file-downloder:download-okhttp-android:1.0.3"
@@ -76,6 +77,7 @@ dependencies {
     annotationProcessor "org.greenrobot:eventbus-annotation-processor:$eventbus_version"
 
     api 'com.github.hss01248.flipperUtil:network-hooks-auth:1.7.20-dev'
+
 }
 
 apply plugin: 'org.greenrobot.greendao'
