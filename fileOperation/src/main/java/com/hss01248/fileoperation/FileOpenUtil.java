@@ -7,12 +7,12 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ReflectUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss01248.apkinstaller.ApkInstallUtil;
 import com.hss01248.apkinstaller.InstallCallback;
+import com.hss01248.bigimageviewpager.LargeImageViewer;
+import com.hss01248.media.localvideoplayer.VideoPlayUtil;
 import com.hss01248.openuri2.OpenUri2;
 
 import java.io.File;
@@ -64,7 +64,7 @@ public class FileOpenUtil {
         }
         String mimeType = FileTypeUtil2.getTypeByFileName(filePath);
         if(filePath.endsWith("jpeg") || filePath.endsWith("JPG")){
-            mimeType = "image/jpeg";
+            mimeType = "image";
         }
         if(paths ==null || paths.isEmpty()){
             paths = new ArrayList<>();
@@ -78,24 +78,9 @@ public class FileOpenUtil {
             //LargeImageViewer.showOne(filePath);
         }
         if(("image".equals(mimeType))){
-            try {
-                ReflectUtils.reflect("com.hss01248.bigimageviewpager.LargeImageViewer")
-                        .method("showInBatch",paths,position)
-                        .get();
-            }catch (Throwable throwable){
-                ToastUtils.showLong(throwable.getMessage());
-                LogUtils.w(throwable);
-            }
+            LargeImageViewer.showInBatch(paths,position);
         }else if("video".equals(mimeType)){
-            //VideoPlayUtil.playList( List<String> sources, int currentPosition)
-            try {
-                ReflectUtils.reflect("com.hss01248.media.localvideoplayer.VideoPlayUtil")
-                        .method("playList",paths,position)
-                        .get();
-            }catch (Throwable throwable){
-                ToastUtils.showLong(throwable.getMessage());
-                LogUtils.w(throwable);
-            }
+            VideoPlayUtil.startPreviewInList(ActivityUtils.getTopActivity(),paths,position);
         }else{
             //调用系统intent来打开
             oepnFileByIntent(filePath);
