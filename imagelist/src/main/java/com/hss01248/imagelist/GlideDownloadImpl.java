@@ -80,7 +80,7 @@ public class GlideDownloadImpl implements IDownload {
             @Override
             public void onProgress(ProgressInfo progressInfo) {
                 try {
-                    callback.onProgress(url,filePath,progressInfo.getCurrentbytes(),progressInfo.getContentLength());
+                    callback.onProgress(url,filePath,progressInfo.getCurrentbytes(),progressInfo.getContentLength(),0);
                     //tvProgress.setText(progressInfo.getPercent()+"% , speed: "+(progressInfo.getSpeed()/1024/8)+"KB/s");
                 }catch (Throwable throwable){
                     throwable.printStackTrace();

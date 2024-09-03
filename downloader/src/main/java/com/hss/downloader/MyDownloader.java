@@ -319,12 +319,12 @@ public class MyDownloader {
              }
 
              @Override
-             public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
+             public void onProgress(String url, String realPath, long currentOffset, long totalLength,long speed) {
                  info.currentOffset = currentOffset;
                  info.totalLength = totalLength;
                  info.status = currentOffset == totalLength ? DownloadInfo.STATUS_SUCCESS : DownloadInfo.STATUS_DOWNLOADING;
+                 info.speed = speed;
                  EventBus.getDefault().post(info);
-
              }
 
              @Override
@@ -346,7 +346,7 @@ public class MyDownloader {
         MyDownloader.download = download;
     }
 
-    static   IDownload download = new OkDownloadImpl();
+    static   IDownload download = new OkDownloadImpl2();
     private static void runOnBack(Runnable runnable) {
         ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
             @Override

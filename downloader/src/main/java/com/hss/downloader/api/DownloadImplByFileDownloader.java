@@ -33,7 +33,7 @@ public class DownloadImplByFileDownloader implements IDownload2 {
 
                     @Override
                     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        api.getCallback().onProgress(api.getUrl(), filePath,soFarBytes, totalBytes);
+                        api.getCallback().onProgress(api.getUrl(), filePath,soFarBytes, totalBytes,0);
                     }
 
                     @Override

@@ -89,7 +89,7 @@ public class OkDownloadImpl implements IDownload{
 
             @Override
             public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
-                callback.onProgress(url,filePath,currentOffset,totalLength);
+                callback.onProgress(url,filePath,currentOffset,totalLength,0);
             }
 
             @Override

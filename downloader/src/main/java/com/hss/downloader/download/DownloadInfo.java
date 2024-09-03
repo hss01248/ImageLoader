@@ -108,6 +108,8 @@ public class DownloadInfo {
     public transient long currentOffset;
     public transient boolean isCompressing;
 
+    public transient long speed;
+
     @Generated(hash = 1249356660)
     public DownloadInfo(String url, String filePath, int status, String name,
             String dir, String errMsg, long totalLength, long createTime,
