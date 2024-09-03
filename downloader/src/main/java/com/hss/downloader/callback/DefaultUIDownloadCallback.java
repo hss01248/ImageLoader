@@ -38,11 +38,12 @@ public class DefaultUIDownloadCallback implements IDownloadCallback {
     }
 
     @Override
-    public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
+    public void onProgress(String url, String realPath, long currentOffset, long totalLength,long speed) {
         String msg = "文件下载中:"+url+"\n-->\n"+realPath+"\n";
         msg += ConvertUtils.byte2FitMemorySize(currentOffset,1)+"/"+ConvertUtils.byte2FitMemorySize(totalLength,1);
+        msg += speed/1024+"KB/s";
         if (dialog != null)dialog.setMessage(msg);
-        callback.onProgress(url, realPath, currentOffset, totalLength);
+        callback.onProgress(url, realPath, currentOffset, totalLength,speed);
     }
 
     @Override

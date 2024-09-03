@@ -22,14 +22,14 @@ buildscript {
         snapshotUrl='https://nexus.hss01248.tech/repository/maven-snapshots/'
         publicUrl='https://nexus.hss01248.tech/#browse/browse:maven-public:'
 
-        utilcodeVersion='1.6.1.06'
+        utilcodeVersion='1.6.3'
 
 
     }
 
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.3.0' // add plugin
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

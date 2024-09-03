@@ -1,4 +1,4 @@
-package com.hss.downloader;
+package com.hss.downloader.list;
 
 
 import androidx.annotation.NonNull;
@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.hss.downloader.download.DownloadInfo;
-import com.hss.downloader.download.DownloadViewHolder;
 
 import java.util.List;
 

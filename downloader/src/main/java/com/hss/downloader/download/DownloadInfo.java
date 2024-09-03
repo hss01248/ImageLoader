@@ -28,6 +28,10 @@ public class DownloadInfo {
     public  boolean downloadSuccess(){
         return status == STATUS_SUCCESS;
     }
+
+    public  boolean downloadFailed(){
+        return status == STATUS_FAIL;
+    }
     public String getUrl() {
         return this.url;
     }
@@ -103,6 +107,8 @@ public class DownloadInfo {
     public transient boolean isInSelectMode;
     public transient long currentOffset;
     public transient boolean isCompressing;
+
+    public transient long speed;
 
     @Generated(hash = 1249356660)
     public DownloadInfo(String url, String filePath, int status, String name,

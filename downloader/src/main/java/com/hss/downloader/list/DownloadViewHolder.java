@@ -1,4 +1,4 @@
-package com.hss.downloader.download;
+package com.hss.downloader.list;
 
 import android.view.View;
 
@@ -14,7 +14,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.hss.downloader.MyDownloader;
 import com.hss.downloader.R;
 import com.hss.downloader.databinding.ItemDownloadUiBinding;
+import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.event.DialogCloseEvent;
+import com.hss01248.bigimageviewpager.LifecycleObjectUtil2;
 import com.hss01248.fileoperation.FileOpenUtil;
 import com.hss01248.fileoperation.FileTypeUtil2;
 import com.hss01248.toast.MyToast;
@@ -99,7 +101,7 @@ public class DownloadViewHolder extends BaseViewHolder {
 
         if(info.status == DownloadInfo.STATUS_DOWNLOADING){
             helper.setText(R.id.tv_status_msg,"下载中");
-            helper.setVisible(R.id.progress_bar,true);
+            helper.setVisible(R.id.ll_progress,true);
             helper.setText(R.id.tv_download_btn_desc,"暂停");
             binding.llRight.setVisibility(View.VISIBLE);
             if(info.totalLength>0){
@@ -108,10 +110,12 @@ public class DownloadViewHolder extends BaseViewHolder {
                     binding.progressBar.setProgress((int) info.currentOffset);
                 }
             }
+            String speed = info.speed/1024+"KB/s";
+            binding.tvSpeed.setText(speed);
             binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
         }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
             helper.setText(R.id.tv_status_msg,"未开始或等待中");
-            helper.setVisible(R.id.progress_bar,false);
+            helper.setGone(R.id.ll_progress,false);
             helper.setText(R.id.tv_download_btn_desc,"开始");
             binding.llRight.setVisibility(View.VISIBLE);
             binding.ivIcon.setImageResource(R.color.design_dark_default_color_primary);
@@ -126,7 +130,7 @@ public class DownloadViewHolder extends BaseViewHolder {
 
         }else if(info.status == DownloadInfo.STATUS_FAIL){
             helper.setText(R.id.tv_status_msg,"失败:"+info.errMsg);
-            helper.setVisible(R.id.progress_bar,false);
+            helper.setGone(R.id.ll_progress,false);
             helper.setText(R.id.tv_download_btn_desc,"重试");
             binding.llRight.setVisibility(View.GONE);
             binding.ivIcon.setImageResource(R.color.design_default_color_error);
@@ -142,7 +146,7 @@ public class DownloadViewHolder extends BaseViewHolder {
             helper.setText(R.id.tv_status_msg,"下载成功");
             helper.setText(R.id.tv_download_btn_desc,"");
             binding.llRight.setVisibility(View.GONE);
-            binding.progressBar.setVisibility(View.GONE);
+            helper.setGone(R.id.ll_progress,false);
             Glide.with(binding.ivIcon)
                     .load(new File(info.dir+"/"+info.name))
                     .into(binding.ivIcon);
@@ -150,6 +154,9 @@ public class DownloadViewHolder extends BaseViewHolder {
                 binding.tvStatusMsg.setText("压缩中");
             }else {
                 binding.tvStatusMsg.setText("下载完成");
+            }
+            if(!new File(info.dir+"/"+info.name).exists()){
+                binding.tvStatusMsg.setText("下载完成但文件已删除");
             }
         }
 
@@ -225,13 +232,14 @@ public class DownloadViewHolder extends BaseViewHolder {
         if(!info.url.equals(this.info.url)){
             return;
         }
-        if(this.info != info){
+        this.info = info;
+        /*if(this.info != info){
             this.info.status = info.status;
             this.info.totalLength = info.totalLength;
             this.info.errMsg = info.errMsg;
             this.info.currentOffset = info.currentOffset;
-        }
-        if(info.status == DownloadInfo.STATUS_DOWNLOADING){
+        }*/
+        /*if(info.status == DownloadInfo.STATUS_DOWNLOADING){
             if(info.currentOffset>0 && info.currentOffset != info.totalLength && info.totalLength>0){
                 //binding.progressBar.setVisibility(View.VISIBLE);
                 binding.progressBar.setMax((int) info.totalLength);
@@ -241,7 +249,7 @@ public class DownloadViewHolder extends BaseViewHolder {
                 }
                 return;
             }
-        }
+        }*/
         showView(info);
 
 

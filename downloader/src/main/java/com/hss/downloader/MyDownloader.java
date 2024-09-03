@@ -9,13 +9,11 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
-import com.hss.downloader.event.DownloadResultEvent;
-
 import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss.downloader.event.DownloadResultEvent;
 import com.hss.downloader.list.DownloadRecordListHolder;
 import com.hss.utils.enhance.foregroundservice.CommonProgressService;
 import com.hss01248.img.compressor.ImageCompressor;
-import com.liulishuo.okdownload.StatusUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -201,12 +199,8 @@ public class MyDownloader {
                         load.genFilePath();
                         //load.name = load.name;//避免多级目录,非法字符,文件过长等情况
                         if(load.status == DownloadInfo.STATUS_DOWNLOADING){
-                            StatusUtil.Status status = StatusUtil.getStatus(info.url, load.dir, load.name);
-                            if( status == StatusUtil.Status.RUNNING
-                                    || status == StatusUtil.Status.PENDING){
-                                toShow.add(load);
-                                continue;
-                            }
+                            toShow.add(load);
+                            continue;
                         }
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.createTime = System.currentTimeMillis();
@@ -319,12 +313,12 @@ public class MyDownloader {
              }
 
              @Override
-             public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
+             public void onProgress(String url, String realPath, long currentOffset, long totalLength,long speed) {
                  info.currentOffset = currentOffset;
                  info.totalLength = totalLength;
                  info.status = currentOffset == totalLength ? DownloadInfo.STATUS_SUCCESS : DownloadInfo.STATUS_DOWNLOADING;
+                 info.speed = speed;
                  EventBus.getDefault().post(info);
-
              }
 
              @Override
@@ -346,7 +340,7 @@ public class MyDownloader {
         MyDownloader.download = download;
     }
 
-    static   IDownload download = new OkDownloadImpl();
+    static   IDownload download = new OkDownloadImpl2();
     private static void runOnBack(Runnable runnable) {
         ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
             @Override

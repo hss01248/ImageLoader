@@ -123,7 +123,7 @@ public class DownloadCallbackDbDecorator implements IDownloadCallback {
 
      long lastTime = 0;
     @Override
-    public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
+    public void onProgress(String url, String realPath, long currentOffset, long totalLength,long speed) {
         if(currentOffset == totalLength){
             lastTime = 0;
         }
@@ -147,7 +147,7 @@ public class DownloadCallbackDbDecorator implements IDownloadCallback {
                 EventBus.getDefault().post(load);
             }
         });
-        callback.onProgress(url, realPath, currentOffset, totalLength);
+        callback.onProgress(url, realPath, currentOffset, totalLength,speed);
     }
 
     @Override
