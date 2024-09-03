@@ -28,6 +28,10 @@ public class DownloadInfo {
     public  boolean downloadSuccess(){
         return status == STATUS_SUCCESS;
     }
+
+    public  boolean downloadFailed(){
+        return status == STATUS_FAIL;
+    }
     public String getUrl() {
         return this.url;
     }

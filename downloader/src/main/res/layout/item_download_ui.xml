@@ -20,6 +20,7 @@
         android:layout_marginRight="8dp"
         android:layout_gravity="center_vertical"
         android:src="@color/design_default_color_error"
+        android:scaleType="centerCrop"
         android:layout_height="50dp"/>
     <LinearLayout
         android:orientation="vertical"

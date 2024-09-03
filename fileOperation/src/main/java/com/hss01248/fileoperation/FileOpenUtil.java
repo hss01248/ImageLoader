@@ -3,6 +3,7 @@ package com.hss01248.fileoperation;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.Nullable;
 
@@ -93,13 +94,23 @@ public class FileOpenUtil {
         try{
             Intent intent = new Intent("android.intent.action.VIEW");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri uri = null;
             if(new File(filePath).exists()){
-                Uri uri = OpenUri2.fromFile(Utils.getApp(), new File(filePath));
+                 uri = OpenUri2.fromFile(Utils.getApp(), new File(filePath));
                 intent.setData(uri);
                 OpenUri2.addPermissionR(intent);
             }else {
-                Uri uri = Uri.parse(filePath);
+                 uri = Uri.parse(filePath);
                 intent.setData(uri);
+            }
+            String name = new File(filePath).getName();
+            if(name.contains(".")){
+                name = name.substring(name.lastIndexOf(".")+1);
+            }
+            name = name.toLowerCase();
+            String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(name);
+            if(!TextUtils.isEmpty(type)){
+                intent.setDataAndType(uri, type);
             }
             ActivityUtils.getTopActivity().startActivity(intent);
         }catch (Throwable throwable){

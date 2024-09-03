@@ -1,4 +1,4 @@
-package com.hss.downloader.download;
+package com.hss.downloader.list;
 
 import android.view.View;
 
@@ -14,7 +14,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.hss.downloader.MyDownloader;
 import com.hss.downloader.R;
 import com.hss.downloader.databinding.ItemDownloadUiBinding;
+import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.event.DialogCloseEvent;
+import com.hss01248.bigimageviewpager.LifecycleObjectUtil2;
 import com.hss01248.fileoperation.FileOpenUtil;
 import com.hss01248.fileoperation.FileTypeUtil2;
 import com.hss01248.toast.MyToast;
@@ -150,6 +152,9 @@ public class DownloadViewHolder extends BaseViewHolder {
                 binding.tvStatusMsg.setText("压缩中");
             }else {
                 binding.tvStatusMsg.setText("下载完成");
+            }
+            if(!new File(info.dir+"/"+info.name).exists()){
+                binding.tvStatusMsg.setText("下载完成但文件已删除");
             }
         }
 
