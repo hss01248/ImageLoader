@@ -9,6 +9,7 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss.downloader.IDownload;
 import com.hss.downloader.IDownloadCallback;
+import com.hss.downloader.OkDownloadImpl2;
 import com.hss.downloader.callback.DefaultUIDownloadCallback;
 import com.hss.downloader.callback.DownloadCallbackDbDecorator;
 import com.hss.downloader.callback.ExeOnMainDownloadCallback;
@@ -81,7 +82,7 @@ public class DownloadApi {
     }
 
     private IDownloadCallback callback;
-   public static IDownload2 downlodImpl = new DownloadImplByFileDownloader();
+   public static IDownload2 downlodImpl = new OkDownloadImpl2();
 
     public DownloadApi setDir(String dir) {
         this.dir = dir;

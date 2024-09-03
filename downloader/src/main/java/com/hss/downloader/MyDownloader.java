@@ -9,13 +9,11 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
-import com.hss.downloader.event.DownloadResultEvent;
-
 import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss.downloader.event.DownloadResultEvent;
 import com.hss.downloader.list.DownloadRecordListHolder;
 import com.hss.utils.enhance.foregroundservice.CommonProgressService;
 import com.hss01248.img.compressor.ImageCompressor;
-import com.liulishuo.okdownload.StatusUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -201,12 +199,8 @@ public class MyDownloader {
                         load.genFilePath();
                         //load.name = load.name;//避免多级目录,非法字符,文件过长等情况
                         if(load.status == DownloadInfo.STATUS_DOWNLOADING){
-                            StatusUtil.Status status = StatusUtil.getStatus(info.url, load.dir, load.name);
-                            if( status == StatusUtil.Status.RUNNING
-                                    || status == StatusUtil.Status.PENDING){
-                                toShow.add(load);
-                                continue;
-                            }
+                            toShow.add(load);
+                            continue;
                         }
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.createTime = System.currentTimeMillis();

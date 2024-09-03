@@ -34,4 +34,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     api project(path: ':downloader')
     api 'io.lindstrom:m3u8-parser:0.27'
+    implementation 'com.liulishuo.filedownloader:library:1.7.7'
 }
