@@ -1,13 +1,11 @@
 package com.hss.downloader.list;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.hss.downloader.download.DownloadInfo;
+import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.utils.enhance.api.MyCommonCallback;
-
 import com.hss01248.refresh_loadmore.ILoadData;
 import com.hss01248.refresh_loadmore.PagerDto;
-import com.hss.downloader.download.DownloadInfoUtil;
 
 /**
  * @Despciption todo
@@ -32,6 +30,7 @@ public class LoadDataByHistoryDb implements ILoadData<DownloadInfo> {
             @Override
             public void onSuccess(PagerDto<DownloadInfo> result) {
                 callback.onSuccess(result);
+                //LogUtils.d(result.pageIndex);
             }
 
             @Override

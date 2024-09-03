@@ -2,11 +2,11 @@ package com.hss.downloader;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.download_okhttp.OkhttpDownloadUtil;
 import com.liulishuo.filedownloader2.AndroidDownloader;
 import com.liulishuo.filedownloader2.DownloadCallbackOnMainThreadWrapper;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,9 +16,25 @@ import java.util.Map;
  * @Version 1.0
  */
 public class OkDownloadImpl2 implements IDownload{
+
+    public static void setUserAgent(String userAgent) {
+        OkDownloadImpl2.userAgent = userAgent;
+    }
+
+   volatile static String userAgent;
     @Override
     public void download(String url, @NonNull String filePath, @NonNull Map<String, String> headers, IDownloadCallback callback) {
         callback.onStart(url,filePath);
+        if(headers == null){
+            headers = new HashMap<>();
+        }
+        if(!headers.containsKey("User-Agent")){
+            if(userAgent ==null){
+                userAgent = System.getProperty("http.agent");
+            }
+            headers.put("User-Agent", userAgent);
+        }
+
         AndroidDownloader.prepareDownload(url)
                         .filePath(filePath)
                         .headers(headers)
@@ -32,29 +48,12 @@ public class OkDownloadImpl2 implements IDownload{
                             public void onFailed(String url, String path, String code, String msg, Throwable e) {
                                 callback.onFail(url,path,code+" "+msg,e);
                             }
-                            long lastReceived = 0;
-                            long lastProgressTime = 0;
                             @Override
-                            public void onProgress(String url, String path, long total, long alreadyReceived) {
-                                if(lastReceived ==0){
-                                    lastReceived = alreadyReceived;
-                                    lastProgressTime = System.currentTimeMillis();
-                                    callback.onProgress(url,path,alreadyReceived,total,0L);
-                                }else {
-                                    long changed = alreadyReceived - lastReceived;
-                                    long speed = changed*1000 /(System.currentTimeMillis() - lastProgressTime);
-                                    lastProgressTime = System.currentTimeMillis();
-                                    lastReceived = alreadyReceived;
-                                    callback.onProgress(url,path,alreadyReceived,total,speed);
-
-                                }
+                            public void onProgress(String url, String path, long total, long alreadyReceived,long speed) {
+                                callback.onProgress(url,path,alreadyReceived,total,speed);
                             }
 
-                            @Override
-                            public void onSpeed(String url, String path, long speed) {
-                                //callback.onSpeed(url, path, speed);
-                                LogUtils.d("speed---> "+speed/1024+"KB/s");
-                            }
+
                         }));
 
     }
