@@ -24,7 +24,7 @@ public class PexelImageParser implements IHtmlParser{
         final ArrayList<String> urls = new ArrayList<>();
         try {
             Element element0 = Jsoup.parse(html).body();
-            Elements elements = element0.select("div.hide-featured-badge > article > a.photo-item__link > img");
+            Elements elements = element0.select("div.BreakpointGrid_item__RSMyf > article > a > img");
             /*if(elements ==null || elements.isEmpty()){
                 elements = element0.select("img");
             }*/
