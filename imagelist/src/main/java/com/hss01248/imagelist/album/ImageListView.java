@@ -41,7 +41,6 @@ import com.hss01248.imagelist.R;
 import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.iwidget.singlechoose.ISingleChooseItem;
-import com.hss01248.ui.pop.list.PopList;
 
 import org.apache.commons.io.FileUtils;
 

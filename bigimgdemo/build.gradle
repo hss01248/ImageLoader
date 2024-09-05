@@ -38,7 +38,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation project(path: ':bigimageviewpager')
     implementation project(path: ':imagelist')
-    implementation project(path: ':webviewspider')
+    api "com.github.hss01248.utilcodeEnhance:webviewspider:${utilcodeVersion}"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
