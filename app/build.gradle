@@ -41,7 +41,7 @@ android {
 
 
 dependencies {
-    implementation project(path: ':downloader')
+    //implementation project(path: ':downloader')
     implementation project(path: ':downloader-m3u8')
     implementation project(path: ':fileOperation')
     api fileTree(include: ['*.jar'], dir: 'libs')
@@ -59,6 +59,7 @@ dependencies {
     //compile project(':memory')
     api project(':imagelist')
     api project(':imagelist')
+    api project(':compressor')
     //compile project(':picasso')
     api project(':glidev4')
 
@@ -87,7 +88,7 @@ dependencies {
 
     api 'org.raphets:roundimageview:1.2.0'
     api('com.github.skyNet2017.Luban:dataForPhotoSelet:3.3.0')
-    api project(path: ':webviewspider')
+    //api project(path: ':webviewspider')
    // api project(path: ':spiders')
     api 'com.github.getActivity:XXPermissions:11.6'//请求存储权限
     debugImplementation 'com.glance.guolindev:glance:1.0.0'
@@ -100,6 +101,8 @@ dependencies {
         resolutionStrategy.force 'com.squareup.okio:okio:1.15.0'
         resolutionStrategy.force 'com.github.bumptech.glide:glide:4.11.0'
     }
+    api "com.github.hss01248.utilcodeEnhance:downloader:${utilcodeVersion}"
+    api "com.github.hss01248.utilcodeEnhance:webviewspider:${utilcodeVersion}"
     api "com.github.hss01248.utilcodeEnhance:bitmap-saver:${utilcodeVersion}"
     api "com.github.hss01248.utilcodeEnhance:viewholder-media:${utilcodeVersion}"
     api('com.davemorrissey.labs:subsampling-scale-image-view:3.10.0') {

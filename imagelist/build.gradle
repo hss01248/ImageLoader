@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 34
 
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
 
@@ -31,7 +31,7 @@ dependencies {
     //api 'com.github.hss01248.ImageLoader:glidev4:3.2.3'
     //api 'com.github.hss01248.ImageLoader:bigimageviewpager:3.2.3'
     api project(':glidev4')
-    api project(':downloader')
+    //api "com.github.hss01248.utilcodeEnhance:downloader:${utilcodeVersion}"
     //api project(':bigimageviewpager')
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
@@ -46,8 +46,9 @@ dependencies {
     api 'com.github.fondesa:recycler-view-divider:3.5.0'
     //implementation 'com.yqritc:recyclerview-flexibledivider:1.4.0'
 
-    api 'com.github.hss01248:UI:0.0.1'
+    //api 'com.github.hss01248:UI:0.0.1'
     api "com.github.hss01248.utilcodeEnhance:iwidget:${utilcodeVersion}"
+    api "com.github.hss01248.utilcodeEnhance:downloader:${utilcodeVersion}"
     api 'com.github.hss01248:DialogUtil:3.0.5'
     api "com.github.hss01248.utilcodeEnhance:fullScreenDialog:${utilcodeVersion}"
     api "com.github.hss01248.utilcodeEnhance:viewholder:${utilcodeVersion}"
@@ -63,7 +64,7 @@ dependencies {
     api 'com.github.hss01248.StartActivityResult:transactivity:1.1.4'
     api 'com.github.hss01248.StartActivityResult:activityresult:1.1.9'
 
-    api 'com.liulishuo.filedownloader:library:1.7.7'
+    //api 'com.liulishuo.filedownloader:library:1.7.7'
 
 
 }
