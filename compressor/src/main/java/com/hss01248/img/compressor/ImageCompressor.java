@@ -424,6 +424,8 @@ public class ImageCompressor {
             success = success && file.exists() && file.length() > 50;
             CloseUtils.closeIO(fileOutputStream);
 
+            //motion image
+
             if (success) {
                 try {
                     if (exifMap != null && !exifMap.isEmpty()) {
@@ -437,9 +439,9 @@ public class ImageCompressor {
                         tail = "webp-q-"+targetWebpQuality;
                     }
                     if(TextUtils.isEmpty(text)){
-                        text = AppUtils.getAppName()+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                        text = AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
                     }else {
-                        text = text + "/"+AppUtils.getAppName()+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                        text = text + "/"+AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
                     }
                     exifMap.put(ExifInterface.TAG_SOFTWARE,text);
                     ExifUtil.writeExif(exifMap, outPath);
