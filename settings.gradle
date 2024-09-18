@@ -22,3 +22,5 @@ include ':myblog'
 include ':glide-aop'
 include ':downloader-m3u8'
 
+include ':motion-photos'
+include ':motion-photos-android'

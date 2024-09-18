@@ -12,13 +12,9 @@ import androidx.multidex.MultiDexApplication;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.Utils;
 import com.elvishew.xlog.XLog;
-import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.DownloadList;
-import com.hss.downloader.DownloadUrls;
 import com.hss.downloader.ILargeImagesViewer;
-import com.hss.downloader.MyDownloader;
 import com.hss01248.basewebview.BaseWebviewActivity;
-import com.hss01248.basewebview.IDownloader;
 import com.hss01248.basewebview.WebConfigger;
 import com.hss01248.basewebview.WebviewInit;
 import com.hss01248.dialog.StyledDialog;
@@ -38,7 +34,6 @@ import com.hss01248.webviewspider.SpiderWebviewActivity;
 import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +60,7 @@ public class BaseApp extends MultiDexApplication {
         Utils.init(this);
         ImageLoader.init(getApplicationContext(), 500, new Glide4Loader());
         GlobalConfig.debug = true;
-        XXPermissions.setScopedStorage(true);
+
         //Glance.INSTANCE.initialize(new MyDBContext(this));
 
         MyDokit.setConfig(new IDokitConfig() {
@@ -87,21 +82,6 @@ public class BaseApp extends MultiDexApplication {
                 return BaseWebviewActivity.class;
             }
 
-            @Override
-            public IDownloader getIDownloader() {
-                return new IDownloader() {
-                    @Override
-                    public void doDownload(String url, String name,String dir) {
-                        List<DownloadUrls> downloadInfos = new ArrayList<>();
-                        DownloadUrls info = new DownloadUrls();
-                        info.url = url;
-                        info.name = name;
-                        info.dir = dir;//Utils.getApp().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                        downloadInfos.add(info);
-                        MyDownloader.download(downloadInfos);
-                    }
-                };
-            }
         });
 
 

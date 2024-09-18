@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +22,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -33,6 +40,7 @@ import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.glide.aop.file.ReadFileUtil;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.viewstate.StatefulLayout;
 import com.hss01248.viewstate.ViewStateConfig;
 import com.shizhefei.view.largeimage.factory.InputStreamBitmapDecoderFactory;
@@ -85,7 +93,7 @@ public class MyLargeImageView extends FrameLayout {
     }
 
     boolean darkMode = true;
-
+    PlayerView playerView;
 
     public MyLargeImageView(@NonNull Context context) {
         super(context);
@@ -101,6 +109,7 @@ public class MyLargeImageView extends FrameLayout {
         stateBinding = StateItemLargeImgBinding.inflate(LayoutInflater.from(context),this,true);
         largeImgBinding = stateBinding.itemLargeImg;
         stateManager = stateBinding.stateLayout;
+        playerView = stateBinding.itemLargeImg.playView;
         stateBinding.stateLayout.setConfig(
                 ViewStateConfig.newBuilder(ViewStateConfig.getGlobalConfig())
                         .errorClick(new Runnable() {
@@ -178,7 +187,6 @@ public class MyLargeImageView extends FrameLayout {
 
     private void reload() {
         loadUri(info.uri);
-
     }
 
     int preOrientation;
@@ -246,7 +254,7 @@ public class MyLargeImageView extends FrameLayout {
     }
 
     private void loadFile(String filePath, boolean isGif) {
-        loadLocal(filePath, isGif);
+        loadLocal(filePath, isGif,true);
     }
 
     private void toastMsg(String message) {
@@ -269,7 +277,7 @@ public class MyLargeImageView extends FrameLayout {
             return;
         }
         if (uri.startsWith("content://")) {
-            loadLocal(uri, false);
+            loadLocal(uri, false,true);
             return;
         }
     }
@@ -282,8 +290,13 @@ public class MyLargeImageView extends FrameLayout {
         return info.getInfo();
     }
 
-    private void loadLocal(String uri, boolean isGif) {
+    private void loadLocal(String uri, boolean isGif,boolean loadMotionVideo) {
         info.localPathOrUri = uri;
+        if(loadMotionVideo && MotionPhotoUtil.isMotionImage(uri,false)){
+            loadMotionVideo(uri);
+            return;
+        }
+
         if (uri.contains(".gif") || isGif) {
             gifView.setVisibility(VISIBLE);
             largeImgBinding.ivGo360.setVisibility(GONE);
@@ -296,12 +309,36 @@ public class MyLargeImageView extends FrameLayout {
                 gifView.setImageURI(Uri.fromFile(tmpOriginalFile));
             }
             stateManager.showContent();
+            playerView.setVisibility(GONE);
         } else {
             gifView.setVisibility(GONE);
             jpgView.setVisibility(VISIBLE);
+            if(MotionPhotoUtil.isMotionImage(uri,false) && !loadMotionVideo){
+                // 创建alpha动画，从1.0（完全不透明）到0.0（完全透明）
+                AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+                alphaAnimation.setDuration(600); // 动画时长为1秒
+                // 设置动画监听器
+                alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        // 动画开始时的处理
+                    }
 
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        // 动画结束时将View设为GONE
+                        playerView.setVisibility(View.GONE);
+                    }
 
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        // 动画重复时的处理
+                    }
+                });
 
+                // 开启动画
+                playerView.startAnimation(alphaAnimation);
+            }
             //兼容avif格式
             if(uri.contains(".avif")){
                 File tmpOriginalFile = AddByteUtil.createTmpOriginalFile(uri);
@@ -398,6 +435,56 @@ public class MyLargeImageView extends FrameLayout {
                     });
         }
     }
+    ExoPlayer player;
+    private void loadMotionVideo(String uri) {
+        String motionVideoPath = MotionPhotoUtil.getMotionVideoPath(uri);
+        if(motionVideoPath ==null || motionVideoPath.equals("")){
+            return;
+        }
+        playerView.setVisibility(VISIBLE);
+        gifView.setVisibility(GONE);
+        jpgView.setVisibility(GONE);
+        File file = new File(motionVideoPath);
+        if(player ==null){
+             player = new ExoPlayer.Builder(getContext())
+                    .build();
+            playerView.setPlayer(player);
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onPlaybackStateChanged(int playbackState) {
+                    Player.Listener.super.onPlaybackStateChanged(playbackState);
+                    if(playbackState == Player.STATE_ENDED ){
+                        loadLocal(uri,false,false);
+                    }
+                }
+
+                @Override
+                public void onPlayerError(PlaybackException error) {
+                    Player.Listener.super.onPlayerError(error);
+                    LogUtils.w(error);
+                    loadLocal(uri,false,false);
+                }
+            });
+
+            player.setPlayWhenReady(true);
+            player.setRepeatMode(Player.REPEAT_MODE_OFF);
+        }
+        player.setMediaItem(MediaItem.fromUri(Uri.fromFile(file)));
+        player.prepare();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        try {
+            if(player !=null){
+                player.release();
+            }
+        }catch (Throwable throwable){
+            LogUtils.w(throwable);
+        }
+
+    }
 
     public static boolean isPanoramaImage(String path){
         Map<String, String> map = ExifUtil.readExif(path);
@@ -405,10 +492,6 @@ public class MyLargeImageView extends FrameLayout {
         if(!TextUtils.isEmpty(xml) ){
             if(xml.contains("GPano:UsePanoramaViewer")){
                 LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
-                return true;
-            }
-            if(xml.contains("MotionPhoto")){
-                LogUtils.i("根据exif特征识别出为MotionPhoto,不进行压缩");
                 return true;
             }
             //MotionPhoto
