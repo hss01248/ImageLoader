@@ -46,4 +46,13 @@
         android:layout_margin="8dp"
         android:layout_width="30dp"
         android:layout_height="30dp"/>
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/iv_play_video"
+        android:src="@drawable/media3_icon_play"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="45dp"
+        android:layout_marginRight="100dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
 </RelativeLayout>

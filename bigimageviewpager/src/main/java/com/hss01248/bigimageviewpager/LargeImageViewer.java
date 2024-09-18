@@ -7,6 +7,8 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,6 +44,58 @@ public class LargeImageViewer {
     }
 
     static OnRightMenuClickedListener onRightMenuClickedListener;
+
+    public static void fadeToGone(View view, long duration){
+        // 创建alpha动画，从1.0（完全不透明）到0.0（完全透明）
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setDuration(duration); // 动画时长为1秒
+        // 设置动画监听器
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // 动画开始时的处理
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // 动画重复时的处理
+            }
+        });
+
+        // 开启动画
+        view.startAnimation(alphaAnimation);
+    }
+
+    public static void fadeToVisiable(View view, long duration){
+        // 创建alpha动画，从1.0（完全不透明）到0.0（完全透明）
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation.setDuration(duration); // 动画时长为1秒
+        // 设置动画监听器
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // 动画开始时的处理
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // 动画重复时的处理
+            }
+        });
+        view.setVisibility(View.VISIBLE);
+        // 开启动画
+        view.startAnimation(alphaAnimation);
+    }
 
     public static void showOne(String path){
         ContainerActivity2.start(new Consumer<Pair<ContainerActivity2, ContainerViewHolderWithTitleBar>>() {

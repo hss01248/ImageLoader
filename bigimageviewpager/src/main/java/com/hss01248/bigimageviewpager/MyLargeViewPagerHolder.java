@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.hss.utils.enhance.viewholder.mvvm.BaseViewHolder;
 import com.hss01248.bigimageviewpager.databinding.RlPagerImagsBinding;
 import com.warkiz.widget.IndicatorSeekBar;
@@ -18,6 +19,8 @@ import com.warkiz.widget.SeekParams;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, Pair<Integer, List<String>>> {
     public MyLargeViewPagerHolder(Context context) {
@@ -26,6 +29,8 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
 
     boolean showInfo = true;
     int currentPosition;
+
+    Map<Integer,View> viewMap = new TreeMap<>();
     @Override
     protected void initDataAndEventInternal(LifecycleOwner lifecycleOwner, Pair<Integer, List<String>> pair) {
         currentPosition = pair.first;
@@ -56,6 +61,7 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
             @NonNull
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
+                LogUtils.d(position,"instantiateItem",cacheList.size(),viewMap.size());
                 MyLargeImageView imageView = null;
                 if(cacheList.isEmpty()){
                     imageView = new MyLargeImageView(context);
@@ -64,8 +70,9 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
                 }
                 String url = uris.get(position);
                 url = LargeImageViewer.getBigImageUrl(url);
-                imageView.loadUri(url);
+                imageView.loadUri(url,viewMap.isEmpty());
                 container.addView(imageView);
+                viewMap.put(position,imageView);
 
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -89,9 +96,10 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
             public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
                 container.removeView((View) object);
                 cacheList.add((View)object);
+                viewMap.remove(position);
             }
         };
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        ViewPager.OnPageChangeListener listener = new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -100,13 +108,17 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
             @Override
             public void onPageSelected(int position) {
                 showInfo(position, uris);
+                LogUtils.d(position,"onPageSelected");
+                MyLargeImageView imageView = (MyLargeImageView) viewMap.get(position);
+                imageView.loadUri(uris.get(position),true);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
 
             }
-        });
+        };
+        viewPager.setOnPageChangeListener(listener);
 
 
 
@@ -116,6 +128,8 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
         viewPager.setCurrentItem(pair.first);
 
         showInfo(pair.first,uris);
+
+
 
         binding.seekBar.setMax(uris.size());
 
@@ -150,6 +164,9 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
                 FullScreenDialogUtil.showMap("meta data",metaData);*/
             }
         });
+
+        //重新播放的按钮:
+
 
     }
 
