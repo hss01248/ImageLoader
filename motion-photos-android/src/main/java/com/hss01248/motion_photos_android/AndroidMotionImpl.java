@@ -4,12 +4,17 @@ import android.net.Uri;
 
 import androidx.exifinterface.media.ExifInterface;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss01248.motion_photos.IMotion;
+import com.hss01248.videocompress.CompressType;
+import com.hss01248.videocompress.VideoCompressUtil;
+import com.hss01248.videocompress.listener.ICompressListener;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @Despciption todo
@@ -88,5 +93,32 @@ public class AndroidMotionImpl implements IMotion {
        File file = new File(path);
        File file2 = new File(dir,file.getName()+".mp4");
         return file2.getAbsolutePath();
+    }
+
+    public static File compressMp4File(String fileOrUriPath){
+
+        File dir = new File(Utils.getApp().getExternalCacheDir(),"motion-videos") ;
+        File file = new File(fileOrUriPath);
+        File file2 = new File(dir,"out-"+file.getName());
+        CountDownLatch latch = new CountDownLatch(1);
+        VideoCompressUtil.doCompressAsync(fileOrUriPath, dir.getAbsolutePath(), CompressType.TYPE_UPLOAD_720P,
+                new ICompressListener() {
+                    @Override
+                    public void onFinish(String outputFilePath) {
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        latch.countDown();
+                    }
+                });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            LogUtils.w(e);
+        }
+        return file2;
+
     }
 }

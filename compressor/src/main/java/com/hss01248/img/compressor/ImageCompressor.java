@@ -20,6 +20,8 @@ import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.FileTypeUtil;
 import com.hss01248.media.metadata.quality.Magick;
+import com.hss01248.motion_photos.MotionPhotoUtil;
+import com.hss01248.motion_photos_android.AndroidMotionImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -399,14 +401,14 @@ public class ImageCompressor {
     }
 
 
-    private static boolean compressOringinal2(String absolutePath, int quality, String outPath) {
+    private static boolean compressOringinal2(String inputPath, int quality, String outPath) {
         try {
             File file = new File(outPath);
-            Bitmap bitmap = BitmapFactory.decodeFile(absolutePath);
+            Bitmap bitmap = BitmapFactory.decodeFile(inputPath);
 
-            ExifInterface exifInterface = new ExifInterface(absolutePath);
+            ExifInterface exifInterface = new ExifInterface(inputPath);
             int oritation = exifInterface.getRotationDegrees();
-            Map<String, String> exifMap = ExifUtil.readExif(absolutePath);
+            Map<String, String> exifMap = ExifUtil.readExif(inputPath);
             ;
             if (oritation != 0) {
                 try {
@@ -445,6 +447,26 @@ public class ImageCompressor {
                     }
                     exifMap.put(ExifInterface.TAG_SOFTWARE,text);
                     ExifUtil.writeExif(exifMap, outPath);
+
+                    //motion photo处理: 视频压缩,更改xml写exif-> 合并文件
+                    boolean motionImage = MotionPhotoUtil.isMotionImage(inputPath, true);
+                    if(motionImage){
+                        String mp4 = MotionPhotoUtil.getMotionVideoPath(inputPath);
+                        File mp4Compressed = AndroidMotionImpl.compressMp4File(mp4);
+                        if(mp4Compressed !=null && mp4Compressed.exists() && mp4Compressed.length() >0){
+                            long length = mp4Compressed.length();
+                            //更改exif
+                            ExifInterface exifInterface1 = new ExifInterface(outPath);
+                            String xmp = exifInterface1.getAttribute(ExifInterface.TAG_XMP);
+                            xmp = xmp.replace(new File(mp4).length()+"",length+"");
+                            exifInterface1.setAttribute(ExifInterface.TAG_XMP,xmp);
+                            //写exif
+                            exifInterface1.saveAttributes();
+                            //合并文件:
+                            FileIOUtils.writeFileFromIS(new File(outPath),new FileInputStream(mp4Compressed),true);
+                        }
+                    }
+
                     /*if(AppUtils.isAppDebug()){
                         ExifUtil.readJpgTail(absolutePath);
                     }*/

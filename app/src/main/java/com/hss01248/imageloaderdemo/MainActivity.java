@@ -318,8 +318,8 @@ public class MainActivity extends AppCompatActivity {
                 //TurboCompressor.compressOriginal(path,70);
                 File file = ImageCompressor.compress(path,false,false);
 
-                File endecrypt = XorUtil.endecrypt(798, file, false);
-                LogUtils.i("out put file: "+endecrypt.getAbsolutePath());
+               // File endecrypt = XorUtil.endecrypt(798, file, false);
+               // LogUtils.i("out put file: "+endecrypt.getAbsolutePath());
                 ///storage/emulated/0/images/enx-cp-20230529_200844.jpg  花费15s.
 
 
