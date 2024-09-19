@@ -204,10 +204,10 @@ public class ImageCompressor {
                 LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
                 return true;
             }
-            if(xml.contains("MotionPhoto")){
+            /*if(xml.contains("MotionPhoto")){
                 LogUtils.i("根据exif特征识别出为MotionPhoto,不进行压缩");
                 return true;
-            }
+            }*/
             //MotionPhoto
         }
         return false;
@@ -526,21 +526,34 @@ public class ImageCompressor {
                     boolean motionImage = MotionPhotoUtil.isMotionImage(inputPath, true);
                     if(motionImage){
                         String mp4 = MotionPhotoUtil.getMotionVideoPath(inputPath);
-                        File mp4Compressed = AndroidMotionImpl.compressMp4File(mp4);
+                        File originalMp4File = new File(mp4);
+                        File mp4Compressed = null;
+                        if(originalMp4File.length() < 1024*1024){
+                            //1M以下不压缩
+                            mp4Compressed = originalMp4File;
+                        }else {
+                             mp4Compressed = AndroidMotionImpl.compressMp4File(mp4);
+                        }
+
                         if(mp4Compressed !=null && mp4Compressed.exists() && mp4Compressed.length() >0){
                             long length = mp4Compressed.length();
-                            //更改exif
-                            ExifInterface exifInterface1 = new ExifInterface(outPath);
-                            String xmp = exifInterface1.getAttribute(ExifInterface.TAG_XMP);
-                            LogUtils.i("xmp before",xmp);
-                            xmp = xmp.replace(new File(mp4).length()+"",length+"");
-                            LogUtils.i("xmp after",xmp);
-                            exifInterface1.setAttribute(ExifInterface.TAG_XMP,xmp);
-                            //写exif
-                            exifInterface1.saveAttributes();
+                            if(length != originalMp4File.length()){
+                                //更改exif
+                                ExifInterface exifInterface1 = new ExifInterface(outPath);
+                                String xmp = exifInterface1.getAttribute(ExifInterface.TAG_XMP);
+                                LogUtils.i("xmp before",xmp);
+                                xmp = xmp.replace(originalMp4File.length()+"",length+"");
+                                LogUtils.i("xmp after",xmp);
+                                exifInterface1.setAttribute(ExifInterface.TAG_XMP,xmp);
+                                //写exif
+                                exifInterface1.saveAttributes();
+                            }
+
 
                             //合并文件:
                             FileIOUtils.writeFileFromIS(new File(outPath),new FileInputStream(mp4Compressed),true);
+                            mp4Compressed.delete();
+                            new File(mp4).delete();
                         }
                     }
 

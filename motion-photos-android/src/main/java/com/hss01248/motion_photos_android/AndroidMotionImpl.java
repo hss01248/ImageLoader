@@ -103,12 +103,16 @@ public class AndroidMotionImpl implements IMotion {
         final File[] file2 = {new File(dir, "out-" + file.getName())};
 
         CountDownLatch latch = new CountDownLatch(1);
-        VideoCompressUtil.doCompress(false,fileOrUriPath, dir.getAbsolutePath(), CompressType.TYPE_UPLOAD_720P,
+        VideoCompressUtil.doCompress(false,fileOrUriPath, dir.getAbsolutePath(), CompressType.TYPE_UPLOAD_1080P,
                 new ICompressListener() {
                     @Override
                     public void onFinish(String outputFilePath) {
                         LogUtils.d("compress finished: ",outputFilePath, file2[0].getAbsolutePath());
                         file2[0] = new File(outputFilePath);
+                        if(file.length() <= file2[0].length()){
+                            LogUtils.w("压缩后文件变大",fileOrUriPath,outputFilePath);
+                            file2[0] = file;
+                        }
 
                         latch.countDown();
                     }
