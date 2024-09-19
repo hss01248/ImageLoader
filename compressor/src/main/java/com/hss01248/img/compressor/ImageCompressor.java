@@ -1,10 +1,17 @@
 package com.hss01248.img.compressor;
 
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -325,6 +332,8 @@ public class ImageCompressor {
                             LogUtils.w("fileCopy成功,删除原文件: " + file.getAbsolutePath());
                             //deleteFile(file);
                         }
+                        //如果是mediastore的图,就更新它在mediastore中的大小:
+                        updateMediaStore(targetFile.getAbsolutePath());
                         return targetFile;
                     } else {
                         deleteFile(file2);
@@ -348,6 +357,70 @@ public class ImageCompressor {
             }
         }
 
+    }
+
+    private static void updateMediaStore(String absolutePath) {
+        scanFile(Utils.getApp(),absolutePath);
+    }
+
+    public static void scanFile(Context context, String filePath) {
+        MediaScannerConnection.scanFile(context, new String[]{filePath}, null,
+                new MediaScannerConnection.MediaScannerConnectionClient() {
+                    @Override
+                    public void onScanCompleted(String path, Uri uri) {
+                        if (uri != null) {
+                            System.out.println("Scan completed, Uri: " + uri.toString());
+                        } else {
+                            System.out.println("Scan failed for path: " + path);
+                        }
+                    }
+
+                    @Override
+                    public void onMediaScannerConnected() {
+                        // Not used, but required by interface
+                    }
+                });
+    }
+    public static void updateFileSize(Context context, String filePath) {
+        // 获取 ContentResolver
+        ContentResolver contentResolver = context.getContentResolver();
+
+        // 构造文件的 Uri
+        Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        // 查询文件在 MediaStore 中的 _id
+        String[] projection = {MediaStore.Images.Media._ID};
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        String[] selectionArgs = {filePath};
+
+        Cursor cursor = contentResolver.query(imageUri, projection, selection, selectionArgs, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            // 获取文件的 _id
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+            cursor.close();
+
+            // 构造要更新的 Uri
+            Uri updateUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(id));
+
+            // 获取文件的实际大小
+            File file = new File(filePath);
+            long fileSize = file.length();
+
+            // 准备更新的数据
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.Images.Media.SIZE, fileSize);
+            // 执行更新
+            int rowsUpdated = contentResolver.update(updateUri, contentValues, null, null);
+            if (rowsUpdated > 0) {
+                System.out.println("File size updated successfully!");
+            } else {
+                System.out.println("Failed to update file size.");
+            }
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 
     /**
@@ -391,6 +464,7 @@ public class ImageCompressor {
                 success = false;
             } else {
                 success = true;
+
             }
 
         } else {
@@ -458,10 +532,13 @@ public class ImageCompressor {
                             //更改exif
                             ExifInterface exifInterface1 = new ExifInterface(outPath);
                             String xmp = exifInterface1.getAttribute(ExifInterface.TAG_XMP);
+                            LogUtils.i("xmp before",xmp);
                             xmp = xmp.replace(new File(mp4).length()+"",length+"");
+                            LogUtils.i("xmp after",xmp);
                             exifInterface1.setAttribute(ExifInterface.TAG_XMP,xmp);
                             //写exif
                             exifInterface1.saveAttributes();
+
                             //合并文件:
                             FileIOUtils.writeFileFromIS(new File(outPath),new FileInputStream(mp4Compressed),true);
                         }

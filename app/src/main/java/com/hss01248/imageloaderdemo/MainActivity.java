@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -314,35 +315,46 @@ public class MainActivity extends AppCompatActivity {
 
                     return;
                 }
+                ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<File>() {
+                    @Override
+                    public File doInBackground() throws Throwable {
+                        return ImageCompressor.compress(path,false,false);
+                    }
+
+                    @Override
+                    public void onSuccess(File file) {
+                        LogUtils.i("image compress result: "+file.getAbsolutePath());
+                        Glide.with(MainActivity.this)
+                                .asBitmap()
+                                .load(file)
+                                .into(new SimpleTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                        LogUtils.d("bitmap size:"+resource.getWidth()+"x"+resource.getHeight());
+                                        ivUrl.setImageBitmap(resource);
+                                    }
+                                });
+                        ivUrl.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                List<String> paths = new ArrayList<>();
+                                paths.add(path);
+                                paths.add(file.getAbsolutePath());
+                                ImageMediaCenterUtil.showBigImag(MainActivity.this,paths,0);
+                            }
+                        });
+                    }
+                });
 
                 //TurboCompressor.compressOriginal(path,70);
-                File file = ImageCompressor.compress(path,false,false);
+                //File file = ImageCompressor.compress(path,false,false);
 
                // File endecrypt = XorUtil.endecrypt(798, file, false);
                // LogUtils.i("out put file: "+endecrypt.getAbsolutePath());
                 ///storage/emulated/0/images/enx-cp-20230529_200844.jpg  花费15s.
 
 
-                LogUtils.i("image compress result: "+file.getAbsolutePath());
-                Glide.with(MainActivity.this)
-                        .asBitmap()
-                        .load(file)
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                LogUtils.d("bitmap size:"+resource.getWidth()+"x"+resource.getHeight());
-                                ivUrl.setImageBitmap(resource);
-                            }
-                        });
-                ivUrl.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        List<String> paths = new ArrayList<>();
-                        paths.add(path);
-                        paths.add(file.getAbsolutePath());
-                        ImageMediaCenterUtil.showBigImag(MainActivity.this,paths,0);
-                    }
-                });
+
             }
 
             @Override

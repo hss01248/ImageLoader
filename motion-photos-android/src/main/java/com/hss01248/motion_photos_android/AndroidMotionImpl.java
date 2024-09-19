@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Despciption todo
@@ -99,26 +100,32 @@ public class AndroidMotionImpl implements IMotion {
 
         File dir = new File(Utils.getApp().getExternalCacheDir(),"motion-videos") ;
         File file = new File(fileOrUriPath);
-        File file2 = new File(dir,"out-"+file.getName());
+        final File[] file2 = {new File(dir, "out-" + file.getName())};
+
         CountDownLatch latch = new CountDownLatch(1);
-        VideoCompressUtil.doCompressAsync(fileOrUriPath, dir.getAbsolutePath(), CompressType.TYPE_UPLOAD_720P,
+        VideoCompressUtil.doCompress(false,fileOrUriPath, dir.getAbsolutePath(), CompressType.TYPE_UPLOAD_720P,
                 new ICompressListener() {
                     @Override
                     public void onFinish(String outputFilePath) {
+                        LogUtils.d("compress finished: ",outputFilePath, file2[0].getAbsolutePath());
+                        file2[0] = new File(outputFilePath);
+
                         latch.countDown();
                     }
 
                     @Override
                     public void onError(String message) {
+                        LogUtils.d("compress failed: ",message);
                         latch.countDown();
                     }
                 });
         try {
-            latch.await();
+            boolean await = latch.await(6, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            LogUtils.w(e);
+            LogUtils.w(e,fileOrUriPath);
         }
-        return file2;
+        LogUtils.d("compress return: ", file2[0].getAbsolutePath());
+        return file2[0];
 
     }
 }

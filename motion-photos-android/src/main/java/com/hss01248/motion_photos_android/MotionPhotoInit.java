@@ -7,7 +7,6 @@ import androidx.startup.Initializer;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
-import com.hss01248.base.compressorimpl.FFmpegCompressImpl;
 import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.videocompress.VideoCompressUtil;
 
@@ -30,7 +29,7 @@ public class MotionPhotoInit implements Initializer<String> {
         }
         MotionPhotoUtil.setMotion(new AndroidMotionImpl());
         VideoCompressUtil.init(Utils.getApp(),true,true);
-        VideoCompressUtil.setCompressor(new FFmpegCompressImpl());
+        //VideoCompressUtil.setCompressor(new FFmpegCompressImpl());
         return "MotionPhotoInit";
     }
 

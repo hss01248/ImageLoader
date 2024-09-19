@@ -36,6 +36,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     api "androidx.startup:startup-runtime:1.1.0"
 
-    api "com.github.skyNet2017.PictureSelector:videocompressbase:2.7.0.3"
-     api "com.github.skyNet2017.PictureSelector:videocompress_ffmpeg:2.7.0.3"
+    api "com.github.skyNet2017.PictureSelector:videocompressbase:3.0.0"
+     api "com.github.skyNet2017.PictureSelector:videocompress_ffmpeg:3.0.0"
+    //implementation 'com.github.yellowcath:VideoProcessor:2.4.2'
 }
