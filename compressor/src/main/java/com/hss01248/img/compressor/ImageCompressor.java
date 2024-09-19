@@ -55,6 +55,8 @@ public class ImageCompressor {
     public static boolean compressToWebp = false;
     public static int targetWebpQuality = 75;
 
+    public static boolean doNotCompressMotionPhoto = false;
+
     public static File compress(String filePath, boolean deleteOriginalIfAvifSuccess, boolean noAvifOver2k) {
         //AvifEncoder.init(Utils.getApp());
         File in = new File(filePath);
@@ -168,6 +170,12 @@ public class ImageCompressor {
             try {
                 if(isPanoramaImage(file.getAbsolutePath())){
                     return false;
+                }
+                if(doNotCompressMotionPhoto){
+                    if(MotionPhotoUtil.isMotionImage(file.getAbsolutePath(),false)){
+                        LogUtils.v("MotionImage 全局配置了不压缩", path);
+                        return false;
+                    }
                 }
                 FileInputStream inputStream = new FileInputStream(file);
                 int quality = new Magick().getJPEGImageQuality(inputStream);
