@@ -110,7 +110,25 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
                 showInfo(position, uris);
                 LogUtils.d(position,"onPageSelected");
                 MyLargeImageView imageView = (MyLargeImageView) viewMap.get(position);
-                imageView.loadUri(uris.get(position),true);
+                if(imageView !=null){
+                    imageView.loadUri(uris.get(position),true);
+                }else {
+                    LogUtils.w("imageView ==null",position);
+                }
+                //前后两个播放器停止
+                int pre = position-1;
+                MyLargeImageView imageViewPre = (MyLargeImageView) viewMap.get(pre);
+                if(imageViewPre !=null){
+                    imageViewPre.pausePlayer();
+                }
+
+                int next = position+1;
+                MyLargeImageView imageViewNext= (MyLargeImageView) viewMap.get(next);
+                if(imageViewNext !=null){
+                    imageViewNext.pausePlayer();
+                }
+
+
             }
 
             @Override
@@ -125,6 +143,8 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
         viewPager.setAdapter(pagerAdapter);
         pagerAdapter.notifyDataSetChanged();
 
+        //一般来说是先instantiateItem后onPageSelected,
+        // 但setCurrentItem这个方法会先触发onPageSelected,后触发instantiateItem
         viewPager.setCurrentItem(pair.first);
 
         showInfo(pair.first,uris);

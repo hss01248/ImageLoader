@@ -454,7 +454,17 @@ public class MyLargeImageView extends FrameLayout {
         LargeImageViewer.fadeToGone(jpgView,300);
         //jpgView.setVisibility(GONE);
         File file = new File(motionVideoPath);
-        if(player ==null){
+
+        if(player !=null){
+            if(player.isPlaying()){
+                player.stop();
+            }else if(player.isLoading()){
+                player.stop();
+            }
+            player.release();
+            player = null;
+        }
+
              player = new ExoPlayer.Builder(getContext())
                     .build();
             playerView.setPlayer(player);
@@ -475,39 +485,44 @@ public class MyLargeImageView extends FrameLayout {
                 }
             };
              player.addListener(listener);
-
             player.setPlayWhenReady(true);
             player.setRepeatMode(Player.REPEAT_MODE_OFF);
-        }else{
-            player.removeListener(listener);
-            listener = new Player.Listener() {
-                @Override
-                public void onPlaybackStateChanged(int playbackState) {
-                    Player.Listener.super.onPlaybackStateChanged(playbackState);
-                    if(playbackState == Player.STATE_ENDED ){
-                        loadLocal(uri,false,false);
-                    }
-                }
 
-                @Override
-                public void onPlayerError(PlaybackException error) {
-                    Player.Listener.super.onPlayerError(error);
-                    LogUtils.w(error);
-                    loadLocal(uri,false,false);
-                }
-            };
-            player.addListener(listener);
+
+        //sending message to a Handler on a dead thread
+        try{
+            //IllegalStateException: Handler (android.os.Handler) {674e76a} sending message to a Handler on a dead thread
+            player.setMediaItem(MediaItem.fromUri(Uri.fromFile(file)));
+            player.prepare();
+        }catch (Throwable throwable){
+            LogUtils.w(throwable);
+            player.release();
+            player = null;
+            loadLocal(uri,false,false);
         }
-        player.setMediaItem(MediaItem.fromUri(Uri.fromFile(file)));
-        player.prepare();
+
+    }
+
+    public void pausePlayer(){
+        if(player !=null){
+            if(player.isPlaying() || player.isLoading()){
+                player.stop();
+            }
+            player.release();
+            player = null;
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        LogUtils.w("onDetachedFromWindow-"+this);
         try {
             if(player !=null){
-               // player.release();
+                if(player.isPlaying()){
+                    player.stop();
+                }
+                player.release();
             }
         }catch (Throwable throwable){
             LogUtils.w(throwable);
