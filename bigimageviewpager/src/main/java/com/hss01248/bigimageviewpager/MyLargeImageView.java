@@ -297,6 +297,7 @@ public class MyLargeImageView extends FrameLayout {
 
     private void loadLocal(String uri, boolean isGif,boolean loadMotionVideo) {
         info.localPathOrUri = uri;
+        stateManager.showContent();
         if( MotionPhotoUtil.isMotionImage(uri,false)){
             if(loadMotionVideo){
                 loadMotionVideo(uri);
@@ -328,6 +329,7 @@ public class MyLargeImageView extends FrameLayout {
             stateManager.showContent();
             playerView.setVisibility(GONE);
         } else {
+
             gifView.setVisibility(GONE);
             jpgView.setVisibility(VISIBLE);
             if(MotionPhotoUtil.isMotionImage(uri,false) ){
