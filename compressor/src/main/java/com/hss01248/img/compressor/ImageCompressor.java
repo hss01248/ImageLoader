@@ -516,18 +516,22 @@ public class ImageCompressor {
                     }else {
                         exifMap = new HashMap<>();
                     }
+                    boolean editSoftware = true;
+                    if(editSoftware){
+                        String text = exifMap.get(ExifInterface.TAG_SOFTWARE);
+                        String tail = "jpg-q-"+targetJpgQuality;
+                        if(compressToWebp){
+                            tail = "webp-q-"+targetWebpQuality;
+                        }
+                        if(TextUtils.isEmpty(text)){
+                            text = AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                        }else {
+                            text = text + "/"+AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                        }
+                        exifMap.put(ExifInterface.TAG_SOFTWARE,text);
+                    }
 
-                    String text = exifMap.get(ExifInterface.TAG_SOFTWARE);
-                    String tail = "jpg-q-"+targetJpgQuality;
-                    if(compressToWebp){
-                        tail = "webp-q-"+targetWebpQuality;
-                    }
-                    if(TextUtils.isEmpty(text)){
-                        text = AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
-                    }else {
-                        text = text + "/"+AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
-                    }
-                    exifMap.put(ExifInterface.TAG_SOFTWARE,text);
+
                     ExifUtil.writeExif(exifMap, outPath);
 
                     //motion photo处理: 视频压缩,更改xml写exif-> 合并文件
@@ -545,6 +549,7 @@ public class ImageCompressor {
 
                         if(mp4Compressed !=null && mp4Compressed.exists() && mp4Compressed.length() >0){
                             long length = mp4Compressed.length();
+                            //保存为谷歌格式/小米格式/原格式
                             if(length != originalMp4File.length()){
                                 //更改exif
                                 ExifInterface exifInterface1 = new ExifInterface(outPath);
@@ -556,7 +561,6 @@ public class ImageCompressor {
                                 //写exif
                                 exifInterface1.saveAttributes();
                             }
-
 
                             //合并文件:
                             FileIOUtils.writeFileFromIS(new File(outPath),new FileInputStream(mp4Compressed),true);

@@ -39,4 +39,7 @@ dependencies {
     api "com.github.skyNet2017.PictureSelector:videocompressbase:3.0.0"
     // api "com.github.skyNet2017.PictureSelector:videocompress_ffmpeg:3.0.0"
     //implementation 'com.github.yellowcath:VideoProcessor:2.4.2'
+
+    // https://mvnrepository.com/artifact/androidx.media3/media3-extractor
+    //implementation 'androidx.media3:media3-extractor:1.4.1'
 }
