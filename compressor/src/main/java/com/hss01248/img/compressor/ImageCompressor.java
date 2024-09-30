@@ -557,7 +557,7 @@ public class ImageCompressor {
                                 LogUtils.i("xmp before",xmp);
                                 xmp = xmp.replace(originalMp4File.length()+"",length+"");
                                 LogUtils.i("xmp after",xmp);
-                                //exifInterface1.setAttribute(ExifInterface.TAG_XMP,MotionPhotoUtil.xmpOfGoogle.replace("xxxx",length+""));
+                                exifInterface1.setAttribute(ExifInterface.TAG_XMP,xmp);
                                 //写exif
                                 exifInterface1.saveAttributes();
                             }
