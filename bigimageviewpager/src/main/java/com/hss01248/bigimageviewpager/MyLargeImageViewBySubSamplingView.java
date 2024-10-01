@@ -289,6 +289,8 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
     private void loadLocal(String uri, boolean isGif) {
         info.localPathOrUri = uri;
         largeImgBinding.ivGo360.setVisibility(GONE);
+       // stateBinding.stateLayout.showContent();
+        stateManager.showContent();
         if (uri.contains(".gif") || isGif) {
             gifView.setVisibility(VISIBLE);
             jpgView.setVisibility(GONE);

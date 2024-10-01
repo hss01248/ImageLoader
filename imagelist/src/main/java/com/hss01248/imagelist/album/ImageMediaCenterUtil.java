@@ -40,7 +40,19 @@ import io.reactivex.functions.Consumer;
  */
 public class ImageMediaCenterUtil {
 
-    public static void getAlbums(final Context context, final NormalCallback<List<Album>> callback) {
+
+    public static void showAlbums(){
+        ContainerActivity2.start(new Consumer<Pair<ContainerActivity2, ContainerViewHolderWithTitleBar>>() {
+            @Override
+            public void accept(Pair<ContainerActivity2, ContainerViewHolderWithTitleBar> pair) throws Exception {
+                ImageListView view1 =  new ImageListView(pair.first);
+                pair.second.getBinding().rlContainer.addView(view1);
+                view1.showAllAlbums();
+            }
+        });
+    }
+
+     static void getAlbums(final Context context, final NormalCallback<List<Album>> callback) {
 
         final Handler mainHandler = new Handler(Looper.getMainLooper());
         Runnable runnable = new Runnable() {

@@ -8,12 +8,12 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.ReflectUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.hss01248.apkinstaller.ApkInstallUtil;
 import com.hss01248.apkinstaller.InstallCallback;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
-import com.hss01248.media.localvideoplayer.VideoPlayUtil;
 import com.hss01248.openuri2.OpenUri2;
 
 import java.io.File;
@@ -81,7 +81,15 @@ public class FileOpenUtil {
         if(("image".equals(mimeType))){
             LargeImageViewer.showInBatch(paths,position);
         }else if("video".equals(mimeType)){
-            VideoPlayUtil.startPreviewInList(ActivityUtils.getTopActivity(),paths,position);
+            try {
+                ReflectUtils.reflect("com.hss01248.media.localvideoplayer.VideoPlayUtil")
+                        .method("startPreviewInList",ActivityUtils.getTopActivity(),paths,position)
+                        .get();
+            }catch (Throwable throwable){
+                ToastUtils.showShort(throwable.getMessage());
+            }
+
+            //VideoPlayUtil.startPreviewInList(ActivityUtils.getTopActivity(),paths,position);
         }else{
             //调用系统intent来打开
             oepnFileByIntent(filePath);
