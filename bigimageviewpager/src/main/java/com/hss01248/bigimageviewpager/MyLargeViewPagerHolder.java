@@ -62,11 +62,11 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
                 LogUtils.d(position,"instantiateItem",cacheList.size(),viewMap.size());
-                MyLargeImageView imageView = null;
+                MyLargeImageViewBySubSamplingView imageView = null;
                 if(cacheList.isEmpty()){
-                    imageView = new MyLargeImageView(context);
+                    imageView = new MyLargeImageViewBySubSamplingView(context);
                 }else {
-                    imageView = (MyLargeImageView) cacheList.remove(0);
+                    imageView = (MyLargeImageViewBySubSamplingView) cacheList.remove(0);
                 }
                 String url = uris.get(position);
                 url = LargeImageViewer.getBigImageUrl(url);
@@ -109,7 +109,7 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
             public void onPageSelected(int position) {
                 showInfo(position, uris);
                 LogUtils.d(position,"onPageSelected");
-                MyLargeImageView imageView = (MyLargeImageView) viewMap.get(position);
+                MyLargeImageViewBySubSamplingView imageView = (MyLargeImageViewBySubSamplingView) viewMap.get(position);
                 if(imageView !=null){
                     imageView.loadUri(uris.get(position),true);
                 }else {
@@ -117,13 +117,13 @@ public class MyLargeViewPagerHolder extends BaseViewHolder<RlPagerImagsBinding, 
                 }
                 //前后两个播放器停止
                 int pre = position-1;
-                MyLargeImageView imageViewPre = (MyLargeImageView) viewMap.get(pre);
+                MyLargeImageViewBySubSamplingView imageViewPre = (MyLargeImageViewBySubSamplingView) viewMap.get(pre);
                 if(imageViewPre !=null){
                     imageViewPre.pausePlayer();
                 }
 
                 int next = position+1;
-                MyLargeImageView imageViewNext= (MyLargeImageView) viewMap.get(next);
+                MyLargeImageViewBySubSamplingView imageViewNext= (MyLargeImageViewBySubSamplingView) viewMap.get(next);
                 if(imageViewNext !=null){
                     imageViewNext.pausePlayer();
                 }

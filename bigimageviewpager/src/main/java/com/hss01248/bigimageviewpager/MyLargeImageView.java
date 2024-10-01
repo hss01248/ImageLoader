@@ -53,6 +53,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+@Deprecated
 public class MyLargeImageView extends FrameLayout {
     MyGifPhotoView gifView;
     MyLargeJpgView jpgView;

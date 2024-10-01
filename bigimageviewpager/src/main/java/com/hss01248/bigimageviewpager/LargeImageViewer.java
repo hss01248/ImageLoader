@@ -103,7 +103,7 @@ public class LargeImageViewer {
             public void accept(Pair<ContainerActivity2, ContainerViewHolderWithTitleBar> pair) throws Exception {
 
                 MyLargeImageViewBySubSamplingView largeImageView = new MyLargeImageViewBySubSamplingView(pair.first);
-                largeImageView.loadUri(path);
+                largeImageView.loadUri(path,true);
                 pair.second.getBinding().llRoot.setBackgroundColor(Color.BLACK);
                 pair.second.getBinding().rlContainer.addView(largeImageView);
 
@@ -155,7 +155,7 @@ public class LargeImageViewer {
         LogUtils.d("path to load: "+ path);
         MyLargeImageViewBySubSamplingView largeImageView = new MyLargeImageViewBySubSamplingView(ActivityUtils.getTopActivity());
         FullScreenDialogUtil.showFullScreen(largeImageView);
-        largeImageView.loadUri(path);
+        largeImageView.loadUri(path,true);
     }
 
 
@@ -201,15 +201,15 @@ public class LargeImageViewer {
             @NonNull
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
-                MyLargeImageView imageView = null;
+                MyLargeImageViewBySubSamplingView imageView = null;
                 if(cacheList.isEmpty()){
-                    imageView = new MyLargeImageView(context);
+                    imageView = new MyLargeImageViewBySubSamplingView(context);
                 }else {
-                    imageView = (MyLargeImageView) cacheList.remove(0);
+                    imageView = (MyLargeImageViewBySubSamplingView) cacheList.remove(0);
                 }
                 String url = uris.get(position);
                 url = getBigImageUrl(url);
-                imageView.loadUri(url);
+                imageView.loadUri(url,true);
                 container.addView(imageView);
                 return imageView;
             }

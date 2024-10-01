@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.shizhefei.view.largeimage.LargeImageView;
 
+@Deprecated
 public class MyLargeJpgView extends LargeImageView {
     PaintFlagsDrawFilter pfd;
 

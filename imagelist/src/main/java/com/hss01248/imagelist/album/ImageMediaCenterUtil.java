@@ -16,6 +16,8 @@ import androidx.core.util.Pair;
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.hss.utils.enhance.viewholder.ContainerActivity2;
 import com.hss.utils.enhance.viewholder.mvvm.ContainerViewHolderWithTitleBar;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
@@ -47,6 +49,7 @@ public class ImageMediaCenterUtil {
             public void accept(Pair<ContainerActivity2, ContainerViewHolderWithTitleBar> pair) throws Exception {
                 ImageListView view1 =  new ImageListView(pair.first);
                 pair.second.getBinding().rlContainer.addView(view1);
+                pair.second.getBinding().realTitleBar.setVisibility(ScreenUtils.isLandscape() ? View.GONE:View.VISIBLE);
                 view1.showAllAlbums();
             }
         });

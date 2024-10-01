@@ -25,9 +25,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -80,7 +83,21 @@ public class ImageListView extends FrameLayout {
     TextView tvRIght;
 
     public static int dividerSize = SizeUtils.dp2px(1);
-    public static final int COUNT = 3;
+    public static final int count(){
+        if(ScreenUtils.isLandscape()){
+            if(DeviceUtils.isTablet()){
+                return 9;
+            }else {
+                return 6;
+            }
+        }else {
+            if(DeviceUtils.isTablet()){
+                return 5;
+            }else {
+                return 3;
+            }
+        }
+    }
 
 
     public ImageListView(Context context) {
@@ -371,7 +388,7 @@ public class ImageListView extends FrameLayout {
      */
     public void showUrls(String pageTitle, final List<String> urls, @Nullable String downloadDir, boolean hideDir, boolean downloadImmediately) {
         //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), COUNT));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), count()));
         ImgItemAdapter adapter = new ImgItemAdapter(R.layout.imglist_item_iv, urls);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -445,7 +462,7 @@ public class ImageListView extends FrameLayout {
         }
 
         //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), COUNT));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), count()));
         ImgItemAdapter adapter = new ImgItemAdapter(R.layout.imglist_item_iv, urls);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -537,7 +554,7 @@ public class ImageListView extends FrameLayout {
             return;
         }
         //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), COUNT));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), count()));
 
         final List<Image> images = new ArrayList<>();
         for (File file : files) {
@@ -657,7 +674,7 @@ public class ImageListView extends FrameLayout {
     }
 
     private void initRecyclerviewByLocalImages(List<Image> cachedImages) {
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), COUNT));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), count()));
         //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
         final AlbumImgAdapter imgItemAdapter = new AlbumImgAdapter(R.layout.imglist_item_iv, cachedImages);
         adapter = imgItemAdapter;
@@ -720,7 +737,7 @@ public class ImageListView extends FrameLayout {
                     return;
                 }
                 //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), COUNT));
+                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), count()));
                 AlbumAdapter imgItemAdapter = new AlbumAdapter(R.layout.imglist_item_iv, albums);
                 recyclerView.setAdapter(imgItemAdapter);
                 setDivider(recyclerView);

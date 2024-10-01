@@ -18,6 +18,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -31,6 +36,7 @@ import com.hss01248.bigimageviewpager.pano.MyPanoActivity;
 import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.viewstate.StatefulLayout;
 import com.hss01248.viewstate.ViewStateConfig;
 import com.tencent.qcloud.image.avif.subsampling.AvifSubsamplingImageDecoder;
@@ -88,7 +94,7 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         }
 
     }
-
+    ImageView ivPlayVideo;
     private void init(Context context) {
         stateBinding = StateItemLargeImgSubsamplingBinding.inflate(LayoutInflater.from(context),this,true);
         largeImgBinding = stateBinding.itemLargeImg;
@@ -107,6 +113,8 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         tvScale = largeImgBinding.tvScale;
         jpgView = largeImgBinding.ivLarge;
         gifView = largeImgBinding.gifLarge;
+        ivPlayVideo = stateBinding.itemLargeImg.ivPlayVideo;
+        playerView = stateBinding.itemLargeImg.playView;
         jpgView.setDebug(AppUtils.isAppDebug());
         jpgView.setMaxScale(12);
 
@@ -183,7 +191,7 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
     }
 
     private void reload() {
-        loadUri(info.uri);
+        loadUri(info.uri,true);
 
     }
 
@@ -210,7 +218,7 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         }
     }
 
-    private void loadUrl(String url) {
+    private void loadUrl(String url, boolean loadMotionVideo) {
 
         stateManager.showLoading();
 
@@ -245,35 +253,35 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
 
     }
 
-    private void loadFile(String filePath) {
-        loadFile(filePath, false);
+    private void loadFile(String filePath, boolean loadMotionVideo) {
+        loadFile(filePath, false,loadMotionVideo);
     }
 
-    private void loadFile(String filePath, boolean isGif) {
-        loadLocal(filePath, isGif);
+    private void loadFile(String filePath, boolean isGif, boolean loadMotionVideo) {
+        loadLocal(filePath, isGif,loadMotionVideo);
     }
 
     private void toastMsg(String message) {
         Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    public void loadUri(String uri) {
+    public void loadUri(String uri, boolean loadMotionVideo) {
         info.uri = uri;
         //if(uri.startsWith("file://") || uri.startsWith("/storage/"))
         if (uri.startsWith("http")) {
-            loadUrl(uri);
+            loadUrl(uri,loadMotionVideo);
             return;
         }
         if (uri.startsWith("/storage/")) {
-            loadFile(uri, false);
+            loadFile(uri, false,loadMotionVideo);
             return;
         }
         if (uri.startsWith("file://")) {
-            loadFile(uri.substring("file://".length()), false);
+            loadFile(uri.substring("file://".length()), false,loadMotionVideo);
             return;
         }
         if (uri.startsWith("content://")) {
-            loadLocal(uri, false);
+            loadLocal(uri, false,loadMotionVideo);
             return;
         }
     }
@@ -286,11 +294,30 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         return info.getInfo();
     }
 
-    private void loadLocal(String uri, boolean isGif) {
+    PlayerView playerView;
+
+    private void loadLocal(String uri, boolean isGif, boolean loadMotionVideo) {
         info.localPathOrUri = uri;
         largeImgBinding.ivGo360.setVisibility(GONE);
        // stateBinding.stateLayout.showContent();
         stateManager.showContent();
+        if( MotionPhotoUtil.isMotionImage(uri,false)){
+            if(loadMotionVideo){
+                loadMotionVideo(uri);
+                return;
+            }
+            ivPlayVideo.setVisibility(VISIBLE);
+            ivPlayVideo.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadLocal(info.localPathOrUri,isGif,true);
+                }
+            });
+
+        }else {
+            ivPlayVideo.setVisibility(GONE);
+        }
+
         if (uri.contains(".gif") || isGif) {
             gifView.setVisibility(VISIBLE);
             jpgView.setVisibility(GONE);
@@ -303,6 +330,21 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
             }
             stateManager.showContent();
         } else {
+            if(MotionPhotoUtil.isMotionImage(uri,false) ){
+                if(playerView.getVisibility() != View.GONE){
+                    LargeImageViewer.fadeToGone(playerView,500);
+                }
+                ivHelper.setVisibility(VISIBLE);
+                ivHelper.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        loadLocal(info.localPathOrUri, isGif, true);
+                    }
+                });
+
+            }else {
+                playerView.setVisibility(View.GONE);
+            }
             gifView.setVisibility(GONE);
             jpgView.setVisibility(VISIBLE);
             //兼容avif格式
@@ -335,6 +377,96 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         }
     }
 
+
+    ExoPlayer player;
+    Player.Listener listener;
+    private void loadMotionVideo(String uri) {
+        String motionVideoPath = MotionPhotoUtil.getMotionVideoPath(uri);
+        if(motionVideoPath ==null || motionVideoPath.equals("")){
+            return;
+        }
+        ivHelper.setVisibility(GONE);
+        playerView.setVisibility(VISIBLE);
+        gifView.setVisibility(GONE);
+        LargeImageViewer.fadeToGone(jpgView,300);
+        //jpgView.setVisibility(GONE);
+        File file = new File(motionVideoPath);
+
+        if(player !=null){
+            if(player.isPlaying()){
+                player.stop();
+            }else if(player.isLoading()){
+                player.stop();
+            }
+            player.release();
+            player = null;
+        }
+
+        player = new ExoPlayer.Builder(getContext())
+                .build();
+        playerView.setPlayer(player);
+        listener = new Player.Listener() {
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                Player.Listener.super.onPlaybackStateChanged(playbackState);
+                if(playbackState == Player.STATE_ENDED ){
+                    loadLocal(uri,false,false);
+                }
+            }
+
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                Player.Listener.super.onPlayerError(error);
+                LogUtils.w(error);
+                loadLocal(uri,false,false);
+            }
+        };
+        player.addListener(listener);
+        player.setPlayWhenReady(true);
+        player.setRepeatMode(Player.REPEAT_MODE_OFF);
+
+
+        //sending message to a Handler on a dead thread
+        try{
+            //IllegalStateException: Handler (android.os.Handler) {674e76a} sending message to a Handler on a dead thread
+            player.setMediaItem(MediaItem.fromUri(Uri.fromFile(file)));
+            player.prepare();
+        }catch (Throwable throwable){
+            LogUtils.w(throwable);
+            player.release();
+            player = null;
+            loadLocal(uri,false,false);
+        }
+
+    }
+
+    public void pausePlayer(){
+        if(player !=null){
+            if(player.isPlaying() || player.isLoading()){
+                player.stop();
+            }
+            player.release();
+            player = null;
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LogUtils.w("onDetachedFromWindow-"+this);
+        try {
+            if(player !=null){
+                if(player.isPlaying()){
+                    player.stop();
+                }
+                player.release();
+            }
+        }catch (Throwable throwable){
+            LogUtils.w(throwable);
+        }
+
+    }
+
     public static boolean isPanoramaImage(String path){
         Map<String, String> map = ExifUtil.readExif(path);
         String xml = map.get("Xmp");
@@ -343,10 +475,10 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
                 LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
                 return true;
             }
-            if(xml.contains("MotionPhoto")){
+            /*if(xml.contains("MotionPhoto")){
                 LogUtils.i("根据exif特征识别出为MotionPhoto,不进行压缩");
                 return true;
-            }
+            }*/
             //MotionPhoto
         }
         return false;
