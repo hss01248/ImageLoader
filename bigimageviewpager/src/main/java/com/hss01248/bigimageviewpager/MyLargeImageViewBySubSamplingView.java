@@ -36,6 +36,7 @@ import com.hss01248.bigimageviewpager.pano.MyPanoActivity;
 import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.media.metadata.FileTypeUtil;
 import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.viewstate.StatefulLayout;
 import com.hss01248.viewstate.ViewStateConfig;
@@ -218,6 +219,9 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         }
     }
 
+    public void loadUri(String uri) {
+        loadUri(uri,true);
+    }
     private void loadUrl(String url, boolean loadMotionVideo) {
 
         stateManager.showLoading();
@@ -226,7 +230,7 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         UrlLoader.download(getContext(), ivHelper, url, new UrlLoader.LoadListener() {
             @Override
             public void onLoad(String path) {
-                loadFile(path, url.contains(".gif"));
+                loadFile(path, loadMotionVideo);
                 //statefulFrameLayout.showError("fail download");
             }
 
@@ -254,7 +258,9 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
     }
 
     private void loadFile(String filePath, boolean loadMotionVideo) {
-        loadFile(filePath, false,loadMotionVideo);
+        //文件头判断:
+       String type =  FileTypeUtil.getType(new File(filePath));
+        loadFile(filePath, type !=null && type.contains("gif"),loadMotionVideo);
     }
 
     private void loadFile(String filePath, boolean isGif, boolean loadMotionVideo) {
@@ -265,6 +271,8 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
         Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
+
+
     public void loadUri(String uri, boolean loadMotionVideo) {
         info.uri = uri;
         //if(uri.startsWith("file://") || uri.startsWith("/storage/"))
@@ -273,11 +281,11 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
             return;
         }
         if (uri.startsWith("/storage/")) {
-            loadFile(uri, false,loadMotionVideo);
+            loadFile(uri, loadMotionVideo);
             return;
         }
         if (uri.startsWith("file://")) {
-            loadFile(uri.substring("file://".length()), false,loadMotionVideo);
+            loadFile(uri.substring("file://".length()), loadMotionVideo);
             return;
         }
         if (uri.startsWith("content://")) {
@@ -318,9 +326,9 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
             ivPlayVideo.setVisibility(GONE);
         }
 
-        if (uri.contains(".gif") || isGif) {
+        if (info.uri.contains(".gif") || isGif) {
+            ivPlayVideo.setVisibility(GONE);
             gifView.setVisibility(VISIBLE);
-            jpgView.setVisibility(GONE);
 
             if (uri.startsWith("content://") || uri.startsWith("file://")) {
                 gifView.setImageURI(Uri.parse(uri));

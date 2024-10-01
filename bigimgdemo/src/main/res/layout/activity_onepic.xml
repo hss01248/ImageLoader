@@ -18,5 +18,10 @@
         android:text="jpg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <Button
+        android:onClick="jpgPortrait"
+        android:text="jpgPortrait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
