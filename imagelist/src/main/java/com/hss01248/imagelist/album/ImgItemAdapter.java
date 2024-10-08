@@ -7,7 +7,6 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.exifinterface.media.ExifInterface;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -21,7 +20,6 @@ import com.hss01248.image.interfaces.ImageListener;
 import com.hss01248.imagelist.R;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -49,7 +47,7 @@ public class ImgItemAdapter extends BaseQuickAdapter<String, BaseViewHolder> imp
         ImageView imageView = helper.getView(R.id.item_iv);
         imageView.setAdjustViewBounds(false);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-        params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.COUNT;
+        params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.count();
         imageView.setLayoutParams(params);
         helper.setText(R.id.tv_info, "");
         ImageLoader.with(helper.itemView.getContext())

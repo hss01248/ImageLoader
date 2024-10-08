@@ -1,6 +1,5 @@
 package com.hss01248.imageloaderdemo;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -26,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -217,21 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 pid=31500, uid=10576 requires android.permission.READ_EXTERNAL_STORAGE, or grantUriPermission()*/
 
 
-                PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE).callback(new PermissionUtils.SingleCallback() {
-                    @Override
-                    public void callback(boolean isAllGranted, @NonNull List<String> granted, @NonNull List<String> deniedForever, @NonNull List<String> denied) {
-
-                        ImageMediaCenterUtil.showViewAsActivity(MainActivity.this, new IViewInit() {
-                            @Override
-                            public View init(Activity activity) {
-                                ImageListView view1 = new ImageListView(activity);
-                                view1.showAllAlbums();
-                                return view1;
-                            }
-                        });
-
-                    }
-                }).request();
+                ImageMediaCenterUtil.showAlbums();
 
 
             }

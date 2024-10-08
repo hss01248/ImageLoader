@@ -19,80 +19,77 @@ public class MotionPhotoUtil {
     public static void main(String[] args) {
         String xiaomi = "/Users/hss/Documents/MVIMG_20240918_093751.jpg";
         String google = "/Users/hss/Documents/PXL_20240918_013738178.MP.jpg";
-        boolean isMotionImage = isMotionImage(xiaomi,true);
-        boolean is2 = isMotionImage(google,true);
+        boolean isMotionImage = isMotionImage(xiaomi, true);
+        boolean is2 = isMotionImage(google, true);
     }
 
 
-
-    public static boolean isMotionImage(String fileOrUriPath,boolean extractVideo){
-        if(fileOrUriPath ==null || fileOrUriPath.equals("")){
+    public static boolean isMotionImage(String fileOrUriPath, boolean extractVideo) {
+        if (fileOrUriPath == null || fileOrUriPath.equals("")) {
             return false;
         }
         String videoPath = motion.mp4CacheFile(fileOrUriPath);
         File video = new File(videoPath);
-        if(video.exists() && video.length()> 500){
-            System.out.println("video 文件已经存在: "+videoPath);
+        if (video.exists() && video.length() > 500) {
+            System.out.println("video 文件已经存在: " + videoPath);
             return true;
         }
         try {
             long wholeFileLength = motion.length(fileOrUriPath);
             String xmp = motion.readXmp(fileOrUriPath);
-            if(xmp ==null || xmp.equals("")){
+            if (xmp == null || xmp.equals("")) {
                 return false;
             }
-            String androidXmp = "xmlns:GCamera=\"http://ns.google.com/photos/1.0/camera/\"";
+            String androidXmp = "xmlns:GCamera=";
             String iosXmp = "iosxxx";
-            if(!xmp.contains(androidXmp) && !xmp.contains(iosXmp)){
+            if (!xmp.contains(androidXmp) && !xmp.contains(iosXmp)) {
                 return false;
             }
-            if(xmp.contains(androidXmp)){
-                String xiaomiXmp = "xmlns:MiCamera=\"http://ns.xiaomi.com/photos/1.0/camera/\"";
-                if(xmp.contains(xiaomiXmp)){
-                    String regex = "GCamera:MicroVideoOffset=\"(\\d+)\"";
+            if (xmp.contains(androidXmp)) {
+                    String regex0 = "GCamera:MicroVideoOffset=\"(\\d+)\"";
                     // 创建 Pattern 对象
-                    Pattern pattern = Pattern.compile(regex);
+                    Pattern pattern0 = Pattern.compile(regex0);
                     // 创建 matcher 对象
-                    Matcher matcher = pattern.matcher(xmp);
+                    Matcher matcher0 = pattern0.matcher(xmp);
                     // 查找并提取数字
-                    if (matcher.find()) {
-                        String number = matcher.group(1);
+                    if (matcher0.find()) {
+                        String number = matcher0.group(1);
                         int length = Integer.parseInt(number);
                         System.out.println("提取到的数字是: " + number);
-                        if(wholeFileLength <= length){
+                        if (wholeFileLength <= length) {
                             System.out.println("文件大小小于视频文件大小, xmp显示是动态图,但实际不是 " + fileOrUriPath);
                             return false;
                         }
                         //提取视频文件
-                        if(extractVideo){
-                            extractMp4FromMotionPhoto(fileOrUriPath,motion.mp4CacheFile(fileOrUriPath),wholeFileLength -length,length);
+                        if (extractVideo) {
+                            extractMp4FromMotionPhoto(fileOrUriPath, motion.mp4CacheFile(fileOrUriPath), wholeFileLength - length, length);
                         }
 
                         return true;
                     } else {
-                        System.out.println("没有找到匹配的模式。");
-                    }
-                }else {
-                    String regex = "<Container:Item\\s+Item:Mime=\"video/mp4\"\\s+Item:Semantic=\"MotionPhoto\"\\s+Item:Length=\"(\\d+)\"\\s+Item:Padding=\"(\\d+)\"\\s*/>";
+                        String regex = "<Container:Item\\s+Item:Mime=\"video/mp4\"\\s+Item:Semantic=\"MotionPhoto\"\\s+Item:Length=\"(\\d+)\"\\s+Item:Padding=\"(\\d+)\"\\s*/>";
+                        Pattern pattern = Pattern.compile(regex);
+                        Matcher matcher = pattern.matcher(xmp);
+                        if (matcher.find()) {
+                            String length = matcher.group(1);
+                            String padding = matcher.group(2);
+                            System.out.println("length: " + length + ", padding:" + padding);
+                            int len = Integer.parseInt(length);
+                            int pad = Integer.parseInt(padding);
+                            if (wholeFileLength <= len + pad) {
+                                System.out.println("文件大小小于视频文件大小2, xmp显示是动态图,但实际不是 " + fileOrUriPath);
+                                return false;
+                            }
+                            //提取视频文件
+                            if (extractVideo) {
+                                extractMp4FromMotionPhoto(fileOrUriPath, motion.mp4CacheFile(fileOrUriPath), wholeFileLength - (len + pad), len);
+                            }
+                            return true;
 
-                    Pattern pattern = Pattern.compile(regex);
-                    Matcher matcher = pattern.matcher(xmp);
-                    if (matcher.find()) {
-                        String length = matcher.group(1);
-                        String padding = matcher.group(2);
-                        System.out.println("length: "+length+", padding:"+padding);
-                        int len = Integer.parseInt(length);
-                        int pad = Integer.parseInt(padding);
-                        if(wholeFileLength <= len + pad){
-                            System.out.println("文件大小小于视频文件大小2, xmp显示是动态图,但实际不是 " + fileOrUriPath);
-                            return false;
+                        } else {
+                           // System.out.println("没有找到匹配的模式。");
                         }
-                        //提取视频文件
-                        if(extractVideo){
-                            extractMp4FromMotionPhoto(fileOrUriPath,motion.mp4CacheFile(fileOrUriPath),wholeFileLength -(len+pad),len);
-                        }
-                        return true;
-                    }
+
                 }
             }
 
@@ -104,26 +101,25 @@ public class MotionPhotoUtil {
     }
 
 
-    public static String getMotionVideoPath(String filePath){
-        boolean isMotionImage = isMotionImage(filePath,true);
-        if(!isMotionImage){
+    public static String getMotionVideoPath(String filePath) {
+        boolean isMotionImage = isMotionImage(filePath, true);
+        if (!isMotionImage) {
             return null;
         }
-        return  motion.mp4CacheFile(filePath);
+        return motion.mp4CacheFile(filePath);
     }
 
 
-
-     static void extractMp4FromMotionPhoto(String inputFile, String outputFile, long startBytes,long length) throws IOException {
+    static void extractMp4FromMotionPhoto(String inputFile, String outputFile, long startBytes, long length) throws IOException {
         RandomAccessFile raf = null;
         RandomAccessFile rafOutput = null;
         try {
             // 打开输出 MP4 文件
             File out = new File(outputFile);
-            if(!out.exists()){
+            if (!out.exists()) {
                 out.createNewFile();
-            }else {
-                if(length == out.length()){
+            } else {
+                if (length == out.length()) {
                     return;
                 }
                 out.delete();
