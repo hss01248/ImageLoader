@@ -22,10 +22,10 @@ public class MotionPhotoUtil {
     static IMotion motion = new JavaMotion();
 
     public static void main(String[] args) {
-        String xiaomi = "/Users/hss/Documents/MVIMG_20240918_093751.jpg";
+        String xiaomi = "/Users/hss/Documents/live_photos/IMG_3919.heic";
         String google = "/Users/hss/Documents/PXL_20240918_013738178.MP.jpg";
         boolean isMotionImage = isMotionImage(xiaomi, true);
-        boolean is2 = isMotionImage(google, true);
+       // boolean is2 = isMotionImage(google, true);
 
         Map<String, Object> metadata = metadata(xiaomi);
         Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
