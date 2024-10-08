@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -36,6 +37,7 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
+import com.hss.utils.enhance.api.MyCommonCallback;
 import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
@@ -53,6 +55,7 @@ import com.hss01248.img.compressor.ImageCompressor;
 import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.media.pick.MediaPickUtil;
 import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.viewholder_media.FileTreeViewHolder;
@@ -663,28 +666,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void motionPhoto(View view) {
-        ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
+
+        MediaPickUtil.pickImage(new MyCommonCallback<Uri>() {
             @Override
-            public void onSuccess(String path) {
-                ToastUtils.showShort(path);
-                LargeImageViewer.showOne(path);
-                Map<String, Object> metadata = MotionPhotoUtil.metadata(path);
-               // Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            public void onSuccess(Uri uri) {
+                Map<String, Object> metadata = MotionPhotoUtil.metadata(uri.toString());
+                // Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 //String json = gson.toJson(metadata);
                 FullScreenDialogUtil.showMap("meta",metadata);
-
-            }
-
-            @Override
-            public void onFail(String path, String msg) {
-
-            }
-
-            @Override
-            public void onCancel() {
-
             }
         });
+
     }
 
 
