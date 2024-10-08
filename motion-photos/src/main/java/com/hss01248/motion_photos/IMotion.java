@@ -1,5 +1,7 @@
 package com.hss01248.motion_photos;
 
+import java.util.Map;
+
 /**
  * @Despciption todo
  * @Author hss
@@ -13,4 +15,8 @@ public interface IMotion {
     String readXmp(String fileOrUriPath) throws Throwable;
 
     String mp4CacheFile(String fileOrUriPath);
+
+    Map<String,Object> metaOfImage(String fileOrUriPath);
+
+    Map<String,Object> metaOfVideo(String fileOrUriPath);
 }

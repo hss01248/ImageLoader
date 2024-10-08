@@ -40,6 +40,7 @@ import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.fileoperation.FileDeleteUtil;
+import com.hss01248.fullscreendialog.FullScreenDialogUtil;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.glide.aop.file.DirOperationUtil;
 import com.hss01248.image.ImageLoader;
@@ -52,6 +53,7 @@ import com.hss01248.img.compressor.ImageCompressor;
 import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.viewholder_media.FileTreeViewHolder;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
@@ -658,6 +660,31 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewDir(View view) {
         FileTreeViewHolder.viewDirInActivity(Environment.getExternalStorageDirectory().getAbsolutePath());
+    }
+
+    public void motionPhoto(View view) {
+        ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
+            @Override
+            public void onSuccess(String path) {
+                ToastUtils.showShort(path);
+                LargeImageViewer.showOne(path);
+                Map<String, Object> metadata = MotionPhotoUtil.metadata(path);
+               // Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                //String json = gson.toJson(metadata);
+                FullScreenDialogUtil.showMap("meta",metadata);
+
+            }
+
+            @Override
+            public void onFail(String path, String msg) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
     }
 
 
