@@ -316,12 +316,13 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
 
         }else {
             ivPlayVideo.setVisibility(GONE);
+
         }
 
         if (uri.contains(".gif") || isGif) {
             gifView.setVisibility(VISIBLE);
             jpgView.setVisibility(GONE);
-
+            playerView.setVisibility(GONE);
             if (uri.startsWith("content://") || uri.startsWith("file://")) {
                 gifView.setImageURI(Uri.parse(uri));
             } else {
