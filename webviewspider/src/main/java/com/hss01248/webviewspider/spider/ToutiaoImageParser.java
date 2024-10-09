@@ -30,7 +30,7 @@ public class ToutiaoImageParser implements IHtmlParser{
             Elements elements = element0.select("div.cs-image-img.cs-image-fill");
             //选择多个class,则不要有空格
             if(elements == null || elements.isEmpty()){
-                LogUtils.w("toutiao image empty!!");
+                LogUtils.i("toutiao image empty!!");
             }else {
                 for (Element element : elements) {
                    String url =  element.attr("data-backup-src");

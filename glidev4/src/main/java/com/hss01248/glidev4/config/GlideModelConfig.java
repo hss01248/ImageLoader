@@ -47,7 +47,7 @@ public class GlideModelConfig extends LibraryGlideModule {
         /**
          * 不带拦截功能，只是单纯替换通讯组件
          */
-        LogUtils.w("in lib: registerComponents");
+        LogUtils.i("in lib: registerComponents");
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
                 //.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         //if(GlobalConfig.debug){

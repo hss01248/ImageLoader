@@ -50,7 +50,7 @@ public class DownloadViewHolder extends BaseViewHolder {
                     public void onDestroy(@NonNull LifecycleOwner owner) {
                         //DefaultLifecycleObserver.super.onDestroy(owner);
                         EventBus.getDefault().unregister(DownloadViewHolder.this);
-                        LogUtils.w("EventBus.getDefault().unregister : "+DownloadViewHolder.this);
+                        LogUtils.i("EventBus.getDefault().unregister : "+DownloadViewHolder.this);
                     }
                 });
             }else {

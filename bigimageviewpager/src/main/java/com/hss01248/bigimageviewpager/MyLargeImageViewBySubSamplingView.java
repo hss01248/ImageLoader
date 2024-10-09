@@ -453,7 +453,7 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        LogUtils.w("onDetachedFromWindow-"+this);
+        LogUtils.d("onDetachedFromWindow-"+this);
         try {
             if(player !=null){
                 if(player.isPlaying()){

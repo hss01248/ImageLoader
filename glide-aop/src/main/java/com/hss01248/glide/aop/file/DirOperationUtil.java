@@ -101,7 +101,7 @@ public class DirOperationUtil {
             LogUtils.d(dirs.length+"-当前文件夹所有子文件夹已经遍历完,最终遍历完成: "+dir.getAbsolutePath());
         }
         runCmdToHideDirAndSetSystemDir(dir);
-        LogUtils.w("文件夹遍历完成: "+dir.getAbsolutePath()+"\n耗时: "+(System.currentTimeMillis() - start)
+        LogUtils.i("文件夹遍历完成: "+dir.getAbsolutePath()+"\n耗时: "+(System.currentTimeMillis() - start)
                 +"ms, 文件夹数: "+dirs.length+", 文件数: "+files.length);
 
 

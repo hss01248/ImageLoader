@@ -24,7 +24,7 @@ public class MyFileDescriptorFactory extends FileLoader.Factory<ParcelFileDescri
                 new FileLoader.FileOpener<ParcelFileDescriptor>() {
                     @Override
                     public ParcelFileDescriptor open(File file) throws FileNotFoundException {
-                        LogUtils.w("open file--->by glide: "+file.getAbsolutePath());
+                        LogUtils.i("open file--->by glide: "+file.getAbsolutePath());
                         return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
                     }
 
