@@ -324,12 +324,14 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
 
         }else {
             ivPlayVideo.setVisibility(GONE);
+
         }
 
         if (info.uri.contains(".gif") || isGif) {
             ivPlayVideo.setVisibility(GONE);
             gifView.setVisibility(VISIBLE);
-
+            jpgView.setVisibility(GONE);
+            playerView.setVisibility(GONE);
             if (uri.startsWith("content://") || uri.startsWith("file://")) {
                 gifView.setImageURI(Uri.parse(uri));
             } else {
@@ -461,7 +463,7 @@ public class MyLargeImageViewBySubSamplingView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        LogUtils.w("onDetachedFromWindow-"+this);
+        LogUtils.d("onDetachedFromWindow-"+this);
         try {
             if(player !=null){
                 if(player.isPlaying()){

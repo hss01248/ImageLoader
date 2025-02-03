@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -36,10 +37,12 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
+import com.hss.utils.enhance.api.MyCommonCallback;
 import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.fileoperation.FileDeleteUtil;
+import com.hss01248.fullscreendialog.FullScreenDialogUtil;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.glide.aop.file.DirOperationUtil;
 import com.hss01248.image.ImageLoader;
@@ -52,6 +55,8 @@ import com.hss01248.img.compressor.ImageCompressor;
 import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.media.pick.MediaPickUtil;
+import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.ui.pop.list.PopList;
 import com.hss01248.viewholder_media.FileTreeViewHolder;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
@@ -658,6 +663,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewDir(View view) {
         FileTreeViewHolder.viewDirInActivity(Environment.getExternalStorageDirectory().getAbsolutePath());
+    }
+
+    public void motionPhoto(View view) {
+
+        MediaPickUtil.pickImage(new MyCommonCallback<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Map<String, Object> metadata = MotionPhotoUtil.metadata(uri.toString());
+                // Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                //String json = gson.toJson(metadata);
+                FullScreenDialogUtil.showMap("meta",metadata);
+            }
+        });
+
     }
 
 

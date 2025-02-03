@@ -80,7 +80,7 @@ public class DownloadCallbackDbDecorator implements IDownloadCallback {
             public void run() {
                 DownloadInfo load = DownloadInfoUtil.getDao().load(url);
                 if(load == null){
-                    LogUtils.w("download info in db == null , "+ url);
+                    LogUtils.i("download info in db == null , "+ url);
                     return;
                 }
                 load.status = DownloadInfo.STATUS_DOWNLOADING;

@@ -1,5 +1,6 @@
 package com.hss01248.motion_photos_android;
 
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -13,7 +14,11 @@ import com.hss01248.videocompress.listener.ICompressListener;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -94,6 +99,62 @@ public class AndroidMotionImpl implements IMotion {
        File file = new File(path);
        File file2 = new File(dir,file.getName()+".mp4");
         return file2.getAbsolutePath();
+    }
+
+    @Override
+    public Map<String, Object> metaOfImage(String fileOrUriPath) {
+        InputStream stream = null;
+        try {
+            stream =   steam(fileOrUriPath);
+            if(stream ==null){
+                return null;
+            }
+            Map<String, Object> map = new TreeMap<>();
+            ExifInterface exifInterface = new ExifInterface(stream);
+            Field[] fields = ExifInterface.class.getDeclaredFields();
+            for (Field field : fields) {
+                if(field.getName().startsWith("TAG_")){
+                    field.setAccessible(true);
+                    String  str = field.get(ExifInterface.class)+"";
+                    map.put(str,exifInterface.getAttribute(str));
+
+                }
+            }
+            return map;
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+            return null;
+        }finally {
+            if(stream !=null){
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public Map<String, Object> metaOfVideo(String fileOrUriPath) {
+
+        try {
+            Map<String, Object> map = new TreeMap<>();
+            MediaMetadataRetriever exifInterface = new MediaMetadataRetriever();
+            exifInterface.setDataSource(fileOrUriPath);
+            Field[] fields = MediaMetadataRetriever.class.getDeclaredFields();
+            for (Field field : fields) {
+                if(field.getName().startsWith("METADATA_KEY_")){
+                    field.setAccessible(true);
+                    int   str = (int) field.get(ExifInterface.class);
+                    map.put(field.getName().substring("METADATA_KEY_".length()).toLowerCase(),exifInterface.extractMetadata(str));
+                }
+            }
+            return map;
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+            return null;
+        }
     }
 
     public static File compressMp4File(String fileOrUriPath){

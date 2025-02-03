@@ -87,7 +87,7 @@ public class ListParser {
 
                         @Override
                         public void run() {
-                            LogUtils.w("caol","30s timeout parse html source "+sleep/1000+"s,then go :"+ idx+", "+paths.get(idx));// Index: 54, Size: 54
+                            LogUtils.i("caol","30s timeout parse html source "+sleep/1000+"s,then go :"+ idx+", "+paths.get(idx));// Index: 54, Size: 54
                             count[0]--;
                             progressCallback.onReceiveValue(idx+"/"+paths.size()+",图片数量:"+urls.size());
                             //if(count[0] ==paths.size() -2){//测试

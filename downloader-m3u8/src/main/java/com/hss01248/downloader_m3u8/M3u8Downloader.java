@@ -321,7 +321,7 @@ public class M3u8Downloader {
             segments.add(build);
         }
         if (segments.isEmpty()) {
-            LogUtils.w("没有需要覆写的uri,拷贝文件就行");
+            LogUtils.i("没有需要覆写的uri,拷贝文件就行");
 
         } else {
 

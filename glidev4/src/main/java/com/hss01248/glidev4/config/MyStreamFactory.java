@@ -34,7 +34,7 @@ public class MyStreamFactory extends FileLoader.Factory<InputStream> {
                         if (read == ModifyResponseBodyInterceptor.dataToAdd) {
                             //隐藏文件,那么要去掉第一个字符
                             try {
-                                LogUtils.w("隐藏文件,那么要去掉第一个字符-->inputStream.available():" + inputStream.available() + ", " + file.getAbsolutePath());
+                                LogUtils.i("隐藏文件,那么要去掉第一个字符-->inputStream.available():" + inputStream.available() + ", " + file.getAbsolutePath());
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }

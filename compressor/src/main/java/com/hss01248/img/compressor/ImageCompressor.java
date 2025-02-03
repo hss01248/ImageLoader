@@ -337,7 +337,7 @@ public class ImageCompressor {
                         deleteFile(file2);
                         if(targetFile != file){
                             //return targetFile;
-                            LogUtils.w("fileCopy成功,删除原文件: " + file.getAbsolutePath());
+                            LogUtils.d("fileCopy成功,删除原文件: " + file.getAbsolutePath());
                             //deleteFile(file);
                         }
                         //如果是mediastore的图,就更新它在mediastore中的大小:
@@ -345,7 +345,7 @@ public class ImageCompressor {
                         return targetFile;
                     } else {
                         deleteFile(file2);
-                        LogUtils.w("fileCopy也失败,则使用原文件: " + file2);
+                        LogUtils.i("fileCopy也失败,则使用原文件: " + file2);
                         return file;
                     }
                 } catch (Throwable throwable) {
@@ -467,7 +467,7 @@ public class ImageCompressor {
         if (success && outFile.exists() && outFile.length() > 50) {
             //如果压缩后的图比压缩前还大,那么就不压缩,返回原图
             if (file.length() < outFile.length()) {
-                LogUtils.w(outFile.getAbsolutePath() + "  file.length() < outFile.length(), ignore");
+                LogUtils.i(outFile.getAbsolutePath() + "  file.length() < outFile.length(), ignore");
                 deleteFile(outFile);
                 success = false;
             } else {

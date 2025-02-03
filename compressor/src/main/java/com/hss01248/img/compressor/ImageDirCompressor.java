@@ -171,7 +171,7 @@ public class ImageDirCompressor {
             File compressed = ImageCompressor.compress(file.getAbsolutePath(), false, true);
             if(compressed.getAbsolutePath().equals(file.getAbsolutePath()) && originalSize == compressed.length()){
                 //压缩失败或跳过
-                LogUtils.w("压缩跳过或失败 ",file.getAbsolutePath());
+                LogUtils.i("压缩跳过或失败 ",file.getAbsolutePath());
             }else {
                 totalOriginal[0] += originalSize;
                 totalCompressed[0] += compressed.length();

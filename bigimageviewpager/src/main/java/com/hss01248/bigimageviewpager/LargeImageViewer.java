@@ -134,6 +134,7 @@ public class LargeImageViewer {
                 pair.second.getBinding().realTitleBar.setLineDrawable(new ColorDrawable(Color.TRANSPARENT));
                 holder.init(new Pair<>(position,paths));
 
+
                 //View viewPager = showBig(pair.first,null,paths,position);
                 pair.second.getBinding().llRoot.setBackgroundColor(Color.BLACK);
                /* UltimateBarX.navigationBar(pair.first).color(Color.BLACK)

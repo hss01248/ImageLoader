@@ -23,8 +23,7 @@ buildscript {
         publicUrl='https://nexus.hss01248.tech/#browse/browse:maven-public:'
 
         utilcodeVersion='1.6.8'
-        uname='admin'
-         pw='614511qa#'
+        
 
     }
 

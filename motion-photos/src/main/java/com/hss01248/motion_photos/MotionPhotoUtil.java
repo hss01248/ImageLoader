@@ -1,9 +1,14 @@
 package com.hss01248.motion_photos;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,10 +22,36 @@ public class MotionPhotoUtil {
     static IMotion motion = new JavaMotion();
 
     public static void main(String[] args) {
-        String xiaomi = "/Users/hss/Documents/MVIMG_20240918_093751.jpg";
+        String xiaomi = "/Users/hss/Documents/live_photos/IMG_3919.heic";
         String google = "/Users/hss/Documents/PXL_20240918_013738178.MP.jpg";
         boolean isMotionImage = isMotionImage(xiaomi, true);
-        boolean is2 = isMotionImage(google, true);
+       // boolean is2 = isMotionImage(google, true);
+
+        Map<String, Object> metadata = metadata(xiaomi);
+        Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+        System.out.println(gson.toJson(metadata));
+
+    }
+
+    public static Map<String,Object> metadata(String fileOrUriPath){
+        boolean isMotion = isMotionImage(fileOrUriPath,true);
+        Map<String, Object> map = new TreeMap<>();
+        map.put("0-path",fileOrUriPath);
+        if(fileOrUriPath !=null && !fileOrUriPath.equals("")){
+            File file = new File(fileOrUriPath);
+            map.put("0-length",file.length());
+            map.put("0-lastModified",file.lastModified());
+        }
+
+        Map<String, Object> stringObjectMap = motion.metaOfImage(fileOrUriPath);
+        map.put("image",stringObjectMap);
+        if(isMotion){
+            String path = getMotionVideoPath(fileOrUriPath);
+            Map<String, Object> stringObjectMap1 = motion.metaOfVideo(path);
+            map.put("video",stringObjectMap1);
+        }
+        return map;
+
     }
 
 

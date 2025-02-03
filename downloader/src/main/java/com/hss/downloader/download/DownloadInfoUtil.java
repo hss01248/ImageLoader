@@ -98,7 +98,7 @@ public class DownloadInfoUtil {
         //            //windows下完全限定文件名必须少于260个字节，目录名必须小于248个字节。
          while (name.getBytes().length> maxLenght ){
              name = name.substring(0,name.length()-2);
-             LogUtils.w("缩短文件名",name);
+             LogUtils.i("缩短文件名",name);
         }
        name = name + suffix;
         return name;

@@ -280,7 +280,7 @@ public class SingleConfig {
                     GlobalConfig.getLoader().debug(this);
                 }
                 if (interceptor != null && interceptor.intercept(this)) {
-                    LogUtils.w("intercept by interceptor: "+interceptor.toString()+", "+ getSourceString());
+                    LogUtils.i("intercept by interceptor: "+interceptor.toString()+", "+ getSourceString());
                     return;
                 }
 
@@ -293,7 +293,7 @@ public class SingleConfig {
                     GlobalConfig.getLoader().requestForNormalDiaplay(this);
                 }
             }else {
-                LogUtils.w("ConfigChecker.check(this) failed: "+ getSourceString());
+                LogUtils.i("ConfigChecker.check(this) failed: "+ getSourceString());
             }
         } catch (Throwable e) {
             if (GlobalConfig.getExceptionHandler() != null) {
