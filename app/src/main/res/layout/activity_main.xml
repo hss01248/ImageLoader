@@ -49,6 +49,12 @@
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <Button
+            android:text="motion photo"
+            android:onClick="motionPhoto"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <Button
             android:text="选图-360全景图test"
@@ -61,6 +67,15 @@
             android:id="@+id/btn_album"
             android:layout_margin="10dp"
             android:text="浏览系统相册"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_album"
+            android:layout_margin="10dp"
+            android:text="文件管理"
+            android:onClick="viewDir"
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

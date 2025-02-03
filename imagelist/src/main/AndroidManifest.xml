@@ -1,13 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hss01248.imagelist" >
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+
 
     <application>
         <!---->
         <activity android:name=".album.EmptyActivity"
             android:configChanges="orientation|screenSize"
-
-
             android:theme="@style/thetransAppTheme3"/>
     </application>
 </manifest>

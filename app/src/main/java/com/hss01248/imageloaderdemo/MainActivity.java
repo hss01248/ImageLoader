@@ -1,12 +1,13 @@
 package com.hss01248.imageloaderdemo;
 
-import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
@@ -25,7 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.PermissionUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -36,11 +37,12 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss.downloader.MyDownloader;
+import com.hss.utils.enhance.api.MyCommonCallback;
 import com.hss01248.basewebview.BaseWebviewActivity;
 import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
 import com.hss01248.fileoperation.FileDeleteUtil;
-import com.hss01248.fullscreendialog.FullScreenDialog;
+import com.hss01248.fullscreendialog.FullScreenDialogUtil;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.glide.aop.file.DirOperationUtil;
 import com.hss01248.image.ImageLoader;
@@ -53,7 +55,10 @@ import com.hss01248.img.compressor.ImageCompressor;
 import com.hss01248.img.compressor.ImageDirCompressor;
 import com.hss01248.img.compressor.UiForDirCompress;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.media.pick.MediaPickUtil;
+import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.ui.pop.list.PopList;
+import com.hss01248.viewholder_media.FileTreeViewHolder;
 import com.hss01248.webviewspider.SpiderWebviewActivity;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
@@ -215,21 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 pid=31500, uid=10576 requires android.permission.READ_EXTERNAL_STORAGE, or grantUriPermission()*/
 
 
-                PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE).callback(new PermissionUtils.SingleCallback() {
-                    @Override
-                    public void callback(boolean isAllGranted, @NonNull List<String> granted, @NonNull List<String> deniedForever, @NonNull List<String> denied) {
-
-                        ImageMediaCenterUtil.showViewAsActivity(MainActivity.this, new IViewInit() {
-                            @Override
-                            public View init(Activity activity) {
-                                ImageListView view1 = new ImageListView(activity);
-                                view1.showAllAlbums();
-                                return view1;
-                            }
-                        });
-
-                    }
-                }).request();
+                ImageMediaCenterUtil.showAlbums();
 
 
             }
@@ -313,35 +304,46 @@ public class MainActivity extends AppCompatActivity {
 
                     return;
                 }
+                ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<File>() {
+                    @Override
+                    public File doInBackground() throws Throwable {
+                        return ImageCompressor.compress(path,false,false);
+                    }
+
+                    @Override
+                    public void onSuccess(File file) {
+                        LogUtils.i("image compress result: "+file.getAbsolutePath());
+                        Glide.with(MainActivity.this)
+                                .asBitmap()
+                                .load(file)
+                                .into(new SimpleTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                        LogUtils.d("bitmap size:"+resource.getWidth()+"x"+resource.getHeight());
+                                        ivUrl.setImageBitmap(resource);
+                                    }
+                                });
+                        ivUrl.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                List<String> paths = new ArrayList<>();
+                                paths.add(path);
+                                paths.add(file.getAbsolutePath());
+                                ImageMediaCenterUtil.showBigImag(MainActivity.this,paths,0);
+                            }
+                        });
+                    }
+                });
 
                 //TurboCompressor.compressOriginal(path,70);
-                File file = ImageCompressor.compress(path,false,false);
+                //File file = ImageCompressor.compress(path,false,false);
 
-                File endecrypt = XorUtil.endecrypt(798, file, false);
-                LogUtils.i("out put file: "+endecrypt.getAbsolutePath());
+               // File endecrypt = XorUtil.endecrypt(798, file, false);
+               // LogUtils.i("out put file: "+endecrypt.getAbsolutePath());
                 ///storage/emulated/0/images/enx-cp-20230529_200844.jpg  花费15s.
 
 
-                LogUtils.i("image compress result: "+file.getAbsolutePath());
-                Glide.with(MainActivity.this)
-                        .asBitmap()
-                        .load(file)
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                LogUtils.d("bitmap size:"+resource.getWidth()+"x"+resource.getHeight());
-                                ivUrl.setImageBitmap(resource);
-                            }
-                        });
-                ivUrl.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        List<String> paths = new ArrayList<>();
-                        paths.add(path);
-                        paths.add(file.getAbsolutePath());
-                        ImageMediaCenterUtil.showBigImag(MainActivity.this,paths,0);
-                    }
-                });
+
             }
 
             @Override
@@ -358,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void goWebSpider(View view) {
         List<String> menus = SpiderWebviewActivity.getSpiders();
+        menus.add("浏览全部下载列表");
         menus.add("浏览下载列表");
         menus.add("修复升级前的数据");
         menus.add("继续下载未完成的图片");
@@ -368,6 +371,8 @@ public class MainActivity extends AppCompatActivity {
                 if(position == menus.size()-1){
                     MyDownloader.continueDownload();
                     //ImgDownloader.downladUrlsInDB(MainActivity.this,new File(SpiderWebviewActivity.getSaveDir("继续下载","")));
+                }else if(position ==  menus.size()-4) {
+                    MyDownloader.showWholeDownloadPage();
                 }else if(position ==  menus.size()-3) {
                     MyDownloader.showDownloadPage();
                 }else if(position == menus.size()-2) {
@@ -474,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
     //当所述待选择图片的宽度大于或等于1000像素点，且所述待选择图片的宽高比大于或等于2:1，且所述待选择图片的宽高比小于4:1，则判断为所述待选择图片为360度全景图片。
     private void showInfo(String path) {
         String exifStr = ExifUtil.getExifStr(path);
-        FullScreenDialog dialog = new FullScreenDialog(MainActivity.this);
+        Dialog dialog = new Dialog(MainActivity.this);
 
         Map<String, String> map = ExifUtil.readExif(path);
         //dialog.setContentView();
@@ -648,7 +653,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void askManagerMediaPermission(View view) {
-        FileDeleteUtil.checkMediaManagerPermission();
+        FileDeleteUtil.checkMediaManagerPermission(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        },null);
+    }
+
+    public void viewDir(View view) {
+        FileTreeViewHolder.viewDirInActivity(Environment.getExternalStorageDirectory().getAbsolutePath());
+    }
+
+    public void motionPhoto(View view) {
+
+        MediaPickUtil.pickImage(new MyCommonCallback<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Map<String, Object> metadata = MotionPhotoUtil.metadata(uri.toString());
+                // Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                //String json = gson.toJson(metadata);
+                FullScreenDialogUtil.showMap("meta",metadata);
+            }
+        });
+
     }
 
 

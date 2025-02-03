@@ -12,9 +12,13 @@ import com.hss.downloader.download.db.DaoMaster;
 import com.hss.downloader.download.db.DaoSession;
 import com.hss.downloader.download.db.DownloadInfoDao;
 import com.hss.downloader.download.db.SubFolderCountDao;
+import com.hss01248.refresh_loadmore.PagerDto;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +55,7 @@ public class DownloadInfoUtil {
 
     private volatile static DaoSession daoSession;
 
-     static DaoSession getDaoSession() {
+   public   static DaoSession getDaoSession() {
         if (daoSession == null) {
             synchronized (DownloadInfoUtil.class) {
                 if (daoSession == null) {
@@ -94,7 +98,7 @@ public class DownloadInfoUtil {
         //            //windows下完全限定文件名必须少于260个字节，目录名必须小于248个字节。
          while (name.getBytes().length> maxLenght ){
              name = name.substring(0,name.length()-2);
-             LogUtils.w("缩短文件名",name);
+             LogUtils.i("缩短文件名",name);
         }
        name = name + suffix;
         return name;
@@ -153,5 +157,25 @@ public class DownloadInfoUtil {
         Matcher matcher = pattern.matcher(fileName);
         fileName = matcher.replaceAll(""); // 将匹配到的非法字符以空替换
         return fileName;
+    }
+
+    public static PagerDto<DownloadInfo> loadByPager(PagerDto pagerDto){
+        QueryBuilder<DownloadInfo> builder = getDaoSession().getDownloadInfoDao().queryBuilder()
+                //.where(DownloadInfoDao.Properties.IsCollect.eq(isCollect? 1: 0))
+                .orderDesc(DownloadInfoDao.Properties.CreateTime)
+                .limit(pagerDto.pageSize)
+                .offset((int) pagerDto.offset);
+        if(!TextUtils.isEmpty(pagerDto.searchText)){
+            builder.whereOr(DownloadInfoDao.Properties.Name.like("%"+pagerDto.searchText+"%"),
+                    DownloadInfoDao.Properties.Url.like("%"+pagerDto.searchText+"%"));
+        }
+        List<DownloadInfo> list = builder.list();
+        PagerDto<DownloadInfo> pagerDto1 = new PagerDto<DownloadInfo>();
+        pagerDto1.isLast = list.size() < pagerDto.pageSize;
+        pagerDto1.datas = list;
+        //在这里自动计算偏移,在界面里直接透传即可
+        pagerDto1.offset = pagerDto.offset+ list.size();
+        pagerDto1.pageSize = pagerDto.pageSize;
+        return pagerDto1;
     }
 }

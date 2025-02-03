@@ -18,6 +18,7 @@ public class DownloadInfo {
     @Id
     public String url;
     @Index
+
     public String filePath;
     /**
      * 成功: 1 下载中 0 下载失败 -1, 初始状态 -2
@@ -27,13 +28,21 @@ public class DownloadInfo {
     public  boolean downloadSuccess(){
         return status == STATUS_SUCCESS;
     }
+
+    public  boolean downloadFailed(){
+        return status == STATUS_FAIL;
+    }
     public String getUrl() {
         return this.url;
     }
     public void setUrl(String url) {
         this.url = url;
     }
+
     public String getFilePath() {
+        if(filePath ==null || "".equals(filePath)){
+            genFilePath();
+        }
         return this.filePath;
     }
     public void setFilePath(String filePath) {
@@ -99,6 +108,8 @@ public class DownloadInfo {
     public transient long currentOffset;
     public transient boolean isCompressing;
 
+    public transient long speed;
+
     @Generated(hash = 1249356660)
     public DownloadInfo(String url, String filePath, int status, String name,
             String dir, String errMsg, long totalLength, long createTime,
@@ -118,5 +129,7 @@ public class DownloadInfo {
     }
 
 
-
+    public void genFilePath() {
+        this.filePath = dir+"/"+name;
+    }
 }

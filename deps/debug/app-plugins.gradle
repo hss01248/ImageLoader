@@ -18,9 +18,10 @@ buildscript{
 
 //list all plugin classPath:
 dependencies {
-     classpath "com.android.tools.build:gradle:4.1.0"
-     classpath "com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10"
-     classpath "io.github.didi.dokit:dokitx-plugin:3.5.0.1"
+     classpath "com.android.tools.build:gradle:7.1.2"
+     classpath "com.didiglobal.booster:booster-gradle-plugin:4.16.2"
+     classpath "io.github.didi.dokit:dokitx-plugin:3.7.11"
+     classpath "io.github.wurensen:gradle-android-plugin-aspectjx:3.3.2"
      classpath "org.greenrobot:greendao-gradle-plugin:3.3.0"
   }
 }
@@ -31,12 +32,13 @@ dependencies {
 // [class:class org.gradle.buildinit.plugins.BuildInitPlugin]
 // [class:class org.gradle.buildinit.plugins.WrapperPlugin]
 // [class:class com.android.build.gradle.internal.plugins.VersionCheckPlugin]
-// [class:class com.android.build.gradle.api.AndroidBasePlugin]
 // [class:class org.gradle.language.base.plugins.LifecycleBasePlugin]
 // [class:class org.gradle.api.plugins.BasePlugin]
+// [class:class org.gradle.api.plugins.JvmEcosystemPlugin]
 // [class:class org.gradle.api.plugins.ReportingBasePlugin]
-// [class:class org.gradle.api.plugins.JavaBasePlugin]
-// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@7ed91653, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, extensionClass:class com.android.build.gradle.internal.dsl.BaseAppModuleExtension, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@58c31f41, variantManager:com.android.build.gradle.internal.VariantManager@4215f479]
+// [class:class org.gradle.api.plugins.JavaBasePlugin$Inject, javaToolchainQueryService:org.gradle.jvm.toolchain.internal.JavaToolchainQueryService@65e6043e, taskThatOwnsThisObject:null, modelIdentityDisplayName:null]
+// [class:class com.android.build.gradle.api.AndroidBasePlugin]
+// [extension:extension 'android', projectType:0, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, projectTypeV2:APPLICATION, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@403ec38c, variantManager:com.android.build.gradle.internal.VariantManager@37c27364]
 // [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
 // [class:class com.hujiang.gradle.plugin.android.aspectjx.AJXPlugin]
 // [class:class com.dorongold.gradle.tasktree.TaskTreePlugin]

@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.Utils;
+import com.bumptech.glide.load.HttpException;
+import com.bumptech.glide.load.engine.GlideException;
 import com.hss01248.image.config.GlobalConfig;
 import com.hss01248.image.config.ScaleMode;
 import com.hss01248.image.config.SingleConfig;
@@ -36,6 +38,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -699,9 +702,56 @@ public class MyUtil {
 
     public static String printException(Throwable e) {
         if (e == null) {
+            //LogUtils.eTag("glide-ex1"," e is null");
             return "exception is null";
         }
-        return "exception:\n" + e.getClass().getName() + ":" + e.getMessage();
+         e = unwrapGlideException(e);
+
+        while (e.getCause() !=null){
+            e = e.getCause();
+        }
+        if(e instanceof HttpException){
+            HttpException httpException = (HttpException) e;
+            //LogUtils.iTag("glide-ex4",httpException.getStatusCode(),httpException);
+            return "exception:\nHttpException: http code " + httpException.getStatusCode() +","+httpException.getMessage();
+        }
+        //LogUtils.iTag("glide-ex5",e);
+        return "exception:\n" + e.getClass().getSimpleName() + ":" + e.getMessage();
+    }
+
+    public static Throwable realException(Throwable e) {
+        if (e == null) {
+            //LogUtils.eTag("glide-ex1"," e is null");
+            return new IOException("null");
+        }
+        e = unwrapGlideException(e);
+
+        while (e.getCause() !=null){
+            e = e.getCause();
+        }
+        if(e instanceof HttpException){
+            HttpException httpException = (HttpException) e;
+            //LogUtils.iTag("glide-ex4",httpException.getStatusCode(),httpException);
+            return new HttpException("http code " + httpException.getStatusCode() +","+httpException.getMessage());
+        }
+        return e;
+    }
+
+    private static Throwable unwrapGlideException(Throwable e) {
+        if(e instanceof GlideException){
+            GlideException exception = (GlideException) e;
+            List<Throwable> rootCauses = exception.getRootCauses();
+            //exception.logRootCauses("glide-ex33");
+            Throwable exception1 = exception;
+            if(rootCauses !=null && rootCauses.size()>0){
+                exception1 = rootCauses.get(0);
+                return  unwrapGlideException(exception1);
+            }else{
+                return exception1;
+            }
+        }else {
+            return e;
+        }
     }
 
     public static boolean isBitmapTooLarge(float bw, float bh, ImageView imageView) {

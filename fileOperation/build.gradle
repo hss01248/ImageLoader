@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 34
     buildToolsVersion "31.0.0"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 31
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
 
@@ -38,9 +38,13 @@ dependencies {
 
     api 'com.github.hss01248.StartActivityResult:activityresult:1.1.9'
     api 'com.blankj:utilcodex:1.30.0'
-    api 'com.github.hss01248.metadata:metadata:1.1.6'
+    api 'com.github.hss01248.metadata:metadata:1.2.8'
     api 'io.reactivex.rxjava2:rxjava:2.2.0'
-    api 'com.github.hss01248.HttpUtil2:openuri:3.0.5'
+    //api 'com.github.hss01248.utilcodeEnhance:openuri:1.4.4'
     api 'com.github.getActivity:XXPermissions:11.6'
-    api 'com.github.hss01248.MyPermission:ext:2.3.8'
+    api 'com.github.hss01248.MyPermission:ext:2.3.9'
+    api "com.github.hss01248.jenkinsTool2:apkInstaller:1.0.2"
+
+    api project(path: ':bigimageviewpager')
+    //api "com.github.hss01248.media:localvideoplayer:1.0.0"
 }

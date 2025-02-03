@@ -1,10 +1,17 @@
 package com.hss01248.img.compressor;
 
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -20,6 +27,8 @@ import com.hss01248.fileoperation.FileDeleteUtil;
 import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.FileTypeUtil;
 import com.hss01248.media.metadata.quality.Magick;
+import com.hss01248.motion_photos.MotionPhotoUtil;
+import com.hss01248.motion_photos_android.AndroidMotionImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +54,8 @@ public class ImageCompressor {
     public static boolean compressToAvif = false;
     public static boolean compressToWebp = false;
     public static int targetWebpQuality = 75;
+
+    public static boolean doNotCompressMotionPhoto = false;
 
     public static File compress(String filePath, boolean deleteOriginalIfAvifSuccess, boolean noAvifOver2k) {
         //AvifEncoder.init(Utils.getApp());
@@ -160,6 +171,12 @@ public class ImageCompressor {
                 if(isPanoramaImage(file.getAbsolutePath())){
                     return false;
                 }
+                if(doNotCompressMotionPhoto){
+                    if(MotionPhotoUtil.isMotionImage(file.getAbsolutePath(),false)){
+                        LogUtils.v("MotionImage 全局配置了不压缩", path);
+                        return false;
+                    }
+                }
                 FileInputStream inputStream = new FileInputStream(file);
                 int quality = new Magick().getJPEGImageQuality(inputStream);
                 CloseUtils.closeIO(inputStream);
@@ -195,10 +212,10 @@ public class ImageCompressor {
                 LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
                 return true;
             }
-            if(xml.contains("MotionPhoto")){
+            /*if(xml.contains("MotionPhoto")){
                 LogUtils.i("根据exif特征识别出为MotionPhoto,不进行压缩");
                 return true;
-            }
+            }*/
             //MotionPhoto
         }
         return false;
@@ -302,7 +319,7 @@ public class ImageCompressor {
                 //todo renameTo - 垃圾api,只能同扩展名处理. 自动删除file2,变成file1.
          /*   boolean renameTo = file2.renameTo(file);
             if(!renameTo){*/
-                LogUtils.w("不同jpg扩展名时,不能renameTo,使用fileCopy: " + file2);
+                LogUtils.i("不同jpg扩展名时,不能renameTo,使用fileCopy: " + file2);
                 try {
                     //todo 文件覆盖也会被miui警告,去tmd-->因为内部调用了file.delete()
                   /*  boolean copy = FileUtils.copy(file2, file, new FileUtils.OnReplaceListener() {
@@ -320,13 +337,15 @@ public class ImageCompressor {
                         deleteFile(file2);
                         if(targetFile != file){
                             //return targetFile;
-                            LogUtils.w("fileCopy成功,删除原文件: " + file.getAbsolutePath());
+                            LogUtils.d("fileCopy成功,删除原文件: " + file.getAbsolutePath());
                             //deleteFile(file);
                         }
+                        //如果是mediastore的图,就更新它在mediastore中的大小:
+                        updateMediaStore(targetFile.getAbsolutePath());
                         return targetFile;
                     } else {
                         deleteFile(file2);
-                        LogUtils.w("fileCopy也失败,则使用原文件: " + file2);
+                        LogUtils.i("fileCopy也失败,则使用原文件: " + file2);
                         return file;
                     }
                 } catch (Throwable throwable) {
@@ -346,6 +365,70 @@ public class ImageCompressor {
             }
         }
 
+    }
+
+    private static void updateMediaStore(String absolutePath) {
+        scanFile(Utils.getApp(),absolutePath);
+    }
+
+    public static void scanFile(Context context, String filePath) {
+        MediaScannerConnection.scanFile(context, new String[]{filePath}, null,
+                new MediaScannerConnection.MediaScannerConnectionClient() {
+                    @Override
+                    public void onScanCompleted(String path, Uri uri) {
+                        if (uri != null) {
+                            System.out.println("Scan completed, Uri: " + uri.toString());
+                        } else {
+                            System.out.println("Scan failed for path: " + path);
+                        }
+                    }
+
+                    @Override
+                    public void onMediaScannerConnected() {
+                        // Not used, but required by interface
+                    }
+                });
+    }
+    public static void updateFileSize(Context context, String filePath) {
+        // 获取 ContentResolver
+        ContentResolver contentResolver = context.getContentResolver();
+
+        // 构造文件的 Uri
+        Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        // 查询文件在 MediaStore 中的 _id
+        String[] projection = {MediaStore.Images.Media._ID};
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        String[] selectionArgs = {filePath};
+
+        Cursor cursor = contentResolver.query(imageUri, projection, selection, selectionArgs, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            // 获取文件的 _id
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+            cursor.close();
+
+            // 构造要更新的 Uri
+            Uri updateUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(id));
+
+            // 获取文件的实际大小
+            File file = new File(filePath);
+            long fileSize = file.length();
+
+            // 准备更新的数据
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.Images.Media.SIZE, fileSize);
+            // 执行更新
+            int rowsUpdated = contentResolver.update(updateUri, contentValues, null, null);
+            if (rowsUpdated > 0) {
+                System.out.println("File size updated successfully!");
+            } else {
+                System.out.println("Failed to update file size.");
+            }
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 
     /**
@@ -384,11 +467,12 @@ public class ImageCompressor {
         if (success && outFile.exists() && outFile.length() > 50) {
             //如果压缩后的图比压缩前还大,那么就不压缩,返回原图
             if (file.length() < outFile.length()) {
-                LogUtils.w(outFile.getAbsolutePath() + "  file.length() < outFile.length(), ignore");
+                LogUtils.i(outFile.getAbsolutePath() + "  file.length() < outFile.length(), ignore");
                 deleteFile(outFile);
                 success = false;
             } else {
                 success = true;
+
             }
 
         } else {
@@ -399,14 +483,14 @@ public class ImageCompressor {
     }
 
 
-    private static boolean compressOringinal2(String absolutePath, int quality, String outPath) {
+    private static boolean compressOringinal2(String inputPath, int quality, String outPath) {
         try {
             File file = new File(outPath);
-            Bitmap bitmap = BitmapFactory.decodeFile(absolutePath);
+            Bitmap bitmap = BitmapFactory.decodeFile(inputPath);
 
-            ExifInterface exifInterface = new ExifInterface(absolutePath);
+            ExifInterface exifInterface = new ExifInterface(inputPath);
             int oritation = exifInterface.getRotationDegrees();
-            Map<String, String> exifMap = ExifUtil.readExif(absolutePath);
+            Map<String, String> exifMap = ExifUtil.readExif(inputPath);
             ;
             if (oritation != 0) {
                 try {
@@ -424,25 +508,67 @@ public class ImageCompressor {
             success = success && file.exists() && file.length() > 50;
             CloseUtils.closeIO(fileOutputStream);
 
+            //motion image
+
             if (success) {
                 try {
                     if (exifMap != null && !exifMap.isEmpty()) {
                     }else {
                         exifMap = new HashMap<>();
                     }
+                    boolean editSoftware = true;
+                    if(editSoftware){
+                        String text = exifMap.get(ExifInterface.TAG_SOFTWARE);
+                        String tail = "jpg-q-"+targetJpgQuality;
+                        if(compressToWebp){
+                            tail = "webp-q-"+targetWebpQuality;
+                        }
+                        if(TextUtils.isEmpty(text)){
+                            text = AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                        }else {
+                            text = text + "/"+AppUtils.getAppPackageName().substring(AppUtils.getAppPackageName().lastIndexOf(".")+1)+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
+                        }
+                        exifMap.put(ExifInterface.TAG_SOFTWARE,text);
+                    }
 
-                    String text = exifMap.get(ExifInterface.TAG_SOFTWARE);
-                    String tail = "jpg-q-"+targetJpgQuality;
-                    if(compressToWebp){
-                        tail = "webp-q-"+targetWebpQuality;
-                    }
-                    if(TextUtils.isEmpty(text)){
-                        text = AppUtils.getAppName()+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
-                    }else {
-                        text = text + "/"+AppUtils.getAppName()+"/"+AppUtils.getAppVersionName()+"/compressor/"+tail;
-                    }
-                    exifMap.put(ExifInterface.TAG_SOFTWARE,text);
+
                     ExifUtil.writeExif(exifMap, outPath);
+
+                    //motion photo处理: 视频压缩,更改xml写exif-> 合并文件
+                    boolean motionImage = MotionPhotoUtil.isMotionImage(inputPath, true);
+                    if(motionImage){
+                        String mp4 = MotionPhotoUtil.getMotionVideoPath(inputPath);
+                        File originalMp4File = new File(mp4);
+                        File mp4Compressed = null;
+                        if(originalMp4File.length() < 1024*1024){
+                            //1M以下不压缩
+                            mp4Compressed = originalMp4File;
+                        }else {
+                             mp4Compressed = AndroidMotionImpl.compressMp4File(mp4);
+                        }
+
+                        if(mp4Compressed !=null && mp4Compressed.exists() && mp4Compressed.length() >0){
+                            long length = mp4Compressed.length();
+                            //保存为谷歌格式/小米格式/原格式
+                            if(length != originalMp4File.length()){
+                                //更改exif
+                                ExifInterface exifInterface1 = new ExifInterface(outPath);
+                                String xmp = exifInterface1.getAttribute(ExifInterface.TAG_XMP);
+                                LogUtils.i("xmp before",xmp);
+                                xmp = xmp.replace(originalMp4File.length()+"",length+"");
+                                LogUtils.i("xmp after",xmp);
+                                exifInterface1.setAttribute(ExifInterface.TAG_XMP,xmp);
+                                //写exif
+                                exifInterface1.saveAttributes();
+                            }
+
+                            //合并文件:
+                            FileIOUtils.writeFileFromIS(new File(outPath),new FileInputStream(mp4Compressed),true);
+                            mp4Compressed.delete();
+                            new File(mp4).delete();
+                        }
+                    }
+
                     /*if(AppUtils.isAppDebug()){
                         ExifUtil.readJpgTail(absolutePath);
                     }*/

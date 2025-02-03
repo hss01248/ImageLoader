@@ -1,3 +1,4 @@
 -keep class com.shizhefei.view.largeimage.factory.** { *; }
 -keep class com.bumptech.glide.** { *; }
 -keep class pl.droidsonroids.gif.InputSource.** { *; }
+-keep class com.hss01248.glide.** { *; }

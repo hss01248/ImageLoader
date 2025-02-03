@@ -16,7 +16,7 @@ public interface IDownloadCallback {
 
     void onSuccess(String url,String realPath);
 
-  default   void onProgress(String url, String realPath , long currentOffset, long totalLength){
+  default   void onProgress(String url, String realPath , long currentOffset, long totalLength,long speed){
 
   }
 

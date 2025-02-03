@@ -42,7 +42,7 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         ImageView imageView = helper.getView(R.id.item_iv);
         imageView.setAdjustViewBounds(false);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-        params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.COUNT;
+        params.height = (ScreenUtils.getAppScreenWidth() - ImageListView.dividerSize) / ImageListView.count();
         imageView.setLayoutParams(params);
 
         ImageLoader.with(helper.itemView.getContext())
@@ -56,7 +56,7 @@ public class AlbumAdapter extends BaseQuickAdapter<Album, BaseViewHolder> implem
         helper.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageMediaCenterUtil.showViewAsActivityOrDialog(v.getContext(), true,new IViewInit() {
+                ImageMediaCenterUtil.showViewAsActivity(v.getContext(), new IViewInit() {
                     @Override
                     public View init(Activity activity) {
                         ImageListView listView = new ImageListView(activity);

@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 34
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
 
@@ -51,8 +51,9 @@ dependencies {
     api 'org.jsoup:jsoup:1.11.2'
     api 'com.blankj:utilcodex:1.30.6'
     api project(':imagelist')
-    api 'com.github.hss01248.utilcodeEnhance:baseWebview:1.4.3'
-    api 'com.github.hss01248.utilcodeEnhance:iwidget:1.4.3'
+    api "com.github.hss01248.utilcodeEnhance:baseWebview:${utilcodeVersion}"
+    api "com.github.hss01248.utilcodeEnhance:iwidget:${utilcodeVersion}"
+    api "com.github.hss01248.flipperUtil:network-hook:1.7.21-dev"
     //api project(':baseWebview')
 
 

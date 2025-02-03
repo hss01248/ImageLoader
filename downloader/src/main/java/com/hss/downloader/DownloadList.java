@@ -1,15 +1,12 @@
 package com.hss.downloader;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,7 +24,10 @@ import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
 import com.hss.downloader.event.DialogCloseEvent;
 import com.hss.downloader.event.DownloadResultEvent;
+import com.hss.downloader.list.DownloadItemAdapter;
+import com.hss.downloader.list.DownloadRecordListHolder;
 import com.hss.utils.enhance.foregroundservice.CommonProgressService;
+import com.hss01248.fullscreendialog.FullScreenDialogUtil;
 import com.noober.menu.FloatMenu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -198,58 +198,13 @@ public class DownloadList {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                final int[] realPosition = {0};
-                ProgressDialog dialog = new ProgressDialog(ActivityUtils.getTopActivity());
-                dialog.setMessage("查询数据...");
-                dialog.show();
-                ThreadUtils.executeByCpu(new ThreadUtils.Task<List<String>>() {
-                    @Override
-                    public List<String> doInBackground() throws Throwable {
-                        List<String> files = new ArrayList<>();
-                        int idx = -1;
-                        int successIdx = -1;
-                        for (DownloadInfo downloadInfo : result) {
-                            idx++;
-
-                            if(downloadInfo.status == DownloadInfo.STATUS_SUCCESS){
-                                files.add(downloadInfo.dir+"/"+downloadInfo.name);
-                                successIdx++;
-                            }
-                            if(position == idx){
-                                realPosition[0] = successIdx;
-                            }
-                        }
-                        return files;
-                    }
-
-                    @Override
-                    public void onSuccess(List<String> result) {
-                        dialog.dismiss();
-                        if(largeImagesViewer != null){
-                            largeImagesViewer.showBig(ActivityUtils.getTopActivity(),result, realPosition[0]);
-                        }else {
-                            ToastUtils.showShort("please set largeImagesViewer impl");
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                    }
-
-                    @Override
-                    public void onFail(Throwable t) {
-
-                    }
-                });
-
+                DownloadRecordListHolder.onItemClick2(adapter,position);
             }
         });
         adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
-                onItemLongClicked(view,position);
+                DownloadRecordListHolder.onItemLongClick2(adapter,view,position);
                 return true;
             }
         });
@@ -262,32 +217,6 @@ public class DownloadList {
         });
     }
 
-    private void onItemLongClicked(View view, int position) {
-        final FloatMenu floatMenu = new FloatMenu(view.getContext(), view);
-        //String hide = DbUtil.showHidden ? "隐藏文件夹":"显示隐藏的文件夹";
-        String[] desc = new String[2];
-        desc[0] = "打开下载文件夹"  ;
-        desc[1] ="todo";
-
-        floatMenu.items(desc);
-        floatMenu.setOnItemClickListener(new FloatMenu.OnItemClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-                if(position == 0){
-                    if(largeImagesViewer != null){
-                        largeImagesViewer.viewDir(ActivityUtils.getTopActivity(),datas.get(position).dir,"");
-                    }else {
-
-                    }
-
-                }else if(position == 1){
-                   // dealFailData(1);
-                }
-            }
-        });
-
-        floatMenu.showAsDropDown(view);
-    }
 
     private void showFailPop(View view) {
         final FloatMenu floatMenu = new FloatMenu(view.getContext(), view);
@@ -364,12 +293,15 @@ public class DownloadList {
     }
     public  void showViewAsDialog(Context context, View view) {
         //View view = init.init(MyUtil.getActivityFromContext(context));
-        Dialog dialog = new Dialog(view.getContext());
+
+        Dialog dialog =  FullScreenDialogUtil.showFullScreen(view);
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+       /* Dialog dialog = new Dialog(view.getContext());
         dialog.setContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));//背景颜色一定要有，看自己需求
         int height = calHeight();
         dialog.getWindow().setLayout(view.getResources().getDisplayMetrics().widthPixels, height);//宽高最大- BarUtils.getStatusBarHeight()
-        dialog.show();
+        dialog.show();*/
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -392,14 +324,5 @@ public class DownloadList {
                 }
             }
         });
-        /*ImageView ivClose = view.findViewById(R.id.iv_back);
-        if (ivClose != null) {
-            ivClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-        }*/
     }
 }

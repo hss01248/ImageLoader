@@ -20,6 +20,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -33,6 +38,7 @@ import com.hss01248.bigimageviewpager.photoview.MyGifPhotoView;
 import com.hss01248.glide.aop.file.AddByteUtil;
 import com.hss01248.glide.aop.file.ReadFileUtil;
 import com.hss01248.media.metadata.ExifUtil;
+import com.hss01248.motion_photos.MotionPhotoUtil;
 import com.hss01248.viewstate.StatefulLayout;
 import com.hss01248.viewstate.ViewStateConfig;
 import com.shizhefei.view.largeimage.factory.InputStreamBitmapDecoderFactory;
@@ -47,6 +53,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+@Deprecated
 public class MyLargeImageView extends FrameLayout {
     MyGifPhotoView gifView;
     MyLargeJpgView jpgView;
@@ -85,7 +92,7 @@ public class MyLargeImageView extends FrameLayout {
     }
 
     boolean darkMode = true;
-
+    PlayerView playerView;
 
     public MyLargeImageView(@NonNull Context context) {
         super(context);
@@ -97,10 +104,13 @@ public class MyLargeImageView extends FrameLayout {
 
     }
 
+    ImageView ivPlayVideo;
     private void init(Context context) {
         stateBinding = StateItemLargeImgBinding.inflate(LayoutInflater.from(context),this,true);
         largeImgBinding = stateBinding.itemLargeImg;
         stateManager = stateBinding.stateLayout;
+        playerView = stateBinding.itemLargeImg.playView;
+        ivPlayVideo = stateBinding.itemLargeImg.ivPlayVideo;
         stateBinding.stateLayout.setConfig(
                 ViewStateConfig.newBuilder(ViewStateConfig.getGlobalConfig())
                         .errorClick(new Runnable() {
@@ -178,7 +188,6 @@ public class MyLargeImageView extends FrameLayout {
 
     private void reload() {
         loadUri(info.uri);
-
     }
 
     int preOrientation;
@@ -204,13 +213,13 @@ public class MyLargeImageView extends FrameLayout {
         }
     }
 
-    private void loadUrl(String url) {
+    private void loadUrl(String url, boolean loadMotionVideo) {
 
         stateManager.showLoading();
         UrlLoader.download(getContext(), ivHelper, url, new UrlLoader.LoadListener() {
             @Override
             public void onLoad(String path) {
-                loadFile(path, url.contains(".gif"));
+                loadFile(path, url.contains(".gif"),loadMotionVideo);
                 //statefulFrameLayout.showError("fail download");
             }
 
@@ -241,37 +250,42 @@ public class MyLargeImageView extends FrameLayout {
 
     }
 
+    @Deprecated
     private void loadFile(String filePath) {
-        loadFile(filePath, false);
+        loadFile(filePath, false,false);
     }
-
-    private void loadFile(String filePath, boolean isGif) {
-        loadLocal(filePath, isGif);
+    @Deprecated
+    private void loadFile(String filePath, boolean isGif, boolean loadMotionVideo) {
+        loadLocal(filePath, isGif,loadMotionVideo);
     }
 
     private void toastMsg(String message) {
         Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
-    public void loadUri(String uri) {
+    public void loadUri(String uri,boolean loadMotionVideo) {
         info.uri = uri;
         //if(uri.startsWith("file://") || uri.startsWith("/storage/"))
         if (uri.startsWith("http")) {
-            loadUrl(uri);
+            loadUrl(uri,loadMotionVideo);
             return;
         }
         if (uri.startsWith("/storage/")) {
-            loadFile(uri, false);
+            loadFile(uri, false,loadMotionVideo);
             return;
         }
         if (uri.startsWith("file://")) {
-            loadFile(uri.substring("file://".length()), false);
+            loadFile(uri.substring("file://".length()), false,loadMotionVideo);
             return;
         }
         if (uri.startsWith("content://")) {
-            loadLocal(uri, false);
+            loadLocal(uri, false,loadMotionVideo);
             return;
         }
+    }
+    @Deprecated
+    public void loadUri(String uri) {
+        loadUri(uri,true);
     }
 
     public LargeImageInfo getInfo(){
@@ -282,8 +296,26 @@ public class MyLargeImageView extends FrameLayout {
         return info.getInfo();
     }
 
-    private void loadLocal(String uri, boolean isGif) {
+    private void loadLocal(String uri, boolean isGif,boolean loadMotionVideo) {
         info.localPathOrUri = uri;
+        stateManager.showContent();
+        if( MotionPhotoUtil.isMotionImage(uri,false)){
+            if(loadMotionVideo){
+                loadMotionVideo(uri);
+                return;
+            }
+            ivPlayVideo.setVisibility(VISIBLE);
+            ivPlayVideo.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadLocal(info.localPathOrUri,isGif,true);
+                }
+            });
+
+        }else {
+            ivPlayVideo.setVisibility(GONE);
+        }
+
         if (uri.contains(".gif") || isGif) {
             gifView.setVisibility(VISIBLE);
             largeImgBinding.ivGo360.setVisibility(GONE);
@@ -296,12 +328,26 @@ public class MyLargeImageView extends FrameLayout {
                 gifView.setImageURI(Uri.fromFile(tmpOriginalFile));
             }
             stateManager.showContent();
+            playerView.setVisibility(GONE);
         } else {
+
             gifView.setVisibility(GONE);
             jpgView.setVisibility(VISIBLE);
+            if(MotionPhotoUtil.isMotionImage(uri,false) ){
+                if(playerView.getVisibility() != View.GONE){
+                    LargeImageViewer.fadeToGone(playerView,500);
+                }
+                ivHelper.setVisibility(VISIBLE);
+                ivHelper.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        loadLocal(info.localPathOrUri, isGif, true);
+                    }
+                });
 
-
-
+            }else {
+                playerView.setVisibility(View.GONE);
+            }
             //兼容avif格式
             if(uri.contains(".avif")){
                 File tmpOriginalFile = AddByteUtil.createTmpOriginalFile(uri);
@@ -398,6 +444,94 @@ public class MyLargeImageView extends FrameLayout {
                     });
         }
     }
+    ExoPlayer player;
+    Player.Listener listener;
+    private void loadMotionVideo(String uri) {
+        String motionVideoPath = MotionPhotoUtil.getMotionVideoPath(uri);
+        if(motionVideoPath ==null || motionVideoPath.equals("")){
+            return;
+        }
+        ivHelper.setVisibility(GONE);
+        playerView.setVisibility(VISIBLE);
+        gifView.setVisibility(GONE);
+        LargeImageViewer.fadeToGone(jpgView,300);
+        //jpgView.setVisibility(GONE);
+        File file = new File(motionVideoPath);
+
+        if(player !=null){
+            if(player.isPlaying()){
+                player.stop();
+            }else if(player.isLoading()){
+                player.stop();
+            }
+            player.release();
+            player = null;
+        }
+
+             player = new ExoPlayer.Builder(getContext())
+                    .build();
+            playerView.setPlayer(player);
+             listener = new Player.Listener() {
+                @Override
+                public void onPlaybackStateChanged(int playbackState) {
+                    Player.Listener.super.onPlaybackStateChanged(playbackState);
+                    if(playbackState == Player.STATE_ENDED ){
+                        loadLocal(uri,false,false);
+                    }
+                }
+
+                @Override
+                public void onPlayerError(PlaybackException error) {
+                    Player.Listener.super.onPlayerError(error);
+                    LogUtils.w(error);
+                    loadLocal(uri,false,false);
+                }
+            };
+             player.addListener(listener);
+            player.setPlayWhenReady(true);
+            player.setRepeatMode(Player.REPEAT_MODE_OFF);
+
+
+        //sending message to a Handler on a dead thread
+        try{
+            //IllegalStateException: Handler (android.os.Handler) {674e76a} sending message to a Handler on a dead thread
+            player.setMediaItem(MediaItem.fromUri(Uri.fromFile(file)));
+            player.prepare();
+        }catch (Throwable throwable){
+            LogUtils.w(throwable);
+            player.release();
+            player = null;
+            loadLocal(uri,false,false);
+        }
+
+    }
+
+    public void pausePlayer(){
+        if(player !=null){
+            if(player.isPlaying() || player.isLoading()){
+                player.stop();
+            }
+            player.release();
+            player = null;
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LogUtils.d("onDetachedFromWindow-"+this);
+        try {
+            if(player !=null){
+                if(player.isPlaying()){
+                    player.stop();
+                }
+                player.release();
+            }
+        }catch (Throwable throwable){
+            LogUtils.w(throwable);
+        }
+
+    }
 
     public static boolean isPanoramaImage(String path){
         Map<String, String> map = ExifUtil.readExif(path);
@@ -405,10 +539,6 @@ public class MyLargeImageView extends FrameLayout {
         if(!TextUtils.isEmpty(xml) ){
             if(xml.contains("GPano:UsePanoramaViewer")){
                 LogUtils.i("根据exif特征识别出为360全景图,不进行压缩");
-                return true;
-            }
-            if(xml.contains("MotionPhoto")){
-                LogUtils.i("根据exif特征识别出为MotionPhoto,不进行压缩");
                 return true;
             }
             //MotionPhoto

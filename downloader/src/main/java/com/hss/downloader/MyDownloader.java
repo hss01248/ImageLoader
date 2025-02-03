@@ -9,12 +9,11 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.hss.downloader.download.CompressEvent;
 import com.hss.downloader.download.DownloadInfo;
 import com.hss.downloader.download.DownloadInfoUtil;
-import com.hss.downloader.event.DownloadResultEvent;
-
 import com.hss.downloader.download.db.DownloadInfoDao;
+import com.hss.downloader.event.DownloadResultEvent;
+import com.hss.downloader.list.DownloadRecordListHolder;
 import com.hss.utils.enhance.foregroundservice.CommonProgressService;
 import com.hss01248.img.compressor.ImageCompressor;
-import com.liulishuo.okdownload.StatusUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -80,7 +79,7 @@ public class MyDownloader {
             File file = new File(info.filePath);
             info.name = file.getName();
             info.dir = file.getParentFile().getAbsolutePath();
-            info.filePath = null;
+            info.getFilePath() ;
             if(info.status == DownloadInfo.STATUS_DOWNLOADING){
                 //info.status = DownloadInfo.STATUS_ORIGINAL;
             }else if(info.status == DownloadInfo.STATUS_ORIGINAL){
@@ -111,6 +110,10 @@ public class MyDownloader {
 
     public static void showDownloadPage(){
         new DownloadList().showList(ActivityUtils.getTopActivity(),null);
+    }
+
+    public static void showWholeDownloadPage(){
+        DownloadRecordListHolder.show();
     }
 
     public static void continueDownload(){
@@ -180,6 +183,7 @@ public class MyDownloader {
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.dir = info.dir;
                         load.name = DownloadInfoUtil.getLeagalFileName(info.dir,info.name);//避免多级目录,非法字符,文件过长等情况
+                        load.genFilePath();
                         load.createTime = System.currentTimeMillis();
                         //兼具去重功能  功能优先于性能
                         toAdd.add(load);
@@ -192,14 +196,11 @@ public class MyDownloader {
                     }else {
                         load.dir = info.dir;
                         load.name = DownloadInfoUtil.getLeagalFileName(info.dir,info.name);//避免多级目录,非法字符,文件过长等情况
+                        load.genFilePath();
                         //load.name = load.name;//避免多级目录,非法字符,文件过长等情况
                         if(load.status == DownloadInfo.STATUS_DOWNLOADING){
-                            StatusUtil.Status status = StatusUtil.getStatus(info.url, load.dir, load.name);
-                            if( status == StatusUtil.Status.RUNNING
-                                    || status == StatusUtil.Status.PENDING){
-                                toShow.add(load);
-                                continue;
-                            }
+                            toShow.add(load);
+                            continue;
                         }
                         load.status = DownloadInfo.STATUS_ORIGINAL;
                         load.createTime = System.currentTimeMillis();
@@ -271,6 +272,12 @@ public class MyDownloader {
 
     }
 
+    public static void stopDownload(DownloadInfo info) {
+        download.stopDownload(info.url);
+        info.status = DownloadInfo.STATUS_ORIGINAL;
+        EventBus.getDefault().post(info);
+    }
+
     public static void startDownload(DownloadInfo info) {
          if(download == null){
              LogUtils.w("download == null");
@@ -306,12 +313,12 @@ public class MyDownloader {
              }
 
              @Override
-             public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
+             public void onProgress(String url, String realPath, long currentOffset, long totalLength,long speed) {
                  info.currentOffset = currentOffset;
                  info.totalLength = totalLength;
                  info.status = currentOffset == totalLength ? DownloadInfo.STATUS_SUCCESS : DownloadInfo.STATUS_DOWNLOADING;
+                 info.speed = speed;
                  EventBus.getDefault().post(info);
-
              }
 
              @Override
@@ -333,7 +340,7 @@ public class MyDownloader {
         MyDownloader.download = download;
     }
 
-    static   IDownload download = new OkDownloadImpl();
+    static   IDownload download = new OkDownloadImpl2();
     private static void runOnBack(Runnable runnable) {
         ThreadUtils.executeByIo(new ThreadUtils.Task<Object>() {
             @Override
@@ -383,6 +390,7 @@ public class MyDownloader {
                 info.isCompressing = false;
                 info.name = compressed.getName();
                 info.dir = compressed.getParentFile().getAbsolutePath();
+                info.genFilePath();
                 info.totalLength = compressed.length();
                 EventBus.getDefault().post(info);
                 DownloadInfoUtil.getDao().update(info);

@@ -37,7 +37,7 @@ public class SougouImageParser implements IHtmlParser{
             Elements elements = element0.select("img.hdFirstImgObj > a > img");
             //选择多个class,则不要有空格
             if(elements == null || elements.isEmpty()){
-                LogUtils.w("baidu image empty!!");
+                LogUtils.i("baidu image empty!!");
             }else {
                 for (Element element : elements) {
                     String url =  element.attr("src");
@@ -45,7 +45,7 @@ public class SougouImageParser implements IHtmlParser{
                         LogUtils.d("图 url : ", url);
                         urls.add(url);
                     }else {
-                        LogUtils.w("img的 src 属性为空",element);
+                        LogUtils.i("img的 src 属性为空",element);
                     }
                 }
             }

@@ -6,9 +6,8 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.hss01248.bigimageviewpager.LargeImageViewer;
 import com.hss01248.bigimageviewpager.MyLargeImageView;
-
-import java.util.Random;
 
 public class OnePicActivity extends AppCompatActivity {
 
@@ -18,7 +17,7 @@ public class OnePicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         gifUrl =  "https://i.pinimg.com/originals/99/a0/11/99a01123f4f5ec82d359289b5dee2e8a.gif";
+         gifUrl =  "/storage/emulated/0/Pictures/news_article/234b8108f0828c35da509917c62d4fb5.jpg";
 
          jpgUrl = "http://img6.16fan.com/attachments/wenzhang/201805/18/152660818127263ge.jpeg";
         setContentView(R.layout.activity_onepic);
@@ -29,9 +28,11 @@ public class OnePicActivity extends AppCompatActivity {
 
     public void gif(View view) {
         imageView.loadUri(gifUrl);
+        LargeImageViewer.showOne(gifUrl);
     }
 
     public void jpg(View view) {
-        imageView.loadUri(jpgUrl);
+        //imageView.loadUri(jpgUrl);
+        LargeImageViewer.showOne(jpgUrl);
     }
 }

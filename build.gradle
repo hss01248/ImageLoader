@@ -2,23 +2,34 @@
 
 buildscript {
     apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/gradle7_5/remote3.gradle?q=2'
+    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/gradle7_5/z_config/pack.gradle?q=3'
     //apply from : 'https://raw.githubusercontent.com/hss01248/BaseAppAnalytics/master/remote.gradle'
-    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/dev/deps/depsLastestChecker.gradle'
-    //apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/dev/deps/uploadAllTask.gradle'
-   // apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/dev/z_config/git_branch_info.gradle'
+    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/gradle7_5/deps/depsLastestChecker.gradle'
+    //apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/gradle7_5/deps/uploadAllByMavenPublish.gradle?a=6'
+    apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/gradle7_5/z_config/git_branch_info.gradle'
+
+    //apply from: 'pack.gradle'
 
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.ImageLoader'
-        versionCode = '3.3.3.01'
+        versionCode = '3.9.3.00'
         isPublisToLocal=true
+        ignoreModules = "spiders"
+
+        releaseUrl='https://nexus.hss01248.tech/repository/maven-releases/'
+        snapshotUrl='https://nexus.hss01248.tech/repository/maven-snapshots/'
+        publicUrl='https://nexus.hss01248.tech/#browse/browse:maven-public:'
+
+        utilcodeVersion='1.6.8'
+        
 
     }
 
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.3.0' // add plugin
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -27,7 +38,7 @@ buildscript {
 
 allprojects {
     repositories {
-
+        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
        /* maven {
             url "http://dl.bintray.com/piasy/maven"
         }*/

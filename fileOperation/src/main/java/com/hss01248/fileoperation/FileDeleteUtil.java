@@ -75,22 +75,42 @@ public class FileDeleteUtil {
 
 
 
+    public static  boolean askMediaManagerPermission = true;
 
     // 注意compileSdkVersion和targetSdkVersion均需要 >= 31
-    public static void checkMediaManagerPermission() {
+    public static void checkMediaManagerPermission(Runnable onSuccess,Runnable onDenied) {
         //<uses-permission android:name="android.permission.MANAGE_MEDIA"/>
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             boolean canManageMedia = MediaStore.canManageMedia(Utils.getApp());
             if(canManageMedia){
                 LogUtils.i("已经有管理媒体的权限了");
+
+                if (onSuccess !=null) onSuccess.run();
             }else {
                 LogUtils.i("还没有管理媒体的权限,去申请");
                 Intent intent = new Intent(Settings.ACTION_REQUEST_MANAGE_MEDIA);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ActivityUtils.getTopActivity().startActivity(intent);
+                StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), intent,
+                        new ActivityResultListener() {
+                            @Override
+                            public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                                boolean canManageMedia = MediaStore.canManageMedia(Utils.getApp());
+                                if(canManageMedia){
+                                    if (onSuccess !=null) onSuccess.run();
+                                }else {
+                                    if (onDenied !=null) onDenied.run();
+                                }
+                            }
+
+                            @Override
+                            public void onActivityNotFound(Throwable e) {
+                                if (onDenied !=null) onDenied.run();
+                            }
+                        });
             }
         }else {
             LogUtils.i("Android版本小于12,还不需要这个管理媒体的权限");
+            onSuccess.run();
         }
     }
 
@@ -263,9 +283,38 @@ public class FileDeleteUtil {
                 //不会弹窗,直接删除
                 ActivityUtils.getTopActivity().startIntentSenderForResult(finalDeleteRequest.getIntentSender(),
                         100, null, 0, 0, 0, null);
+                callBack.onNext(true);
+                return;
+            }
+            if(askMediaManagerPermission){
+                checkMediaManagerPermission(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ActivityUtils.getTopActivity().startIntentSenderForResult(finalDeleteRequest.getIntentSender(),
+                                    100, null, 0, 0, 0, null);
+                            callBack.onNext(true);
+                        }catch (Throwable throwable){
+                            LogUtils.w(throwable);
+                            //callBack.onError(throwable);
+                            deleteByUserDialog(callBack, finalDeleteRequest);
+                        }
+
+                    }
+                }, new Runnable() {
+                    @Override
+                    public void run() {
+                        //callBack.onNext(false);
+                        deleteByUserDialog(callBack, finalDeleteRequest);
+                    }
+                });
                 return;
             }
         }
+        deleteByUserDialog(callBack, finalDeleteRequest);
+    }
+
+    private static void deleteByUserDialog(Observer<Boolean> callBack, PendingIntent finalDeleteRequest) {
         StartActivityUtil.goOutAppForResult(ActivityUtils.getTopActivity(), null, new ActivityResultListener() {
             @Override
             public boolean onInterceptStartIntent(@NonNull Fragment fragment, @Nullable Intent intent, int requestCode) {

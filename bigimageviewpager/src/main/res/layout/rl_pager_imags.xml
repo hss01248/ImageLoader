@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_root"
+    android:layout_height="match_parent">
+    <com.hss01248.bigimageviewpager.MyViewPager
+        android:layout_width="match_parent"
+        android:id="@+id/my_view_pager"
+        android:layout_height="match_parent"/>
+    <LinearLayout
+        android:id="@+id/ll_progress"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.warkiz.widget.IndicatorSeekBar
+            android:layout_width="match_parent"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:id="@+id/seek_bar"
+            android:layout_height="wrap_content"
+            app:isb_max="1000"
+            app:isb_min="1"
+            app:isb_progress="25"
+            app:isb_seek_smoothly="true"
+            app:isb_thumb_size="20dp"
+            app:isb_show_indicator="rounded_rectangle"
+            app:isb_indicator_text_color="#333333"
+            app:isb_indicator_text_size="18sp"
+            app:isb_track_background_size="2dp"
+            app:isb_track_progress_size="4dp"
+            app:isb_only_thumb_draggable="false"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:textColor="@color/color_bg_white"
+            android:textSize="13sp"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/tv_progress"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <View
+        android:visibility="gone"
+        android:id="@+id/float_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="60dp"
+        android:background="#ff08f5"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+
+</RelativeLayout>

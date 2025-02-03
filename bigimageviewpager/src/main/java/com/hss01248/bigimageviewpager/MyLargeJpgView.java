@@ -7,11 +7,10 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 
-import com.shizhefei.view.largeimage.BlockImageLoader;
 import com.shizhefei.view.largeimage.LargeImageView;
 
+@Deprecated
 public class MyLargeJpgView extends LargeImageView {
     PaintFlagsDrawFilter pfd;
 
@@ -38,6 +37,14 @@ public class MyLargeJpgView extends LargeImageView {
         setCriticalScaleValueHook(new CriticalScaleValueHook() {
             @Override
             public float getMinScale(LargeImageView largeImageView, int imageWidth, int imageHeight, float suggestMinScale) {
+                //这里控制默认显示时的大小,类似scaletype的作用:
+                /*int layoutWidth = largeImageView.getMeasuredWidth();
+                int layoutHeight = largeImageView.getMeasuredHeight();
+                float suggestMinScale2 = layoutHeight *1.0f/imageHeight;
+                float suggestMinScale3 = layoutWidth *1.0f/imageWidth;
+                LogUtils.d("height scale: "+ suggestMinScale2, "width scale: "+suggestMinScale3);*/
+
+                //否则就按默认的,铺满宽度
 
                 return suggestMinScale;
             }
@@ -119,6 +126,13 @@ public class MyLargeJpgView extends LargeImageView {
                ", maxratio:"+ getMaxScaleRatio()+", isLandscape:"+ isLandscape+",currentScale:"+getScale()+",realPercentNow:"+realPercentNow);
 
        //getScale()
+        /*if(imageHeight*1.0f/imageWidth > layoutHeight*1.0f/layoutWidth){
+            setScale(layoutHeight *1.0f/imageHeight);
+        }else {
+            setScale(layoutWidth *1.0f/imageWidth);
+        }*/
+
+
         if(isLandscape){
             if(!fromConfigChange){
                 setScale(scaleHeight/scaleWidth);
@@ -133,7 +147,6 @@ public class MyLargeJpgView extends LargeImageView {
             }else {
                 setScale(1.0f);
             }
-
         }
 
         //setScale(getMinScale());

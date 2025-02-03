@@ -53,11 +53,11 @@ public class ExeOnMainDownloadCallback implements IDownloadCallback {
     }
 
     @Override
-    public void onProgress(String url, String realPath, long currentOffset, long totalLength) {
+    public void onProgress(String url, String realPath, long currentOffset, long totalLength,long speed) {
         exeOnMain(new Runnable(){
             @Override
             public void run() {
-                callback.onProgress(url,realPath,currentOffset,totalLength);
+                callback.onProgress(url,realPath,currentOffset,totalLength,speed);
             }
         });
     }

@@ -18,7 +18,7 @@ import com.bumptech.glide.module.AppGlideModule;
 public class GMylideApp extends AppGlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
-        LogUtils.w("in app: applyOptions");
+        LogUtils.d("in app: applyOptions");
         //设置缓存到外部存储器
         //builder.setDiskCache(new ExternalPreferredCacheDiskCacheFactory(context));
         long memoryCacheSizeBytes = 1024L * 1024 * 1024 * 2; // 2G
